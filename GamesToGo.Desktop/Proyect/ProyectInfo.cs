@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GamesToGo.Desktop.Database.Models
 {
-    public class Proyect
+    public class ProyectInfo
     {
         public int LocalProyectID { get; set; }
         public int CreatorID { get; set; }
