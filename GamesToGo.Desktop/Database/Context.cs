@@ -26,8 +26,6 @@ namespace GamesToGo.Desktop.Database.Models
         // This method connects the context with the database
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = "DesktopDatabase.db" };
-            var connectionString = connectionStringBuilder.ToString();
             var connection = new SqliteConnection(connectionString);
 
             optionsBuilder.UseSqlite(connection);
