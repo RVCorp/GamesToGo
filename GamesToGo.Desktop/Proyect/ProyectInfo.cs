@@ -16,6 +16,6 @@ namespace GamesToGo.Desktop.Database.Models
         public int OnlineProyecrID { get; set; }
         public int ModerationStatus { get; set; }
         public int ComunityStatus { get; set; }
-        public int FileID { get; set; }
+        public ICollection<FileRelation> Relations { get; set; }
     }
 }
