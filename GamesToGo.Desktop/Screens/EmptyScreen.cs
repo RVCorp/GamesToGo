@@ -39,9 +39,9 @@ namespace GamesToGo.Desktop.Screens
                 backButton = new BasicButton
                 {
                     AutoSizeAxes = Axes.X,          //Botones del tamaño justo para el texto que tengan...
-                    Height = 50,                    //Con altura de 50 pixeles
-                    Anchor = Anchor.BottomLeft,     //En la esquina inferior izquierda
-                    Origin = Anchor.BottomLeft,
+                    Height = 30,                    //Con altura de 50 pixeles
+                    Anchor = Anchor.TopLeft,     //En la esquina inferior izquierda
+                    Origin = Anchor.TopLeft,
                 },
                 screenText = new SpriteText             //Un sprite de texto...
                 {
