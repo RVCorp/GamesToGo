@@ -41,98 +41,98 @@ namespace GamesToGo.Desktop.Screens
                         {
                             userInformation = new Container
                             {
-                                RelativeSizeAxes = Axes.Both, 
+                                RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
                                     new Box
                                     {
-                                        RelativeSizeAxes = Axes.Both, 
+                                        RelativeSizeAxes = Axes.Both,
                                         Colour = new Color4 (145,144,144, 255)   //Color userInformation
-                                    }, 
+                                    },
                                     new CircularContainer
                                     {
-                                        Size = new Vector2(250), 
+                                        Size = new Vector2(250),
                                         Child = new Box         //Cambiar Box por Sprite
                                         {
                                             RelativeSizeAxes = Axes.Both
                                             //FillMode= FillMode.Fill,
                                         }, 
-                                        BorderColour = Color4.Black, 
-                                        BorderThickness = 3.5f, 
-                                        Anchor = Anchor.TopCentre, 
-                                        Origin = Anchor.TopCentre, 
-                                        Position = new Vector2(0,125), 
+                                        BorderColour = Color4.Black,
+                                        BorderThickness = 3.5f,
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
+                                        Position = new Vector2(0,125),
                                         Masking = true
-                                    }, 
+                                    },
                                     new SpriteText
                                     {
-                                        Text = "StUpIdUsErNaMe27", 
-                                        Anchor = Anchor.TopCentre, 
-                                        Origin = Anchor.TopCentre, 
+                                        Text = "StUpIdUsErNaMe27",
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,450)
-                                    }, 
+                                    },
                                     new BasicButton
                                     {
-                                        Text = "Perfil", 
-                                        BackgroundColour = new Color4 (106,100,104, 255),   //Color Boton userInformation
-                                        BorderColour = Color4.Black, 
-                                        BorderThickness = 2f, 
-                                        RelativeSizeAxes = Axes.X, 
-                                        Masking = true, 
-                                        Height = 40, 
-                                        Anchor = Anchor.TopCentre, 
-                                        Origin = Anchor.TopCentre, 
+                                        Text = "Perfil",
+                                        BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
+                                        BorderColour = Color4.Black,
+                                        BorderThickness = 2f,
+                                        RelativeSizeAxes = Axes.X,
+                                        Masking = true,
+                                        Height = 40,
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,600)
-                                    }, 
+                                    },
                                     new BasicButton
                                     {
-                                        Text = "Cerrar Sesión", 
+                                        Text = "Cerrar Sesión",
                                         BackgroundColour = new Color4 (106,100,104, 255),   //Color Boton userInformation
-                                        BorderColour = Color4.Black, 
-                                        BorderThickness = 2f, 
-                                        RelativeSizeAxes = Axes.X, 
-                                        Masking = true, 
-                                        Height = 40, 
-                                        Anchor = Anchor.TopCentre, 
-                                        Origin = Anchor.TopCentre, 
+                                        BorderColour = Color4.Black,
+                                        BorderThickness = 2f,
+                                        RelativeSizeAxes = Axes.X,
+                                        Masking = true,
+                                        Height = 40,
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,700)
                                     }
                                 }
-                            },
+                            }
                             new Container
                             {
-                                RelativeSizeAxes = Axes.Both, 
+                                RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
                                     new BasicButton
                                     {
-                                        Text = "Crear Nuevo Proyecto", 
-                                        BackgroundColour = new Color4 (145,144,144, 255), 
-                                        BorderColour = Color4.Black, 
-                                        BorderThickness = 2f, 
-                                        RelativeSizeAxes = Axes.X, 
-                                        Masking = true, 
-                                        Height = 100, 
-                                        Anchor = Anchor.BottomCentre, 
+                                        Text = "Crear Nuevo Proyecto",
+                                        BackgroundColour = new Color4 (145,144,144, 255),
+                                        BorderColour = Color4.Black,
+                                        BorderThickness = 2f,
+                                        RelativeSizeAxes = Axes.X,
+                                        Masking = true,
+                                        Height = 100,
+                                        Anchor = Anchor.BottomCentre,
                                         Origin = Anchor.BottomCentre
                                     },
                                     proyectsList = new FillFlowContainer
                                     {
-                                        BorderColour = Color4.Black, 
-                                        BorderThickness = 3f, 
-                                        Masking = true, 
-                                        Height = 650, 
-                                        Width = 1000, 
-                                        Anchor = Anchor.TopCentre, 
-                                        Origin = Anchor.TopCentre, 
-                                        Position = new Vector2(0,200), 
+                                        BorderColour = Color4.Black,
+                                        BorderThickness = 3f,
+                                        Masking = true,
+                                        Height = 650,
+                                        Width = 1000,
+                                        Anchor = Anchor.TopCentre,
+                                        Origin = Anchor.TopCentre,
+                                        Position = new Vector2(0,200),
                                         Children = new Drawable[]
                                         {
-                                            new ProjectDescriptionButton(), 
-                                            new ProjectDescriptionButton(), 
-                                            new ProjectDescriptionButton(), 
-                                            new ProjectDescriptionButton(), 
-                                            new ProjectDescriptionButton(), 
+                                            new ProjectDescriptionButton(),
+                                            new ProjectDescriptionButton(),
+                                            new ProjectDescriptionButton(),
+                                            new ProjectDescriptionButton(),
+                                            new ProjectDescriptionButton(),
                                             new ProjectDescriptionButton()
                                         }
                                     }

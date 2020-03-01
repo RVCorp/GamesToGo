@@ -13,7 +13,7 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectDescriptionButton : Button
     {
-        private SpriteText ProyectName;
+        private SpriteText proyectName;
         private readonly SpriteIcon icon;
         public ProjectDescriptionButton()
         {
@@ -29,7 +29,7 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black
                 },
-                ProyectName = new SpriteText
+                proyectName = new SpriteText
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
