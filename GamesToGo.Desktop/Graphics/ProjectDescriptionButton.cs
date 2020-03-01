@@ -13,7 +13,7 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectDescriptionButton : Button
     {
-        public SpriteText ProyectName;
+        private SpriteText ProyectName;
         private readonly SpriteIcon icon;
         public ProjectDescriptionButton()
         {
