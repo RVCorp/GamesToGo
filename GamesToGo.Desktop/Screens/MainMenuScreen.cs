@@ -98,7 +98,7 @@ namespace GamesToGo.Desktop.Screens
                                         Position = new Vector2(0,700)
                                     }
                                 }
-                            }
+                            },
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,

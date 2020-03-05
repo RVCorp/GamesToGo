@@ -11,7 +11,8 @@ namespace GamesToGo.Desktop.Screens
         //Agregamos el menu principal como pantalla a la cual se deberia poder acceder
         protected override IEnumerable<Type> FollowingScreens => new[]
         {
-            typeof(MainMenuScreen)
+            typeof(MainMenuScreen),
+            typeof(Home)
         };
     }
 }
