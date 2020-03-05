@@ -12,7 +12,7 @@ namespace GamesToGo.Desktop.Screens
         protected override IEnumerable<Type> FollowingScreens => new[]
         {
             typeof(MainMenuScreen),
-            typeof(Home)
+            typeof(ProjectHome)
         };
     }
 }

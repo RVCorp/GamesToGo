@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -12,9 +9,9 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
-    public class Home: Screen
+    public class ProjectHome : Screen
     {
-        public Home()
+        public ProjectHome()
         {
             InternalChildren = new Drawable[]
             {
