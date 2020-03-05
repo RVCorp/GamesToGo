@@ -9,7 +9,8 @@ namespace GamesToGo.Desktop.Database.Models
         public int LocalProyectID { get; set; }
         public int CreatorID { get; set; }
         public string Name { get; set; }
-        public int NumberPlayers { get; set; }
+        public int MinNumberPlayers { get; set; }
+        public int MaxNumberPlayers { get; set; }
         public int NumberCards { get; set; }
         public int NumberTokens { get; set; }
         public int NumberBoxes { get; set; }

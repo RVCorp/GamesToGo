@@ -48,7 +48,8 @@ namespace GamesToGo.Desktop.Database.Models
                 proyect.Property(e => e.LocalProyectID).IsRequired();
                 proyect.Property(e => e.Name).IsRequired();
                 proyect.Property(e => e.CreatorID).IsRequired();
-                proyect.Property(e => e.NumberPlayers).IsRequired();
+                proyect.Property(e => e.MinNumberPlayers).IsRequired();
+                proyect.Property(e => e.MaxNumberPlayers).IsRequired();
                 proyect.Property(e => e.NumberCards).IsRequired();
                 proyect.Property(e => e.NumberTokens).IsRequired();
                 proyect.Property(e => e.NumberBoxes).IsRequired();
