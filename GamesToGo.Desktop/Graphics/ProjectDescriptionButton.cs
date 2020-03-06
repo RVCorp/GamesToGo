@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using osu.Framework.Bindables;
 using System.Text;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -7,7 +8,9 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK.Graphics;
 using osuTK;
-
+using GamesToGo.Desktop.Database.Models;
+using osu.Framework.Allocation;
+using GamesToGo.Desktop.Proyect;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -15,9 +18,8 @@ namespace GamesToGo.Desktop.Graphics
     {
         private SpriteText proyectName;
         private readonly SpriteIcon icon;
-        public ProjectDescriptionButton()
+        public ProjectDescriptionButton(WorkingProject project)
         {
-
             Masking = true;
             BorderThickness = 3;
             RelativeSizeAxes = Axes.X;
@@ -35,7 +37,7 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.CentreLeft,
                     Position = new Vector2(15,5),
                     Colour = Color4.White,
-                    Text = "Proyecto",    //Aquí va Name de ProyectInfo.cs
+                    Text = project.Title.Value,
                     RelativeSizeAxes = Axes.Both
                 },
                 icon= new SpriteIcon
@@ -47,6 +49,14 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.CentreRight
                 }
             };
+
+            project.Title.ValueChanged += t => proyectName.Text = t.NewValue;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(Context database)
+        {
+
         }
     }
 }

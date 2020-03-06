@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GamesToGo.Desktop.Migrations
+namespace GamesToGo.Desktop.Database.Migrations
 {
-    public partial class ContextCorrection : Migration
+    public partial class OverrideMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "File",
+                name: "Files",
                 columns: table => new
                 {
                     FileID = table.Column<int>(nullable: false)
@@ -18,18 +18,19 @@ namespace GamesToGo.Desktop.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_File", x => x.FileID);
+                    table.PrimaryKey("PK_Files", x => x.FileID);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProyectInfo",
+                name: "Proyects",
                 columns: table => new
                 {
                     LocalProyectID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CreatorID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    NumberPlayers = table.Column<int>(nullable: false),
+                    MinNumberPlayers = table.Column<int>(nullable: false),
+                    MaxNumberPlayers = table.Column<int>(nullable: false),
                     NumberCards = table.Column<int>(nullable: false),
                     NumberTokens = table.Column<int>(nullable: false),
                     NumberBoxes = table.Column<int>(nullable: false),
@@ -39,11 +40,11 @@ namespace GamesToGo.Desktop.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProyectInfo", x => x.LocalProyectID);
+                    table.PrimaryKey("PK_Proyects", x => x.LocalProyectID);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FileRelation",
+                name: "Relations",
                 columns: table => new
                 {
                     ProyectID = table.Column<int>(nullable: false),
@@ -51,37 +52,37 @@ namespace GamesToGo.Desktop.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FileRelation", x => new { x.FileID, x.ProyectID });
+                    table.PrimaryKey("PK_Relations", x => new { x.FileID, x.ProyectID });
                     table.ForeignKey(
-                        name: "FK_FileRelation_File_FileID",
+                        name: "FK_Relations_Files_FileID",
                         column: x => x.FileID,
-                        principalTable: "File",
+                        principalTable: "Files",
                         principalColumn: "FileID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FileRelation_ProyectInfo_ProyectID",
+                        name: "FK_Relations_Proyects_ProyectID",
                         column: x => x.ProyectID,
-                        principalTable: "ProyectInfo",
+                        principalTable: "Proyects",
                         principalColumn: "LocalProyectID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FileRelation_ProyectID",
-                table: "FileRelation",
+                name: "IX_Relations_ProyectID",
+                table: "Relations",
                 column: "ProyectID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FileRelation");
+                name: "Relations");
 
             migrationBuilder.DropTable(
-                name: "File");
+                name: "Files");
 
             migrationBuilder.DropTable(
-                name: "ProyectInfo");
+                name: "Proyects");
         }
     }
 }

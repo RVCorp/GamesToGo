@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GamesToGo.Desktop.Proyect;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -10,18 +11,21 @@ namespace GamesToGo.Desktop.Database.Models
 {
     public class Context : DbContext
     {
-        private string connectionString
-        {
-            get
-            {
-                var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = "DesktopDatabase.db" };
-                return connectionStringBuilder.ToString();
-            }
-        }
+        private readonly string connectionString;
 
         public DbSet<File> Files { get; set; }
         public DbSet<ProyectInfo> Proyects { get; set; }
         public DbSet<FileRelation> Relations { get; set; }
+
+        public Context() : this("DataSource=:memory:")
+        {
+            
+        }
+
+        public Context(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
 
         // This method connects the context with the database
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -61,6 +65,7 @@ namespace GamesToGo.Desktop.Database.Models
             modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProyectID });
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Proyect).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProyectID);
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.File).WithMany(f => f.Relations).HasForeignKey(fr => fr.FileID);
+            modelBuilder.Entity<ProyectInfo>().HasOne(pi => pi.File).WithOne().HasForeignKey<ProyectInfo>(pi => pi.FileID);
         }
     }
 }
