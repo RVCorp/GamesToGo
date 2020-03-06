@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -11,6 +12,8 @@ using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Proyect;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -42,6 +45,7 @@ namespace GamesToGo.Desktop.Screens
                             userInformation = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
+                                RelativePositionAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
                                     new Box
@@ -56,7 +60,7 @@ namespace GamesToGo.Desktop.Screens
                                         {
                                             RelativeSizeAxes = Axes.Both
                                             //FillMode= FillMode.Fill,
-                                        }, 
+                                        },
                                         BorderColour = Color4.Black,
                                         BorderThickness = 3.5f,
                                         Anchor = Anchor.TopCentre,
@@ -95,7 +99,8 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 40,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
-                                        Position = new Vector2(0,700)
+                                        Position = new Vector2(0,700),
+                                        Action = () => this.Exit(),
                                     }
                                 }
                             },
@@ -114,7 +119,8 @@ namespace GamesToGo.Desktop.Screens
                                         Masking = true,
                                         Height = 100,
                                         Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.BottomCentre
+                                        Origin = Anchor.BottomCentre,
+                                        Action = () => this.Push(new ProjectHome(new WorkingProject(new ProyectInfo())))
                                     },
                                     proyectsList = new FillFlowContainer
                                     {
@@ -128,12 +134,7 @@ namespace GamesToGo.Desktop.Screens
                                         Position = new Vector2(0,200),
                                         Children = new Drawable[]
                                         {
-                                            new ProjectDescriptionButton(),
-                                            new ProjectDescriptionButton(),
-                                            new ProjectDescriptionButton(),
-                                            new ProjectDescriptionButton(),
-                                            new ProjectDescriptionButton(),
-                                            new ProjectDescriptionButton()
+                                            new ProjectDescriptionButton(new WorkingProject(new ProyectInfo()))
                                         }
                                     }
                                 }
@@ -149,9 +150,18 @@ namespace GamesToGo.Desktop.Screens
             };
         }
 
+        [BackgroundDependencyLoader]
+        private void load(Context database)
+        {
+            foreach(var project in database.Proyects)
+            {
+                proyectsList.Add(new ProjectDescriptionButton(new WorkingProject(project)));
+            }
+        }
+
         protected override void LoadComplete()
         {
-            userInformation.MoveToX(-1).Then().MoveToX(0, 10000, Easing.OutBounce);
+            userInformation.MoveToX(-1).Then().MoveToX(0, 1000, Easing.OutBounce);
         }
     }
 }

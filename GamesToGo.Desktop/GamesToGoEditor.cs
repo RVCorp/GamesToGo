@@ -4,6 +4,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Configuration;
 using osu.Framework.Screens;
 using GamesToGo.Desktop.Screens;
+using GamesToGo.Desktop.Database.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamesToGo.Desktop
 {
@@ -30,10 +32,24 @@ namespace GamesToGo.Desktop
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
             dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
+        private Context dbContext;
+
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
         private void load(FrameworkConfigManager config) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
+            dependencies.Cache(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
+
+            try
+            {
+                dbContext.Database.Migrate();
+            }
+            catch
+            {
+                Host.Storage.DeleteDatabase(Name);
+                dbContext.Database.Migrate();
+            }
+
             //Ventana sin bordes, sin requerir modo exclusivo.
             config.GetBindable<WindowMode>(FrameworkSetting.WindowMode).Value = WindowMode.Borderless;
 

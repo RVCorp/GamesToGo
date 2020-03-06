@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace GamesToGo.Desktop.Migrations
+namespace GamesToGo.Desktop.Database.Migrations
 {
     [DbContext(typeof(Context))]
     partial class ContextModelSnapshot : ModelSnapshot
@@ -66,6 +66,9 @@ namespace GamesToGo.Desktop.Migrations
                     b.Property<int>("CreatorID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("FileID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MaxNumberPlayers")
                         .HasColumnType("INTEGER");
 
@@ -93,6 +96,9 @@ namespace GamesToGo.Desktop.Migrations
 
                     b.HasKey("LocalProyectID");
 
+                    b.HasIndex("FileID")
+                        .IsUnique();
+
                     b.ToTable("Proyects");
                 });
 
@@ -107,6 +113,15 @@ namespace GamesToGo.Desktop.Migrations
                     b.HasOne("GamesToGo.Desktop.Database.Models.ProyectInfo", "Proyect")
                         .WithMany("Relations")
                         .HasForeignKey("ProyectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GamesToGo.Desktop.Database.Models.ProyectInfo", b =>
+                {
+                    b.HasOne("GamesToGo.Desktop.Database.Models.File", "File")
+                        .WithOne()
+                        .HasForeignKey("GamesToGo.Desktop.Database.Models.ProyectInfo", "FileID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

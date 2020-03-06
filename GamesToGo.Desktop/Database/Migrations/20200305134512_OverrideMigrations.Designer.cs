@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace GamesToGo.Desktop.Migrations
+namespace GamesToGo.Desktop.Database.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20200225020822_ContextCorrection")]
-    partial class ContextCorrection
+    [Migration("20200305134512_OverrideMigrations")]
+    partial class OverrideMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,7 +38,7 @@ namespace GamesToGo.Desktop.Migrations
 
                     b.HasKey("FileID");
 
-                    b.ToTable("File");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("GamesToGo.Desktop.Database.Models.FileRelation", b =>
@@ -53,7 +53,7 @@ namespace GamesToGo.Desktop.Migrations
 
                     b.HasIndex("ProyectID");
 
-                    b.ToTable("FileRelation");
+                    b.ToTable("Relations");
                 });
 
             modelBuilder.Entity("GamesToGo.Desktop.Database.Models.ProyectInfo", b =>
@@ -66,6 +66,12 @@ namespace GamesToGo.Desktop.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CreatorID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaxNumberPlayers")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinNumberPlayers")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ModerationStatus")
@@ -81,9 +87,6 @@ namespace GamesToGo.Desktop.Migrations
                     b.Property<int>("NumberCards")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("NumberPlayers")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("NumberTokens")
                         .HasColumnType("INTEGER");
 
@@ -92,7 +95,7 @@ namespace GamesToGo.Desktop.Migrations
 
                     b.HasKey("LocalProyectID");
 
-                    b.ToTable("ProyectInfo");
+                    b.ToTable("Proyects");
                 });
 
             modelBuilder.Entity("GamesToGo.Desktop.Database.Models.FileRelation", b =>

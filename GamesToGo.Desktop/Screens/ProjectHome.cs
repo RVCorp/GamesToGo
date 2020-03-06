@@ -1,4 +1,5 @@
-﻿using osu.Framework.Graphics;
+﻿using GamesToGo.Desktop.Proyect;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -11,7 +12,8 @@ namespace GamesToGo.Desktop.Screens
 {
     public class ProjectHome : Screen
     {
-        public ProjectHome()
+        private BasicTextBox titleTextBox;
+        public ProjectHome(WorkingProject project)
         {
             InternalChildren = new Drawable[]
             {
@@ -75,8 +77,9 @@ namespace GamesToGo.Desktop.Screens
                             Text = "Nombre del proyecto:",
                             Position = new Vector2(15,17)
                         },
-                        new BasicTextBox
+                        titleTextBox = new BasicTextBox
                         {
+                            Text = project.Title.Value,
                             Position = new Vector2(175,10),
                             Height = 35,
                             Width = 775
@@ -118,6 +121,7 @@ namespace GamesToGo.Desktop.Screens
                             Height = 100,
                             Width = 1732
                         }
+
                     }
                 },
                 new GridContainer
