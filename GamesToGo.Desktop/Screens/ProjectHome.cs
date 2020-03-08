@@ -1,4 +1,5 @@
-﻿using GamesToGo.Desktop.Proyect;
+﻿using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Proyect;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -13,6 +14,9 @@ namespace GamesToGo.Desktop.Screens
     public class ProjectHome : Screen
     {
         private BasicTextBox titleTextBox;
+        private FillFlowContainer allCards;
+        private FillFlowContainer allTokens;
+        private FillFlowContainer allBoxes;
         public ProjectHome(WorkingProject project)
         {
             InternalChildren = new Drawable[]
@@ -50,10 +54,10 @@ namespace GamesToGo.Desktop.Screens
                         },
                         new BasicButton
                         {
-                            Position = new Vector2(70,0),
+                            Position = new Vector2(140,0),
                             RelativeSizeAxes = Axes.Y,
                             Width = 70,
-                            Text = "Inicio",
+                            Text = "Objetos",
                             BackgroundColour = Color4.DimGray
                         }
                     }
@@ -142,6 +146,65 @@ namespace GamesToGo.Desktop.Screens
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Yellow
+                                    },
+                                    new Container
+                                    {
+                                        Anchor = Anchor.BottomRight,
+                                        Origin = Anchor.BottomRight,
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 50,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = Color4.Beige
+                                            },
+                                            new BasicButton
+                                            {
+                                                RelativeSizeAxes = Axes.Y,
+                                                Anchor = Anchor.BottomRight,
+                                                Origin = Anchor.BottomRight,
+                                                Width = 70,
+                                                BackgroundColour = Color4.Red,
+                                                BorderColour = Color4.Black,
+                                                BorderThickness = 2.5f,
+                                                Masking = true,
+                                                Child =  new SpriteIcon
+                                                {
+                                                    Icon = FontAwesome.Solid.Ad,
+                                                    Colour = Color4.Black,
+                                                    RelativeSizeAxes = Axes.Y,
+                                                    Width = 40,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                },
+                                                Action = () => allCards.Add(new Container
+                                                {
+                                                    Width = 158.4f,
+                                                    Height = 250,
+                                                    Children = new Drawable[]
+                                                    {
+                                                        new Box
+                                                        {
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Color4.Aquamarine
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    },
+                                    allCards = new FillFlowContainer()
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Full,
+                                        Children = new Drawable[]
+                                        {
+                                            
+                                        }
                                     }
                                 }
                             },
@@ -154,6 +217,65 @@ namespace GamesToGo.Desktop.Screens
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Blue
+                                    },
+                                    new Container
+                                    {
+                                        Anchor = Anchor.BottomRight,
+                                        Origin = Anchor.BottomRight,
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 50,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = Color4.Beige
+                                            },
+                                            new BasicButton
+                                            {
+                                                RelativeSizeAxes = Axes.Y,
+                                                Anchor = Anchor.BottomRight,
+                                                Origin = Anchor.BottomRight,
+                                                Width = 70,
+                                                BackgroundColour = Color4.Red,
+                                                BorderColour = Color4.Black,
+                                                BorderThickness = 2.5f,
+                                                Masking = true,
+                                                Child =  new SpriteIcon
+                                                {
+                                                    Icon = FontAwesome.Solid.Ad,
+                                                    Colour = Color4.Black,
+                                                    RelativeSizeAxes = Axes.Y,
+                                                    Width = 40,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                },
+                                                Action = () => allTokens.Add(new Container
+                                                {
+                                                    Width = 158.4f,
+                                                    Height = 250,
+                                                    Children = new Drawable[]
+                                                    {
+                                                        new Box
+                                                        {
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Color4.Aquamarine
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    },
+                                    allTokens = new FillFlowContainer()
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Full,
+                                        Children = new Drawable[]
+                                        {
+
+                                        }
                                     }
                                 }
                             },
@@ -166,6 +288,65 @@ namespace GamesToGo.Desktop.Screens
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Red
+                                    },
+                                    new Container
+                                    {
+                                        Anchor = Anchor.BottomRight,
+                                        Origin = Anchor.BottomRight,
+                                        RelativeSizeAxes = Axes.X,
+                                        Height = 50,
+                                        Children = new Drawable[]
+                                        {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = Color4.Beige
+                                            },
+                                            new BasicButton
+                                            {
+                                                RelativeSizeAxes = Axes.Y,
+                                                Anchor = Anchor.BottomRight,
+                                                Origin = Anchor.BottomRight,
+                                                Width = 70,
+                                                BackgroundColour = Color4.Red,
+                                                BorderColour = Color4.Black,
+                                                BorderThickness = 2.5f,
+                                                Masking = true,
+                                                Child =  new SpriteIcon
+                                                {
+                                                    Icon = FontAwesome.Solid.Ad,
+                                                    Colour = Color4.Black,
+                                                    RelativeSizeAxes = Axes.Y,
+                                                    Width = 40,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                },
+                                                Action = () => allBoxes.Add(new Container
+                                                {
+                                                    Width = 163,
+                                                    Height = 250,
+                                                    Children = new Drawable[]
+                                                    {
+                                                        new Box
+                                                        {
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Color4.Aquamarine
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    },
+                                    allBoxes = new FillFlowContainer()
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Direction = FillDirection.Full,
+                                        Children = new Drawable[]
+                                        {
+
+                                        }
                                     }
                                 }
                             }
