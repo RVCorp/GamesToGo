@@ -197,15 +197,7 @@ namespace GamesToGo.Desktop.Screens
                                             }
                                         }
                                     },
-                                    allCards = new FillFlowContainer()
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Full,
-                                        Children = new Drawable[]
-                                        {
-                                            
-                                        }
-                                    }
+                                    allCards = new ObjectContainer()
                                 }
                             },
                             new Container
@@ -268,15 +260,7 @@ namespace GamesToGo.Desktop.Screens
                                             }
                                         }
                                     },
-                                    allTokens = new FillFlowContainer()
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Full,
-                                        Children = new Drawable[]
-                                        {
-
-                                        }
-                                    }
+                                    allTokens = new ObjectContainer()
                                 }
                             },
                             new Container
@@ -339,15 +323,7 @@ namespace GamesToGo.Desktop.Screens
                                             }
                                         }
                                     },
-                                    allBoxes = new FillFlowContainer()
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Full,
-                                        Children = new Drawable[]
-                                        {
-
-                                        }
-                                    }
+                                    allBoxes = new ObjectContainer()
                                 }
                             }
                         }
