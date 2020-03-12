@@ -13,7 +13,7 @@ using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Database.Models;
-using GamesToGo.Desktop.Proyect;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,7 +23,7 @@ namespace GamesToGo.Desktop.Screens
     public class MainMenuScreen : Screen
     {
         private Container userInformation;
-        private FillFlowContainer proyectsList;
+        private FillFlowContainer projectsList;
 
         public MainMenuScreen()
         {
@@ -120,9 +120,9 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 100,
                                         Anchor = Anchor.BottomCentre,
                                         Origin = Anchor.BottomCentre,
-                                        Action = () => this.Push(new ProjectHome(new WorkingProject(new ProyectInfo())))
+                                        Action = () => this.Push(new ProjectHome(new WorkingProject(new ProjectInfo())))
                                     },
-                                    proyectsList = new FillFlowContainer
+                                    projectsList = new FillFlowContainer
                                     {
                                         BorderColour = Color4.Black,
                                         BorderThickness = 3f,
@@ -134,7 +134,7 @@ namespace GamesToGo.Desktop.Screens
                                         Position = new Vector2(0,200),
                                         Children = new Drawable[]
                                         {
-                                            new ProjectDescriptionButton(new WorkingProject(new ProyectInfo()))
+                                            new ProjectDescriptionButton(new WorkingProject(new ProjectInfo()))
                                         }
                                     }
                                 }
@@ -153,9 +153,9 @@ namespace GamesToGo.Desktop.Screens
         [BackgroundDependencyLoader]
         private void load(Context database)
         {
-            foreach(var project in database.Proyects)
+            foreach(var project in database.Projects)
             {
-                proyectsList.Add(new ProjectDescriptionButton(new WorkingProject(project)));
+                projectsList.Add(new ProjectDescriptionButton(new WorkingProject(project)));
             }
         }
 

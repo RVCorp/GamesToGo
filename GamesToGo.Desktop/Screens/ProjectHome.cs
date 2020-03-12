@@ -1,4 +1,4 @@
-﻿using GamesToGo.Desktop.Proyect;
+﻿using GamesToGo.Desktop.Project;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
