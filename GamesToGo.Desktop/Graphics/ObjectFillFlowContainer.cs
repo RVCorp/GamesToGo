@@ -6,9 +6,9 @@ using osu.Framework.Graphics.Containers;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ObjectContainer:FillFlowContainer
+    public class ObjectFillFlowContainer:FillFlowContainer
     {
-        public ObjectContainer ()
+        public ObjectFillFlowContainer ()
         {
             RelativeSizeAxes = Axes.Both;
             Direction = FillDirection.Full;
