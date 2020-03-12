@@ -24,6 +24,7 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Red
                 },
+                allElements = new ObjectFillFlowContainer(),
                 new Container
                 {
                     Anchor = Anchor.BottomRight,
@@ -73,8 +74,7 @@ namespace GamesToGo.Desktop.Graphics
                             })
                         }
                     }
-                },
-                allElements = new ObjectFillFlowContainer()
+                }
             };
         }
     }
