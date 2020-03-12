@@ -1,4 +1,4 @@
-using GamesToGo.Destop.Graphics;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

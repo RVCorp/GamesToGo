@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using osu.Framework.Graphics;
 
-namespace GamesToGo.Desktop.Proyect
+namespace GamesToGo.Desktop.Project
 {
     public interface IProjectElement
     {

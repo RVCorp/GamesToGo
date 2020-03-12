@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GamesToGo.Desktop.Proyect;
+using GamesToGo.Desktop.Project;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -13,7 +13,7 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectObjectManagerContainer<T>: Container where T : IProjectElement
     {
-        FillFlowContainer allElements;
+        private FillFlowContainer allElements;
         public ProjectObjectManagerContainer()
         {
             RelativeSizeAxes = Axes.Both;
