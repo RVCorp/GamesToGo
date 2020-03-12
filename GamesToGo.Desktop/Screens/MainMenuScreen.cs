@@ -161,7 +161,7 @@ namespace GamesToGo.Desktop.Screens
 
         protected override void LoadComplete()
         {
-            userInformation.MoveToX(-1).Then().MoveToX(0, 1000, Easing.OutBounce);
+            userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
         }
     }
 }

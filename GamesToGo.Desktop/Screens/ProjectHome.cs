@@ -1,4 +1,5 @@
-﻿using GamesToGo.Desktop.Proyect;
+﻿using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Proyect;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -13,6 +14,9 @@ namespace GamesToGo.Desktop.Screens
     public class ProjectHome : Screen
     {
         private BasicTextBox titleTextBox;
+        private FillFlowContainer allCards;
+        private FillFlowContainer allTokens;
+        private FillFlowContainer allBoxes;
         public ProjectHome(WorkingProject project)
         {
             InternalChildren = new Drawable[]
@@ -50,10 +54,10 @@ namespace GamesToGo.Desktop.Screens
                         },
                         new BasicButton
                         {
-                            Position = new Vector2(70,0),
+                            Position = new Vector2(140,0),
                             RelativeSizeAxes = Axes.Y,
                             Width = 70,
-                            Text = "Inicio",
+                            Text = "Objetos",
                             BackgroundColour = Color4.DimGray
                         }
                     }
@@ -133,42 +137,9 @@ namespace GamesToGo.Desktop.Screens
                     {
                         new Drawable[]
                         {
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Yellow
-                                    }
-                                }
-                            },
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Blue
-                                    }
-                                }
-                            },
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
-                                {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Red
-                                    }
-                                }
-                            }
+                            new ProjectObjectManagerContainer<IProjectElement>(),
+                            new ProjectObjectManagerContainer<IProjectElement>(),
+                            new ProjectObjectManagerContainer<IProjectElement>()
                         }
                     },
                     ColumnDimensions = new Dimension[]
