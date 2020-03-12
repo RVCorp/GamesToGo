@@ -77,11 +77,6 @@ namespace GamesToGo.Desktop.Database.Migrations
                 table: "Projects",
                 column: "FileID",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Relations_ProjectID",
-                table: "Relations",
-                column: "ProjectID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
