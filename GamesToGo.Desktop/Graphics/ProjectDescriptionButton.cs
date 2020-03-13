@@ -18,7 +18,7 @@ namespace GamesToGo.Desktop.Graphics
     {
         private SpriteText projectName;
         private readonly SpriteIcon icon;
-        public ProjectDescriptionButton(WorkingProject project)
+        public ProjectDescriptionButton(ProjectInfo project)
         {
             Masking = true;
             BorderThickness = 3;
@@ -37,7 +37,7 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.CentreLeft,
                     Position = new Vector2(15,5),
                     Colour = Color4.White,
-                    Text = project.Title.Value,
+                    Text = project.Name,
                     RelativeSizeAxes = Axes.Both
                 },
                 icon= new SpriteIcon
@@ -49,8 +49,6 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.CentreRight
                 }
             };
-
-            project.Title.ValueChanged += t => projectName.Text = t.NewValue;
         }
 
         [BackgroundDependencyLoader]

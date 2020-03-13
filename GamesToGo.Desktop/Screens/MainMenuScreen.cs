@@ -120,7 +120,7 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 100,
                                         Anchor = Anchor.BottomCentre,
                                         Origin = Anchor.BottomCentre,
-                                        Action = () => this.Push(new ProjectHome(new WorkingProject(new ProjectInfo())))
+                                        Action = () => this.Push(new ProjectEditor(new ProjectInfo()))
                                     },
                                     projectsList = new FillFlowContainer
                                     {
@@ -134,7 +134,7 @@ namespace GamesToGo.Desktop.Screens
                                         Position = new Vector2(0,200),
                                         Children = new Drawable[]
                                         {
-                                            new ProjectDescriptionButton(new WorkingProject(new ProjectInfo()))
+                                            new ProjectDescriptionButton(new ProjectInfo())
                                         }
                                     }
                                 }
@@ -155,7 +155,7 @@ namespace GamesToGo.Desktop.Screens
         {
             foreach(var project in database.Projects)
             {
-                projectsList.Add(new ProjectDescriptionButton(new WorkingProject(project)));
+                projectsList.Add(new ProjectDescriptionButton(project));
             }
         }
 
