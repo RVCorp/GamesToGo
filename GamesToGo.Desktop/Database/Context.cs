@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GamesToGo.Desktop.Proyect;
+using GamesToGo.Desktop.Project;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -14,7 +14,7 @@ namespace GamesToGo.Desktop.Database.Models
         private readonly string connectionString;
 
         public DbSet<File> Files { get; set; }
-        public DbSet<ProyectInfo> Proyects { get; set; }
+        public DbSet<ProjectInfo> Projects { get; set; }
         public DbSet<FileRelation> Relations { get; set; }
 
         public Context() : this("DataSource=:memory:")
@@ -46,26 +46,26 @@ namespace GamesToGo.Desktop.Database.Models
                 file.Property(e => e.NewName).IsRequired().HasMaxLength(40);
             });
 
-            modelBuilder.Entity<ProyectInfo>().HasKey(p => p.LocalProyectID);
-            modelBuilder.Entity<ProyectInfo>(proyect =>
+            modelBuilder.Entity<ProjectInfo>().HasKey(p => p.LocalProjectID);
+            modelBuilder.Entity<ProjectInfo>(project =>
             {
-                proyect.Property(e => e.LocalProyectID).IsRequired();
-                proyect.Property(e => e.Name).IsRequired();
-                proyect.Property(e => e.CreatorID).IsRequired();
-                proyect.Property(e => e.MinNumberPlayers).IsRequired();
-                proyect.Property(e => e.MaxNumberPlayers).IsRequired();
-                proyect.Property(e => e.NumberCards).IsRequired();
-                proyect.Property(e => e.NumberTokens).IsRequired();
-                proyect.Property(e => e.NumberBoxes).IsRequired();
-                proyect.Property(e => e.OnlineProyecrID);
-                proyect.Property(e => e.ModerationStatus).IsRequired();
-                proyect.Property(e => e.ComunityStatus).IsRequired();
+                project.Property(e => e.LocalProjectID).IsRequired();
+                project.Property(e => e.Name).IsRequired();
+                project.Property(e => e.CreatorID).IsRequired();
+                project.Property(e => e.MinNumberPlayers).IsRequired();
+                project.Property(e => e.MaxNumberPlayers).IsRequired();
+                project.Property(e => e.NumberCards).IsRequired();
+                project.Property(e => e.NumberTokens).IsRequired();
+                project.Property(e => e.NumberBoxes).IsRequired();
+                project.Property(e => e.OnlineProjectID);
+                project.Property(e => e.ModerationStatus).IsRequired();
+                project.Property(e => e.ComunityStatus).IsRequired();
             });
 
-            modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProyectID });
-            modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Proyect).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProyectID);
+            modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProjectID });
+            modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Project).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProjectID);
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.File).WithMany(f => f.Relations).HasForeignKey(fr => fr.FileID);
-            modelBuilder.Entity<ProyectInfo>().HasOne(pi => pi.File).WithOne().HasForeignKey<ProyectInfo>(pi => pi.FileID);
+            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne().HasForeignKey<ProjectInfo>(pi => pi.FileID);
         }
     }
 }

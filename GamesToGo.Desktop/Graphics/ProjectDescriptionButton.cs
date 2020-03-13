@@ -10,13 +10,13 @@ using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Allocation;
-using GamesToGo.Desktop.Proyect;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectDescriptionButton : Button
     {
-        private SpriteText proyectName;
+        private SpriteText projectName;
         private readonly SpriteIcon icon;
         public ProjectDescriptionButton(WorkingProject project)
         {
@@ -31,7 +31,7 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black
                 },
-                proyectName = new SpriteText
+                projectName = new SpriteText
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
@@ -50,7 +50,7 @@ namespace GamesToGo.Desktop.Graphics
                 }
             };
 
-            project.Title.ValueChanged += t => proyectName.Text = t.NewValue;
+            project.Title.ValueChanged += t => projectName.Text = t.NewValue;
         }
 
         [BackgroundDependencyLoader]

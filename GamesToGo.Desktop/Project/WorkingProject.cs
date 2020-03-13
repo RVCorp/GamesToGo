@@ -4,18 +4,18 @@ using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Bindables;
 
-namespace GamesToGo.Desktop.Proyect
+namespace GamesToGo.Desktop.Project
 {
     public class WorkingProject
     {
-        public ProyectInfo DatabaseObject { get; }
+        public ProjectInfo DatabaseObject { get; }
 
         public Bindable<string> Title { get; private set; }
 
-        public WorkingProject(ProyectInfo proyect)
+        public WorkingProject(ProjectInfo project)
         {
-            DatabaseObject = proyect;
-            Title = new Bindable<string>(string.IsNullOrEmpty(DatabaseObject.Name) ? "New game" : DatabaseObject.Name);;
+            DatabaseObject = project;
+            Title = new Bindable<string>(string.IsNullOrEmpty(DatabaseObject.Name) ? "New game" : DatabaseObject.Name);
             Title.ValueChanged += name => DatabaseObject.Name = name.NewValue;
         }
     }
