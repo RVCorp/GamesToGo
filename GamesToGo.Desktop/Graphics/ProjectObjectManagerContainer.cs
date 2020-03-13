@@ -24,7 +24,15 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Red
                 },
-                allElements = new ObjectFillFlowContainer(),
+                new BasicScrollContainer
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    ClampExtension = 30,
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding { Bottom = 50 },
+                    Child = allElements = new ProjectObjectFillFlowContainer(),
+                },
                 new Container
                 {
                     Anchor = Anchor.BottomRight,
@@ -61,12 +69,12 @@ namespace GamesToGo.Desktop.Graphics
                             {
                                 Width = 163,
                                 Height = 250,
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.TopCentre,
                                 Children = new Drawable[]
                                 {
                                     new Box //button
                                     {
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Aquamarine
                                     }
