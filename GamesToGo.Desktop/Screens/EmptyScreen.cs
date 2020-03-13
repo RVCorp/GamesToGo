@@ -23,6 +23,8 @@ namespace GamesToGo.Desktop.Screens
         //Boton para regresar a la pantalla anterior.
         private readonly BasicButton backButton;
 
+        protected virtual bool ShouldShowExit => true;
+
         //Accion con la cual se puede cerrar la ventana por completo, en caso de necesitarse.
         private Action gameExitAction;
 
@@ -33,16 +35,19 @@ namespace GamesToGo.Desktop.Screens
 
         public EmptyScreen()
         {
-            //Cargamos los componentes que deben estar dentro de la pantalla
-            InternalChildren = new Drawable[]
+            if (ShouldShowExit)
             {
-                backButton = new BasicButton
+                AddInternal(backButton = new BasicButton
                 {
                     AutoSizeAxes = Axes.X,          //Botones del tamaño justo para el texto que tengan...
                     Height = 50,                    //Con altura de 50 pixeles
                     Anchor = Anchor.BottomLeft,     //En la esquina inferior izquierda
                     Origin = Anchor.BottomLeft,
-                },
+                });
+            }
+            //Cargamos los componentes que deben estar dentro de la pantalla
+            AddRangeInternal(new Drawable[]
+            {
                 screenText = new SpriteText             //Un sprite de texto...
                 {
                     Text = GetType().Name,              //Con el nombre de la clase como texto
@@ -58,7 +63,7 @@ namespace GamesToGo.Desktop.Screens
                     Origin = Anchor.BottomRight,
                     AutoSizeAxes = Axes.Both, //Tamaños determinados por su contenido
                 }
-            };
+            });
 
             //Por defecto, no hay pantallas a las que acceder
             if (FollowingScreens != null)
@@ -124,15 +129,18 @@ namespace GamesToGo.Desktop.Screens
             screenText.MoveToX(0f, 1000, Easing.OutExpo);
             this.FadeInFromZero(1000, Easing.OutExpo);
 
-            //Le damos texto al boton de atrás, nombre de la pantalla anterior en caso de existir.
-            backButton.Text = last?.GetType().Name ?? "Exit";
+            if (ShouldShowExit)
+            {
+                //Le damos texto al boton de atrás, nombre de la pantalla anterior en caso de existir.
+                backButton.Text = last?.GetType().Name ?? "Exit";
 
-            //Mismo metodo para agregar color a los botones que a los botones de pantallas posteriores.
-            backButton.BackgroundColour = last == null ? Color4.IndianRed : getColorFor(last.GetType().Name);
-            backButton.HoverColour = backButton.BackgroundColour.Lighten(0.2f);
+                //Mismo metodo para agregar color a los botones que a los botones de pantallas posteriores.
+                backButton.BackgroundColour = last == null ? Color4.IndianRed : getColorFor(last.GetType().Name);
+                backButton.HoverColour = backButton.BackgroundColour.Lighten(0.2f);
 
-            //Para la acción, usamos la salida de nuestra pantalla si es posible, si no es posible, la salida de la ventana.
-            backButton.Action = last == null ? gameExitAction : this.Exit;
+                //Para la acción, usamos la salida de nuestra pantalla si es posible, si no es posible, la salida de la ventana.
+                backButton.Action = last == null ? gameExitAction : this.Exit;
+            }
         }
 
         //Manera de obtener un color diferente para cada nobre de pantalla.
