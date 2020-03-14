@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using osu.Framework.Bindables;
-using System.Text;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -23,7 +19,7 @@ namespace GamesToGo.Desktop.Graphics
             Masking = true;
             BorderThickness = 3;
             RelativeSizeAxes = Axes.X;
-            Height = 30;
+            Height = 80;
             Children = new Drawable[]
             {
                 new Box
@@ -40,7 +36,7 @@ namespace GamesToGo.Desktop.Graphics
                     Text = project.Name,
                     RelativeSizeAxes = Axes.Both
                 },
-                icon= new SpriteIcon
+                icon = new SpriteIcon
                 {
                     Icon = FontAwesome.Regular.Meh,
                     RelativeSizeAxes = Axes.Y,
