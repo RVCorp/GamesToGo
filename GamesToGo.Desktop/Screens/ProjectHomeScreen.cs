@@ -69,7 +69,7 @@ namespace GamesToGo.Desktop.Screens
                                         Text = "Minimo Jugadores:",
                                         Position = new Vector2(560, 17)
                                     },
-                                    new BasicTextBox        //Restringir la cantidad de digitos a 2 
+                                    new NumericTextbox        //Restringir la cantidad de digitos a 2 
                                     {
                                         Anchor = Anchor.TopCentre,
                                         Position = new Vector2(694, 10),
@@ -82,7 +82,7 @@ namespace GamesToGo.Desktop.Screens
                                         Text = "Maximo Jugadores:",
                                         Position = new Vector2(760, 17)
                                     },
-                                    new BasicTextBox        //Restringir la cantidad de digitos a 2 
+                                    new NumericTextbox        //Restringir la cantidad de digitos a 2 
                                     {
                                         Anchor = Anchor.TopCentre,
                                         Position = new Vector2(898, 10),
