@@ -1,20 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Project;
+using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectObjectManagerContainer<T>: Container where T : IProjectElement
     {
-        private FillFlowContainer allElements;
-        public ProjectObjectManagerContainer()
+        public Color4 BackgroundColour { get; set; } = Color4.Black;
+
+        private ProjectObjectFillFlowContainer allElements;
+
+        private readonly string areaName;
+        public ProjectObjectManagerContainer(string name)
+        {
+            areaName = name;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
@@ -22,7 +32,7 @@ namespace GamesToGo.Desktop.Graphics
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Red
+                    Colour = BackgroundColour.Opacity(0.3f),
                 },
                 new BasicScrollContainer
                 {
@@ -30,8 +40,21 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.Centre,
                     ClampExtension = 30,
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Bottom = 50 },
+                    Padding = new MarginPadding { Vertical = 50 },
                     Child = allElements = new ProjectObjectFillFlowContainer(),
+                },
+                new Box
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Colour = BackgroundColour,
+                    Height = 50,
+                },
+                new SpriteText
+                {
+                    Text = areaName,
+                    Font = new FontUsage(size: 45),
+                    Position = new Vector2(5, 2.5f),
+                    Shadow = true,
                 },
                 new Container
                 {
@@ -65,25 +88,18 @@ namespace GamesToGo.Desktop.Graphics
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                             },
-                            Action = () => allElements.Add(new Container
-                            {
-                                Width = 163,
-                                Height = 250,
-                                Anchor = Anchor.TopCentre,
-                                Origin = Anchor.TopCentre,
-                                Children = new Drawable[]
-                                {
-                                    new Box //button
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Aquamarine
-                                    }
-                                }
-                            })
+                            Action = () => allElements.AddElement(new TestObject())
                         }
                     }
                 }
             };
         }
+    }
+
+    public class TestObject : IProjectElement
+    {
+        public int ID { get; set; }
+        public string Name { get => "test"; set { } }
+        public Drawable Miniature { get => null; set { } }
     }
 }
