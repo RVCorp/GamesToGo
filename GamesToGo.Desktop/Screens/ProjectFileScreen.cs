@@ -4,12 +4,13 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
-    public class ProjectFileScreen : EmptyScreen
+    public class ProjectFileScreen : Screen
     {
         private WorkingProject project;
 
