@@ -9,6 +9,6 @@ namespace GamesToGo.Desktop.Project
     {
         int ID { get; set; }
         string Name { get; set; }
-        Drawable Image(bool size);
+        //Drawable Image(bool size);
     }
 }

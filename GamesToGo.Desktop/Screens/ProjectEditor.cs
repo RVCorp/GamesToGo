@@ -101,7 +101,7 @@ namespace GamesToGo.Desktop.Screens
         {
             base.LoadComplete();
 
-            changeEditorScreen(EditorScreenOption.Archivo);
+            changeEditorScreen(EditorScreenOption.Inicio);
         }
 
         private void changeEditorScreen(EditorScreenOption option)
@@ -112,18 +112,15 @@ namespace GamesToGo.Desktop.Screens
                 case EditorScreenOption.Archivo:
                     if (!(currentScreen is ProjectFileScreen))
                         tempScreen = new ProjectFileScreen();
-                    else
-                        return;
                     break;
                 case EditorScreenOption.Inicio:
                     if (!(currentScreen is ProjectHomeScreen))
                         tempScreen = new ProjectHomeScreen();
-                    else
-                        return;
                     break;
                 case EditorScreenOption.Objetos:
-                    tempScreen = null;
-                    return;
+                    if(!(currentScreen is ProjectObjectScreen))
+                        tempScreen = new ProjectObjectScreen();
+                    break;
                 default:
                     break;
             }
