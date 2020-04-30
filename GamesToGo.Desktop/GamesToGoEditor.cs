@@ -6,6 +6,11 @@ using osu.Framework.Screens;
 using GamesToGo.Desktop.Screens;
 using GamesToGo.Desktop.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Linq;
+using GamesToGo.Desktop.Overlays;
+using osu.Framework.IO.Stores;
+using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop
 {
@@ -20,6 +25,8 @@ namespace GamesToGo.Desktop
 
         // La pila de pantallas permite acciones en las pantallas del proyecto (Cambio y flujo de pantallas, comprobar orden, etc.)
         private ScreenStack stack;
+
+        private ImageFinderOverlay imageFinder;
 
         public GamesToGoEditor()
         {
@@ -40,6 +47,9 @@ namespace GamesToGo.Desktop
         {
             dependencies.Cache(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
+            var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            dependencies.Cache(largeStore);
+
             try
             {
                 dbContext.Database.Migrate();
@@ -52,6 +62,7 @@ namespace GamesToGo.Desktop
 
             //Ventana sin bordes, sin requerir modo exclusivo.
             config.GetBindable<WindowMode>(FrameworkSetting.WindowMode).Value = WindowMode.Borderless;
+            config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.VSync;
 
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
@@ -67,6 +78,17 @@ namespace GamesToGo.Desktop
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);
+            LoadComponentAsync(imageFinder = new ImageFinderOverlay(), ifo =>
+            {
+                Add(ifo);
+                ifo.Show();
+            });
+        }
+
+        public string HashBytes(byte[] bytes)
+        {
+            using SHA1Managed hasher = new SHA1Managed();
+            return string.Concat(hasher.ComputeHash(bytes).Select(by => by.ToString("x2")));
         }
     }
 }
