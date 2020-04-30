@@ -40,7 +40,7 @@ namespace GamesToGo.Desktop.Graphics
                     Text = project.Name,
                     RelativeSizeAxes = Axes.Both
                 },
-                icon= new SpriteIcon
+                icon = new SpriteIcon
                 {
                     Icon = FontAwesome.Regular.Meh,
                     RelativeSizeAxes = Axes.Y,
