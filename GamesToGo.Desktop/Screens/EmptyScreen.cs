@@ -89,9 +89,9 @@ namespace GamesToGo.Desktop.Screens
 
         //Usualmente, la función load es para acceder a las dependencias ya cargadas
         [BackgroundDependencyLoader]
-        private void load(GamesToGoEditor editor) //En este caso accedemos a la ventana del juego
+        private void load(GamesToGoEditor program) //En este caso accedemos a la ventana del juego
         {
-            gameExitAction = editor.Exit; //Y obtenemos su acción para ser cerrada.
+            gameExitAction = program.Exit; //Y obtenemos su acción para ser cerrada.
         }
 
         //Llamada cuando se sale de la pantalla con this.Exit()
