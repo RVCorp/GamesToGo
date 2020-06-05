@@ -1,4 +1,6 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using System;
+using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -19,9 +21,12 @@ namespace GamesToGo.Desktop.Screens
 
         private readonly Bindable<IProjectElement> currentEditingElement = new Bindable<IProjectElement>();
 
+        public IBindable<IProjectElement> CurrentEditingElement => currentEditingElement;
+
         private DependencyContainer dependencies;
 
         private readonly WorkingProject workingProject;
+        private readonly EditorTabChanger tabsBar;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         {
@@ -57,87 +62,53 @@ namespace GamesToGo.Desktop.Screens
                             RelativeSizeAxes = Axes.Both,
                             Colour = Color4.Gray
                         },
-                        new BasicButton
-                        {
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Archivo",
-                            BackgroundColour = Color4.Red,
-                            Action = () => changeEditorScreen(EditorScreenOption.Archivo),
-                        },
-                        new BasicButton
-                        {
-                            Position = new Vector2(70,0),
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Inicio",
-                            BackgroundColour = Color4.DimGray,
-                            Action = () => changeEditorScreen(EditorScreenOption.Inicio),
-                        },
-                        new BasicButton
-                        {
-                            Position = new Vector2(140,0),
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Objetos",
-                            BackgroundColour = Color4.DimGray,
-                            Action = () => changeEditorScreen(EditorScreenOption.Objetos),
-                        }
+                        tabsBar = new EditorTabChanger(),
                     },
                 },
             };
+
+            tabsBar.Current.ValueChanged += changeEditorScreen;
+
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            currentEditingElement.ValueChanged += _ => changeEditorScreen(EditorScreenOption.Objetos);
+            CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
 
-            dependencies.Cache(currentEditingElement);
             dependencies.Cache(workingProject);
+            dependencies.Cache(this);
+
+            tabsBar.Current.Value = EditorScreenOption.Inicio;
+        }
+
+        public void SelectElement(IProjectElement element)
+        {
+            currentEditingElement.Value = element;
         }
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
-
-            changeEditorScreen(EditorScreenOption.Inicio);
         }
 
-        private void changeEditorScreen(EditorScreenOption option)
+        private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)
         {
-            Screen tempScreen = null;
-            switch (option)
+            currentScreen?.Exit();
+            switch (value.NewValue)
             {
                 case EditorScreenOption.Archivo:
-                    if (!(currentScreen is ProjectFileScreen))
-                        tempScreen = new ProjectFileScreen();
+                    currentScreen = new ProjectFileScreen();
                     break;
                 case EditorScreenOption.Inicio:
-                    if (!(currentScreen is ProjectHomeScreen))
-                        tempScreen = new ProjectHomeScreen();
+                    currentScreen = new ProjectHomeScreen();
                     break;
                 case EditorScreenOption.Objetos:
-                    if(!(currentScreen is ProjectObjectScreen))
-                        tempScreen = new ProjectObjectScreen();
-                    break;
-                default:
+                    currentScreen = new ProjectObjectScreen();
                     break;
             }
 
-            if(tempScreen != null)
-            {
-                currentScreen?.Exit();
-                currentScreen = tempScreen;
-                LoadComponentAsync(currentScreen, screenContainer.Push);
-            }
-        }
-
-        private enum EditorScreenOption
-        {
-            Archivo,
-            Inicio,
-            Objetos,
+            LoadComponentAsync(currentScreen, screenContainer.Push);
         }
     }
 }

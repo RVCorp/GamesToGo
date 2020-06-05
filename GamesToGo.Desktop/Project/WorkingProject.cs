@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Project.Elements;
+using System.Linq;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project
@@ -12,19 +14,29 @@ namespace GamesToGo.Desktop.Project
 
         public Bindable<string> Title { get; private set; }
 
-        public readonly List<IProjectElement> Cards = new List<IProjectElement>();
+        private int latestElementID = 0;
 
-        public readonly List<IProjectElement> Tokens = new List<IProjectElement>();
+        private readonly BindableList<IProjectElement> projectElements = new BindableList<IProjectElement>();
 
-        public readonly List<IProjectElement> Boards = new List<IProjectElement>();
+        public IEnumerable<Card> ProjectCards => projectElements.Where(e => e is Card).Select(e => (Card)e);
 
-        public readonly List<IProjectElement> Tiles = new List<IProjectElement>();
+        public IEnumerable<Token> ProjectTokens => projectElements.Where(e => e is Token).Select(e => (Token)e);
+
+        public IEnumerable<Board> ProjectBoards => projectElements.Where(e => e is Board).Select(e => (Board)e);
+
+        public IBindableList<IProjectElement> ProjectElements => projectElements;
 
         public WorkingProject(ProjectInfo project)
         {
             DatabaseObject = project;
             Title = new Bindable<string>(string.IsNullOrEmpty(DatabaseObject.Name) ? "New game" : DatabaseObject.Name);
             Title.ValueChanged += name => DatabaseObject.Name = name.NewValue;
+        }
+
+        public void AddElement(IProjectElement element)
+        {
+            element.ID = latestElementID++;
+            projectElements.Add(element);
         }
 
         private void parse()

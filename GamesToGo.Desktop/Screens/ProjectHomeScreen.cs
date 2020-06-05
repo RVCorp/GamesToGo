@@ -1,5 +1,6 @@
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -15,9 +16,9 @@ namespace GamesToGo.Desktop.Screens
     public class ProjectHomeScreen : Screen
     {
         private BasicTextBox titleTextBox;
-        private ProjectObjectManagerContainer<IProjectElement> allCards;
-        private ProjectObjectManagerContainer<IProjectElement> allTokens;
-        private ProjectObjectManagerContainer<IProjectElement> allBoards;
+        private ProjectObjectManagerContainer<Card> allCards;
+        private ProjectObjectManagerContainer<Token> allTokens;
+        private ProjectObjectManagerContainer<Board> allBoards;
         private WorkingProject project;
 
         [BackgroundDependencyLoader]
@@ -102,26 +103,23 @@ namespace GamesToGo.Desktop.Screens
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        allCards = new ProjectObjectManagerContainer<IProjectElement>("Cartas")
+                        allCards = new ProjectObjectManagerContainer<Card>("Cartas")
                         {
                             Anchor = Anchor.BottomLeft,
                             Origin = Anchor.BottomLeft,
                             Width = 1/3f,
-                            BackgroundColour = Color4.Maroon,
                         },
-                        allTokens = new ProjectObjectManagerContainer<IProjectElement>("Fichas")
+                        allTokens = new ProjectObjectManagerContainer<Token>("Fichas")
                         {
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomCentre,
                             Width = 1/3f,
-                            BackgroundColour = Color4.Crimson,
                         },
-                        allBoards = new ProjectObjectManagerContainer<IProjectElement>("Tableros y casillas")
+                        allBoards = new ProjectObjectManagerContainer<Board>("Tableros")
                         {
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
                             Width = 1/3f,
-                            BackgroundColour = Color4.DarkSeaGreen,
                         },
                     }
                 }

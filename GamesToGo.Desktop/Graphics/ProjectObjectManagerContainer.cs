@@ -1,5 +1,10 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Elements;
+using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,11 +16,25 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ProjectObjectManagerContainer<T>: Container where T : IProjectElement
+    public class ProjectObjectManagerContainer<T> : Container where T : IProjectElement, new()
     {
-        public Color4 BackgroundColour { get; set; } = Color4.Black;
+        private IBindableList<IProjectElement> projectElements = new BindableList<IProjectElement>();
 
-        private ProjectObjectFillFlowContainer allElements;
+        public Color4 BackgroundColour
+        {
+            get
+            {
+                if (typeof(T).Equals(typeof(Card)))
+                    return Color4.Maroon;
+                if (typeof(T).Equals(typeof(Token)))
+                    return Color4.Crimson;
+                if (typeof(T).Equals(typeof(Board)))
+                    return Color4.DarkSeaGreen;
+                return Color4.Black;
+            }
+        }
+
+        private FillFlowContainer<ElementEditButton<T>> allElements;
 
         private readonly string areaName;
         public ProjectObjectManagerContainer(string name)
@@ -24,7 +43,7 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(ProjectEditor editor, WorkingProject project)
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
@@ -41,7 +60,16 @@ namespace GamesToGo.Desktop.Graphics
                     ClampExtension = 30,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Vertical = 50 },
-                    Child = allElements = new ProjectObjectFillFlowContainer(),
+                    Child = allElements = new FillFlowContainer<ElementEditButton<T>>
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+                        Direction = FillDirection.Full,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Padding = new MarginPadding { Vertical = 10 },
+                        Spacing = new Vector2(5),
+                    },
                 },
                 new Box
                 {
@@ -88,18 +116,45 @@ namespace GamesToGo.Desktop.Graphics
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                             },
-                            Action = () => allElements.AddElement(new TestObject())
+                            Action = () => project.AddElement(new T())
                         }
                     }
                 }
             };
-        }
-    }
 
-    public class TestObject : IProjectElement
-    {
-        public int ID { get; set; }
-        public string Name { get => "test"; set { } }
-        public Drawable Miniature { get => null; set { } }
+            checkAdded(project.ProjectElements);
+
+            projectElements.BindTo(project.ProjectElements);
+
+            projectElements.ItemsAdded += checkAdded;
+            projectElements.ItemsRemoved += checkRemoved;
+        }
+
+        private void checkAdded(IEnumerable<IProjectElement> added)
+        {
+            foreach (var item in added)
+            {
+                if (item is T)
+                {
+                    allElements.Add(new ElementEditButton<T>((T)item));
+                }
+            }
+        }
+
+        private void checkRemoved(IEnumerable<IProjectElement> removed)
+        {
+            foreach (var item in removed)
+            {
+                if(item is T)
+                {
+                    var deletable = allElements.Children.FirstOrDefault(b => b.Element.ID == item.ID);
+
+                    if(deletable != null)
+                    {
+                        allElements.Remove(deletable);
+                    }
+                }
+            }
+        }
     }
 }

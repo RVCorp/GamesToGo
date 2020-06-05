@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,12 +19,15 @@ namespace GamesToGo.Desktop.Screens
 {
     public class ProjectObjectScreen : Screen
     {
-        WorkingProject project;
-        ElementListContainer allCards, allTokens, allBoards;
-        [BackgroundDependencyLoader]
-        private void load (WorkingProject project)
+        private IBindable<IProjectElement> currentEditing = new Bindable<IProjectElement>();
+        private ProjectEditor editor;
+        private BasicTextBox nameTextBox;
+        private Container noSelectionContainer;
+        private Container activeEditContainer;
+        private Container editAreaContainer;
+
+        public ProjectObjectScreen()
         {
-            this.project = project;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -39,7 +44,7 @@ namespace GamesToGo.Desktop.Screens
                         {
                             new Container
                             {
-                                RelativeSizeAxes =Axes.Both,
+                                RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable []
                                 {
                                     new Box
@@ -47,84 +52,29 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Gray
                                     },
-                                    allCards = new ElementListContainer(),
-                                    allTokens = new ElementListContainer(),
-                                    allBoards = new ElementListContainer()
-                                }
-                            },
-                            new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
-                                {
-                                    new Container
+                                    new ProjectObjectManagerContainer<Card>("Cartas")
                                     {
-                                        RelativeSizeAxes = Axes.X,
-                                        Height = 600,
-                                        Children = new Drawable[]
-                                        {
-                                            new Box
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = Color4.Cyan
-                                            },
-                                            new Box //Imagen del objeto
-                                            {
-                                                Width = 500,
-                                                Height = 500,
-                                                Position = new Vector2(60,50),
-                                                Colour = Color4.Black
-                                            },
-                                            new SpriteText
-                                            {
-                                                Anchor = Anchor.TopRight,
-                                                Origin = Anchor.TopRight,
-                                                Position = new Vector2(-675,60),
-                                                Text = "Nombre:",
-                                                Colour = Color4.Black
-                                            },
-                                            new BasicTextBox
-                                            {
-                                                Anchor = Anchor.TopRight,
-                                                Origin = Anchor.TopRight,
-                                                Position = new Vector2(-250,50),
-                                                Height = 35,
-                                                Width = 400
-                                            },
-                                            new SpriteText
-                                            {
-                                                Anchor = Anchor.TopRight,
-                                                Origin = Anchor.TopRight,
-                                                Position = new Vector2(-675,130),
-                                                Text = "Descripcion:",
-                                                Colour = Color4.Black
-                                            },
-                                            new BasicTextBox
-                                            {
-                                                Anchor = Anchor.TopRight,
-                                                Origin = Anchor.TopRight,
-                                                Position = new Vector2(-250, 120),
-                                                Height = 200,
-                                                Width = 400
-                                            }
-                                        }
+                                        Anchor = Anchor.TopLeft,
+                                        Origin = Anchor.TopLeft,
+                                        Height = 1/3f,
                                     },
-                                    new Container
+                                    new ProjectObjectManagerContainer<Token>("Fichas")
                                     {
-                                        RelativeSizeAxes = Axes.X,
-                                        Height = 400,
-                                        Anchor = Anchor.BottomRight,
-                                        Origin = Anchor.BottomRight,
-                                        Children = new Drawable[]
-                                        {
-                                            new Box
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = Color4.Fuchsia
-                                            }
-                                        }
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Height = 1/3f,
+                                    },
+                                    new ProjectObjectManagerContainer<Board>("Tableros")
+                                    {
+                                        Anchor = Anchor.BottomLeft,
+                                        Origin = Anchor.BottomLeft,
+                                        Height = 1/3f,
                                     }
                                 }
+                            },
+                            editAreaContainer = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
                             }
                         }
                     },
@@ -135,6 +85,118 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(ProjectEditor editor)
+        {
+            this.editor = editor;
+
+            editAreaContainer.Add(noSelectionContainer = new Container
+            {
+                Alpha = editor.CurrentEditingElement.Value != null ? 0 : 1,
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Child = new SpriteText
+                {
+                    Text = "Selecciona un objeto para editarlo",
+                },
+            });
+            editAreaContainer.Add(activeEditContainer = new Container
+            {
+                Alpha = editor.CurrentEditingElement.Value != null ? 1 : 0,
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]
+                {
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 600,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Color4.Cyan
+                            },
+                            new Box //Imagen del objeto
+                            {
+                                Width = 500,
+                                Height = 500,
+                                Position = new Vector2(60,50),
+                                Colour = Color4.Black
+                            },
+                            new SpriteText
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Position = new Vector2(-675,60),
+                                Text = "Nombre:",
+                                Colour = Color4.Black
+                            },
+                            nameTextBox = new BasicTextBox
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Position = new Vector2(-250,50),
+                                Height = 35,
+                                Width = 400,
+                            },
+                            new SpriteText
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Position = new Vector2(-675,130),
+                                Text = "Descripcion:",
+                                Colour = Color4.Black
+                            },
+                            new BasicTextBox
+                            {
+                                Anchor = Anchor.TopRight,
+                                Origin = Anchor.TopRight,
+                                Position = new Vector2(-250, 120),
+                                Height = 200,
+                                Width = 400
+                            }
+                        }
+                    },
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 400,
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Color4.Fuchsia
+                            }
+                        }
+                    }
+                }
+            });
+
+            currentEditing.BindTo(editor.CurrentEditingElement);
+            currentEditing.BindValueChanged(checkData, true);
+
+            
+        }
+
+        private void checkData(ValueChangedEvent<IProjectElement> obj)
+        {
+            activeEditContainer.FadeTo(obj.NewValue == null ? 0 : 1);
+            noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
+
+            nameTextBox.Current.UnbindEvents();
+            if(obj.NewValue != null)
+            {
+                nameTextBox.Text = obj.NewValue.Name.Value;
+            }
+
+            nameTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Name.Value = obj.NewValue;
         }
     }
 }

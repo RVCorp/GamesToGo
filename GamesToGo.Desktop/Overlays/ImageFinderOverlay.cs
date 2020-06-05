@@ -12,11 +12,13 @@ using osu.Framework.Platform;
 using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Logging;
+using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop.Overlays
 {
     public class ImageFinderOverlay : OverlayContainer
     {
+        private GameHost host;
         private const float entries_per_row = 5;
         public const float ENTRY_WIDTH = (1920 - 100 - ((entries_per_row - 1) * entry_spacing)) / entries_per_row;
         private const float entry_spacing = 10;
@@ -38,8 +40,9 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(GameHost host)
         {
+            this.host = host;
             dependencies.Cache(this);
 
             RelativeSizeAxes = Axes.Both;
@@ -153,6 +156,11 @@ namespace GamesToGo.Desktop.Overlays
         protected override void PopOut()
         {
             this.FadeOut(250);
+
+            directoriesContainer.Clear();
+            filesContainer.Clear();
+
+            host.Collect();
         }
 
         public void ShowError(string error)
@@ -218,6 +226,7 @@ namespace GamesToGo.Desktop.Overlays
 
             itemsScrollContainer.FadeOut(100);
 
+
             LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(nd, newFiles));
             LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, nf));
         }
@@ -241,6 +250,8 @@ namespace GamesToGo.Desktop.Overlays
             
             string target = Path.GetFileName(lastVisited);
             currentDirectoryText.Text = string.IsNullOrEmpty(lastVisited) ? "Este equipo" : string.IsNullOrEmpty(target) ? lastVisited : target;
+
+            host.Collect();
         }
     }
 }
