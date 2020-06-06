@@ -38,7 +38,6 @@ namespace GamesToGo.Desktop.Graphics
                     Masking = true,
                     CornerRadius = 10,
                     BorderThickness = 2,
-                    Alpha = 0,
                     BorderColour = Color4.White,
                     RelativeSizeAxes = Axes.Both,
                     Child = new Box
@@ -73,8 +72,8 @@ namespace GamesToGo.Desktop.Graphics
             elementName.Current.BindTo(Element.Name);
 
             currentEditing.BindTo(editor.CurrentEditingElement);
-            currentEditing.ValueChanged += (_) => editingChanged();
-            editingChanged();
+            currentEditing.BindValueChanged((_) => editingChanged(), true);
+            borderContainer.Alpha = selected ? 1 : 0;
         }
         private void editingChanged()
         {
