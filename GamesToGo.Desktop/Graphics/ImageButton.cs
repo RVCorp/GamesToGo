@@ -77,9 +77,9 @@ namespace GamesToGo.Desktop.Graphics
                 Action = () => imageFinder.SelectImage(path);
                 displayContainer.Add(new Sprite
                 {
+                    RelativeSizeAxes = displayContainer.ChildSize.X > tex.Size.X && displayContainer.ChildSize.Y > tex.Size.Y ? Axes.None : Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
                     FillMode = FillMode.Fit,
                     Texture = tex,
                 });
