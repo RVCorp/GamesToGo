@@ -134,9 +134,9 @@ namespace GamesToGo.Desktop.Graphics
         {
             foreach (var item in added)
             {
-                if (item is T)
+                if (item is T itemT)
                 {
-                    allElements.Add(new ElementEditButton<T>((T)item));
+                    allElements.Add(new ElementEditButton<T>(itemT));
                 }
             }
         }

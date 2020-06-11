@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="ppy.osu.Framework" Version="2020.125.0" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.112" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

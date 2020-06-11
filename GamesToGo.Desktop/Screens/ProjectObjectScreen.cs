@@ -25,6 +25,7 @@ namespace GamesToGo.Desktop.Screens
         private Container noSelectionContainer;
         private Container activeEditContainer;
         private Container editAreaContainer;
+        private Container customElementsContainer;
 
         public ProjectObjectScreen()
         {
@@ -161,7 +162,7 @@ namespace GamesToGo.Desktop.Screens
                             }
                         }
                     },
-                    new Container
+                    customElementsContainer = new Container
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 400,
@@ -181,8 +182,6 @@ namespace GamesToGo.Desktop.Screens
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
-
-            
         }
 
         private void checkData(ValueChangedEvent<IProjectElement> obj)
@@ -191,7 +190,8 @@ namespace GamesToGo.Desktop.Screens
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
             nameTextBox.Current.UnbindEvents();
-            if(obj.NewValue != null)
+
+            if (obj.NewValue != null)
             {
                 nameTextBox.Text = obj.NewValue.Name.Value;
             }

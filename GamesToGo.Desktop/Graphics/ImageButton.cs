@@ -74,7 +74,7 @@ namespace GamesToGo.Desktop.Graphics
             }
             else
             {
-                Action = imageFinder.Hide;
+                Action = () => imageFinder.SelectImage(path);
                 displayContainer.Add(new Sprite
                 {
                     Anchor = Anchor.Centre,

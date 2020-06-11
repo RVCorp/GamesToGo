@@ -12,7 +12,6 @@ using osu.Framework.Platform;
 using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Logging;
-using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -142,6 +141,11 @@ namespace GamesToGo.Desktop.Overlays
                     }
                 },
             };
+        }
+
+        public void SelectImage(string path)
+        {
+            Hide();
         }
 
         protected override void PopIn()
