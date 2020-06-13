@@ -65,7 +65,7 @@ namespace GamesToGo.Desktop.Database.Models
             modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProjectID });
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Project).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProjectID);
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.File).WithMany(f => f.Relations).HasForeignKey(fr => fr.FileID);
-            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne().HasForeignKey<ProjectInfo>(pi => pi.FileID);
+            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne(f => f.Project).HasForeignKey<ProjectInfo>(pi => pi.FileID);
         }
     }
 }
