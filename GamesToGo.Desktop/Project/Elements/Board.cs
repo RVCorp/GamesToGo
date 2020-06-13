@@ -12,19 +12,16 @@ namespace GamesToGo.Desktop.Project.Elements
         public int ID { get; set; }
         public Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
 
+        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
+
         public Board()
         {
 
         }
 
-        public Drawable Image(bool size)
+        public string ToSaveable()
         {
-            return null;
-        }
-
-        public int CompareTo([AllowNull] IProjectElement other)
-        {
-            throw new NotImplementedException();
+            return "";
         }
     }
 }

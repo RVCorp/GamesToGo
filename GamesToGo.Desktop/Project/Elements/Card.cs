@@ -11,14 +11,16 @@ namespace GamesToGo.Desktop.Project.Elements
         public int ID { get; set; }
         public Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Carta");
 
+        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
+
         public Card()
         {
 
         }
 
-        public Drawable Image(bool size)
+        public string ToSaveable()
         {
-            throw new NotImplementedException();
+            return "";
         }
     }
 }

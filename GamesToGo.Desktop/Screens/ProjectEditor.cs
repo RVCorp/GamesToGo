@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
@@ -6,7 +7,9 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
@@ -17,7 +20,7 @@ namespace GamesToGo.Desktop.Screens
     {
         private Screen currentScreen;
 
-        private readonly ScreenStack screenContainer;
+        private ScreenStack screenContainer;
 
         private readonly Bindable<IProjectElement> currentEditingElement = new Bindable<IProjectElement>();
 
@@ -25,8 +28,9 @@ namespace GamesToGo.Desktop.Screens
 
         private DependencyContainer dependencies;
 
-        private readonly WorkingProject workingProject;
-        private readonly EditorTabChanger tabsBar;
+        private WorkingProject workingProject;
+        private EditorTabChanger tabsBar;
+        private readonly ProjectInfo info;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         {
@@ -35,7 +39,13 @@ namespace GamesToGo.Desktop.Screens
 
         public ProjectEditor(ProjectInfo project)
         {
-            workingProject = new WorkingProject(project);
+            info = project;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures, Storage store)
+        {
+            workingProject = new WorkingProject(info, store, textures);
 
             InternalChildren = new[]
             {
@@ -68,12 +78,6 @@ namespace GamesToGo.Desktop.Screens
             };
 
             tabsBar.Current.ValueChanged += changeEditorScreen;
-
-        }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
 
             dependencies.Cache(workingProject);

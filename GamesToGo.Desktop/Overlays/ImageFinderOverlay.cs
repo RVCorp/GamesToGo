@@ -1,27 +1,38 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
 using osuTK.Graphics;
-using osu.Framework.Logging;
+using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
 namespace GamesToGo.Desktop.Overlays
 {
     public class ImageFinderOverlay : OverlayContainer
     {
         private GameHost host;
+        private TextureStore textures;
+        private Storage store;
+        private Context database;
         private const float entries_per_row = 5;
         public const float ENTRY_WIDTH = (1920 - 100 - ((entries_per_row - 1) * entry_spacing)) / entries_per_row;
         private const float entry_spacing = 10;
         private const float entry_padding = 50;
+
+        private WorkingProject project;
+
+        private string filesPath;
 
         private readonly string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
         private static string lastVisited;
@@ -39,10 +50,16 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host)
+        private void load(GameHost host, WorkingProject project, TextureStore textures, Storage store, Context database)
         {
             this.host = host;
+            this.project = project;
+            this.textures = textures;
+            this.store = store;
+            this.database = database;
             dependencies.Cache(this);
+
+            filesPath = store.GetFullPath("files/", true);
 
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
@@ -145,6 +162,28 @@ namespace GamesToGo.Desktop.Overlays
 
         public void SelectImage(string path)
         {
+            var finalName = GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(path));
+            DatabaseFile file;
+            if (project.Images.Any(i => i.DatabaseObject.NewName == finalName))
+            {
+                ShowError("Esta imagen ya ha sido agregada");
+            }
+            if (!store.Exists($"files/{finalName}"))
+            {
+                System.IO.File.Copy(path, filesPath + finalName);
+                file = new DatabaseFile()
+                {
+                    OriginalName = Path.GetFileName(path),
+                    NewName = finalName,
+                    Type = "image",
+                };
+            }
+            else
+            {
+                file = database.Files.FirstOrDefault(f => f.NewName == finalName);
+            }
+
+            project.AddImage(file);
             Hide();
         }
 
@@ -251,7 +290,7 @@ namespace GamesToGo.Desktop.Overlays
             filesContainer.AddRange(file);
 
             itemsScrollContainer.FadeIn(100);
-            
+
             string target = Path.GetFileName(lastVisited);
             currentDirectoryText.Text = string.IsNullOrEmpty(lastVisited) ? "Este equipo" : string.IsNullOrEmpty(target) ? lastVisited : target;
 

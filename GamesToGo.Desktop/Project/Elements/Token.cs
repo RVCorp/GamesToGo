@@ -14,23 +14,11 @@ namespace GamesToGo.Desktop.Project.Elements
         public int ID { get; set; }
         public Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Ficha");
 
-        private Bindable<Texture> miniatureTexture = new Bindable<Texture>();
+        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
 
-        public Token()
+        public string ToSaveable()
         {
-
-        }
-
-        public Drawable Image(bool size)
-        {
-            if(size)
-            {
-                return new Container().WithChild(new Sprite { Texture = miniatureTexture.Value });
-            }
-            else
-            {
-                return null;
-            }
+            return "";
         }
     }
 }

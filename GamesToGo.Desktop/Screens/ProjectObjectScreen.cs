@@ -34,7 +34,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)
+                    Colour = new Color4 (106, 100, 104, 255),
                 },
                 new GridContainer
                 {
@@ -76,6 +76,92 @@ namespace GamesToGo.Desktop.Screens
                             editAreaContainer = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
+                                Children = new[]
+                                {
+                                    activeEditContainer = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Children = new Drawable[]
+                                        {
+                                            new Container
+                                            {
+                                                RelativeSizeAxes = Axes.X,
+                                                Height = 600,
+                                                Children = new Drawable[]
+                                                {
+                                                    new Box
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Colour = Color4.Cyan
+                                                    },
+                                                    new Box //Imagen del objeto
+                                                    {
+                                                        Width = 500,
+                                                        Height = 500,
+                                                        Position = new Vector2(60,50),
+                                                    },
+                                                    new SpriteText
+                                                    {
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Position = new Vector2(-675,60),
+                                                        Text = "Nombre:",
+                                                        Colour = Color4.Black
+                                                    },
+                                                    nameTextBox = new BasicTextBox
+                                                    {
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Position = new Vector2(-250,50),
+                                                        Height = 35,
+                                                        Width = 400,
+                                                    },
+                                                    new SpriteText
+                                                    {
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Position = new Vector2(-675,130),
+                                                        Text = "Descripcion:",
+                                                        Colour = Color4.Black
+                                                    },
+                                                    new BasicTextBox
+                                                    {
+                                                        Anchor = Anchor.TopRight,
+                                                        Origin = Anchor.TopRight,
+                                                        Position = new Vector2(-250, 120),
+                                                        Height = 200,
+                                                        Width = 400
+                                                    }
+                                                }
+                                            },
+                                            customElementsContainer = new Container
+                                            {
+                                                RelativeSizeAxes = Axes.X,
+                                                Height = 400,
+                                                Anchor = Anchor.BottomRight,
+                                                Origin = Anchor.BottomRight,
+                                                Children = new Drawable[]
+                                                {
+                                                    new Box
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Colour = Color4.Fuchsia
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    noSelectionContainer = new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Child = new SpriteText
+                                        {
+                                            Text = "Selecciona un objeto para editarlo",
+                                        },
+                                    },
+                                }
                             }
                         }
                     },
@@ -92,93 +178,6 @@ namespace GamesToGo.Desktop.Screens
         private void load(ProjectEditor editor)
         {
             this.editor = editor;
-
-            editAreaContainer.Add(noSelectionContainer = new Container
-            {
-                Alpha = editor.CurrentEditingElement.Value != null ? 0 : 1,
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Child = new SpriteText
-                {
-                    Text = "Selecciona un objeto para editarlo",
-                },
-            });
-            editAreaContainer.Add(activeEditContainer = new Container
-            {
-                Alpha = editor.CurrentEditingElement.Value != null ? 1 : 0,
-                RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]
-                {
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 600,
-                        Children = new Drawable[]
-                        {
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Cyan
-                            },
-                            new Box //Imagen del objeto
-                            {
-                                Width = 500,
-                                Height = 500,
-                                Position = new Vector2(60,50),
-                                Colour = Color4.Black
-                            },
-                            new SpriteText
-                            {
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight,
-                                Position = new Vector2(-675,60),
-                                Text = "Nombre:",
-                                Colour = Color4.Black
-                            },
-                            nameTextBox = new BasicTextBox
-                            {
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight,
-                                Position = new Vector2(-250,50),
-                                Height = 35,
-                                Width = 400,
-                            },
-                            new SpriteText
-                            {
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight,
-                                Position = new Vector2(-675,130),
-                                Text = "Descripcion:",
-                                Colour = Color4.Black
-                            },
-                            new BasicTextBox
-                            {
-                                Anchor = Anchor.TopRight,
-                                Origin = Anchor.TopRight,
-                                Position = new Vector2(-250, 120),
-                                Height = 200,
-                                Width = 400
-                            }
-                        }
-                    },
-                    customElementsContainer = new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 400,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Children = new Drawable[]
-                        {
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Fuchsia
-                            }
-                        }
-                    }
-                }
-            });
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);

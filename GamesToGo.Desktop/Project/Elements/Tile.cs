@@ -10,10 +10,11 @@ namespace GamesToGo.Desktop.Project.Elements
     {
         public int ID { get; set; }
         public Bindable<string> Name { get; set; } = new Bindable<string>("Nueva casilla");
+        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
 
-        public Drawable Image(bool size)
+        public string ToSaveable()
         {
-            return null;
+            return "";
         }
     }
 }

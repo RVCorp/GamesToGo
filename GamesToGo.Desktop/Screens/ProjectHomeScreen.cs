@@ -53,7 +53,7 @@ namespace GamesToGo.Desktop.Screens
                         },
                         titleTextBox = new BasicTextBox
                         {
-                            Text = project.Title.Value,
+                            Text = project.DatabaseObject.Name,
                             Position = new Vector2(175,10),
                             Height = 35,
                             Width = 775,
@@ -124,6 +124,8 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
+
+            titleTextBox.Current.ValueChanged += (obj) => project.DatabaseObject.Name = obj.NewValue;
         }
     }
 }
