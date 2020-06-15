@@ -47,7 +47,7 @@ namespace GamesToGo.Desktop.Project
 
         public void AddImage(File image)
         {
-            Images.Add(new Image(() => { return textures.Get($"files/{image.NewName}"); }, image));
+            Images.Add(new Image(textures, image));
         }
 
         /// <summary>

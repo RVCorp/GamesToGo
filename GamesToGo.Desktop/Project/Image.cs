@@ -11,11 +11,18 @@ namespace GamesToGo.Desktop.Project
 
         public readonly File DatabaseObject;
 
-        public Image(Func<Texture> func, File databaseObject)
+        private TextureStore textures;
+
+        public Image(TextureStore textures, File databaseObject)
         {
-            Texture = new Lazy<Texture>(func, LazyThreadSafetyMode.ExecutionAndPublication);
+            this.textures = textures;
+            Texture = new Lazy<Texture>(getTexture, LazyThreadSafetyMode.ExecutionAndPublication);
             DatabaseObject = databaseObject;
         }
 
+        private Texture getTexture()
+        {
+            return textures.Get($"files/{DatabaseObject.NewName}");
+        }
     }
 }
