@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
@@ -10,7 +7,11 @@ namespace GamesToGo.Desktop.Project.Elements
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Carta");
 
-        public override Dictionary<string, Image> Images => new Dictionary<string, Image>();
+        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new List<KeyValuePair<string, Image>>
+        {
+            new KeyValuePair<string, Image>("Frente", null),
+            new KeyValuePair<string, Image>("Posterior", null),
+        });
 
         public override string ToSaveable()
         {

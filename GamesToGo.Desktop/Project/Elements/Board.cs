@@ -7,10 +7,9 @@ namespace GamesToGo.Desktop.Project.Elements
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
 
-        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new List<KeyValuePair<string, Image>>
+        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new KeyValuePair<string, Image>[]
         {
-            new KeyValuePair<string, Image>("Frente", null),
-            new KeyValuePair<string, Image>("Miniatura", null),
+            new KeyValuePair<string, Image>("Fondo", null),
         });
 
         public override string ToSaveable()
