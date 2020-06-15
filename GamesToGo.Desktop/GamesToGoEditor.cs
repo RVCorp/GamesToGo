@@ -8,7 +8,6 @@ using GamesToGo.Desktop.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Linq;
-using GamesToGo.Desktop.Overlays;
 using osu.Framework.IO.Stores;
 using osu.Framework.Graphics.Textures;
 
@@ -25,8 +24,6 @@ namespace GamesToGo.Desktop
 
         // La pila de pantallas permite acciones en las pantallas del proyecto (Cambio y flujo de pantallas, comprobar orden, etc.)
         private ScreenStack stack;
-
-        private ImageFinderOverlay imageFinder;
 
         public GamesToGoEditor()
         {
