@@ -171,12 +171,12 @@ namespace GamesToGo.Desktop.Overlays
             if (!store.Exists($"files/{finalName}"))
             {
                 System.IO.File.Copy(path, filesPath + finalName);
-                file = new DatabaseFile()
+                database.Add(file = new DatabaseFile
                 {
                     OriginalName = Path.GetFileName(path),
                     NewName = finalName,
                     Type = "image",
-                };
+                });
             }
             else
             {
