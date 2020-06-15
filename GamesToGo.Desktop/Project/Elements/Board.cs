@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Collections.Generic;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Board : IProjectElement
+    public class Board : ProjectElement
     {
-        public int ID { get; set; }
-        public Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
+        public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
 
-        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
-
-        public Board()
+        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new List<KeyValuePair<string, Image>>
         {
+            new KeyValuePair<string, Image>("Frente", null),
+            new KeyValuePair<string, Image>("Miniatura", null),
+        });
 
-        }
-
-        public string ToSaveable()
+        public override string ToSaveable()
         {
-            return "";
+            return "1|" + base.ToSaveable();
         }
     }
 }

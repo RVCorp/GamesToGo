@@ -13,7 +13,7 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ElementEditButton<T> : Button where T : IProjectElement
+    public class ElementEditButton<T> : Button where T : ProjectElement
     {
 
         public readonly T Element;
@@ -21,7 +21,7 @@ namespace GamesToGo.Desktop.Graphics
         private readonly SpriteText elementName;
 
         private IBindable<string> elementText = new Bindable<string>();
-        private IBindable<IProjectElement> currentEditing = new Bindable<IProjectElement>();
+        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
 
         private bool selected => (currentEditing.Value?.ID ?? -1) == Element.ID;
         public ElementEditButton(T element)

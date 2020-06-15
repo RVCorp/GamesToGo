@@ -19,7 +19,7 @@ namespace GamesToGo.Desktop.Screens
 {
     public class ProjectObjectScreen : Screen
     {
-        private IBindable<IProjectElement> currentEditing = new Bindable<IProjectElement>();
+        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ProjectEditor editor;
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
@@ -183,7 +183,7 @@ namespace GamesToGo.Desktop.Screens
             currentEditing.BindValueChanged(checkData, true);
         }
 
-        private void checkData(ValueChangedEvent<IProjectElement> obj)
+        private void checkData(ValueChangedEvent<ProjectElement> obj)
         {
             activeEditContainer.FadeTo(obj.NewValue == null ? 0 : 1);
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);

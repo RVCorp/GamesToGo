@@ -6,15 +6,14 @@ using osu.Framework.Graphics;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Tile : IProjectElement
+    public class Tile : ProjectElement
     {
-        public int ID { get; set; }
-        public Bindable<string> Name { get; set; } = new Bindable<string>("Nueva casilla");
-        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
+        public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva casilla");
+        public override Dictionary<string, Image> Images => new Dictionary<string, Image>();
 
-        public string ToSaveable()
+        public override string ToSaveable()
         {
-            return "";
+            return "3|" + base.ToSaveable();
         }
     }
 }

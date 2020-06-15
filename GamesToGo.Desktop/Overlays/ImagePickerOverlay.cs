@@ -54,7 +54,7 @@ namespace GamesToGo.Desktop.Overlays
 
         }
 
-        public void QueryImage(IProjectElement element)
+        public void QueryImage(ProjectElement element)
         {
             Show();
         }

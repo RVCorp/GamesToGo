@@ -9,16 +9,19 @@ using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Token : IProjectElement
+    public class Token : ProjectElement
     {
-        public int ID { get; set; }
-        public Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Ficha");
+        public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Ficha");
 
-        public Dictionary<string, Image> Images => new Dictionary<string, Image>();
-
-        public string ToSaveable()
+        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new List<KeyValuePair<string, Image>>
         {
-            return "";
+            new KeyValuePair<string, Image>("Frente", null),
+            new KeyValuePair<string, Image>("Miniatura", null),
+        });
+
+        public override string ToSaveable()
+        {
+            return "0|" + base.ToSaveable();
         }
     }
 }

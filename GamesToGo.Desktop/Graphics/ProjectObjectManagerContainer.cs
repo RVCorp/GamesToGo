@@ -16,9 +16,9 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ProjectObjectManagerContainer<T> : Container where T : IProjectElement, new()
+    public class ProjectObjectManagerContainer<T> : Container where T : ProjectElement, new()
     {
-        private IBindableList<IProjectElement> projectElements = new BindableList<IProjectElement>();
+        private IBindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
         public Color4 BackgroundColour
         {
@@ -130,7 +130,7 @@ namespace GamesToGo.Desktop.Graphics
             projectElements.ItemsRemoved += checkRemoved;
         }
 
-        private void checkAdded(IEnumerable<IProjectElement> added)
+        private void checkAdded(IEnumerable<ProjectElement> added)
         {
             foreach (var item in added)
             {
@@ -141,7 +141,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        private void checkRemoved(IEnumerable<IProjectElement> removed)
+        private void checkRemoved(IEnumerable<ProjectElement> removed)
         {
             foreach (var item in removed)
             {

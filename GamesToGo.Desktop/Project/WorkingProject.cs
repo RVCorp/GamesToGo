@@ -18,7 +18,7 @@ namespace GamesToGo.Desktop.Project
 
         private int latestElementID = 1;
 
-        private readonly BindableList<IProjectElement> projectElements = new BindableList<IProjectElement>();
+        private readonly BindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
         public IEnumerable<Card> ProjectCards => projectElements.Where(e => e is Card).Select(e => (Card)e);
 
@@ -26,7 +26,7 @@ namespace GamesToGo.Desktop.Project
 
         public IEnumerable<Board> ProjectBoards => projectElements.Where(e => e is Board).Select(e => (Board)e);
 
-        public IBindableList<IProjectElement> ProjectElements => projectElements;
+        public IBindableList<ProjectElement> ProjectElements => projectElements;
 
         public List<Image> Images = new List<Image>();
 
@@ -39,7 +39,7 @@ namespace GamesToGo.Desktop.Project
                 parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{DatabaseObject.File.NewName}")));
         }
 
-        public void AddElement(IProjectElement element)
+        public void AddElement(ProjectElement element)
         {
             element.ID = latestElementID++;
             projectElements.Add(element);
@@ -73,7 +73,7 @@ namespace GamesToGo.Desktop.Project
             builder.AppendLine();
 
             builder.AppendLine("[Objects]");
-            foreach(IProjectElement elem in ProjectElements)
+            foreach(ProjectElement elem in ProjectElements)
             {
                 builder.AppendLine($"{elem.ToSaveable()}");
             }

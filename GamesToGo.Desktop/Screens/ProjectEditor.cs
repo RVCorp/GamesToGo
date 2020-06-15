@@ -22,9 +22,9 @@ namespace GamesToGo.Desktop.Screens
 
         private ScreenStack screenContainer;
 
-        private readonly Bindable<IProjectElement> currentEditingElement = new Bindable<IProjectElement>();
+        private readonly Bindable<ProjectElement> currentEditingElement = new Bindable<ProjectElement>();
 
-        public IBindable<IProjectElement> CurrentEditingElement => currentEditingElement;
+        public IBindable<ProjectElement> CurrentEditingElement => currentEditingElement;
 
         private DependencyContainer dependencies;
 
@@ -86,7 +86,7 @@ namespace GamesToGo.Desktop.Screens
             tabsBar.Current.Value = EditorScreenOption.Inicio;
         }
 
-        public void SelectElement(IProjectElement element)
+        public void SelectElement(ProjectElement element)
         {
             currentEditingElement.Value = element;
         }
