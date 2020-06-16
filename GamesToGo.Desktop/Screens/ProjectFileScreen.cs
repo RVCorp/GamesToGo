@@ -23,7 +23,7 @@ namespace GamesToGo.Desktop.Screens
         private WorkingProject project;
 
         [BackgroundDependencyLoader]
-        private void load(WorkingProject project, Context database, Storage store)
+        private void load(WorkingProject project, Context database, Storage store, ProjectEditor editor)
         {
             this.store = store;
             this.database = database;
@@ -62,7 +62,7 @@ namespace GamesToGo.Desktop.Screens
                             Height = 200,
                             BackgroundColour = Color4.DodgerBlue,
                             Text = "Incompleto? Guarda y termina después",
-                            Action = save,
+                            Action = editor.SaveProject,
                         },
                         new BasicButton
                         {
@@ -86,53 +86,6 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
-        }
-
-        private void save()
-        {
-            string fileString = project.SaveableString();
-            string newFileName;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                var sw = new StreamWriter(stream, new UnicodeEncoding());
-
-                sw.Write(fileString);
-                sw.Flush();
-                stream.Seek(0, SeekOrigin.Begin);
-                newFileName = GamesToGoEditor.HashBytes(stream.ToArray());
-                sw.Dispose();
-            }
-
-            using (Stream fileStream = store.GetStream($"files/{newFileName}", FileAccess.Write, FileMode.Create))
-            {
-                var sw = new StreamWriter(fileStream, new UnicodeEncoding());
-
-                sw.Write(fileString);
-                sw.Flush();
-                sw.Dispose();
-            }
-
-            if (project.DatabaseObject.File == null)
-            {
-                project.DatabaseObject.File = new DatabaseFile
-                {
-                    OriginalName = "",
-                    Type = "project",
-                };
-
-                database.Add(project.DatabaseObject);
-            }
-            else
-            {
-                store.Delete($"files/{project.DatabaseObject.File.NewName}");
-            }
-
-            project.DatabaseObject.File.NewName = newFileName;
-
-
-            database.SaveChanges();
-            Console.WriteLine();
-
         }
     }
 }
