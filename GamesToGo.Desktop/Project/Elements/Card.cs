@@ -14,7 +14,7 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>("Posterior", new Bindable<Image>()),
         });
 
-        public Bindable<Vector2> Size { get; } =  new Bindable<Vector2>();
+        public Bindable<Vector2> Size { get; } = new Bindable<Vector2>();
 
         public BindableList<int> Events { get; } = new BindableList<int>();
 

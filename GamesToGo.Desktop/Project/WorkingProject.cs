@@ -7,7 +7,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GamesToGo.Desktop.Project
 {

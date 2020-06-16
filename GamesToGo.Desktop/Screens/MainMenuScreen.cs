@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -14,8 +10,6 @@ using osuTK;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
-using osu.Framework.Graphics.Textures;
-using System.Data.Entity;
 
 namespace GamesToGo.Desktop.Screens
 {

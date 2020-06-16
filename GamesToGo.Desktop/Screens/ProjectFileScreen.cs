@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using GamesToGo.Desktop.Database.Models;
+﻿using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,7 +9,6 @@ using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
-using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
 namespace GamesToGo.Desktop.Screens
 {

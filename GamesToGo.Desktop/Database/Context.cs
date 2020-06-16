@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Project;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 
 namespace GamesToGo.Desktop.Database.Models

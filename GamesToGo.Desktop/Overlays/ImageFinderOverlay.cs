@@ -10,7 +10,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
@@ -22,7 +21,6 @@ namespace GamesToGo.Desktop.Overlays
     public class ImageFinderOverlay : OverlayContainer
     {
         private GameHost host;
-        private TextureStore textures;
         private Storage store;
         private Context database;
         private const float entries_per_row = 5;
@@ -50,11 +48,10 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host, WorkingProject project, TextureStore textures, Storage store, Context database)
+        private void load(GameHost host, WorkingProject project, Storage store, Context database)
         {
             this.host = host;
             this.project = project;
-            this.textures = textures;
             this.store = store;
             this.database = database;
             dependencies.Cache(this);
@@ -177,6 +174,8 @@ namespace GamesToGo.Desktop.Overlays
                     NewName = finalName,
                     Type = "image",
                 });
+
+                database.Add(new FileRelation { File = file, Project = project.DatabaseObject });
             }
             else
             {
@@ -247,6 +246,7 @@ namespace GamesToGo.Desktop.Overlays
 
                     List<string> possibleFiles = new List<string>(Directory.GetFiles(directory, "*.png", new EnumerationOptions { }));
                     possibleFiles.AddRange(Directory.GetFiles(directory, "*jpg", new EnumerationOptions { }));
+
                     foreach (var file in possibleFiles)
                         newFiles.Add(new ImageButton(file));
 

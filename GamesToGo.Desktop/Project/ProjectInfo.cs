@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using GamesToGo.Desktop.Database.Models;
 
 namespace GamesToGo.Desktop.Project
