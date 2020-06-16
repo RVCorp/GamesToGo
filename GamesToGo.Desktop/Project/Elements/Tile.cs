@@ -1,19 +1,24 @@
 ﻿using System.Collections.Generic;
 using osu.Framework.Bindables;
+using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Tile : ProjectElement
+    public class Tile : ProjectElement, IHasSize, IHasEvents
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva casilla");
-        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new KeyValuePair<string, Image>[]
+        public override Dictionary<string, Bindable<Image>> Images => new Dictionary<string, Bindable<Image>>(new KeyValuePair<string, Bindable<Image>>[]
         {
-            new KeyValuePair<string, Image>("Frente", null)
+            new KeyValuePair<string, Bindable<Image>>("Frente", new Bindable<Image>())
         });
+
+        public BindableList<int> Events { get; } = new BindableList<int>();
+
+        public Bindable<Vector2> Size { get; } = new Bindable<Vector2>();
 
         public override string ToSaveable()
         {
-            return "3|" + base.ToSaveable();
+            return "2|" + base.ToSaveable();
         }
     }
 }

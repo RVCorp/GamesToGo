@@ -1,20 +1,23 @@
 ﻿using System.Collections.Generic;
 using osu.Framework.Bindables;
+using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Board : ProjectElement
+    public class Board : ProjectElement, IHasSize
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
 
-        public override Dictionary<string, Image> Images => new Dictionary<string, Image>(new KeyValuePair<string, Image>[]
+        public override Dictionary<string, Bindable<Image>> Images => new Dictionary<string, Bindable<Image>>(new KeyValuePair<string, Bindable<Image>>[]
         {
-            new KeyValuePair<string, Image>("Fondo", null),
+            new KeyValuePair<string, Bindable<Image>>("Fondo", new Bindable<Image>()),
         });
+
+        public Bindable<Vector2> Size { get; } = new Bindable<Vector2>();
 
         public override string ToSaveable()
         {
-            return "1|" + base.ToSaveable();
+            return "3|" + base.ToSaveable();
         }
     }
 }

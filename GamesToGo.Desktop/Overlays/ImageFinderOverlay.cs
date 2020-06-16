@@ -245,7 +245,9 @@ namespace GamesToGo.Desktop.Overlays
                     foreach (var sub in Directory.GetDirectories(directory, "*", new EnumerationOptions() { }))
                         newDirectories.Add(new DirectoryButton(sub, DirectoryType.Directory));
 
-                    foreach (var file in Directory.GetFiles(directory, "*.png", new EnumerationOptions() { }))
+                    List<string> possibleFiles = new List<string>(Directory.GetFiles(directory, "*.png", new EnumerationOptions { }));
+                    possibleFiles.AddRange(Directory.GetFiles(directory, "*jpg", new EnumerationOptions { }));
+                    foreach (var file in possibleFiles)
                         newFiles.Add(new ImageButton(file));
 
                     newDirectories.Insert(0, new DirectoryButton(Path.GetDirectoryName(directory) ?? "", DirectoryType.ParentDirectory));

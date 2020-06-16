@@ -10,17 +10,17 @@ namespace GamesToGo.Desktop.Project
 
         public abstract Bindable<string> Name { get; set; }
 
-        public abstract Dictionary<string, Image> Images { get; }
+        public abstract Dictionary<string, Bindable<Image>> Images { get; }
 
         public virtual string ToSaveable()
         {
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"{ID}|{Name}");
-            builder.AppendLine("Images:");
+            builder.AppendLine($"Images:{Images.Count}");
             foreach (var image in Images)
             {
-                builder.AppendLine($"{image.Key}={image.Value?.DatabaseObject?.NewName ?? "null"}");
+                builder.AppendLine($"{image.Key}={image.Value.Value?.DatabaseObject?.NewName ?? "null"}");
             }
 
             return builder.ToString();
