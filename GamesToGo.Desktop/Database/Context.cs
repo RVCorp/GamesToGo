@@ -57,6 +57,7 @@ namespace GamesToGo.Desktop.Database.Models
                 project.Property(e => e.NumberCards).IsRequired();
                 project.Property(e => e.NumberTokens).IsRequired();
                 project.Property(e => e.NumberBoxes).IsRequired();
+                project.Property(e => e.NumberBoards).IsRequired();
                 project.Property(e => e.OnlineProjectID);
                 project.Property(e => e.ModerationStatus).IsRequired();
                 project.Property(e => e.ComunityStatus).IsRequired();

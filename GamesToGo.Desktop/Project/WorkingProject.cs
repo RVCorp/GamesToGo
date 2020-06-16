@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Project.Elements;
@@ -26,6 +26,8 @@ namespace GamesToGo.Desktop.Project
 
         public IEnumerable<Board> ProjectBoards => projectElements.Where(e => e is Board).Select(e => (Board)e);
 
+        public IEnumerable<Tile> ProjectTiles => projectElements.Where(e => e is Tile).Select(e => (Tile)e);
+
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
         public List<Image> Images = new List<Image>();
@@ -37,6 +39,17 @@ namespace GamesToGo.Desktop.Project
 
             if (DatabaseObject.File != null)
                 parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{DatabaseObject.File.NewName}")));
+
+            ProjectElements.ItemsAdded += _ => updateDatabaseObjectInfo();
+            ProjectElements.ItemsRemoved += _ => updateDatabaseObjectInfo();
+        }
+
+        private void updateDatabaseObjectInfo()
+        {
+            DatabaseObject.NumberBoxes = ProjectTiles.Count();
+            DatabaseObject.NumberCards = ProjectCards.Count();
+            DatabaseObject.NumberTokens = ProjectTokens.Count();
+            DatabaseObject.NumberBoards = ProjectBoards.Count();
         }
 
         public void AddElement(ProjectElement element)
