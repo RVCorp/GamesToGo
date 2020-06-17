@@ -12,7 +12,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osuTK;
 using osuTK.Graphics;
 using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
@@ -145,11 +144,6 @@ namespace GamesToGo.Desktop.Screens
 
             database.SaveChanges();
             Console.WriteLine();
-        }
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
         }
 
         private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)
