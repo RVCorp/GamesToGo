@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -23,10 +19,13 @@ namespace GamesToGo.Desktop.Screens
     public class MainMenuScreen : Screen
     {
         private Container userInformation;
+        private Context database;
         private FillFlowContainer projectsList;
 
-        public MainMenuScreen()
+        [BackgroundDependencyLoader]
+        private void load(Context database)
         {
+            this.database = database;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -120,7 +119,7 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 100,
                                         Anchor = Anchor.BottomCentre,
                                         Origin = Anchor.BottomCentre,
-                                        Action = () => this.Push(new ProjectEditor(new ProjectInfo()))
+                                        Action = createProject,
                                     },
                                     projectsList = new FillFlowContainer
                                     {
@@ -132,10 +131,6 @@ namespace GamesToGo.Desktop.Screens
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,200),
-                                        Children = new Drawable[]
-                                        {
-                                            new ProjectDescriptionButton(new ProjectInfo())
-                                        }
                                     }
                                 }
                             }
@@ -148,20 +143,26 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
-        }
 
-        [BackgroundDependencyLoader]
-        private void load(Context database)
-        {
-            foreach(var project in database.Projects)
+            foreach (var project in database.Projects)
             {
-                projectsList.Add(new ProjectDescriptionButton(project));
+                projectsList.Add(new ProjectDescriptionButton(project) { Action = () => openProject(project) });
             }
         }
 
         protected override void LoadComplete()
         {
             userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
+        }
+
+        private void openProject(ProjectInfo project)
+        {
+            this.Push(new ProjectEditor(project));
+        }
+
+        private void createProject()
+        {
+            openProject(new ProjectInfo() { Name = "Nuevo Proyecto" });
         }
     }
 }

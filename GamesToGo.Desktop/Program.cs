@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using osu.Framework;
 using osu.Framework.Platform;
 

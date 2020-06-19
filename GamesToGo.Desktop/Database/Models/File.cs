@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop.Database.Models
 {
@@ -15,5 +14,7 @@ namespace GamesToGo.Desktop.Database.Models
         public string NewName { get; set; }
 
         public ICollection<FileRelation> Relations { get; set; }
+
+        public ProjectInfo Project { get; set; }
     }
 }

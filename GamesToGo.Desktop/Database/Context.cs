@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Project;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 
 namespace GamesToGo.Desktop.Database.Models
@@ -57,6 +53,7 @@ namespace GamesToGo.Desktop.Database.Models
                 project.Property(e => e.NumberCards).IsRequired();
                 project.Property(e => e.NumberTokens).IsRequired();
                 project.Property(e => e.NumberBoxes).IsRequired();
+                project.Property(e => e.NumberBoards).IsRequired();
                 project.Property(e => e.OnlineProjectID);
                 project.Property(e => e.ModerationStatus).IsRequired();
                 project.Property(e => e.ComunityStatus).IsRequired();
@@ -65,7 +62,7 @@ namespace GamesToGo.Desktop.Database.Models
             modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProjectID });
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Project).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProjectID);
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.File).WithMany(f => f.Relations).HasForeignKey(fr => fr.FileID);
-            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne().HasForeignKey<ProjectInfo>(pi => pi.FileID);
+            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne(f => f.Project).HasForeignKey<ProjectInfo>(pi => pi.FileID);
         }
     }
 }

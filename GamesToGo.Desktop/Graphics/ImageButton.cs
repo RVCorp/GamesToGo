@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Logging;
 using osuTK;
 using osuTK.Graphics;
 
@@ -16,7 +15,6 @@ namespace GamesToGo.Desktop.Graphics
     [LongRunningLoad]
     public class ImageButton : ImageOverlayButton
     {
-        public Texture Texture { get; private set; }
         private readonly Container displayContainer;
         private string path;
 
@@ -50,23 +48,21 @@ namespace GamesToGo.Desktop.Graphics
         [BackgroundDependencyLoader]
         private void load(ImageFinderOverlay imageFinder)
         {
+            Texture tex = null;
             try
             {
-                Texture = Texture.FromStream(File.OpenRead(path));
-                Action = imageFinder.Hide;
-                displayContainer.Add(new Sprite
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    FillMode = FillMode.Fit,
-                    Texture = Texture,
-                });
+                var file = File.OpenRead(path);
+                tex = Texture.FromStream(file);
+                file.Dispose();
             }
-            catch
+            catch (Exception e)
             {
-                Texture = null;
-                Action = () => imageFinder.ShowError($"Imagen demasiado grande: {path}");
+                Logger.Log($"No se puede abrir {path}: {e.Message}", LoggingTarget.Runtime, LogLevel.Error);
+            }
+
+            if (tex == null)
+            {
+                Action = () => imageFinder.ShowError($"No se puede abrir la imagen: {path}");
                 displayContainer.Add(new SpriteIcon
                 {
                     Anchor = Anchor.Centre,
@@ -74,6 +70,18 @@ namespace GamesToGo.Desktop.Graphics
                     Size = new Vector2(50),
                     Icon = FontAwesome.Solid.File,
                     Colour = Color4.Black,
+                });
+            }
+            else
+            {
+                Action = () => imageFinder.SelectImage(path);
+                displayContainer.Add(new Sprite
+                {
+                    RelativeSizeAxes = displayContainer.ChildSize.X > tex.Size.X && displayContainer.ChildSize.Y > tex.Size.Y ? Axes.None : Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    FillMode = FillMode.Fit,
+                    Texture = tex,
                 });
             }
         }

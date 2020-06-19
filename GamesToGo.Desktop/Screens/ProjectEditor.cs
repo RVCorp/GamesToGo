@@ -1,13 +1,19 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using System;
+using System.IO;
+using System.Text;
+using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osuTK;
 using osuTK.Graphics;
+using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -15,13 +21,19 @@ namespace GamesToGo.Desktop.Screens
     {
         private Screen currentScreen;
 
-        private readonly ScreenStack screenContainer;
+        private ScreenStack screenContainer;
 
-        private readonly Bindable<IProjectElement> currentEditingElement = new Bindable<IProjectElement>();
+        private readonly Bindable<ProjectElement> currentEditingElement = new Bindable<ProjectElement>();
+
+        public IBindable<ProjectElement> CurrentEditingElement => currentEditingElement;
 
         private DependencyContainer dependencies;
+        private Storage store;
+        private Context database;
+        private WorkingProject workingProject;
+        private EditorTabChanger tabsBar;
+        private readonly ProjectInfo info;
 
-        private readonly WorkingProject workingProject;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         {
@@ -30,7 +42,20 @@ namespace GamesToGo.Desktop.Screens
 
         public ProjectEditor(ProjectInfo project)
         {
-            workingProject = new WorkingProject(project);
+            info = project;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures, Storage store, Context database)
+        {
+            this.store = store;
+            this.database = database;
+
+
+            workingProject = new WorkingProject(info, store, textures);
+
+            if (info.File == null)
+                SaveProject();
 
             InternalChildren = new[]
             {
@@ -57,87 +82,87 @@ namespace GamesToGo.Desktop.Screens
                             RelativeSizeAxes = Axes.Both,
                             Colour = Color4.Gray
                         },
-                        new BasicButton
-                        {
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Archivo",
-                            BackgroundColour = Color4.Red,
-                            Action = () => changeEditorScreen(EditorScreenOption.Archivo),
-                        },
-                        new BasicButton
-                        {
-                            Position = new Vector2(70,0),
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Inicio",
-                            BackgroundColour = Color4.DimGray,
-                            Action = () => changeEditorScreen(EditorScreenOption.Inicio),
-                        },
-                        new BasicButton
-                        {
-                            Position = new Vector2(140,0),
-                            RelativeSizeAxes = Axes.Y,
-                            Width = 70,
-                            Text = "Objetos",
-                            BackgroundColour = Color4.DimGray,
-                            Action = () => changeEditorScreen(EditorScreenOption.Objetos),
-                        }
+                        tabsBar = new EditorTabChanger(),
                     },
                 },
             };
-        }
 
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            currentEditingElement.ValueChanged += _ => changeEditorScreen(EditorScreenOption.Objetos);
+            tabsBar.Current.ValueChanged += changeEditorScreen;
+            CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
 
-            dependencies.Cache(currentEditingElement);
             dependencies.Cache(workingProject);
+            dependencies.Cache(this);
+
+            tabsBar.Current.Value = EditorScreenOption.Inicio;
         }
 
-        protected override void LoadComplete()
+        public void SelectElement(ProjectElement element)
         {
-            base.LoadComplete();
-
-            changeEditorScreen(EditorScreenOption.Inicio);
+            currentEditingElement.Value = element;
         }
 
-        private void changeEditorScreen(EditorScreenOption option)
+        public void SaveProject()
         {
-            Screen tempScreen = null;
-            switch (option)
+            string fileString = workingProject.SaveableString();
+            string newFileName;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                var sw = new StreamWriter(stream, new UnicodeEncoding());
+
+                sw.Write(fileString);
+                sw.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+                newFileName = GamesToGoEditor.HashBytes(stream.ToArray());
+                sw.Dispose();
+            }
+
+            using (Stream fileStream = store.GetStream($"files/{newFileName}", FileAccess.Write, FileMode.Create))
+            {
+                var sw = new StreamWriter(fileStream, new UnicodeEncoding());
+
+                sw.Write(fileString);
+                sw.Flush();
+                sw.Dispose();
+            }
+
+            if (workingProject.DatabaseObject.File == null)
+            {
+                workingProject.DatabaseObject.File = new DatabaseFile
+                {
+                    OriginalName = "",
+                    Type = "project",
+                };
+
+                database.Add(workingProject.DatabaseObject);
+            }
+            else
+            {
+                store.Delete($"files/{workingProject.DatabaseObject.File.NewName}");
+            }
+
+            workingProject.DatabaseObject.File.NewName = newFileName;
+
+            database.SaveChanges();
+            Console.WriteLine();
+        }
+
+        private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)
+        {
+            currentScreen?.Exit();
+            switch (value.NewValue)
             {
                 case EditorScreenOption.Archivo:
-                    if (!(currentScreen is ProjectFileScreen))
-                        tempScreen = new ProjectFileScreen();
+                    currentScreen = new ProjectFileScreen();
                     break;
                 case EditorScreenOption.Inicio:
-                    if (!(currentScreen is ProjectHomeScreen))
-                        tempScreen = new ProjectHomeScreen();
+                    currentScreen = new ProjectHomeScreen();
                     break;
                 case EditorScreenOption.Objetos:
-                    if(!(currentScreen is ProjectObjectScreen))
-                        tempScreen = new ProjectObjectScreen();
-                    break;
-                default:
+                    currentScreen = new ProjectObjectScreen();
                     break;
             }
 
-            if(tempScreen != null)
-            {
-                currentScreen?.Exit();
-                currentScreen = tempScreen;
-                LoadComponentAsync(currentScreen, screenContainer.Push);
-            }
-        }
-
-        private enum EditorScreenOption
-        {
-            Archivo,
-            Inicio,
-            Objetos,
+            LoadComponentAsync(currentScreen, screenContainer.Push);
         }
     }
 }

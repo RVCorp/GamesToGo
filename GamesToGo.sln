@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamesToGo.Desktop", "GamesToGo.Desktop\GamesToGo.Desktop.csproj", "{B60EB00A-8455-43C3-951E-008449743275}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamesToGo.Desktop", "GamesToGo.Desktop\GamesToGo.Desktop.csproj", "{B60EB00A-8455-43C3-951E-008449743275}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

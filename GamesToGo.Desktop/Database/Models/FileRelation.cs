@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop.Database.Models
 {

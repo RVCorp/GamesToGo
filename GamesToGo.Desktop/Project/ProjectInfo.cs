@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using GamesToGo.Desktop.Database.Models;
 
 namespace GamesToGo.Desktop.Project
@@ -22,6 +21,8 @@ namespace GamesToGo.Desktop.Project
         public int NumberTokens { get; set; }
 
         public int NumberBoxes { get; set; }
+
+        public int NumberBoards { get; set; }
 
         public int OnlineProjectID { get; set; }
 

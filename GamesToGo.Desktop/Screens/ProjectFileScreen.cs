@@ -1,9 +1,11 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
@@ -12,11 +14,15 @@ namespace GamesToGo.Desktop.Screens
 {
     public class ProjectFileScreen : Screen
     {
+        private Storage store;
+        private Context database;
         private WorkingProject project;
 
         [BackgroundDependencyLoader]
-        private void load(WorkingProject project)
+        private void load(WorkingProject project, Context database, Storage store, ProjectEditor editor)
         {
+            this.store = store;
+            this.database = database;
             this.project = project;
             InternalChildren = new Drawable[]
             {
@@ -51,7 +57,8 @@ namespace GamesToGo.Desktop.Screens
                             Width = 650,
                             Height = 200,
                             BackgroundColour = Color4.DodgerBlue,
-                            Text = "Incompleto? Guarda y termina después"
+                            Text = "Incompleto? Guarda y termina después",
+                            Action = editor.SaveProject,
                         },
                         new BasicButton
                         {
@@ -77,4 +84,4 @@ namespace GamesToGo.Desktop.Screens
             };
         }
     }
-}   
+}
