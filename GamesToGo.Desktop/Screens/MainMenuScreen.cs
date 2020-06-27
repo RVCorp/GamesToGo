@@ -10,7 +10,6 @@ using osuTK;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
-using osu.Framework.Bindables;
 using System.Linq;
 using osu.Framework.Platform;
 
