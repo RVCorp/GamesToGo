@@ -285,7 +285,6 @@ namespace GamesToGo.Desktop.Overlays
 
             itemsScrollContainer.FadeOut(100);
 
-
             LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(nd, newFiles));
             LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, nf));
         }
