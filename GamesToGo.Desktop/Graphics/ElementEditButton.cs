@@ -15,7 +15,6 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ElementEditButton<T> : Button where T : ProjectElement
     {
-
         public readonly T Element;
         private readonly Container borderContainer;
         private readonly SpriteText elementName;

@@ -37,9 +37,11 @@ namespace GamesToGo.Desktop.Graphics
         private FillFlowContainer<ElementEditButton<T>> allElements;
 
         private readonly string areaName;
-        public ProjectObjectManagerContainer(string name)
+        private readonly bool shouldStartEditing;
+        public ProjectObjectManagerContainer(string name, bool shouldStartEditing = false)
         {
             areaName = name;
+            this.shouldStartEditing = shouldStartEditing;
         }
 
         [BackgroundDependencyLoader]
@@ -48,78 +50,98 @@ namespace GamesToGo.Desktop.Graphics
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
-                new Box
+                new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = BackgroundColour.Opacity(0.3f),
-                },
-                new BasicScrollContainer
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    ClampExtension = 30,
-                    RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding { Vertical = 50 },
-                    Child = allElements = new FillFlowContainer<ElementEditButton<T>>
+                    RowDimensions = new Dimension[]
                     {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Direction = FillDirection.Full,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Padding = new MarginPadding { Vertical = 10 },
-                        Spacing = new Vector2(5),
+                        new Dimension(GridSizeMode.AutoSize),
+                        new Dimension(),
+                        new Dimension(GridSizeMode.AutoSize),
                     },
-                },
-                new Box
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Colour = BackgroundColour,
-                    Height = 50,
-                },
-                new SpriteText
-                {
-                    Text = areaName,
-                    Font = new FontUsage(size: 45),
-                    Position = new Vector2(5, 2.5f),
-                    Shadow = true,
-                },
-                new Container
-                {
-                    Anchor = Anchor.BottomRight,
-                    Origin = Anchor.BottomRight,
-                    RelativeSizeAxes = Axes.X,
-                    Height = 50,
-                    Children = new Drawable[]
+                    Content = new Drawable[][]
                     {
-                        new Box
+                        new Drawable[]
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.Beige
-                        },
-                        new BasicButton
-                        {
-                            RelativeSizeAxes = Axes.Y,
-                            Anchor = Anchor.BottomRight,
-                            Origin = Anchor.BottomRight,
-                            Width = 70,
-                            BackgroundColour = Color4.Red,
-                            BorderColour = Color4.Black,
-                            BorderThickness = 2.5f,
-                            Masking = true,
-                            Child =  new SpriteIcon
+                            new Container
                             {
-                                Icon = FontAwesome.Solid.Ad,
-                                Colour = Color4.Black,
-                                RelativeSizeAxes = Axes.Y,
-                                Width = 40,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.X,
+                                        Colour = BackgroundColour,
+                                        Height = 50,
+                                    },
+                                    new SpriteText
+                                    {
+                                        Text = areaName,
+                                        Font = new FontUsage(size: 45),
+                                        Position = new Vector2(5, 2.5f),
+                                        Shadow = true,
+                                    },
+                                }
                             },
-                            Action = () => project.AddElement(new T())
+                        },
+                        new Drawable[]
+                        {
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = BackgroundColour.Opacity(0.3f),
+                                    },
+                                    new BasicScrollContainer
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        ClampExtension = 30,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Child = allElements = new FillFlowContainer<ElementEditButton<T>>
+                                        {
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Full,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Padding = new MarginPadding { Vertical = 10 },
+                                            Spacing = new Vector2(5),
+                                        },
+                                    },
+                                }
+                            }
+                            
+                        },
+                        new Drawable[]
+                        {
+                            new Container
+                            {
+                                Anchor = Anchor.BottomRight,
+                                Origin = Anchor.BottomRight,
+                                RelativeSizeAxes = Axes.X,
+                                Height = 50,
+                                Children = new Drawable[]
+                                {
+                                    new Box
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Colour = Color4.Beige
+                                    },
+                                    new AddElementButton
+                                    {
+                                        Action = () => editor.AddElement(new T(), shouldStartEditing)
+                                    }
+                                }
+                            }
                         }
                     }
-                }
+                },
             };
 
             checkAdded(project.ProjectElements);
@@ -145,15 +167,54 @@ namespace GamesToGo.Desktop.Graphics
         {
             foreach (var item in removed)
             {
-                if(item is T)
+                if (item is T)
                 {
                     var deletable = allElements.Children.FirstOrDefault(b => b.Element.ID == item.ID);
 
-                    if(deletable != null)
+                    if (deletable != null)
                     {
                         allElements.Remove(deletable);
                     }
                 }
+            }
+        }
+
+        private class AddElementButton : BasicButton
+        {
+            private readonly Container content = new Container
+            {
+                RelativeSizeAxes = Axes.Y,
+                AutoSizeAxes = Axes.X,
+            };
+
+            protected override Container<Drawable> Content => content;
+            public AddElementButton()
+            {
+                AddInternal(content);
+                Padding = new MarginPadding(7);
+                RelativeSizeAxes = Axes.Y;
+                Anchor = Anchor.BottomRight;
+                Origin = Anchor.BottomRight;
+                AutoSizeAxes = Axes.X;
+                BackgroundColour = Color4.Black;
+                HoverColour = new Color4(55, 55, 55, 255);
+                Text = "Añadir nuevo";
+
+                content.Masking = true;
+                content.CornerRadius = 5;
+                content.BorderThickness = 3f;
+                content.BorderColour = Color4.Black;
+            }
+
+            protected override SpriteText CreateText()
+            {
+                var text = base.CreateText();
+
+                text.Colour = Color4.White;
+                text.Font = new FontUsage(size: 25);
+                text.Margin = new MarginPadding { Horizontal = 6.5f };
+
+                return text;
             }
         }
     }

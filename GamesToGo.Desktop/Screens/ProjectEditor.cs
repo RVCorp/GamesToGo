@@ -54,7 +54,7 @@ namespace GamesToGo.Desktop.Screens
 
             workingProject = new WorkingProject(info, store, textures);
 
-            if (info.File == null)
+            if (workingProject.DatabaseObject.File == null)
                 SaveProject();
 
             InternalChildren = new[]
@@ -144,6 +144,13 @@ namespace GamesToGo.Desktop.Screens
 
             database.SaveChanges();
             Console.WriteLine();
+        }
+
+        public void AddElement(ProjectElement element, bool startEditing)
+        {
+            workingProject.AddElement(element);
+            if (startEditing)
+                SelectElement(element);
         }
 
         private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)

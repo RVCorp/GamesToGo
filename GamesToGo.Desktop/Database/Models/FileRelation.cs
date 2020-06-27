@@ -4,6 +4,8 @@ namespace GamesToGo.Desktop.Database.Models
 {
     public class FileRelation
     {
+        public int RelationID { get; set; }
+
         public int ProjectID { get; set; }
 
         public ProjectInfo Project { get; set; }

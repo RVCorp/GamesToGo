@@ -10,6 +10,9 @@ using System.Security.Cryptography;
 using System.Linq;
 using osu.Framework.IO.Stores;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Platform;
+using osu.Framework.Bindables;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop
 {
@@ -40,7 +43,7 @@ namespace GamesToGo.Desktop
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
-        private void load(FrameworkConfigManager config) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
+        private void load(FrameworkConfigManager config, Storage store) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
@@ -55,6 +58,7 @@ namespace GamesToGo.Desktop
             {
                 Host.Storage.DeleteDatabase(Name);
                 dbContext.Database.Migrate();
+                store.DeleteDirectory("files");
             }
             finally
             {

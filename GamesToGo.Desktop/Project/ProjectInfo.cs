@@ -32,6 +32,10 @@ namespace GamesToGo.Desktop.Project
 
         public DateTime LastEdited { get; set; }
 
+        public FileRelation ImageRelation { get; set; }
+
+        public int? ImageRelationID { get; set; }
+
         public File File { get; set; }
 
         public int FileID { get; set; }

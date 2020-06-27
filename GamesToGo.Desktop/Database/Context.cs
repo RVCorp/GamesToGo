@@ -57,12 +57,21 @@ namespace GamesToGo.Desktop.Database.Models
                 project.Property(e => e.OnlineProjectID);
                 project.Property(e => e.ModerationStatus).IsRequired();
                 project.Property(e => e.ComunityStatus).IsRequired();
+                project.Property(e => e.ImageRelationID);
             });
 
-            modelBuilder.Entity<FileRelation>().HasKey(fr => new { fr.FileID, fr.ProjectID });
+            modelBuilder.Entity<FileRelation>().HasKey(fr => fr.RelationID);
+            modelBuilder.Entity<FileRelation>(relation =>
+            {
+                relation.Property(e => e.RelationID).IsRequired();
+                relation.Property(e => e.ProjectID).IsRequired();
+                relation.Property(e => e.FileID).IsRequired();
+            });
+
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.Project).WithMany(p => p.Relations).HasForeignKey(fr => fr.ProjectID);
             modelBuilder.Entity<FileRelation>().HasOne(fr => fr.File).WithMany(f => f.Relations).HasForeignKey(fr => fr.FileID);
             modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.File).WithOne(f => f.Project).HasForeignKey<ProjectInfo>(pi => pi.FileID);
+            modelBuilder.Entity<ProjectInfo>().HasOne(pi => pi.ImageRelation).WithOne().HasForeignKey<ProjectInfo>(pi => pi.ImageRelationID);
         }
     }
 }

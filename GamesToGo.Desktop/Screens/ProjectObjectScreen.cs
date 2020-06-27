@@ -24,8 +24,11 @@ namespace GamesToGo.Desktop.Screens
         private Container editAreaContainer;
         private Container customElementsContainer;
 
-        public ProjectObjectScreen()
+        [BackgroundDependencyLoader]
+        private void load(ProjectEditor editor)
         {
+            this.editor = editor;
+
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -36,10 +39,11 @@ namespace GamesToGo.Desktop.Screens
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Content = new []
+                    Content = new[]
                     {
                         new Drawable[]
                         {
+                            //Listas de elementos
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -50,19 +54,19 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Gray
                                     },
-                                    new ProjectObjectManagerContainer<Card>("Cartas")
+                                    new ProjectObjectManagerContainer<Card>("Cartas", true)
                                     {
                                         Anchor = Anchor.TopLeft,
                                         Origin = Anchor.TopLeft,
                                         Height = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Token>("Fichas")
+                                    new ProjectObjectManagerContainer<Token>("Fichas", true)
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
                                         Height = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Board>("Tableros")
+                                    new ProjectObjectManagerContainer<Board>("Tableros", true)
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
@@ -70,6 +74,7 @@ namespace GamesToGo.Desktop.Screens
                                     }
                                 }
                             },
+                            //Area de edición
                             editAreaContainer = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -169,12 +174,6 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor)
-        {
-            this.editor = editor;
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);

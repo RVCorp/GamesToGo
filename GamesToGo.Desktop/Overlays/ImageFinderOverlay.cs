@@ -54,6 +54,7 @@ namespace GamesToGo.Desktop.Overlays
             this.project = project;
             this.store = store;
             this.database = database;
+
             dependencies.Cache(this);
 
             filesPath = store.GetFullPath("files/", true);
@@ -160,27 +161,40 @@ namespace GamesToGo.Desktop.Overlays
         public void SelectImage(string path)
         {
             var finalName = GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(path));
+            var destinationPath = filesPath + finalName;
             DatabaseFile file;
+
             if (project.Images.Any(i => i.DatabaseObject.NewName == finalName))
             {
                 ShowError("Esta imagen ya ha sido agregada");
+                return;
             }
+
             if (!store.Exists($"files/{finalName}"))
             {
-                System.IO.File.Copy(path, filesPath + finalName);
+                System.IO.File.Copy(path, destinationPath);
+            }
+            else if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(destinationPath)) != finalName)
+            {
+                System.IO.File.Delete(destinationPath);
+                System.IO.File.Copy(path, destinationPath);
+            }
+
+            if(database.Files.Any(f => f.NewName == finalName))
+            {
+                file = database.Files.FirstOrDefault(f => f.NewName == finalName);
+            }
+            else
+            {
                 database.Add(file = new DatabaseFile
                 {
                     OriginalName = Path.GetFileName(path),
                     NewName = finalName,
                     Type = "image",
                 });
+            }
 
-                database.Add(new FileRelation { File = file, Project = project.DatabaseObject });
-            }
-            else
-            {
-                file = database.Files.FirstOrDefault(f => f.NewName == finalName);
-            }
+            database.Add(new FileRelation { File = file, Project = project.DatabaseObject });
 
             project.AddImage(file);
             Hide();
