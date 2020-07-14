@@ -34,8 +34,6 @@ namespace GamesToGo.Desktop.Project
 
         public List<Image> Images = new List<Image>();
 
-        public 
-
         protected WorkingProject(ProjectInfo project, Storage store, TextureStore textures, Context database)
         {
             DatabaseObject = project;
@@ -95,7 +93,7 @@ namespace GamesToGo.Desktop.Project
             builder.AppendLine($"Name={DatabaseObject.Name}");
             builder.AppendLine($"MinNumberPlayers={DatabaseObject.MinNumberPlayers}");
             builder.AppendLine($"MaxNumberPlayers={DatabaseObject.MaxNumberPlayers}");
-            builder.AppendLine($"ChatRecommendation={}")
+            builder.AppendLine($"ChatRecommendation=nothing");
             builder.AppendLine($"Files={Images.Count}");
             foreach (var img in Images)
             {
