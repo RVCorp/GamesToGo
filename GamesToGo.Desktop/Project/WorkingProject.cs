@@ -12,8 +12,9 @@ namespace GamesToGo.Desktop.Project
 {
     public class WorkingProject
     {
-        private TextureStore textures;
-        private Storage store;
+        private readonly TextureStore textures;
+        private readonly Context database;
+        private readonly Storage store;
 
         public ProjectInfo DatabaseObject { get; }
 
@@ -33,17 +34,31 @@ namespace GamesToGo.Desktop.Project
 
         public List<Image> Images = new List<Image>();
 
-        public WorkingProject(ProjectInfo project, Storage store, TextureStore textures)
+        public 
+
+        protected WorkingProject(ProjectInfo project, Storage store, TextureStore textures, Context database)
         {
-            this.textures = textures;
-            this.store = store;
             DatabaseObject = project;
+            this.store = store;
+            this.textures = textures;
+            this.database = database;
+        }
 
-            if (DatabaseObject.File != null)
-                parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{DatabaseObject.File.NewName}")));
+        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures, Context database)
+        {
+            WorkingProject ret = new WorkingProject(project, store, textures, database);
 
-            ProjectElements.ItemsAdded += _ => updateDatabaseObjectInfo();
-            ProjectElements.ItemsRemoved += _ => updateDatabaseObjectInfo();
+            if (project.File != null)
+            {
+                if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
+                    return null;
+                ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}")));
+            }
+
+            ret.ProjectElements.ItemsAdded += _ => ret.updateDatabaseObjectInfo();
+            ret.ProjectElements.ItemsRemoved += _ => ret.updateDatabaseObjectInfo();
+
+            return ret;
         }
 
         private void updateDatabaseObjectInfo()
@@ -71,18 +86,20 @@ namespace GamesToGo.Desktop.Project
         /// <returns></returns>
         public string SaveableString()
         {
+            DatabaseObject.ComunityStatus = CommunityStatus.Saved;
+
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine("[Info]");
-            builder.AppendLine("OnlineProjectID=-1");
             builder.AppendLine("CreatorID=-1");
             builder.AppendLine($"Name={DatabaseObject.Name}");
             builder.AppendLine($"MinNumberPlayers={DatabaseObject.MinNumberPlayers}");
             builder.AppendLine($"MaxNumberPlayers={DatabaseObject.MaxNumberPlayers}");
+            builder.AppendLine($"ChatRecommendation={}")
             builder.AppendLine($"Files={Images.Count}");
             foreach (var img in Images)
             {
-                builder.AppendLine($" {img.DatabaseObject.NewName}");
+                builder.AppendLine($"{img.DatabaseObject.NewName}");
             }
             builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
             builder.AppendLine();
@@ -99,9 +116,6 @@ namespace GamesToGo.Desktop.Project
 
         private bool parse(string[] lines)
         {
-            if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{DatabaseObject.File.NewName}"))) != DatabaseObject.File.NewName)
-                return false;
-
             bool isParsingObjects = false;
 
             ProjectElement parsingElement = null;
@@ -110,7 +124,7 @@ namespace GamesToGo.Desktop.Project
             {
                 if (line.StartsWith('['))
                 {
-                    switch(line.Trim(new char[] { '[', ']' }))
+                    switch (line.Trim(new char[] { '[', ']' }))
                     {
                         case "Info":
                             isParsingObjects = false;
@@ -122,7 +136,7 @@ namespace GamesToGo.Desktop.Project
                     continue;
                 }
 
-                if(isParsingObjects)
+                if (isParsingObjects)
                 {
                     if (string.IsNullOrEmpty(line))
                     {
@@ -134,12 +148,12 @@ namespace GamesToGo.Desktop.Project
                         continue;
                     }
 
-                    if(parsingElement == null)
+                    if (parsingElement == null)
                     {
                         var idents = line.Split('|', 3);
                         if (idents.Length != 3)
                             return false;
-                        switch(int.Parse(idents[0]))
+                        switch (int.Parse(idents[0]))
                         {
                             case 0:
                                 parsingElement = new Token();

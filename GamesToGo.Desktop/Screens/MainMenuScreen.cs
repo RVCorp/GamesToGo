@@ -179,16 +179,15 @@ namespace GamesToGo.Desktop.Screens
             userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
         }
 
-        public void OpenProject(ProjectInfo project)
+        public void OpenProject(WorkingProject project)
         {
             this.Push(new ProjectEditor(project));
         }
-
         public void DeleteProject(ProjectInfo project)
         {
             if (project.Relations != null)
                 database.Relations.RemoveRange(project.Relations);
-            projectsList.Remove(projectsList.Children.First(p => p.Project.LocalProjectID == project.LocalProjectID));
+            projectsList.Remove(projectsList.Children.First(p => p.ProjectInfo.LocalProjectID == project.LocalProjectID));
             store.Delete($"files/{project.File.NewName}");
             database.Files.Remove(project.File);
             database.Projects.Remove(project);
@@ -197,7 +196,7 @@ namespace GamesToGo.Desktop.Screens
 
         private void createProject()
         {
-            OpenProject(new ProjectInfo() { Name = "Nuevo Proyecto" });
+            OpenProject(null);
         }
     }
 }

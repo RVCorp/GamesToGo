@@ -7,8 +7,13 @@ using osuTK;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
-using SixLabors.ImageSharp;
 using System;
+using osu.Framework.Allocation;
+using GamesToGo.Desktop.Overlays;
+using osu.Framework.Platform;
+using System.IO;
+using GamesToGo.Desktop.Database.Models;
+using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -19,18 +24,36 @@ namespace GamesToGo.Desktop.Graphics
         private const float small_text_size = 20;
         private const float small_height = main_text_size + small_text_size + margin_size * 3;
         private const float expanded_height = main_text_size + small_text_size * 2 + margin_size * 4;
-        private readonly Container buttonsContainer;
+        private Container buttonsContainer;
         private ActionButton deleteButton;
         private ActionButton editButton;
+        private MultipleOptionOverlay optionsOverlay;
 
-        public ProjectInfo Project { get; private set; }
+        public readonly ProjectInfo ProjectInfo;
 
-        public Action<ProjectInfo> EditAction { private get; set; }
+        private WorkingProject workingProject;
+
+        private IconUsage editIcon;
+
+        public Action<WorkingProject> EditAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
 
         public ProjectSummaryContainer(ProjectInfo project)
         {
-            Project = project;
+            ProjectInfo = project;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(MultipleOptionOverlay optionsOverlay, Storage store, TextureStore textures, Context database)
+        {
+            this.optionsOverlay = optionsOverlay;
+
+            workingProject = WorkingProject.Parse(ProjectInfo, store, textures, database);
+            if (workingProject == null)
+                editIcon = FontAwesome.Solid.ExclamationTriangle;
+            else
+                editIcon = FontAwesome.Solid.Edit;
+
             Masking = true;
             CornerRadius = margin_size;
             BorderColour = Color4.DarkGray;
@@ -62,12 +85,12 @@ namespace GamesToGo.Desktop.Graphics
                                 new SpriteText
                                 {
                                     Font = new FontUsage(size: main_text_size),
-                                    Text = project.Name,
+                                    Text = ProjectInfo.Name,
                                 },
                                 new SpriteText
                                 {
                                     Font = new FontUsage(size: small_text_size),
-                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {project.LastEdited:dd/MM/yyyy HH:mm})",
+                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
                                 },
                                 new FillFlowContainer
                                 {
@@ -76,10 +99,11 @@ namespace GamesToGo.Desktop.Graphics
                                     AutoSizeAxes = Axes.Both,
                                     Children = new Drawable[]
                                     {
-                                        new StatText(FontAwesome.Regular.Clone, project.NumberCards),
-                                        new StatText(FontAwesome.Solid.Coins, project.NumberTokens),
-                                        new StatText(FontAwesome.Solid.ChessBoard, project.NumberBoards),
-                                        new StatText(FontAwesome.Regular.Square, project.NumberBoxes)
+                                        new StatText(FontAwesome.Regular.Clone, ProjectInfo.NumberCards),
+                                        new StatText(FontAwesome.Solid.Coins, ProjectInfo.NumberTokens),
+                                        new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
+                                        new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
+                                        new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
                                     }
                                 }
                             }
@@ -107,20 +131,70 @@ namespace GamesToGo.Desktop.Graphics
                                 deleteButton = new ActionButton
                                 {
                                     Icon = FontAwesome.Solid.TrashAlt,
-                                    Action = () => DeleteAction?.Invoke(project),
+                                    Action = showConfirmation,
                                     ButtonColour = Color4.DarkRed,
                                 },
                                 editButton = new ActionButton
                                 {
-                                    Icon = FontAwesome.Solid.Edit,
-                                    Action = () => EditAction?.Invoke(project),
-                                    ButtonColour = FrameworkColour.Green,
+                                    Icon = editIcon,
+                                    Action = checkValidWorkingProject,
+                                    ButtonColour = workingProject == null ? FrameworkColour.YellowDark : FrameworkColour.Green,
                                 }
                             }
                         }
                     }
                 },
             };
+        }
+
+        private void checkValidWorkingProject()
+        {
+            if (workingProject == null)
+            {
+                optionsOverlay.Show("Este proyecto no se puede abrir. ¿Qué deseas hacer con el?", new[]
+                {
+                    new OptionItem
+                    {
+                        Text = "Eliminarlo",
+                        Action = showConfirmation,
+                        Type = OptionType.Destructive,
+                    },
+                    new OptionItem
+                    {
+                        Text = "Buscarlo en el servidor",
+                        Type = OptionType.Additive,
+                    },
+                    new OptionItem
+                    {
+                        Text = "Nada",
+                        Action = () => { },
+                        Type = OptionType.Neutral,
+                    }
+                });
+            }
+            else
+            {
+                EditAction?.Invoke(workingProject);
+            }
+        }
+
+        private void showConfirmation()
+        {
+            optionsOverlay.Show($"Seguro que quieres eliminar el proyecto \'{ProjectInfo.Name}\'", new[]
+            {
+                new OptionItem
+                {
+                    Text = "¡A la basura!",
+                    Action = () => DeleteAction?.Invoke(ProjectInfo),
+                    Type = OptionType.Destructive,
+                },
+                new OptionItem
+                {
+                    Text = "Mejor me lo quedo",
+                    Action = () => { },
+                    Type = OptionType.Neutral,
+                }
+            });
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -149,7 +223,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private class StatText : FillFlowContainer
         {
-            public StatText(IconUsage icon, int count)
+            public StatText(IconUsage icon, string text)
             {
                 Direction = FillDirection.Horizontal;
                 Spacing = new Vector2(margin_size);
@@ -164,7 +238,7 @@ namespace GamesToGo.Desktop.Graphics
                     new SpriteText
                     {
                         Font = new FontUsage(size: small_text_size),
-                        Text = count.ToString(),
+                        Text = text,
                     },
                     new Container
                     {
@@ -173,6 +247,8 @@ namespace GamesToGo.Desktop.Graphics
                     },
                 };
             }
+
+            public StatText(IconUsage icon, int count) : this(icon, count.ToString()) { }
         }
 
         private class ActionButton : Button

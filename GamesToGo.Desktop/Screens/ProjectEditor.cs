@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -30,9 +31,9 @@ namespace GamesToGo.Desktop.Screens
         private DependencyContainer dependencies;
         private Storage store;
         private Context database;
+        private SplashInfoOverlay splashOverlay;
         private WorkingProject workingProject;
         private EditorTabChanger tabsBar;
-        private readonly ProjectInfo info;
 
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -40,22 +41,23 @@ namespace GamesToGo.Desktop.Screens
             return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
         }
 
-        public ProjectEditor(ProjectInfo project)
+        public ProjectEditor(WorkingProject project)
         {
-            info = project;
+            workingProject = project;
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Storage store, Context database)
+        private void load(TextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay)
         {
             this.store = store;
             this.database = database;
+            this.splashOverlay = splashOverlay;
 
-
-            workingProject = new WorkingProject(info, store, textures);
-
-            if (workingProject.DatabaseObject.File == null)
-                SaveProject();
+            if (workingProject == null)
+            {
+                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto" }, store, textures, database);
+                SaveProject(false);
+            }
 
             InternalChildren = new[]
             {
@@ -94,6 +96,7 @@ namespace GamesToGo.Desktop.Screens
             dependencies.Cache(this);
 
             tabsBar.Current.Value = EditorScreenOption.Inicio;
+
         }
 
         public void SelectElement(ProjectElement element)
@@ -101,7 +104,7 @@ namespace GamesToGo.Desktop.Screens
             currentEditingElement.Value = element;
         }
 
-        public void SaveProject()
+        public void SaveProject(bool showSplashConfirmation = true)
         {
             string fileString = workingProject.SaveableString();
             string newFileName;
@@ -143,7 +146,16 @@ namespace GamesToGo.Desktop.Screens
             workingProject.DatabaseObject.File.NewName = newFileName;
 
             database.SaveChanges();
-            Console.WriteLine();
+
+            Random random = new Random();
+
+            if (showSplashConfirmation)
+                splashOverlay.Show("Se ha guardado el proyecto localmente", new Color4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Color4(80, 80, 80, 255)*/);
+
+            byte randomNumber()
+            {
+                return (byte)(random.NextDouble() * 255);
+            }
         }
 
         public void AddElement(ProjectElement element, bool startEditing)

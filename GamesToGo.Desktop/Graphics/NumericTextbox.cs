@@ -7,6 +7,6 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class NumericTextbox : BasicTextBox
     {
-        protected override bool CanAddCharacter(char character) => char.IsNumber(character) && Text.Length < 2;
+        protected override bool CanAddCharacter(char character) => char.IsNumber(character) && (Text.Length < 2 || SelectedText.Length > 0);
     }
 }

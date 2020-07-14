@@ -11,8 +11,7 @@ using System.Linq;
 using osu.Framework.IO.Stores;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
-using osu.Framework.Bindables;
-using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Overlays;
 
 namespace GamesToGo.Desktop
 {
@@ -40,6 +39,8 @@ namespace GamesToGo.Desktop
             dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         private Context dbContext;
+        private MultipleOptionOverlay optionsOverlay;
+        private SplashInfoOverlay splashOverlay;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
@@ -69,13 +70,21 @@ namespace GamesToGo.Desktop
 
             //Ventana sin bordes, sin requerir modo exclusivo.
             config.GetBindable<WindowMode>(FrameworkSetting.WindowMode).Value = WindowMode.Borderless;
-            config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.VSync;
+            config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.Unlimited;
 
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
             Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both });
+
+            Add(splashOverlay = new SplashInfoOverlay());
+
+            dependencies.Cache(splashOverlay);
+
+            Add(optionsOverlay = new MultipleOptionOverlay());
+
+            dependencies.Cache(optionsOverlay);
         }
 
         //Corrido cuando se termine de cargar el juego, justo antes de ser renderizado.
@@ -90,7 +99,7 @@ namespace GamesToGo.Desktop
         public static string HashBytes(byte[] bytes)
         {
             using SHA1Managed hasher = new SHA1Managed();
-            return string.Concat(hasher.ComputeHash(bytes).Select(by => by.ToString("x2")));
+            return string.Concat(hasher.ComputeHash(bytes).Select(by => by.ToString("X2")));
         }
     }
 }

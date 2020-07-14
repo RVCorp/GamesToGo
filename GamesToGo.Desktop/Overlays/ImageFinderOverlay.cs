@@ -20,6 +20,7 @@ namespace GamesToGo.Desktop.Overlays
 {
     public class ImageFinderOverlay : OverlayContainer
     {
+        private SplashInfoOverlay splashOverlay;
         private GameHost host;
         private Storage store;
         private Context database;
@@ -38,8 +39,6 @@ namespace GamesToGo.Desktop.Overlays
         private FillFlowContainer<ImageButton> filesContainer;
         private BasicScrollContainer itemsScrollContainer;
         private SpriteText currentDirectoryText;
-        private Container errorContainer;
-        private SpriteText errorText;
 
         private DependencyContainer dependencies;
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -48,8 +47,9 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host, WorkingProject project, Storage store, Context database)
+        private void load(GameHost host, WorkingProject project, Storage store, Context database, SplashInfoOverlay splashOverlay)
         {
+            this.splashOverlay = splashOverlay;
             this.host = host;
             this.project = project;
             this.store = store;
@@ -126,35 +126,7 @@ namespace GamesToGo.Desktop.Overlays
                             Margin = new MarginPadding(15),
                         },
                     }
-                },
-                new Container
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 50,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.TopCentre,
-                    Child = errorContainer = new Container
-                    {
-                        RelativePositionAxes = Axes.Y,
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Children = new Drawable[]
-                        {
-                            new Box
-                            {
-                                Colour = new Color4(44, 53, 119, 255),
-                                RelativeSizeAxes = Axes.Both,
-                            },
-                            errorText = new SpriteText
-                            {
-                                Margin = new MarginPadding(12),
-                                Font = new FontUsage(size: 30),
-                                Truncate = true,
-                                RelativeSizeAxes = Axes.X,
-                            }
-                        }
-                    }
-                },
+                }
             };
         }
 
@@ -221,11 +193,7 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ShowError(string error)
         {
-            errorText.Text = error;
-
-            errorContainer.MoveToY(-1, 400, Easing.OutCubic)
-                .Delay(5000)
-                .MoveToY(0, 400, Easing.OutCubic);
+            splashOverlay.Show(error, new Color4(44, 53, 119, 255));
         }
 
         public void ChangeToParent()

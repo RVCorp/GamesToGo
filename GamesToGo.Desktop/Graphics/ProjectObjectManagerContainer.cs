@@ -30,6 +30,8 @@ namespace GamesToGo.Desktop.Graphics
                     return Color4.Crimson;
                 if (typeof(T).Equals(typeof(Board)))
                     return Color4.DarkSeaGreen;
+                if (typeof(T).Equals(typeof(Tile)))
+                    return Color4.BlueViolet;
                 return Color4.Black;
             }
         }
@@ -108,8 +110,8 @@ namespace GamesToGo.Desktop.Graphics
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
                                             Direction = FillDirection.Full,
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
+                                            Anchor = Anchor.TopCentre,
+                                            Origin = Anchor.TopCentre,
                                             Padding = new MarginPadding { Vertical = 10 },
                                             Spacing = new Vector2(5),
                                         },

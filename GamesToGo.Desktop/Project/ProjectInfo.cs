@@ -28,7 +28,7 @@ namespace GamesToGo.Desktop.Project
 
         public int ModerationStatus { get; set; }
 
-        public int ComunityStatus { get; set; }
+        public CommunityStatus ComunityStatus { get; set; }
 
         public DateTime LastEdited { get; set; }
 
