@@ -34,7 +34,8 @@ namespace GamesToGo.Desktop.Screens
         private SplashInfoOverlay splashOverlay;
         private WorkingProject workingProject;
         private EditorTabChanger tabsBar;
-
+        private ImageFinderOverlay imageFinder;
+        private ImagePickerOverlay imagePicker;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         {
@@ -59,10 +60,14 @@ namespace GamesToGo.Desktop.Screens
                 SaveProject(false);
             }
 
+            dependencies.Cache(workingProject);
+            dependencies.Cache(this);
+
             InternalChildren = new[]
             {
                 new Container
                 {
+                    Depth = 4,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding
                     {
@@ -75,6 +80,7 @@ namespace GamesToGo.Desktop.Screens
                 },
                 new Container
                 {
+                    Depth = 3,
                     RelativeSizeAxes = Axes.X,
                     Height = 30,
                     Children = new Drawable[]
@@ -87,16 +93,24 @@ namespace GamesToGo.Desktop.Screens
                         tabsBar = new EditorTabChanger(),
                     },
                 },
+                imageFinder = new ImageFinderOverlay
+                {
+                    Depth = 1
+                }
             };
 
             tabsBar.Current.ValueChanged += changeEditorScreen;
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
 
-            dependencies.Cache(workingProject);
-            dependencies.Cache(this);
+            dependencies.Cache(imageFinder);
+
+            AddInternal(imagePicker = new ImagePickerOverlay
+            {
+                Depth = 2
+            });
+            dependencies.Cache(imagePicker);
 
             tabsBar.Current.Value = EditorScreenOption.Inicio;
-
         }
 
         public void SelectElement(ProjectElement element)

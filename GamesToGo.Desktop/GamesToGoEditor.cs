@@ -12,6 +12,7 @@ using osu.Framework.IO.Stores;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop
 {
@@ -46,6 +47,9 @@ namespace GamesToGo.Desktop
         [BackgroundDependencyLoader]
         private void load(FrameworkConfigManager config, Storage store) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
+            Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
+            Textures.AddStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"files")));
+            Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
             var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
@@ -91,6 +95,8 @@ namespace GamesToGo.Desktop
         protected override void LoadComplete()
         {
             base.LoadComplete();
+
+            ProjectElement.Textures = Textures;
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);

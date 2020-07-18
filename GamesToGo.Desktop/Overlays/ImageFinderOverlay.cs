@@ -136,7 +136,7 @@ namespace GamesToGo.Desktop.Overlays
             var destinationPath = filesPath + finalName;
             DatabaseFile file;
 
-            if (project.Images.Any(i => i.DatabaseObject.NewName == finalName))
+            if (project.Images.Any(i => i.ImageName == finalName))
             {
                 ShowError("Esta imagen ya ha sido agregada");
                 return;
@@ -208,9 +208,6 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ChangeToDirectory(string directory)
         {
-            if (lastVisited == directory)
-                return;
-
             var newDirectories = new List<DirectoryButton>();
             var newFiles = new List<ImageButton>();
 

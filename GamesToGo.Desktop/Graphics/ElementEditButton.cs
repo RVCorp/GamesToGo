@@ -1,4 +1,5 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using System.Linq;
+using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -9,6 +10,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
+using Image = GamesToGo.Desktop.Project.Image;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
@@ -21,6 +23,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private IBindable<string> elementText = new Bindable<string>();
         private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
+        private Sprite image;
 
         private bool selected => (currentEditing.Value?.ID ?? -1) == Element.ID;
         public ElementEditButton(T element)
@@ -51,6 +54,13 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.TopCentre,
                     Size = new Vector2(120),
                     Position = new Vector2(0, 15),
+                    Child = image = new Sprite
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Both,
+                        FillMode = FillMode.Fit,
+                    }
                 },
                 elementName = new SpriteText
                 {
@@ -72,12 +82,18 @@ namespace GamesToGo.Desktop.Graphics
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged((_) => editingChanged(), true);
+            Element.Images.Values.First().BindValueChanged(imageChanged, true);
             borderContainer.Alpha = selected ? 1 : 0;
         }
         private void editingChanged()
         {
             borderContainer.Colour = selected ? Color4.Gold : Color4.White;
             borderContainer.FadeTo(selected ? 1 : IsHovered ? 1 : 0, 125);
+        }
+
+        private void imageChanged(ValueChangedEvent<Image> value)
+        {
+            image.Texture = value.NewValue?.Texture ?? Element.DefaultImage.Texture;
         }
 
         protected override bool OnHover(HoverEvent e)

@@ -10,6 +10,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
 using osuTK.Graphics;
@@ -47,7 +48,7 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor, WorkingProject project)
+        private void load(ProjectEditor editor, WorkingProject project, TextureStore textures)
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]

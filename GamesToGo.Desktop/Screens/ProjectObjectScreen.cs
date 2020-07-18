@@ -20,7 +20,7 @@ namespace GamesToGo.Desktop.Screens
         private ProjectEditor editor;
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
-        private Container activeEditContainer;
+        private BasicScrollContainer activeEditContainer;
         private Container editAreaContainer;
         private Container customElementsContainer;
 
@@ -78,76 +78,84 @@ namespace GamesToGo.Desktop.Screens
                             editAreaContainer = new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Children = new[]
+                                Children = new Drawable[]
                                 {
-                                    activeEditContainer = new Container
+                                    activeEditContainer = new BasicScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Children = new Drawable[]
+                                        Child = new FillFlowContainer
                                         {
-                                            new Container
+                                            RelativeSizeAxes = Axes.X,
+                                            AutoSizeAxes = Axes.Y,
+                                            Direction = FillDirection.Vertical,
+                                            Children = new Drawable[]
                                             {
-                                                RelativeSizeAxes = Axes.X,
-                                                Height = 600,
-                                                Children = new Drawable[]
+                                                new Container
                                                 {
-                                                    new Box
+                                                    RelativeSizeAxes = Axes.X,
+                                                    AutoSizeAxes = Axes.Y,
+                                                    Children = new Drawable[]
                                                     {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Colour = Color4.Cyan
-                                                    },
-                                                    new Box //Imagen del objeto
-                                                    {
-                                                        Width = 500,
-                                                        Height = 500,
-                                                        Position = new Vector2(60,50),
-                                                    },
-                                                    new SpriteText
-                                                    {
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Position = new Vector2(-675,60),
-                                                        Text = "Nombre:",
-                                                        Colour = Color4.Black
-                                                    },
-                                                    nameTextBox = new BasicTextBox
-                                                    {
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Position = new Vector2(-250,50),
-                                                        Height = 35,
-                                                        Width = 400,
-                                                    },
-                                                    new SpriteText
-                                                    {
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Position = new Vector2(-675,130),
-                                                        Text = "Descripcion:",
-                                                        Colour = Color4.Black
-                                                    },
-                                                    new BasicTextBox
-                                                    {
-                                                        Anchor = Anchor.TopRight,
-                                                        Origin = Anchor.TopRight,
-                                                        Position = new Vector2(-250, 120),
-                                                        Height = 200,
-                                                        Width = 400
+                                                        new Box
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Color4.Cyan
+                                                        },
+                                                        new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Padding = new MarginPadding() { Horizontal = 60, Vertical = 50 },
+                                                            Children = new Drawable[]
+                                                            {
+                                                                new ImagePreviewContainer(),
+                                                                new SpriteText
+                                                                {
+                                                                    Anchor = Anchor.TopRight,
+                                                                    Origin = Anchor.TopRight,
+                                                                    Position = new Vector2(-675,10),
+                                                                    Text = "Nombre:",
+                                                                    Colour = Color4.Black
+                                                                },
+                                                                nameTextBox = new BasicTextBox
+                                                                {
+                                                                    Anchor = Anchor.TopRight,
+                                                                    Origin = Anchor.TopRight,
+                                                                    Position = new Vector2(-250,0),
+                                                                    Height = 35,
+                                                                    Width = 400,
+                                                                },
+                                                                new SpriteText
+                                                                {
+                                                                    Anchor = Anchor.TopRight,
+                                                                    Origin = Anchor.TopRight,
+                                                                    Position = new Vector2(-675,80),
+                                                                    Text = "Descripcion:",
+                                                                    Colour = Color4.Black
+                                                                },
+                                                                new BasicTextBox
+                                                                {
+                                                                    Anchor = Anchor.TopRight,
+                                                                    Origin = Anchor.TopRight,
+                                                                    Position = new Vector2(-250, 70),
+                                                                    Height = 35,
+                                                                    Width = 400,
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                }
-                                            },
-                                            customElementsContainer = new Container
-                                            {
-                                                RelativeSizeAxes = Axes.X,
-                                                Height = 400,
-                                                Anchor = Anchor.BottomRight,
-                                                Origin = Anchor.BottomRight,
-                                                Children = new Drawable[]
+                                                },
+                                                customElementsContainer = new Container
                                                 {
-                                                    new Box
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Height = 400,
+                                                    Children = new Drawable[]
                                                     {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Colour = Color4.Fuchsia
+                                                        new Box
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Color4.Fuchsia
+                                                        }
                                                     }
                                                 }
                                             }

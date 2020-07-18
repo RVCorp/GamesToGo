@@ -32,7 +32,9 @@ namespace GamesToGo.Desktop.Project
 
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
-        public List<Image> Images = new List<Image>();
+        public BindableList<Image> Images = new BindableList<Image>();
+
+        public ChatRecommendation ChatRecommendation { get; set; }
 
         protected WorkingProject(ProjectInfo project, Storage store, TextureStore textures, Context database)
         {
@@ -51,6 +53,17 @@ namespace GamesToGo.Desktop.Project
                 if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
                     return null;
                 ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}")));
+
+                if (project.Relations != null)
+                {
+                    if (project.Relations.Count != ret.Images.Count)
+                        return null;
+                    foreach (var image in project.Relations)
+                    {
+                        if (!ret.Images.Any(im => im.ImageName == image.File.NewName))
+                            return null;
+                    }
+                }
             }
 
             ret.ProjectElements.ItemsAdded += _ => ret.updateDatabaseObjectInfo();
@@ -75,7 +88,7 @@ namespace GamesToGo.Desktop.Project
 
         public void AddImage(File image)
         {
-            Images.Add(new Image(textures, image));
+            Images.Add(new Image(store, image.NewName));
         }
 
         /// <summary>
@@ -89,15 +102,11 @@ namespace GamesToGo.Desktop.Project
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine("[Info]");
-            builder.AppendLine("CreatorID=-1");
-            builder.AppendLine($"Name={DatabaseObject.Name}");
-            builder.AppendLine($"MinNumberPlayers={DatabaseObject.MinNumberPlayers}");
-            builder.AppendLine($"MaxNumberPlayers={DatabaseObject.MaxNumberPlayers}");
-            builder.AppendLine($"ChatRecommendation=nothing");
+            builder.AppendLine($"ChatRecommendation={ChatRecommendation}");
             builder.AppendLine($"Files={Images.Count}");
             foreach (var img in Images)
             {
-                builder.AppendLine($"{img.DatabaseObject.NewName}");
+                builder.AppendLine($"{img.ImageName}");
             }
             builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
             builder.AppendLine();
@@ -118,8 +127,9 @@ namespace GamesToGo.Desktop.Project
 
             ProjectElement parsingElement = null;
 
-            foreach (var line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
+                var line = lines[i];
                 if (line.StartsWith('['))
                 {
                     switch (line.Trim(new char[] { '[', ']' }))
@@ -169,6 +179,53 @@ namespace GamesToGo.Desktop.Project
                         parsingElement.ID = int.Parse(idents[1]);
                         parsingElement.Name.Value = idents[2];
                         continue;
+                    }
+                    else
+                    {
+                        var tokens = line.Split('=');
+
+                        if (tokens.Length != 2)
+                            return false;
+
+                        switch(tokens[0])
+                        {
+                            case "Images":
+                                int amm = int.Parse(tokens[1]);
+                                for (int j = i + amm; i < j; i++)
+                                {
+                                    var parts = lines[i + 1].Split('=');
+                                    if (parts.Length != 2)
+                                        return false;
+                                    if (parts[1] == "null")
+                                        continue;
+                                    parsingElement.Images[parts[0]].Value = Images.First(im => im.ImageName == parts[1]);
+                                }
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    var tokens = line.Split('=');
+
+                    if (tokens.Length != 2)
+                        return false;
+
+                    switch (tokens[0])
+                    {
+                        case "ChatRecommendation":
+                            ChatRecommendation = Enum.Parse<ChatRecommendation>(tokens[1]);
+                            break;
+                        case "Files":
+                            int amm = int.Parse(tokens[1]);
+                            for(int j = i + amm; i < j; i++)
+                            {
+                                Images.Add(new Image(store, lines[i + 1]));
+                            }
+                            break;
                     }
                 }
             }
