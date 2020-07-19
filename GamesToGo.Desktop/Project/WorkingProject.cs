@@ -52,7 +52,8 @@ namespace GamesToGo.Desktop.Project
             {
                 if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
                     return null;
-                ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}")));
+                if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
+                    return null;
 
                 if (project.Relations != null)
                 {
@@ -198,7 +199,10 @@ namespace GamesToGo.Desktop.Project
                                         return false;
                                     if (parts[1] == "null")
                                         continue;
-                                    parsingElement.Images[parts[0]].Value = Images.First(im => im.ImageName == parts[1]);
+                                    if (Images.First(im => im.ImageName == parts[1]) is var image && image != null)
+                                        parsingElement.Images[parts[0]].Value = image;
+                                    else
+                                        return false;
                                 }
                                 break;
                         }
