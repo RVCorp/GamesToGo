@@ -67,9 +67,9 @@ namespace GamesToGo.Desktop
             }
             finally
             {
-                foreach (var p in dbContext.Projects) ;
-                foreach (var f in dbContext.Files) ;
-                foreach (var r in dbContext.Relations) ;
+                foreach (var _ in dbContext.Projects) ;
+                foreach (var _ in dbContext.Files) ;
+                foreach (var _ in dbContext.Relations) ;
             }
 
             //Ventana sin bordes, sin requerir modo exclusivo.
