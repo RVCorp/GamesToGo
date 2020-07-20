@@ -325,7 +325,19 @@ namespace GamesToGo.Desktop.Graphics
                 editing.BindValueChanged(newVal =>
                 {
                     if (newVal.NewValue?.Texture != null)
-                        image.RelativeSizeAxes = newVal.NewValue.Texture.Size.X > RenderSize.X - 2 || newVal.NewValue.Texture.Size.Y > RenderSize.Y - 2 ? Axes.Both : Axes.None;
+                    {
+                        if(newVal.NewValue.Texture.Size.X > RenderSize.X - 2 || newVal.NewValue.Texture.Size.Y > RenderSize.Y - 2)
+                        {
+                            image.Size = Vector2.One;
+                            image.RelativeSizeAxes = Axes.Both;
+                        }
+                        else
+                        {
+
+                            image.Size = newVal.NewValue.Texture.Size;
+                            image.RelativeSizeAxes = Axes.None;
+                        }
+                    }
                     image.Texture = newVal?.NewValue?.Texture;
                     if (image.Texture == null)
                     {
