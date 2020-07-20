@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using GamesToGo.Desktop.Overlays;
+﻿using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
@@ -11,10 +10,10 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using Image = GamesToGo.Desktop.Project.Image;
 using osuTK;
 using osuTK.Graphics;
 using GamesToGo.Desktop.Project.Elements;
+using Image = GamesToGo.Desktop.Project.Image;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -44,7 +43,7 @@ namespace GamesToGo.Desktop.Graphics
                 },
                 images = new FillFlowContainer<ImageChangerButton>
                 {
-                    Direction = FillDirection.Vertical,
+                    Direction = FillDirection.Horizontal,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Horizontal = 50 },
                     Spacing = new Vector2(100)
@@ -73,8 +72,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private void move(int value)
         {
-            //TODO: Mover contenedor de imagenes
-
+            images.MoveToX(value * -500, 250, Easing.OutQuint);
             leftMovementButton.Enabled.Value = value != 0;
             rightMovementButton.Enabled.Value = value != currentEditing.Value.Images.Count - 1;
         }
@@ -166,26 +164,123 @@ namespace GamesToGo.Desktop.Graphics
 
         private class ImageChangerButton : Button
         {
+            private const float draw_size = 400;
             private string imageName;
-            private DrawSizePreservingFillContainer content;
+            private Container content;
             private Container hoverContainer;
+            private Bindable<Image> editing = new Bindable<Image>();
+            private Sprite image;
+            private SpriteText changeImageText;
+            private SpriteText noImageText;
+
+            public Vector2 RenderSize
+            {
+                get;
+                private set;
+            }
 
             public Vector2 TargetSize
             {
-                set => content.TargetDrawSize = value;
+                set
+                {
+                    float ratio = 1;
+                    if (value.Y / (draw_size - 50) > value.X / draw_size)
+                    {
+                        if (value.Y > draw_size - 50)
+                            ratio = value.Y / (draw_size - 50);
+                    }
+                    else
+                    {
+                        if (value.X > draw_size)
+                            ratio = value.X / draw_size;
+                    }
+
+                    RenderSize = new Vector2(value.X / ratio, value.Y / ratio);
+                    content.Padding = new MarginPadding { Horizontal = (400 - RenderSize.X) / 2, Vertical = (400 - 50 - RenderSize.Y) / 2 };
+                }
             }
 
             public ImageChangerButton(string name, Vector2 size)
             {
                 imageName = name;
-                Size = new Vector2(400);
+                Size = new Vector2(draw_size);
                 Children = new Drawable[]
                 {
-                    content = new DrawSizePreservingFillContainer
+                    new GridContainer
                     {
-                        TargetDrawSize = size,
-                        BorderColour = Color4.White,
-                        BorderThickness = 2,
+                        RelativeSizeAxes = Axes.Both,
+                        RowDimensions = new Dimension[]
+                        {
+                            new Dimension(),
+                            new Dimension(GridSizeMode.Absolute, 50)
+                        },
+                        ColumnDimensions = new Dimension[]
+                        {
+                            new Dimension(),
+                        },
+                        Content = new Drawable[][]
+                        {
+                            new Drawable[]
+                            {
+                                new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Children = new Drawable[]
+                                    {
+                                        content = new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Child = new Container
+                                            {
+                                                Masking = true,
+                                                BorderColour = Color4.White,
+                                                BorderThickness = 3.5f,
+                                                RelativeSizeAxes = Axes.Both,
+                                                Children = new Drawable[]
+                                                {
+                                                    new Box
+                                                    {
+                                                        Colour = Color4.Black.Opacity(0),
+                                                        RelativeSizeAxes = Axes.Both,
+                                                    },
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Padding = new MarginPadding(2),
+                                                        Child =  image = new Sprite
+                                                        {
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            FillMode = FillMode.Fit,
+                                                        },
+                                                    }
+                                                }
+                                            }
+
+                                        },
+                                        noImageText = new SpriteText
+                                        {
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Font = new FontUsage(size: 40),
+                                            Text = "No se ha agregado imagen"
+                                        }
+                                    },
+                                }
+                            },
+                            new Drawable[]
+                            {
+                                new SpriteText
+                                {
+                                    Text = name,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Font = new FontUsage(size: 40)
+                                }
+                            }
+                        }
                     },
                     hoverContainer = new Container
                     {
@@ -205,26 +300,46 @@ namespace GamesToGo.Desktop.Graphics
                                 Icon = FontAwesome.Regular.Images,
                                 Size = new Vector2(60),
                             },
-                            new SpriteText
+                            changeImageText = new SpriteText
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.TopCentre,
-                                Text = "Cambiar Imagen",
                                 Font = new FontUsage(size: 40)
                             }
                         }
                     }
                 };
+
+                TargetSize = size;
             }
 
-            public ImageChangerButton(string name) : this(name, new Vector2(400))
+            public ImageChangerButton(string name) : this(name, new Vector2(200, 400))
             {
             }
 
             [BackgroundDependencyLoader]
-            private void load(ImagePickerOverlay imagePicker)
+            private void load(ImagePickerOverlay imagePicker, ProjectEditor editor)
             {
                 Action = () => imagePicker.QueryImage(imageName);
+                editing.BindTo(editor.CurrentEditingElement.Value.Images[imageName]);
+                editing.BindValueChanged(newVal =>
+                {
+                    if (newVal.NewValue?.Texture != null)
+                        image.RelativeSizeAxes = newVal.NewValue.Texture.Size.X > RenderSize.X - 2 || newVal.NewValue.Texture.Size.Y > RenderSize.Y - 2 ? Axes.Both : Axes.None;
+                    image.Texture = newVal?.NewValue?.Texture;
+                    if (image.Texture == null)
+                    {
+                        changeImageText.Text = "Añadir Imagen";
+                        noImageText.Alpha = 1;
+                        content.Alpha = 0;
+                    }
+                    else
+                    {
+                        changeImageText.Text = "Cambiar Imagen";
+                        noImageText.Alpha = 0;
+                        content.Alpha = 1;
+                    }
+                }, true);
             }
 
             protected override bool OnHover(HoverEvent e)
