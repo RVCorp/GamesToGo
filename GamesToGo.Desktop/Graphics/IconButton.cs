@@ -13,6 +13,8 @@ namespace GamesToGo.Desktop.Graphics
     {
         private readonly SpriteIcon icon;
         private readonly Box colourBox;
+        private Box hoverBox;
+
         public IconButton()
         {
             Masking = true;
@@ -25,7 +27,13 @@ namespace GamesToGo.Desktop.Graphics
                     colourBox = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = BackgroundColor,
+                        Colour = new Color4(100, 100, 100, 255),
+                    },
+                    hoverBox = new Box
+                    {
+                        Alpha = 0,
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = new Color4(100, 100, 100, 255),
                     },
                     new Container
                     {
@@ -47,13 +55,13 @@ namespace GamesToGo.Desktop.Graphics
 
         public IconUsage Icon { set => icon.Icon = value; }
 
-        public Color4 ButtonColour { get; set; }
+        public Color4 ButtonColour { set => hoverBox.Colour = value; }
 
-        public Color4 BackgroundColor { get; set; } = new Color4(100, 100, 100, 255);
+        public Color4 BackgroundColour { set => colourBox.Colour = value; }
 
         private void fadeToColour()
         {
-            colourBox.FadeColour(ButtonColour, 100);
+            hoverBox.FadeIn(100);
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -65,7 +73,7 @@ namespace GamesToGo.Desktop.Graphics
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            colourBox.FadeColour(BackgroundColor, 100);
+            hoverBox.FadeOut(100);
             base.OnHoverLost(e);
         }
     }
