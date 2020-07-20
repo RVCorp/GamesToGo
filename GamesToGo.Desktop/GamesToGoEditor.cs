@@ -74,7 +74,7 @@ namespace GamesToGo.Desktop
 
             //Ventana sin bordes, sin requerir modo exclusivo.
             config.GetBindable<WindowMode>(FrameworkSetting.WindowMode).Value = WindowMode.Borderless;
-            config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.Unlimited;
+            config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.VSync;
 
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
