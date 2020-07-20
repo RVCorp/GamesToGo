@@ -10,6 +10,9 @@ using System.Security.Cryptography;
 using System.Linq;
 using osu.Framework.IO.Stores;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Platform;
+using GamesToGo.Desktop.Overlays;
+using GamesToGo.Desktop.Project;
 
 namespace GamesToGo.Desktop
 {
@@ -37,11 +40,16 @@ namespace GamesToGo.Desktop
             dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         private Context dbContext;
+        private MultipleOptionOverlay optionsOverlay;
+        private SplashInfoOverlay splashOverlay;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
-        private void load(FrameworkConfigManager config) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
+        private void load(FrameworkConfigManager config, Storage store) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
+            Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
+            Textures.AddStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"files")));
+            Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
             var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
@@ -55,12 +63,13 @@ namespace GamesToGo.Desktop
             {
                 Host.Storage.DeleteDatabase(Name);
                 dbContext.Database.Migrate();
+                store.DeleteDirectory("files");
             }
             finally
             {
-                foreach (var p in dbContext.Projects) ;
-                foreach (var f in dbContext.Files) ;
-                foreach (var r in dbContext.Relations) ;
+                foreach (var _ in dbContext.Projects) ;
+                foreach (var _ in dbContext.Files) ;
+                foreach (var _ in dbContext.Relations) ;
             }
 
             //Ventana sin bordes, sin requerir modo exclusivo.
@@ -72,12 +81,22 @@ namespace GamesToGo.Desktop
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
             Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both });
+
+            Add(splashOverlay = new SplashInfoOverlay());
+
+            dependencies.Cache(splashOverlay);
+
+            Add(optionsOverlay = new MultipleOptionOverlay());
+
+            dependencies.Cache(optionsOverlay);
         }
 
         //Corrido cuando se termine de cargar el juego, justo antes de ser renderizado.
         protected override void LoadComplete()
         {
             base.LoadComplete();
+
+            ProjectElement.Textures = Textures;
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);
@@ -86,7 +105,7 @@ namespace GamesToGo.Desktop
         public static string HashBytes(byte[] bytes)
         {
             using SHA1Managed hasher = new SHA1Managed();
-            return string.Concat(hasher.ComputeHash(bytes).Select(by => by.ToString("x2")));
+            return string.Concat(hasher.ComputeHash(bytes).Select(by => by.ToString("X2")));
         }
     }
 }

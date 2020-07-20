@@ -1,28 +1,43 @@
 ﻿using System;
 using System.Threading;
-using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Logging;
+using osu.Framework.Platform;
 
 namespace GamesToGo.Desktop.Project
 {
     public class Image
     {
-        public readonly Lazy<Texture> Texture;
+        public Texture Texture => texture.Value;
+        private readonly Lazy<Texture> texture;
 
-        public readonly File DatabaseObject;
+        public readonly string ImageName;
 
         private TextureStore textures;
+        private Storage store;
 
-        public Image(TextureStore textures, File databaseObject)
+        private Image(string imageName)
+        {
+            texture = new Lazy<Texture>(getTexture, LazyThreadSafetyMode.ExecutionAndPublication);
+            ImageName = imageName;
+        }
+
+        public Image(TextureStore textures, string imageName) : this(imageName)
         {
             this.textures = textures;
-            Texture = new Lazy<Texture>(getTexture, LazyThreadSafetyMode.ExecutionAndPublication);
-            DatabaseObject = databaseObject;
+        }
+
+        public Image(Storage store, string imageName) : this(imageName)
+        {
+            this.store = store;
         }
 
         private Texture getTexture()
         {
-            return textures.Get($"files/{DatabaseObject.NewName}");
+            if (textures != null)
+                return textures.Get(ImageName);
+            else
+                return Texture.FromStream(store.GetStream($"files/{ImageName}"));
         }
     }
 }

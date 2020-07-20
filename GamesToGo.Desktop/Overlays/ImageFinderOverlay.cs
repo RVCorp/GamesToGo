@@ -20,6 +20,7 @@ namespace GamesToGo.Desktop.Overlays
 {
     public class ImageFinderOverlay : OverlayContainer
     {
+        private SplashInfoOverlay splashOverlay;
         private GameHost host;
         private Storage store;
         private Context database;
@@ -38,8 +39,6 @@ namespace GamesToGo.Desktop.Overlays
         private FillFlowContainer<ImageButton> filesContainer;
         private BasicScrollContainer itemsScrollContainer;
         private SpriteText currentDirectoryText;
-        private Container errorContainer;
-        private SpriteText errorText;
 
         private DependencyContainer dependencies;
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -48,12 +47,14 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host, WorkingProject project, Storage store, Context database)
+        private void load(GameHost host, WorkingProject project, Storage store, Context database, SplashInfoOverlay splashOverlay)
         {
+            this.splashOverlay = splashOverlay;
             this.host = host;
             this.project = project;
             this.store = store;
             this.database = database;
+
             dependencies.Cache(this);
 
             filesPath = store.GetFullPath("files/", true);
@@ -125,62 +126,47 @@ namespace GamesToGo.Desktop.Overlays
                             Margin = new MarginPadding(15),
                         },
                     }
-                },
-                new Container
-                {
-                    RelativeSizeAxes = Axes.X,
-                    Height = 50,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.TopCentre,
-                    Child = errorContainer = new Container
-                    {
-                        RelativePositionAxes = Axes.Y,
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Children = new Drawable[]
-                        {
-                            new Box
-                            {
-                                Colour = new Color4(44, 53, 119, 255),
-                                RelativeSizeAxes = Axes.Both,
-                            },
-                            errorText = new SpriteText
-                            {
-                                Margin = new MarginPadding(12),
-                                Font = new FontUsage(size: 30),
-                                Truncate = true,
-                                RelativeSizeAxes = Axes.X,
-                            }
-                        }
-                    }
-                },
+                }
             };
         }
 
         public void SelectImage(string path)
         {
             var finalName = GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(path));
+            var destinationPath = filesPath + finalName;
             DatabaseFile file;
-            if (project.Images.Any(i => i.DatabaseObject.NewName == finalName))
+
+            if (project.Images.Any(i => i.ImageName == finalName))
             {
                 ShowError("Esta imagen ya ha sido agregada");
+                return;
             }
+
             if (!store.Exists($"files/{finalName}"))
             {
-                System.IO.File.Copy(path, filesPath + finalName);
+                System.IO.File.Copy(path, destinationPath);
+            }
+            else if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(destinationPath)) != finalName)
+            {
+                System.IO.File.Delete(destinationPath);
+                System.IO.File.Copy(path, destinationPath);
+            }
+
+            if(database.Files.Any(f => f.NewName == finalName))
+            {
+                file = database.Files.FirstOrDefault(f => f.NewName == finalName);
+            }
+            else
+            {
                 database.Add(file = new DatabaseFile
                 {
                     OriginalName = Path.GetFileName(path),
                     NewName = finalName,
                     Type = "image",
                 });
+            }
 
-                database.Add(new FileRelation { File = file, Project = project.DatabaseObject });
-            }
-            else
-            {
-                file = database.Files.FirstOrDefault(f => f.NewName == finalName);
-            }
+            database.Add(new FileRelation { File = file, Project = project.DatabaseObject });
 
             project.AddImage(file);
             Hide();
@@ -207,11 +193,7 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ShowError(string error)
         {
-            errorText.Text = error;
-
-            errorContainer.MoveToY(-1, 400, Easing.OutCubic)
-                .Delay(5000)
-                .MoveToY(0, 400, Easing.OutCubic);
+            splashOverlay.Show(error, new Color4(44, 53, 119, 255));
         }
 
         public void ChangeToParent()
@@ -226,9 +208,6 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ChangeToDirectory(string directory)
         {
-            if (lastVisited == directory)
-                return;
-
             var newDirectories = new List<DirectoryButton>();
             var newFiles = new List<ImageButton>();
 
@@ -270,7 +249,6 @@ namespace GamesToGo.Desktop.Overlays
             lastVisited = directory;
 
             itemsScrollContainer.FadeOut(100);
-
 
             LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(nd, newFiles));
             LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, nf));

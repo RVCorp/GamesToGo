@@ -10,6 +10,8 @@ using osuTK;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
+using System.Linq;
+using osu.Framework.Platform;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -20,12 +22,14 @@ namespace GamesToGo.Desktop.Screens
     {
         private Container userInformation;
         private Context database;
-        private FillFlowContainer projectsList;
+        private Storage store;
+        private FillFlowContainer<ProjectSummaryContainer> projectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database)
+        private void load(Context database, Storage store)
         {
             this.database = database;
+            this.store = store;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -37,6 +41,11 @@ namespace GamesToGo.Desktop.Screens
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    ColumnDimensions = new Dimension[]
+                    {
+                        new Dimension(GridSizeMode.Relative, 0.25f),
+                        new Dimension(GridSizeMode.Distributed)
+                    },
                     Content = new []
                     {
                         new Drawable[]
@@ -103,50 +112,65 @@ namespace GamesToGo.Desktop.Screens
                                     }
                                 }
                             },
-                            new Container
+                            new GridContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable[]
+                                RowDimensions = new Dimension[]
                                 {
-                                    new BasicButton
+                                    new Dimension(),
+                                    new Dimension(GridSizeMode.AutoSize),
+                                },
+                                Content = new []
+                                {
+                                    new Drawable[]
                                     {
-                                        Text = "Crear Nuevo Proyecto",
-                                        BackgroundColour = new Color4 (145,144,144, 255),
-                                        BorderColour = Color4.Black,
-                                        BorderThickness = 2f,
-                                        RelativeSizeAxes = Axes.X,
-                                        Masking = true,
-                                        Height = 100,
-                                        Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.BottomCentre,
-                                        Action = createProject,
+                                        new BasicScrollContainer
+                                        {
+                                            Anchor = Anchor.TopCentre,
+                                            Origin = Anchor.TopCentre,
+                                            ClampExtension = 10,
+                                            Padding = new MarginPadding() { Top = 200, Horizontal = 150 },
+                                            RelativeSizeAxes = Axes.Both,
+                                            Child = projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                            {
+                                                BorderColour = Color4.Black,
+                                                BorderThickness = 3f,
+                                                Masking = true,
+                                                Anchor = Anchor.TopCentre,
+                                                Origin = Anchor.TopCentre,
+                                                Spacing = new Vector2(0, 7),
+                                                RelativeSizeAxes = Axes.X,
+                                                AutoSizeAxes = Axes.Y,
+                                                Direction = FillDirection.Vertical,
+                                            },
+                                        },
                                     },
-                                    projectsList = new FillFlowContainer
+                                    new Drawable[]
                                     {
-                                        BorderColour = Color4.Black,
-                                        BorderThickness = 3f,
-                                        Masking = true,
-                                        Height = 650,
-                                        Width = 1000,
-                                        Anchor = Anchor.TopCentre,
-                                        Origin = Anchor.TopCentre,
-                                        Position = new Vector2(0,200),
+                                        new BasicButton
+                                        {
+                                            Text = "Crear Nuevo Proyecto",
+                                            BackgroundColour = new Color4 (145,144,144, 255),
+                                            BorderColour = Color4.Black,
+                                            BorderThickness = 2f,
+                                            RelativeSizeAxes = Axes.X,
+                                            Masking = true,
+                                            Height = 100,
+                                            Anchor = Anchor.BottomCentre,
+                                            Origin = Anchor.BottomCentre,
+                                            Action = createProject,
+                                        }
                                     }
                                 }
                             }
                         }
-                    },
-                    ColumnDimensions = new Dimension[]
-                    {
-                        new Dimension(GridSizeMode.Relative, 0.25f),
-                        new Dimension(GridSizeMode.Distributed)
                     }
                 }
             };
 
-            foreach (var project in database.Projects)
+            foreach (var proj in database.Projects)
             {
-                projectsList.Add(new ProjectDescriptionButton(project) { Action = () => openProject(project) });
+                projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
             }
         }
 
@@ -155,14 +179,24 @@ namespace GamesToGo.Desktop.Screens
             userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
         }
 
-        private void openProject(ProjectInfo project)
+        public void OpenProject(WorkingProject project)
         {
             this.Push(new ProjectEditor(project));
+        }
+        public void DeleteProject(ProjectInfo project)
+        {
+            if (project.Relations != null)
+                database.Relations.RemoveRange(project.Relations);
+            projectsList.Remove(projectsList.Children.First(p => p.ProjectInfo.LocalProjectID == project.LocalProjectID));
+            store.Delete($"files/{project.File.NewName}");
+            database.Files.Remove(project.File);
+            database.Projects.Remove(project);
+            database.SaveChanges();
         }
 
         private void createProject()
         {
-            openProject(new ProjectInfo() { Name = "Nuevo Proyecto" });
+            OpenProject(null);
         }
     }
 }

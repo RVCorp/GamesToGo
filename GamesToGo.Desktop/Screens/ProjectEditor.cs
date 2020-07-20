@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -30,37 +31,43 @@ namespace GamesToGo.Desktop.Screens
         private DependencyContainer dependencies;
         private Storage store;
         private Context database;
+        private SplashInfoOverlay splashOverlay;
         private WorkingProject workingProject;
         private EditorTabChanger tabsBar;
-        private readonly ProjectInfo info;
-
+        private ImageFinderOverlay imageFinder;
+        private ImagePickerOverlay imagePicker;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         {
             return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
         }
 
-        public ProjectEditor(ProjectInfo project)
+        public ProjectEditor(WorkingProject project)
         {
-            info = project;
+            workingProject = project;
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Storage store, Context database)
+        private void load(TextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay)
         {
             this.store = store;
             this.database = database;
+            this.splashOverlay = splashOverlay;
 
+            if (workingProject == null)
+            {
+                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto" }, store, textures, database);
+                SaveProject(false);
+            }
 
-            workingProject = new WorkingProject(info, store, textures);
-
-            if (info.File == null)
-                SaveProject();
+            dependencies.Cache(workingProject);
+            dependencies.Cache(this);
 
             InternalChildren = new[]
             {
                 new Container
                 {
+                    Depth = 4,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding
                     {
@@ -73,6 +80,7 @@ namespace GamesToGo.Desktop.Screens
                 },
                 new Container
                 {
+                    Depth = 3,
                     RelativeSizeAxes = Axes.X,
                     Height = 30,
                     Children = new Drawable[]
@@ -85,13 +93,22 @@ namespace GamesToGo.Desktop.Screens
                         tabsBar = new EditorTabChanger(),
                     },
                 },
+                imageFinder = new ImageFinderOverlay
+                {
+                    Depth = 1
+                }
             };
 
             tabsBar.Current.ValueChanged += changeEditorScreen;
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
 
-            dependencies.Cache(workingProject);
-            dependencies.Cache(this);
+            dependencies.Cache(imageFinder);
+
+            AddInternal(imagePicker = new ImagePickerOverlay
+            {
+                Depth = 2
+            });
+            dependencies.Cache(imagePicker);
 
             tabsBar.Current.Value = EditorScreenOption.Inicio;
         }
@@ -101,7 +118,7 @@ namespace GamesToGo.Desktop.Screens
             currentEditingElement.Value = element;
         }
 
-        public void SaveProject()
+        public void SaveProject(bool showSplashConfirmation = true)
         {
             string fileString = workingProject.SaveableString();
             string newFileName;
@@ -143,7 +160,23 @@ namespace GamesToGo.Desktop.Screens
             workingProject.DatabaseObject.File.NewName = newFileName;
 
             database.SaveChanges();
-            Console.WriteLine();
+
+            Random random = new Random();
+
+            if (showSplashConfirmation)
+                splashOverlay.Show("Se ha guardado el proyecto localmente", new Color4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Color4(80, 80, 80, 255)*/);
+
+            byte randomNumber()
+            {
+                return (byte)(random.NextDouble() * 255);
+            }
+        }
+
+        public void AddElement(ProjectElement element, bool startEditing)
+        {
+            workingProject.AddElement(element);
+            if (startEditing)
+                SelectElement(element);
         }
 
         private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)

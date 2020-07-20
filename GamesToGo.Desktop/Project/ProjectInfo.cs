@@ -28,9 +28,13 @@ namespace GamesToGo.Desktop.Project
 
         public int ModerationStatus { get; set; }
 
-        public int ComunityStatus { get; set; }
+        public CommunityStatus ComunityStatus { get; set; }
 
         public DateTime LastEdited { get; set; }
+
+        public FileRelation ImageRelation { get; set; }
+
+        public int? ImageRelationID { get; set; }
 
         public File File { get; set; }
 

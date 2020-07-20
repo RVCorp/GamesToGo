@@ -58,7 +58,7 @@ namespace GamesToGo.Desktop.Screens
                             Height = 200,
                             BackgroundColour = Color4.DodgerBlue,
                             Text = "Incompleto? Guarda y termina después",
-                            Action = editor.SaveProject,
+                            Action = () => editor.SaveProject(),
                         },
                         new BasicButton
                         {
