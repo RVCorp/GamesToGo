@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -13,5 +17,38 @@ namespace GamesToGo.Desktop.Screens
         {
             typeof(MainMenuScreen)
         };
+
+        private Container cosa;
+        private Vector2 speed = new Vector2(300, 300);
+
+        public SessionStartScreen()
+        {
+            AddInternal(cosa = new Container
+            {
+                Depth = 10,
+                Scale = new Vector2(2.5f, 1),
+                Masking = true,
+                CornerRadius = 50,
+                Size = new Vector2(100, 100),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Child = new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                }
+            });
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (cosa.BoundingBox.Left < 0 || cosa.BoundingBox.Right > BoundingBox.Right)
+                speed.X = -speed.X;
+            if (cosa.BoundingBox.Top < 0 || cosa.BoundingBox.Bottom > BoundingBox.Bottom)
+                speed.Y = -speed.Y;
+
+            cosa.MoveToOffset(speed * ((float)Clock.ElapsedFrameTime / 1000f));
+        }
     }
 }
