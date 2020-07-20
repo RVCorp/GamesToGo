@@ -10,6 +10,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
@@ -125,6 +126,14 @@ namespace GamesToGo.Desktop.Overlays
                             Font = new FontUsage(size: 40),
                             Margin = new MarginPadding(15),
                         },
+                        new IconButton
+                        {
+                            Action = Hide,
+                            Icon = FontAwesome.Solid.Times,
+                            ButtonColour = new Color4(145, 151, 243, 255),
+                            BackgroundColour = new Color4(100, 112, 206, 255),
+                            X = -10,
+                        }
                     }
                 }
             };
