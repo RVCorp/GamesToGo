@@ -168,15 +168,28 @@ namespace GamesToGo.Desktop.Screens
                 }
             };
 
-            foreach (var proj in database.Projects)
-            {
-                projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
-            }
+            populateProjectList();
         }
 
         protected override void LoadComplete()
         {
             userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
+        }
+
+        public override void OnResuming(IScreen last)
+        {
+            base.OnResuming(last);
+
+            projectsList.Clear();
+            populateProjectList();
+        }
+
+        private void populateProjectList()
+        {
+            foreach (var proj in database.Projects)
+            {
+                projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
+            }
         }
 
         public void OpenProject(WorkingProject project)
