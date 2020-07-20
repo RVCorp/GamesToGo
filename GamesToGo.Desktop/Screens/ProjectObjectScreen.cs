@@ -168,6 +168,8 @@ namespace GamesToGo.Desktop.Screens
                                         Origin = Anchor.Centre,
                                         Child = new SpriteText
                                         {
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
                                             Text = "Selecciona un objeto para editarlo",
                                         },
                                     },
