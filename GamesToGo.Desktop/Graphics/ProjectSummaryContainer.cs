@@ -32,6 +32,7 @@ namespace GamesToGo.Desktop.Graphics
         private WorkingProject workingProject;
 
         private IconUsage editIcon;
+        private Sprite projectImage;
 
         public Action<WorkingProject> EditAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
@@ -80,15 +81,42 @@ namespace GamesToGo.Desktop.Graphics
                             AutoSizeAxes = Axes.Both,
                             Children = new Drawable[]
                             {
-                                new SpriteText
+                                new FillFlowContainer
                                 {
-                                    Font = new FontUsage(size: main_text_size),
-                                    Text = ProjectInfo.Name,
-                                },
-                                new SpriteText
-                                {
-                                    Font = new FontUsage(size: small_text_size),
-                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
+                                    Direction = FillDirection.Horizontal,
+                                    Spacing = new Vector2(margin_size),
+                                    AutoSizeAxes = Axes.Both,
+                                    Children = new Drawable[]
+                                    {
+                                        new Container
+                                        {
+                                            Size = new Vector2(main_text_size + small_text_size + margin_size),
+                                            Child = projectImage = new Sprite
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                FillMode = FillMode.Fit
+                                            }
+                                        },
+                                        new FillFlowContainer
+                                        {
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(margin_size),
+                                            AutoSizeAxes = Axes.Both,
+                                            Children = new[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Font = new FontUsage(size: main_text_size),
+                                                    Text = ProjectInfo.Name,
+                                                },
+                                                new SpriteText
+                                                {
+                                                    Font = new FontUsage(size: small_text_size),
+                                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
+                                                },
+                                            }
+                                        }
+                                    }
                                 },
                                 new FillFlowContainer
                                 {
