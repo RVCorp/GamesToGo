@@ -4,6 +4,7 @@ using osu.Framework.Graphics.UserInterface;
 using GamesToGo.Desktop.Overlays;
 using osuTK.Graphics;
 using System;
+using osu.Framework.Extensions.Color4Extensions;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -25,7 +26,7 @@ namespace GamesToGo.Desktop.Graphics
                     BackgroundColour = new Color4(115, 115, 115, 255);
                     break;
                 case OptionType.Additive:
-                    HoverColour = Color4.LightGreen;
+                    HoverColour = Color4.Green.Opacity(150);
                     BackgroundColour = Color4.DarkGreen;
                     break;
             }
