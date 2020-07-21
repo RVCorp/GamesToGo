@@ -1,7 +1,6 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Project;
@@ -11,7 +10,6 @@ using System;
 using osu.Framework.Allocation;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Platform;
-using System.IO;
 using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Graphics.Textures;
 
@@ -25,8 +23,8 @@ namespace GamesToGo.Desktop.Graphics
         private const float small_height = main_text_size + small_text_size + margin_size * 3;
         private const float expanded_height = main_text_size + small_text_size * 2 + margin_size * 4;
         private Container buttonsContainer;
-        private ActionButton deleteButton;
-        private ActionButton editButton;
+        private IconButton deleteButton;
+        private IconButton editButton;
         private MultipleOptionOverlay optionsOverlay;
 
         public readonly ProjectInfo ProjectInfo;
@@ -34,6 +32,7 @@ namespace GamesToGo.Desktop.Graphics
         private WorkingProject workingProject;
 
         private IconUsage editIcon;
+        private Sprite projectImage;
 
         public Action<WorkingProject> EditAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
@@ -82,15 +81,42 @@ namespace GamesToGo.Desktop.Graphics
                             AutoSizeAxes = Axes.Both,
                             Children = new Drawable[]
                             {
-                                new SpriteText
+                                new FillFlowContainer
                                 {
-                                    Font = new FontUsage(size: main_text_size),
-                                    Text = ProjectInfo.Name,
-                                },
-                                new SpriteText
-                                {
-                                    Font = new FontUsage(size: small_text_size),
-                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
+                                    Direction = FillDirection.Horizontal,
+                                    Spacing = new Vector2(margin_size),
+                                    AutoSizeAxes = Axes.Both,
+                                    Children = new Drawable[]
+                                    {
+                                        new Container
+                                        {
+                                            Size = new Vector2(main_text_size + small_text_size + margin_size),
+                                            Child = projectImage = new Sprite
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                FillMode = FillMode.Fit
+                                            }
+                                        },
+                                        new FillFlowContainer
+                                        {
+                                            Direction = FillDirection.Vertical,
+                                            Spacing = new Vector2(margin_size),
+                                            AutoSizeAxes = Axes.Both,
+                                            Children = new[]
+                                            {
+                                                new SpriteText
+                                                {
+                                                    Font = new FontUsage(size: main_text_size),
+                                                    Text = ProjectInfo.Name,
+                                                },
+                                                new SpriteText
+                                                {
+                                                    Font = new FontUsage(size: small_text_size),
+                                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
+                                                },
+                                            }
+                                        }
+                                    }
                                 },
                                 new FillFlowContainer
                                 {
@@ -119,7 +145,7 @@ namespace GamesToGo.Desktop.Graphics
                     Alpha = 0,
                     Children = new Drawable[]
                     {
-                        new FillFlowContainer<ActionButton>
+                        new FillFlowContainer<IconButton>
                         {
                             AutoSizeAxes = Axes.Both,
                             Anchor = Anchor.CentreRight,
@@ -128,13 +154,13 @@ namespace GamesToGo.Desktop.Graphics
                             Direction = FillDirection.Horizontal,
                             Children = new []
                             {
-                                deleteButton = new ActionButton
+                                deleteButton = new IconButton
                                 {
                                     Icon = FontAwesome.Solid.TrashAlt,
                                     Action = showConfirmation,
                                     ButtonColour = Color4.DarkRed,
                                 },
-                                editButton = new ActionButton
+                                editButton = new IconButton
                                 {
                                     Icon = editIcon,
                                     Action = checkValidWorkingProject,
@@ -249,66 +275,6 @@ namespace GamesToGo.Desktop.Graphics
             }
 
             public StatText(IconUsage icon, int count) : this(icon, count.ToString()) { }
-        }
-
-        private class ActionButton : Button
-        {
-            private readonly SpriteIcon icon;
-            private readonly Box colourBox;
-            private static readonly Color4 base_colour = new Color4(100, 100, 100, 255);
-            public ActionButton()
-            {
-                Masking = true;
-                CornerRadius = margin_size;
-                Anchor = Anchor.CentreRight;
-                Origin = Anchor.CentreRight;
-                Size = new Vector2(main_text_size * 1.5f, main_text_size);
-                Children = new Drawable[]
-                {
-                    colourBox = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = base_colour,
-                    },
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Padding = new MarginPadding(margin_size),
-                        Child = icon = new SpriteIcon
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                        }
-                    }
-                };
-
-                Enabled.ValueChanged += e =>
-                {
-                    if (IsHovered && e.NewValue)
-                        fadeToColour();
-                };
-            }
-
-            public IconUsage Icon { set => icon.Icon = value; }
-
-            public Color4 ButtonColour { get; set; }
-
-            private void fadeToColour()
-            {
-                colourBox.FadeColour(ButtonColour, 100);
-            }
-
-            protected override bool OnHover(HoverEvent e)
-            {
-                if (Enabled.Value)
-                    fadeToColour();
-                return base.OnHover(e);
-            }
-
-            protected override void OnHoverLost(HoverLostEvent e)
-            {
-                colourBox.FadeColour(base_colour, 100);
-                base.OnHoverLost(e);
-            }
         }
     }
 }

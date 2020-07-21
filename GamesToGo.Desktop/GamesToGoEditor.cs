@@ -13,6 +13,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
+using System.Reflection;
 
 namespace GamesToGo.Desktop
 {
@@ -89,6 +90,18 @@ namespace GamesToGo.Desktop
             Add(optionsOverlay = new MultipleOptionOverlay());
 
             dependencies.Cache(optionsOverlay);
+        }
+
+        public override void SetHost(GameHost host)
+        {
+            base.SetHost(host);
+
+            switch (host.Window)
+            {
+                case DesktopGameWindow gameWindow:
+                    gameWindow.SetIconFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(GetType(), "gtg.ico"));
+                    break;
+            }
         }
 
         //Corrido cuando se termine de cargar el juego, justo antes de ser renderizado.
