@@ -98,9 +98,8 @@ namespace GamesToGo.Desktop
 
             switch (host.Window)
             {
-                // Legacy osuTK DesktopGameWindow
-                case DesktopGameWindow desktopGameWindow:
-                    desktopGameWindow.SetIconFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(GetType(), "gtg.ico"));
+                case DesktopGameWindow gameWindow:
+                    gameWindow.SetIconFromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(GetType(), "gtg.ico"));
                     break;
             }
         }
