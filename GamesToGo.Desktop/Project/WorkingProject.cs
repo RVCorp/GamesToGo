@@ -89,7 +89,7 @@ namespace GamesToGo.Desktop.Project
 
         public void AddImage(File image)
         {
-            Images.Add(new Image(store, image.NewName));
+            Images.Add(new Image(textures, image.NewName));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace GamesToGo.Desktop.Project
                             int amm = int.Parse(tokens[1]);
                             for(int j = i + amm; i < j; i++)
                             {
-                                Images.Add(new Image(store, lines[i + 1]));
+                                Images.Add(new Image(textures, lines[i + 1]));
                             }
                             break;
                     }

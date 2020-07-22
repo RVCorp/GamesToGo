@@ -43,7 +43,7 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(MultipleOptionOverlay optionsOverlay, Storage store, TextureStore textures, Context database)
+        private void load(MultipleOptionOverlay optionsOverlay, Storage store, LargeTextureStore textures, Context database)
         {
             this.optionsOverlay = optionsOverlay;
 

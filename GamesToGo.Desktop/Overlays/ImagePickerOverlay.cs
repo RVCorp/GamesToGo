@@ -118,8 +118,7 @@ namespace GamesToGo.Desktop.Overlays
                 }
             };
 
-            project.Images.ItemsAdded += _ => recreateItems();
-            project.Images.ItemsRemoved += _ => recreateItems();
+            project.Images.CollectionChanged += (_, __) => recreateItems();
 
             recreateItems();
         }
