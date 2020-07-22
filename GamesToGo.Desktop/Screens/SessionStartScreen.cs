@@ -90,11 +90,13 @@ namespace GamesToGo.Desktop.Screens
         private void showLogin()
         {
             loginOverlay.ToggleVisibility();
+            registerOverlay.Hide();
         }
 
         private void showRegistration()
         {
             registerOverlay.ToggleVisibility();
+            loginOverlay.Hide();
         }
 
         private void registerInServer()
