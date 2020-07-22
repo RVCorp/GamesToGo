@@ -80,7 +80,7 @@ namespace GamesToGo.Desktop.Screens
                         },
                     }
                 },
-                loginOverlay = new LoginOverlay(() => LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms))),
+                loginOverlay = new LoginOverlay(() => loginIntoServer()),
                 registerOverlay = new RegisterOverlay(() => registerInServer()),
                 new Box
                 {
@@ -125,6 +125,12 @@ namespace GamesToGo.Desktop.Screens
         private void registerInServer()
         {
 
+        }
+
+        private void loginIntoServer()
+        {
+
+            LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms));
         }
     }
 }
