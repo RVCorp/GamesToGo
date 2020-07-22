@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+	<ApplicationIcon>gtg.ico</ApplicationIcon>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <ApplicationIcon />
+
     <StartupObject />
   </PropertyGroup>
 
@@ -19,6 +20,10 @@
     <PackageReference Include="Veldrid.ImageSharp" Version="4.7.0" />
 	<EmbeddedResource Include="Textures\**\*.png" />
 	<EmbeddedResource Include="Textures\**\*.jpg" />
+  </ItemGroup>
+
+  <ItemGroup Label="Resources">
+    <EmbeddedResource Include="gtg.ico" />
   </ItemGroup>
 
 </Project>
