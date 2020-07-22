@@ -1,28 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Screens;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
-    class RegisterOverlay : OverlayContainer
+    public class RegisterOverlay : OverlayContainer
     {
         private Box shadowBox;
         private Container popUpContent;
 
-        public RegisterOverlay(Action Register)
+        public RegisterOverlay(Action registerAction)
         {
             Origin = Anchor.TopLeft;
             Anchor = Anchor.TopLeft;
             RelativeSizeAxes = Axes.Both;
             Width = 1 / 3f;
+            Alpha = 0;
             Children = new Drawable[]
             {
                 shadowBox = new Box
@@ -137,7 +134,7 @@ namespace GamesToGo.Desktop.Overlays
                                                 Text = "Registrarse",
                                                 Width = 100,
                                                 Height = 35,
-                                                Action = Register
+                                                Action = registerAction
                                             }
                                         }
                                     }
