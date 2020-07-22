@@ -1,4 +1,4 @@
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -204,7 +204,7 @@ namespace GamesToGo.Desktop.Screens
 
         public void OpenProject(WorkingProject project)
         {
-            this.Push(new ProjectEditor(project));
+            LoadComponentAsync(new ProjectEditor(project), pe => this.Push(pe));
         }
 
         public void DeleteProject(ProjectInfo project)

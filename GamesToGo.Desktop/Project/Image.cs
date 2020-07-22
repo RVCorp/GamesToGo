@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Logging;
-using osu.Framework.Platform;
 
 namespace GamesToGo.Desktop.Project
 {
@@ -17,7 +15,6 @@ namespace GamesToGo.Desktop.Project
         public readonly string ImageName;
 
         private TextureStore textures;
-        private Storage store;
 
         private Image(string imageName, bool fromStorage)
         {
@@ -31,12 +28,6 @@ namespace GamesToGo.Desktop.Project
             this.textures = textures;
         }
 
-        private Texture getTexture()
-        {
-            if (textures != null)
-                return textures.Get(fromStorage ? Path.Combine("files", ImageName) : ImageName);
-            else
-                return Texture.FromStream(store.GetStream($"files/{ImageName}"));
-        }
+        private Texture getTexture() => textures.Get(fromStorage ? Path.Combine("files", ImageName) : ImageName);
     }
 }
