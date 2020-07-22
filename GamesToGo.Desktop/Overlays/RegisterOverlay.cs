@@ -148,6 +148,7 @@ namespace GamesToGo.Desktop.Overlays
 
         protected override void PopIn()
         {
+            this.FadeIn();
             shadowBox.FadeTo(0.5f, 250);
             popUpContent.Delay(150)
                 .MoveToX(0, 250, Easing.OutQuint);
@@ -156,7 +157,8 @@ namespace GamesToGo.Desktop.Overlays
         protected override void PopOut()
         {
             shadowBox.FadeOut(250, Easing.OutExpo);
-            popUpContent.MoveToX(-1, 250, Easing.OutExpo);
+            popUpContent.MoveToX(-1, 250, Easing.OutExpo)
+                .OnComplete(_ => this.FadeOut());
         }
     }
 }
