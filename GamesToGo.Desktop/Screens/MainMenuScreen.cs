@@ -30,6 +30,7 @@ namespace GamesToGo.Desktop.Screens
         {
             this.database = database;
             this.store = store;
+            RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -37,7 +38,6 @@ namespace GamesToGo.Desktop.Screens
                     RelativeSizeAxes = Axes.Both,
                     Colour = new Color4 (106,100,104, 255)      //Color fondo general
                 },
-
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -171,9 +171,19 @@ namespace GamesToGo.Desktop.Screens
             populateProjectList();
         }
 
-        protected override void LoadComplete()
+        public override void OnEntering(IScreen last)
         {
-            userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
+            base.OnEntering(last);
+
+            this.MoveToX(-1).MoveToX(0, 1000, Easing.InOutQuart);
+            userInformation.MoveToX(-1).Then().Delay(300).MoveToX(0, 1500, Easing.OutBounce);
+        }
+
+        public override bool OnExiting(IScreen next)
+        {
+            this.MoveToX(-1, 1000, Easing.InOutQuart);
+
+            return base.OnExiting(next);
         }
 
         public override void OnResuming(IScreen last)

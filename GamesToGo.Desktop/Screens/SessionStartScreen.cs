@@ -1,5 +1,4 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -7,9 +6,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
-using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Overlays;
-using System;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,12 +20,13 @@ namespace GamesToGo.Desktop.Screens
 
         public SessionStartScreen()
         {
+            RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Color4 (106,100,104, 255)
                 },
                 new Container
                 {
@@ -82,9 +80,34 @@ namespace GamesToGo.Desktop.Screens
                         },
                     }
                 },
-                loginOverlay = new LoginOverlay(() => this.Push(new MainMenuScreen())),
-                registerOverlay = new RegisterOverlay(() => registerInServer())
+                loginOverlay = new LoginOverlay(() => LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms))),
+                registerOverlay = new RegisterOverlay(() => registerInServer()),
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    RelativePositionAxes = Axes.X,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreRight,
+                    Colour = new Color4 (106,100,104, 255),
+                    Width = 1,
+                }
             };
+        }
+
+        public override void OnSuspending(IScreen next)
+        {
+            base.OnSuspending(next);
+
+            this.MoveToX(1, 1000, Easing.InOutQuart);
+        }
+
+        public override void OnResuming(IScreen last)
+        {
+            base.OnResuming(last);
+
+            this.MoveToX(0, 1000, Easing.InOutQuart);
+            loginOverlay.Hide();
+            registerOverlay.Hide();
         }
 
         private void showLogin()
