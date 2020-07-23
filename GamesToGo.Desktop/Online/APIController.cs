@@ -272,15 +272,15 @@ namespace GamesToGo.Desktop.Online
                 base.PrePerform();
             }
         }
+    }
 
-        private class AuthToken
-        {
-            [JsonProperty(@"token")]
-            public string Token;
+    public class AuthToken
+    {
+        [JsonProperty(@"token")]
+        public string Token;
 
-            [JsonProperty(@"id")]
-            public int ID;
-        }
+        [JsonProperty(@"id")]
+        public int ID;
     }
 
     public enum APIState
