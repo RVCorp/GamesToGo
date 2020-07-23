@@ -12,6 +12,7 @@ using GamesToGo.Desktop.Overlays;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Graphics.Textures;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -26,13 +27,14 @@ namespace GamesToGo.Desktop.Graphics
         private IconButton deleteButton;
         private IconButton editButton;
         private MultipleOptionOverlay optionsOverlay;
-
+        private APIController api;
         public readonly ProjectInfo ProjectInfo;
 
         private WorkingProject workingProject;
 
         private IconUsage editIcon;
         private Sprite projectImage;
+        private SpriteText usernameBox;
 
         public Action<WorkingProject> EditAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
@@ -43,15 +45,21 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(MultipleOptionOverlay optionsOverlay, Storage store, LargeTextureStore textures, Context database)
+        private void load(MultipleOptionOverlay optionsOverlay, Storage store, LargeTextureStore textures, Context database, APIController api)
         {
             this.optionsOverlay = optionsOverlay;
+            this.api = api;
 
             workingProject = WorkingProject.Parse(ProjectInfo, store, textures, database);
             if (workingProject == null)
                 editIcon = FontAwesome.Solid.ExclamationTriangle;
             else
                 editIcon = FontAwesome.Solid.Edit;
+
+            var getCreator = new GetUserRequest(workingProject.DatabaseObject.CreatorID);
+            getCreator.Success += u => usernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
+
+            api.Queue(getCreator);
 
             Masking = true;
             CornerRadius = margin_size;
@@ -109,10 +117,9 @@ namespace GamesToGo.Desktop.Graphics
                                                     Font = new FontUsage(size: main_text_size),
                                                     Text = ProjectInfo.Name,
                                                 },
-                                                new SpriteText
+                                                usernameBox = new SpriteText
                                                 {
                                                     Font = new FontUsage(size: small_text_size),
-                                                    Text = $"De StUpIdUsErNaMe27 (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})",
                                                 },
                                             }
                                         }
@@ -193,7 +200,17 @@ namespace GamesToGo.Desktop.Graphics
                     new OptionItem
                     {
                         Text = "Nada",
-                        Action = () => { },
+                        Type = OptionType.Neutral,
+                    }
+                });
+            }
+            else if(api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            {
+                optionsOverlay.Show("Este proyecto no te pertenece, no puedes editarlo", new[]
+                {
+                    new OptionItem
+                    {
+                        Text = "Enterado",
                         Type = OptionType.Neutral,
                     }
                 });

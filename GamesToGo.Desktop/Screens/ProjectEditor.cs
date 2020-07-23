@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace GamesToGo.Desktop.Screens
         private Context database;
         private SplashInfoOverlay splashOverlay;
         private MultipleOptionOverlay optionOverlay;
+        private APIController api;
         private WorkingProject workingProject;
         private EditorTabChanger tabsBar;
         private ImageFinderOverlay imageFinder;
@@ -53,16 +55,17 @@ namespace GamesToGo.Desktop.Screens
         }
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay)
+        private void load(LargeTextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay, APIController api)
         {
             this.store = store;
             this.database = database;
             this.splashOverlay = splashOverlay;
             this.optionOverlay = optionOverlay;
+            this.api = api;
 
             if (workingProject == null)
             {
-                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto" }, store, textures, database);
+                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures, database);
                 SaveProject(false);
             }
 
