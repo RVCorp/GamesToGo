@@ -106,6 +106,8 @@ namespace GamesToGo.Desktop.Screens
             base.OnResuming(last);
 
             this.MoveToX(0, 1000, Easing.InOutQuart);
+            loginOverlay.Reset();
+            registerOverlay.Reset();
             loginOverlay.Hide();
             registerOverlay.Hide();
         }

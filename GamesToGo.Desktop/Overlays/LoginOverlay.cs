@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Screens;
+using GamesToGo.Desktop.Online;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
@@ -16,9 +15,15 @@ namespace GamesToGo.Desktop.Overlays
     {
         private Box shadowBox;
         private Container popUpContent;
+        private BasicTextBox usernameBox;
+        private BasicPasswordTextBox passwordBox;
+        private BasicButton loginButton;
+        private APIController api;
+        private Action nextScreenAction;
 
         public LoginOverlay(Action nextScreen)
         {
+            nextScreenAction = nextScreen;
             Origin = Anchor.TopRight;
             Anchor = Anchor.TopRight;
             RelativeSizeAxes = Axes.Both;
@@ -74,7 +79,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Text = "Usuario:"
                                         },
-                                        new BasicTextBox
+                                        usernameBox = new BasicTextBox
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
@@ -88,7 +93,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Text = "Contraseña:",
                                         },
-                                        new BasicPasswordTextBox
+                                        passwordBox = new BasicPasswordTextBox
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
@@ -102,14 +107,14 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
-                                            Child = new BasicButton
+                                            Child = loginButton = new BasicButton
                                             {
                                                 Origin = Anchor.BottomCentre,
                                                 Anchor = Anchor.BottomCentre,
                                                 Text = "Iniciar Sesión",
                                                 Width = 100,
                                                 Height = 35,
-                                                Action = nextScreen
+                                                Action = onlineLogin,
                                             }
                                         }
                                     }
@@ -119,8 +124,39 @@ namespace GamesToGo.Desktop.Overlays
                     }
                 }
             };
+
+            loginButton.Enabled.Value = false;
+
+            passwordBox.Current.BindValueChanged(checkUserPass);
+            usernameBox.Current.BindValueChanged(checkUserPass);
         }
 
+        internal void Reset()
+        {
+            passwordBox.Text = string.Empty;
+            usernameBox.Text = string.Empty;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(APIController api)
+        {
+            this.api = api;
+        }
+
+        private void onlineLogin()
+        {
+            var user = api.LocalUser;
+            user.BindValueChanged(_ => nextScreenAction());
+            api.Login(usernameBox.Text, passwordBox.Text);
+        }
+
+        private void checkUserPass(ValueChangedEvent<string> obj)
+        {
+            if (string.IsNullOrEmpty(passwordBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text))
+                loginButton.Enabled.Value = false;
+            else
+                loginButton.Enabled.Value = true;
+        }
 
         protected override void PopIn()
         {

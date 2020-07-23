@@ -14,6 +14,7 @@ using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using System.Reflection;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop
 {
@@ -44,6 +45,7 @@ namespace GamesToGo.Desktop
         private MultipleOptionOverlay optionsOverlay;
         private SplashInfoOverlay splashOverlay;
         private LargeTextureStore largeStore;
+        private APIController api;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
@@ -84,6 +86,10 @@ namespace GamesToGo.Desktop
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
             Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both });
+
+            Add(api = new APIController());
+
+            dependencies.Cache(api);
 
             Add(splashOverlay = new SplashInfoOverlay());
 

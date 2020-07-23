@@ -12,6 +12,7 @@ using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
 using System.Linq;
 using osu.Framework.Platform;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,13 +24,15 @@ namespace GamesToGo.Desktop.Screens
         private Container userInformation;
         private Context database;
         private Storage store;
+        private APIController api;
         private FillFlowContainer<ProjectSummaryContainer> projectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database, Storage store)
+        private void load(Context database, Storage store, APIController api)
         {
             this.database = database;
             this.store = store;
+            this.api = api;
             RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
@@ -78,7 +81,7 @@ namespace GamesToGo.Desktop.Screens
                                     },
                                     new SpriteText
                                     {
-                                        Text = "StUpIdUsErNaMe27",
+                                        Text = api.LocalUser.Value.Username,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,450)
@@ -108,7 +111,7 @@ namespace GamesToGo.Desktop.Screens
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,700),
-                                        Action = () => this.Exit(),
+                                        Action = logout,
                                     }
                                 }
                             },
@@ -169,6 +172,12 @@ namespace GamesToGo.Desktop.Screens
             };
 
             populateProjectList();
+        }
+
+        private void logout()
+        {
+            api.Logout();
+            this.Exit();
         }
 
         public override void OnEntering(IScreen last)

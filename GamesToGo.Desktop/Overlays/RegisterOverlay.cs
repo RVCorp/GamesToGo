@@ -146,6 +146,11 @@ namespace GamesToGo.Desktop.Overlays
             };
         }
 
+        internal void Reset()
+        {
+
+        }
+
         protected override void PopIn()
         {
             ClearTransforms();
