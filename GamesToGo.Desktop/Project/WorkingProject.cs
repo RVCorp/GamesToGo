@@ -13,8 +13,6 @@ namespace GamesToGo.Desktop.Project
     public class WorkingProject
     {
         private readonly TextureStore textures;
-        private readonly Context database;
-        private readonly Storage store;
 
         public ProjectInfo DatabaseObject { get; }
 
@@ -34,19 +32,19 @@ namespace GamesToGo.Desktop.Project
 
         public BindableList<Image> Images = new BindableList<Image>();
 
+        public Bindable<Image> Image { get; set; } = new Bindable<Image>();
+
         public ChatRecommendation ChatRecommendation { get; set; }
 
-        protected WorkingProject(ProjectInfo project, Storage store, TextureStore textures, Context database)
+        protected WorkingProject(ProjectInfo project, TextureStore textures)
         {
             DatabaseObject = project;
-            this.store = store;
             this.textures = textures;
-            this.database = database;
         }
 
-        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures, Context database)
+        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures)
         {
-            WorkingProject ret = new WorkingProject(project, store, textures, database);
+            WorkingProject ret = new WorkingProject(project, textures);
 
             if (project.File != null)
             {
@@ -109,6 +107,7 @@ namespace GamesToGo.Desktop.Project
             {
                 builder.AppendLine($"{img.ImageName}");
             }
+            builder.AppendLine($"Image={Image.Value?.ImageName ?? "null"}");
             builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
             builder.AppendLine();
 
@@ -229,6 +228,12 @@ namespace GamesToGo.Desktop.Project
                             {
                                 Images.Add(new Image(textures, lines[i + 1]));
                             }
+                            break;
+                        case "Image":
+                            if (tokens[1] == "null")
+                                continue;
+                            if (Images.First(im => im.ImageName == tokens[1]) is var image && image != null)
+                                Image.Value = image;
                             break;
                     }
                 }

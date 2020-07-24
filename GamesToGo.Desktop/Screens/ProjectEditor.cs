@@ -65,7 +65,7 @@ namespace GamesToGo.Desktop.Screens
 
             if (workingProject == null)
             {
-                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures, database);
+                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures);
                 SaveProject(false);
             }
 

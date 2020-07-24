@@ -50,7 +50,8 @@ namespace GamesToGo.Desktop.Graphics
             this.optionsOverlay = optionsOverlay;
             this.api = api;
 
-            workingProject = WorkingProject.Parse(ProjectInfo, store, textures, database);
+
+            workingProject = WorkingProject.Parse(ProjectInfo, store, textures);
             if (workingProject == null)
                 editIcon = FontAwesome.Solid.ExclamationTriangle;
             else
@@ -99,10 +100,13 @@ namespace GamesToGo.Desktop.Graphics
                                         new Container
                                         {
                                             Size = new Vector2(main_text_size + small_text_size + margin_size),
+                                            Masking = true,
+                                            CornerRadius = 20 * (main_text_size + small_text_size + margin_size) / 150,
                                             Child = projectImage = new Sprite
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                FillMode = FillMode.Fit
+                                                FillMode = FillMode.Fit,
+                                                Texture = workingProject.Image.Value?.Texture,
                                             }
                                         },
                                         new FillFlowContainer

@@ -37,6 +37,15 @@ namespace GamesToGo.Desktop.Screens
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    ColumnDimensions = new Dimension[]
+                    {
+                        new Dimension(),
+                    },
+                    RowDimensions = new Dimension[]
+                    {
+                        new Dimension(GridSizeMode.AutoSize),
+                        new Dimension()
+                    },
                     Content = new Drawable[][]
                     {
                         new Drawable[]
@@ -60,15 +69,24 @@ namespace GamesToGo.Desktop.Screens
                                                 RelativeSizeAxes = Axes.Both,
                                                 Colour = Color4.Black.Opacity(0.8f),
                                             },
+                                            new Container
+                                            {
+                                                Padding = new MarginPadding(15),
+                                                Size = new Vector2(180),
+                                                Child = new ImageChangerButton()
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                }
+                                            },
                                             new SpriteText
                                             {
                                                 Text = "Nombre del proyecto:",
-                                                Position = new Vector2(15,17)
+                                                Position = new Vector2(180, 17)
                                             },
                                             titleTextBox = new BasicTextBox
                                             {
                                                 Text = project.DatabaseObject.Name,
-                                                Position = new Vector2(175,10),
+                                                Position = new Vector2(340, 10),
                                                 Height = 35,
                                                 Width = 775,
                                             },
@@ -105,11 +123,11 @@ namespace GamesToGo.Desktop.Screens
                                             new SpriteText
                                             {
                                                 Text = "Descripción:",
-                                                Position = new Vector2(80,70)
+                                                Position = new Vector2(245,70)
                                             },
                                             new BasicTextBox        //Textbox de varios renglones
                                             {
-                                                Position = new Vector2(175,70),
+                                                Position = new Vector2(340,70),
                                                 Height = 100,
                                                 Width = 1732
                                             }
@@ -147,15 +165,6 @@ namespace GamesToGo.Desktop.Screens
                                 }
                             }
                         }
-                    },
-                    ColumnDimensions = new Dimension[]
-                    {
-                        new Dimension(),
-                    },
-                    RowDimensions = new Dimension[]
-                    {
-                        new Dimension(GridSizeMode.AutoSize),
-                        new Dimension()
                     },
                 }
             };
