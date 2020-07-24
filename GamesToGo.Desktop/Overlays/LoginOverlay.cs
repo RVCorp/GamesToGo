@@ -20,6 +20,7 @@ namespace GamesToGo.Desktop.Overlays
         private BasicButton loginButton;
         private APIController api;
         private Action nextScreenAction;
+        private Bindable<User> localUser = new Bindable<User>();
 
         public LoginOverlay(Action nextScreen)
         {
@@ -42,7 +43,7 @@ namespace GamesToGo.Desktop.Overlays
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                     RelativePositionAxes = Axes.X,
-                    X=1,
+                    X = 1,
                     Child = new Container
                     {
                         Anchor = Anchor.Centre,
@@ -114,7 +115,7 @@ namespace GamesToGo.Desktop.Overlays
                                                 Text = "Iniciar Sesión",
                                                 Width = 100,
                                                 Height = 35,
-                                                Action = onlineLogin,
+                                                Action = () => api.Login(usernameBox.Text, passwordBox.Text),
                                             }
                                         }
                                     }
@@ -131,7 +132,7 @@ namespace GamesToGo.Desktop.Overlays
             usernameBox.Current.BindValueChanged(checkUserPass);
         }
 
-        internal void Reset()
+        public void Reset()
         {
             passwordBox.Text = string.Empty;
             usernameBox.Text = string.Empty;
@@ -141,13 +142,8 @@ namespace GamesToGo.Desktop.Overlays
         private void load(APIController api)
         {
             this.api = api;
-        }
-
-        private void onlineLogin()
-        {
-            var user = api.LocalUser;
-            user.BindValueChanged(_ => nextScreenAction());
-            api.Login(usernameBox.Text, passwordBox.Text);
+            localUser.BindTo(api.LocalUser);
+            localUser.BindValueChanged(_ => nextScreenAction?.Invoke());
         }
 
         private void checkUserPass(ValueChangedEvent<string> obj)

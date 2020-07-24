@@ -134,18 +134,30 @@ namespace GamesToGo.Desktop.Screens
                                             ClampExtension = 10,
                                             Padding = new MarginPadding() { Top = 200, Horizontal = 150 },
                                             RelativeSizeAxes = Axes.Both,
-                                            Child = projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                            Child = new FillFlowContainer
                                             {
-                                                BorderColour = Color4.Black,
-                                                BorderThickness = 3f,
-                                                Masking = true,
                                                 Anchor = Anchor.TopCentre,
                                                 Origin = Anchor.TopCentre,
                                                 Spacing = new Vector2(0, 7),
                                                 RelativeSizeAxes = Axes.X,
                                                 AutoSizeAxes = Axes.Y,
                                                 Direction = FillDirection.Vertical,
-                                            },
+                                                Children = new Drawable[]
+                                                {
+                                                    projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                                    {
+                                                        BorderColour = Color4.Black,
+                                                        BorderThickness = 3f,
+                                                        Masking = true,
+                                                        Anchor = Anchor.TopCentre,
+                                                        Origin = Anchor.TopCentre,
+                                                        Spacing = new Vector2(0, 7),
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Direction = FillDirection.Vertical,
+                                                    },
+                                                }
+                                            }
                                         },
                                     },
                                     new Drawable[]

@@ -38,6 +38,7 @@ namespace GamesToGo.Desktop.Online
             Success?.Invoke(Result);
         }
     }
+
     public abstract class APIRequest
     {
         protected abstract string Target { get; }

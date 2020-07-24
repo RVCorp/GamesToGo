@@ -12,9 +12,20 @@ namespace GamesToGo.Desktop.Online
         public string Email { get; set; }
 
         [JsonProperty(@"UsertypeId")]
-        public int UserTypeID { get; set; }
+        public UserType UserType { get; set; }
 
         public string Image { get; set; }
 
+    }
+
+    public class PasswordedUser : User
+    {
+        public string Password { get; set; }
+    }
+
+    public enum UserType
+    {
+        User = 1,
+        Admin = 2,
     }
 }

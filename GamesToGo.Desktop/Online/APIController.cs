@@ -14,6 +14,7 @@ namespace GamesToGo.Desktop.Online
         public string Token;
         private string password;
         private string username;
+        private AddUserRequest registrableUser = null;
 
         public static string UserAgent { get; set; } = "gtg";
 
@@ -67,7 +68,14 @@ namespace GamesToGo.Desktop.Online
 
                     case APIState.Offline:
                     case APIState.Connecting:
-                        // work to restore a connection...
+
+                        if (registrableUser != null)
+                        {
+                            handleRequest(registrableUser);
+                            registrableUser = null;
+                            continue;
+                        }
+
                         if (!hasLogin)
                         {
                             State = APIState.Offline;
@@ -137,7 +145,6 @@ namespace GamesToGo.Desktop.Online
             {
                 req.Perform(this);
 
-                // we could still be in initialisation, at which point we don't want to say we're Online yet.
                 if (IsLoggedIn) State = APIState.Online;
 
                 failureCount = 0;
@@ -156,10 +163,8 @@ namespace GamesToGo.Desktop.Online
 
         private bool handleWebException(WebException we)
         {
-            HttpStatusCode statusCode = (we.Response as HttpWebResponse)?.StatusCode
-                                        ?? (we.Status == WebExceptionStatus.UnknownError ? HttpStatusCode.NotAcceptable : HttpStatusCode.RequestTimeout);
+            HttpStatusCode statusCode = (we.Response as HttpWebResponse)?.StatusCode ?? (we.Status == WebExceptionStatus.UnknownError ? HttpStatusCode.NotAcceptable : HttpStatusCode.RequestTimeout);
 
-            // special cases for un-typed but useful message responses.
             switch (we.Message)
             {
                 case "Unauthorized":
@@ -241,6 +246,11 @@ namespace GamesToGo.Desktop.Online
         {
             this.username = username;
             this.password = password;
+        }
+
+        public void Register(AddUserRequest userRequest)
+        {
+            registrableUser = userRequest;
         }
 
         public void Logout()

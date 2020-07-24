@@ -1,0 +1,29 @@
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using osu.Framework.IO.Network;
+
+namespace GamesToGo.Desktop.Online
+{
+    public class AddUserRequest : APIRequest<User>
+    {
+        private PasswordedUser user;
+
+        public AddUserRequest(PasswordedUser user)
+        {
+            this.user = user;
+        }
+
+        protected override WebRequest CreateWebRequest()
+        {
+            var req = base.CreateWebRequest();
+
+            req.Method = HttpMethod.Post;
+            req.AddRaw(JsonConvert.SerializeObject(user));
+            req.ContentType = "text/json";
+            return req;
+        }
+
+        protected override string Target => "Users";
+    }
+}

@@ -7,6 +7,7 @@ using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Overlays;
+using osu.Framework.Input.Events;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -81,7 +82,7 @@ namespace GamesToGo.Desktop.Screens
                     }
                 },
                 loginOverlay = new LoginOverlay(() => loginIntoServer()),
-                registerOverlay = new RegisterOverlay(() => registerInServer()),
+                registerOverlay = new RegisterOverlay(),
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -112,6 +113,13 @@ namespace GamesToGo.Desktop.Screens
             registerOverlay.Hide();
         }
 
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            loginOverlay.Hide();
+            registerOverlay.Hide();
+            return base.OnMouseDown(e);
+        }
+
         private void showLogin()
         {
             loginOverlay.ToggleVisibility();
@@ -124,14 +132,8 @@ namespace GamesToGo.Desktop.Screens
             loginOverlay.Hide();
         }
 
-        private void registerInServer()
-        {
-
-        }
-
         private void loginIntoServer()
         {
-
             LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms));
         }
     }
