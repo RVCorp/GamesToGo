@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -17,7 +18,7 @@ namespace GamesToGo.Desktop.Overlays
         private Container popUpContent;
         private BasicTextBox usernameBox;
         private BasicPasswordTextBox passwordBox;
-        private BasicButton loginButton;
+        private GamesToGoButton loginButton;
         private APIController api;
         private Action nextScreenAction;
         private Bindable<User> localUser = new Bindable<User>();
@@ -108,7 +109,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
-                                            Child = loginButton = new BasicButton
+                                            Child = loginButton = new GamesToGoButton
                                             {
                                                 Origin = Anchor.BottomCentre,
                                                 Anchor = Anchor.BottomCentre,

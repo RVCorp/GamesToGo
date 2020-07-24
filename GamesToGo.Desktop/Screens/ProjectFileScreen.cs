@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -43,14 +44,14 @@ namespace GamesToGo.Desktop.Screens
                     },
                     Children = new Drawable[]
                     {
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             RelativeSizeAxes = Axes.Y,
                             Width = 650,
                             BackgroundColour = Color4.DarkGreen,
                             Text = "Quieres compartir tu juego con la comunidad? Publica tu juego"
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
@@ -60,7 +61,7 @@ namespace GamesToGo.Desktop.Screens
                             Text = "Incompleto? Guarda y termina después",
                             Action = () => editor.SaveProject(),
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
@@ -70,7 +71,7 @@ namespace GamesToGo.Desktop.Screens
                             BackgroundColour = Color4.Linen,
                             Text = "Quieres un respaldo? Sube tu juego"
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,

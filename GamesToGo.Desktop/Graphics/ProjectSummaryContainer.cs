@@ -57,11 +57,6 @@ namespace GamesToGo.Desktop.Graphics
             else
                 editIcon = FontAwesome.Solid.Edit;
 
-            var getCreator = new GetUserRequest(workingProject.DatabaseObject.CreatorID);
-            getCreator.Success += u => usernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
-
-            api.Queue(getCreator);
-
             Masking = true;
             CornerRadius = margin_size;
             BorderColour = Color4.DarkGray;
@@ -106,7 +101,9 @@ namespace GamesToGo.Desktop.Graphics
                                             {
                                                 RelativeSizeAxes = Axes.Both,
                                                 FillMode = FillMode.Fit,
-                                                Texture = workingProject.Image.Value?.Texture,
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Texture = workingProject?.Image.Value?.Texture,
                                             }
                                         },
                                         new FillFlowContainer
@@ -182,6 +179,10 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 },
             };
+
+            var getCreator = new GetUserRequest(workingProject.DatabaseObject.CreatorID);
+            getCreator.Success += u => usernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
+            api.Queue(getCreator);
         }
 
         private void checkValidWorkingProject()

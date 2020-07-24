@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -20,7 +21,7 @@ namespace GamesToGo.Desktop.Overlays
         private BasicTextBox emailBox;
         private BasicPasswordTextBox passwordBox;
         private BasicPasswordTextBox confirmPasswordBox;
-        private BasicButton registerButton;
+        private GamesToGoButton registerButton;
         private APIController api;
         private SplashInfoOverlay infoOverlay;
         private readonly Color4 confirmationColor = new Color4(47, 69, 33, 255);
@@ -138,7 +139,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
-                                            Child = registerButton = new BasicButton
+                                            Child = registerButton = new GamesToGoButton
                                             {
                                                 Origin = Anchor.BottomCentre,
                                                 Anchor = Anchor.BottomCentre,
@@ -209,7 +210,6 @@ namespace GamesToGo.Desktop.Overlays
 
         protected override void PopIn()
         {
-            ClearTransforms();
             shadowBox.FadeTo(0.5f, 250);
             popUpContent.Delay(150)
                 .MoveToX(0, 250, Easing.OutQuint);

@@ -8,6 +8,7 @@ using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Input.Events;
+using GamesToGo.Desktop.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -51,7 +52,7 @@ namespace GamesToGo.Desktop.Screens
                             Origin = Anchor.TopCentre,
                             Position = new Vector2(0,100)
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Text = "Registrarse",
                             BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
@@ -65,7 +66,7 @@ namespace GamesToGo.Desktop.Screens
                             Position = new Vector2(100,200),
                             Action = showRegistration
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Text = "Iniciar Sesión",
                             BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation

@@ -8,7 +8,7 @@ using osu.Framework.Extensions.Color4Extensions;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class OptionButton : BasicButton
+    public class OptionButton : GamesToGoButton
     {
         public OptionButton(OptionItem option, Action action)
         {

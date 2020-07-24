@@ -86,7 +86,7 @@ namespace GamesToGo.Desktop.Screens
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,450)
                                     },
-                                    new BasicButton
+                                    new GamesToGoButton
                                     {
                                         Text = "Perfil",
                                         BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
@@ -99,7 +99,7 @@ namespace GamesToGo.Desktop.Screens
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,600)
                                     },
-                                    new BasicButton
+                                    new GamesToGoButton
                                     {
                                         Text = "Cerrar Sesión",
                                         BackgroundColour = new Color4 (106,100,104, 255),   //Color Boton userInformation
@@ -162,7 +162,7 @@ namespace GamesToGo.Desktop.Screens
                                     },
                                     new Drawable[]
                                     {
-                                        new BasicButton
+                                        new GamesToGoButton
                                         {
                                             Text = "Crear Nuevo Proyecto",
                                             BackgroundColour = new Color4 (145,144,144, 255),

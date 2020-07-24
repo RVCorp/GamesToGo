@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
@@ -7,6 +8,7 @@ using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -40,6 +42,7 @@ namespace GamesToGo.Desktop.Screens
         private MultipleOptionOverlay optionOverlay;
         private APIController api;
         private WorkingProject workingProject;
+        private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
         private ImageFinderOverlay imageFinder;
         private ImagePickerOverlay imagePicker;
@@ -68,6 +71,8 @@ namespace GamesToGo.Desktop.Screens
                 workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures);
                 SaveProject(false);
             }
+
+            initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
 
             dependencies.Cache(workingProject);
             dependencies.Cache(this);
@@ -260,6 +265,14 @@ namespace GamesToGo.Desktop.Screens
                         break;
                 }
             }
+
+            if (workingProject.DatabaseObject.Relations != null)
+            {
+                workingProject.DatabaseObject.Relations.Clear();
+                workingProject.DatabaseObject.Relations = initialRelations == null ? null : new List<FileRelation>(initialRelations);
+            }
+
+            database.SaveChanges();
         }
 
         private class CloseButton : Button
