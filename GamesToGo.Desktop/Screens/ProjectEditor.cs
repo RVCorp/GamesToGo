@@ -179,6 +179,8 @@ namespace GamesToGo.Desktop.Screens
 
             database.SaveChanges();
 
+            initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
+
             Random random = new Random();
 
             if (showSplashConfirmation)
