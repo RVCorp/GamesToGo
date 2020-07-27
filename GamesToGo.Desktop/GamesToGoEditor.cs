@@ -57,6 +57,7 @@ namespace GamesToGo.Desktop
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
             largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            largeStore.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
             largeStore.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             dependencies.Cache(largeStore);
 
