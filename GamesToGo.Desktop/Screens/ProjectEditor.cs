@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
@@ -137,6 +138,8 @@ namespace GamesToGo.Desktop.Screens
 
         public void SaveProject(bool showSplashConfirmation = true)
         {
+            database.SaveChanges();
+
             string fileString = workingProject.SaveableString();
             string newFileName;
             using (MemoryStream stream = new MemoryStream())
@@ -175,6 +178,8 @@ namespace GamesToGo.Desktop.Screens
             }
 
             workingProject.DatabaseObject.File.NewName = newFileName;
+            workingProject.DatabaseObject.ImageRelationID = workingProject.Image.Value == null ? null :
+                (int?)workingProject.DatabaseObject.Relations.First(r => r.File.NewName == workingProject.Image.Value.ImageName).RelationID;
 
             database.SaveChanges();
 

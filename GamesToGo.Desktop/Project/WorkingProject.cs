@@ -67,14 +67,8 @@ namespace GamesToGo.Desktop.Project
 
             ret.ProjectElements.ItemsAdded += _ => ret.updateDatabaseObjectInfo();
             ret.ProjectElements.ItemsRemoved += _ => ret.updateDatabaseObjectInfo();
-            ret.Image.BindValueChanged(ret.imageChanged, false);
 
             return ret;
-        }
-
-        private void imageChanged(ValueChangedEvent<Image> val)
-        {
-            DatabaseObject.ImageRelationID = val.NewValue == null ? null : (int?)DatabaseObject.Relations.First(r => r.File.NewName == val.NewValue.ImageName).RelationID;
         }
 
         private void updateDatabaseObjectInfo()
