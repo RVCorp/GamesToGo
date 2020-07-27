@@ -41,6 +41,6 @@ namespace GamesToGo.Desktop.Project
 
         public int FileID { get; set; }
 
-        public ICollection<FileRelation> Relations { get; set; }
+        public ICollection<FileRelation> Relations { get; set; } = new List<FileRelation>();
     }
 }

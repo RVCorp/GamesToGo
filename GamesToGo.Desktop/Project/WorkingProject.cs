@@ -48,10 +48,17 @@ namespace GamesToGo.Desktop.Project
 
             if (project.File != null)
             {
-                if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
+                try
+                {
+                    if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
+                        return null;
+                    if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
+                        return null;
+                }
+                catch
+                {
                     return null;
-                if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
-                    return null;
+                }
 
                 if (project.Relations != null)
                 {
@@ -67,6 +74,8 @@ namespace GamesToGo.Desktop.Project
 
             ret.ProjectElements.ItemsAdded += _ => ret.updateDatabaseObjectInfo();
             ret.ProjectElements.ItemsRemoved += _ => ret.updateDatabaseObjectInfo();
+
+            ret.updateDatabaseObjectInfo();
 
             return ret;
         }

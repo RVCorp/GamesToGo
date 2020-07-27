@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GamesToGo.Desktop.Online
 {
-    public class Project
+    public class OnlineProject
     {
         public int Id { get; set; }
         public string Image { get; set; }
