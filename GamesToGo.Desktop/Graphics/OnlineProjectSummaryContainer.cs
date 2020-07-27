@@ -33,6 +33,7 @@ namespace GamesToGo.Desktop.Graphics
         private Sprite projectImage;
         private SpriteText usernameBox;
         private SpriteText projectName;
+        private SpriteIcon loadingIcon;
 
         public Action<WorkingProject> EditAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
@@ -89,12 +90,24 @@ namespace GamesToGo.Desktop.Graphics
                                             Size = new Vector2(main_text_size + small_text_size + margin_size),
                                             Masking = true,
                                             CornerRadius = 20 * (main_text_size + small_text_size + margin_size) / 150,
-                                            Child = projectImage = new Sprite
+                                            Children = new Drawable[]
                                             {
-                                                RelativeSizeAxes = Axes.Both,
-                                                FillMode = FillMode.Fit,
-                                                Anchor = Anchor.Centre,
-                                                Origin = Anchor.Centre,
+                                                projectImage = new Sprite
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    FillMode = FillMode.Fit,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                },
+                                                loadingIcon = new SpriteIcon
+                                                {
+                                                    Size = new Vector2(.7f),
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    FillMode = FillMode.Fit,
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    Icon = FontAwesome.Solid.Spinner
+                                                }
                                             }
                                         },
                                         new FillFlowContainer
@@ -119,7 +132,7 @@ namespace GamesToGo.Desktop.Graphics
                                 new SpriteText
                                 {
                                     Font = new FontUsage(size: small_text_size),
-                                    Text = "Este proyecto está en el servidor, descrgalo para editarlo!",
+                                    Text = "Este proyecto está en el servidor, descargalo para editarlo!",
                                 }
                             }
                         }
@@ -154,15 +167,21 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 },
             };
-
+            loadingIcon.RotateTo(0).Then().RotateTo(360,1500).Loop();
             var getProject = new GetProjectRequest(ID);
-            getProject.Success += u =>
+            getProject.Success += async u =>
             {
                 usernameBox.Text = $"Ultima vez editado {u.LastEdited:dd/MM/yyyy HH:mm}";
                 projectName.Text = u.Name;
-                projectImage.Texture = textures.Get($"https://gamestogo.company/api/Games/DownloadFile/{u.Image}");
+                loadingImage(await textures.GetAsync($"https://gamestogo.company/api/Games/DownloadFile/{u.Image}"));
             };
             api.Queue(getProject);
+        }
+
+        private void loadingImage(Texture texture)
+        {
+            loadingIcon.FadeOut();
+            projectImage.Texture = texture;
         }
 
         protected void DownloadProject()
