@@ -10,7 +10,6 @@ using System;
 using osu.Framework.Allocation;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Platform;
-using GamesToGo.Desktop.Database.Models;
 using osu.Framework.Graphics.Textures;
 using GamesToGo.Desktop.Online;
 
@@ -45,11 +44,10 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(MultipleOptionOverlay optionsOverlay, Storage store, LargeTextureStore textures, Context database, APIController api)
+        private void load(MultipleOptionOverlay optionsOverlay, Storage store, LargeTextureStore textures, APIController api)
         {
             this.optionsOverlay = optionsOverlay;
             this.api = api;
-
 
             workingProject = WorkingProject.Parse(ProjectInfo, store, textures);
             if (workingProject == null)

@@ -8,7 +8,6 @@ using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -190,6 +189,24 @@ namespace GamesToGo.Desktop.Screens
             {
                 return (byte)(random.NextDouble() * 255);
             }
+        }
+
+        public void UploadProject()
+        {
+            SaveProject(false);
+            splashOverlay.Show("Proyecto guardado localmente, subiendo al servidor...", Color4.ForestGreen);
+            var req = new UploadGameRequest(workingProject.DatabaseObject, store);
+            req.Failure += e =>
+            {
+                splashOverlay.Show("Hubo un problema al subir el proyecto al servidor", Color4.DarkRed);
+            };
+            req.Success += res =>
+            {
+                workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
+                splashOverlay.Show("Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Color4.ForestGreen);
+                database.SaveChanges();
+            };
+            api.Queue(req);
         }
 
         public void AddElement(ProjectElement element, bool startEditing)

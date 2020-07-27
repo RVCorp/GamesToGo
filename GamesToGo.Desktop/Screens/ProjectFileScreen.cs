@@ -69,7 +69,8 @@ namespace GamesToGo.Desktop.Screens
                             Width = 650,
                             Height = 200,
                             BackgroundColour = Color4.Linen,
-                            Text = "Quieres un respaldo? Sube tu juego"
+                            Text = "Quieres un respaldo? Sube tu juego",
+                            Action = editor.UploadProject,
                         },
                         new GamesToGoButton
                         {
