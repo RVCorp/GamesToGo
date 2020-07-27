@@ -13,6 +13,7 @@ using GamesToGo.Desktop.Project;
 using System.Linq;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Online;
+using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -26,6 +27,7 @@ namespace GamesToGo.Desktop.Screens
         private Storage store;
         private APIController api;
         private FillFlowContainer<ProjectSummaryContainer> projectsList;
+        private FillFlowContainer<OnlineProjectSummaryContainer> onlineProjectsList;
 
         [BackgroundDependencyLoader]
         private void load(Context database, Storage store, APIController api)
@@ -156,6 +158,18 @@ namespace GamesToGo.Desktop.Screens
                                                         AutoSizeAxes = Axes.Y,
                                                         Direction = FillDirection.Vertical,
                                                     },
+                                                    onlineProjectsList = new FillFlowContainer<OnlineProjectSummaryContainer>
+                                                    {
+                                                        BorderColour = Color4.Black,
+                                                        BorderThickness = 3f,
+                                                        Masking = true,
+                                                        Anchor = Anchor.TopCentre,
+                                                        Origin = Anchor.TopCentre,
+                                                        Spacing = new Vector2(0, 7),
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Direction = FillDirection.Vertical,
+                                                    }
                                                 }
                                             }
                                         },
@@ -211,6 +225,7 @@ namespace GamesToGo.Desktop.Screens
         {
             base.OnResuming(last);
 
+            onlineProjectsList.Clear();
             projectsList.Clear();
             populateProjectList();
         }
@@ -221,6 +236,16 @@ namespace GamesToGo.Desktop.Screens
             {
                 projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
             }
+
+            var getProjects = new GetAllProjectsRequest();
+            getProjects.Success += u =>
+            {
+                foreach (var proj in u)
+                {
+                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj.Id));
+                }
+            };
+            api.Queue(getProjects);
         }
 
         public void OpenProject(WorkingProject project)
