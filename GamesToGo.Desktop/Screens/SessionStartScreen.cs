@@ -1,5 +1,4 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -7,9 +6,9 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
-using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Overlays;
-using System;
+using osu.Framework.Input.Events;
+using GamesToGo.Desktop.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,12 +22,13 @@ namespace GamesToGo.Desktop.Screens
 
         public SessionStartScreen()
         {
+            RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Color4 (106,100,104, 255)
                 },
                 new Container
                 {
@@ -52,7 +52,7 @@ namespace GamesToGo.Desktop.Screens
                             Origin = Anchor.TopCentre,
                             Position = new Vector2(0,100)
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Text = "Registrarse",
                             BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
@@ -66,7 +66,7 @@ namespace GamesToGo.Desktop.Screens
                             Position = new Vector2(100,200),
                             Action = showRegistration
                         },
-                        new BasicButton
+                        new GamesToGoButton
                         {
                             Text = "Iniciar Sesión",
                             BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
@@ -83,29 +83,59 @@ namespace GamesToGo.Desktop.Screens
                     }
                 },
                 loginOverlay = new LoginOverlay(() => loginIntoServer()),
-                registerOverlay = new RegisterOverlay(() => registerInServer())
+                registerOverlay = new RegisterOverlay(),
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    RelativePositionAxes = Axes.X,
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreRight,
+                    Colour = new Color4 (106,100,104, 255),
+                    Width = 1,
+                }
             };
+        }
+
+        public override void OnSuspending(IScreen next)
+        {
+            base.OnSuspending(next);
+
+            this.MoveToX(1, 1000, Easing.InOutQuart);
+        }
+
+        public override void OnResuming(IScreen last)
+        {
+            base.OnResuming(last);
+
+            this.MoveToX(0, 1000, Easing.InOutQuart);
+            loginOverlay.Reset();
+            registerOverlay.Reset();
+            loginOverlay.Hide();
+            registerOverlay.Hide();
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            loginOverlay.Hide();
+            registerOverlay.Hide();
+            return base.OnMouseDown(e);
         }
 
         private void showLogin()
         {
             loginOverlay.ToggleVisibility();
+            registerOverlay.Hide();
         }
 
         private void showRegistration()
         {
             registerOverlay.ToggleVisibility();
-        }
-
-        private void registerInServer()
-        {
-
+            loginOverlay.Hide();
         }
 
         private void loginIntoServer()
         {
-
-            this.Push(new MainMenuScreen());
+            LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms));
         }
     }
 }

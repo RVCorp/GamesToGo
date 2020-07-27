@@ -13,6 +13,7 @@ using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using GamesToGo.Desktop.Screens;
+using System;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -118,8 +119,7 @@ namespace GamesToGo.Desktop.Overlays
                 }
             };
 
-            project.Images.ItemsAdded += _ => recreateItems();
-            project.Images.ItemsRemoved += _ => recreateItems();
+            project.Images.CollectionChanged += (_, __) => recreateItems();
 
             recreateItems();
         }
@@ -140,7 +140,10 @@ namespace GamesToGo.Desktop.Overlays
 
         private void setImage(Image image)
         {
-            editing.Value.Images[targetElementImage].Value = image;
+            if (targetElementImage == null)
+                project.Image.Value = image;
+            else
+                editing.Value.Images[targetElementImage].Value = image;
             Hide();
         }
 
@@ -152,6 +155,12 @@ namespace GamesToGo.Desktop.Overlays
         public void QueryImage(string imageName)
         {
             targetElementImage = imageName;
+            Show();
+        }
+
+        public void QueryProjectImage()
+        {
+            targetElementImage = null;
             Show();
         }
 

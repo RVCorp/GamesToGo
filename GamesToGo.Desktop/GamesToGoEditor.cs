@@ -14,6 +14,7 @@ using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using System.Reflection;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop
 {
@@ -43,17 +44,20 @@ namespace GamesToGo.Desktop
         private Context dbContext;
         private MultipleOptionOverlay optionsOverlay;
         private SplashInfoOverlay splashOverlay;
+        private LargeTextureStore largeStore;
+        private APIController api;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
         private void load(FrameworkConfigManager config, Storage store) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
-            Textures.AddStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"files")));
+            Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
 
-            var largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
+            largeStore.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             dependencies.Cache(largeStore);
 
             try
@@ -83,6 +87,10 @@ namespace GamesToGo.Desktop
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
             Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both });
 
+            Add(api = new APIController());
+
+            dependencies.Cache(api);
+
             Add(splashOverlay = new SplashInfoOverlay());
 
             dependencies.Cache(splashOverlay);
@@ -109,7 +117,7 @@ namespace GamesToGo.Desktop
         {
             base.LoadComplete();
 
-            ProjectElement.Textures = Textures;
+            ProjectElement.Textures = largeStore;
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);

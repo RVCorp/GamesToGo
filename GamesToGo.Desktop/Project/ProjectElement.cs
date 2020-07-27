@@ -21,7 +21,7 @@ namespace GamesToGo.Desktop.Project
 
         public ProjectElement()
         {
-            DefaultImage = new Image(Textures, "Elements/" + DefaultImageName);
+            DefaultImage = new Image(Textures, "Elements/" + DefaultImageName, false);
         }
 
         public virtual string ToSaveable()

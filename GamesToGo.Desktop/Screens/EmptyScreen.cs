@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GamesToGo.Desktop.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -17,11 +18,11 @@ namespace GamesToGo.Desktop.Screens
     public class EmptyScreen : Screen
     {
         //Contenedor de reflujo automatico, contiene los botones para acceder a las siguientes pantallas a esta.
-        private readonly FillFlowContainer<BasicButton> nextScreensContainer;
+        private readonly FillFlowContainer<GamesToGoButton> nextScreensContainer;
         //Texto de muestra en la pantalla (Muestra nombre de pantalla).
         private readonly SpriteText screenText;
         //Boton para regresar a la pantalla anterior.
-        private readonly BasicButton backButton;
+        private readonly GamesToGoButton backButton;
 
         protected virtual bool ShouldShowExit => true;
 
@@ -37,7 +38,7 @@ namespace GamesToGo.Desktop.Screens
         {
             if (ShouldShowExit)
             {
-                AddInternal(backButton = new BasicButton
+                AddInternal(backButton = new GamesToGoButton
                 {
                     AutoSizeAxes = Axes.X,          //Botones del tamaño justo para el texto que tengan...
                     Height = 50,                    //Con altura de 50 pixeles
@@ -56,7 +57,7 @@ namespace GamesToGo.Desktop.Screens
                     Origin = Anchor.Centre,
                     X = 1f / 16,                        //Ubicado un 16vo de pantalla a la derecha
                 },
-                nextScreensContainer = new FillFlowContainer<BasicButton> //Un contenedor de reflujo que contiene botones...
+                nextScreensContainer = new FillFlowContainer<GamesToGoButton> //Un contenedor de reflujo que contiene botones...
                 {
                     Direction = FillDirection.Vertical, //Que acomoda en vertical    
                     Anchor = Anchor.BottomRight, //Ubicado en la esquina inferior derecha
@@ -72,7 +73,7 @@ namespace GamesToGo.Desktop.Screens
                 foreach (var screen in FollowingScreens)
                 {
                     //En lo general, mismas propiedades que el boton de retorno.
-                    nextScreensContainer.Add(new BasicButton
+                    nextScreensContainer.Add(new GamesToGoButton
                     {
                         AutoSizeAxes = Axes.X,
                         Anchor = Anchor.BottomRight,

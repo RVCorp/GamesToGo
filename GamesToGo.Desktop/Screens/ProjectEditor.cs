@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +39,9 @@ namespace GamesToGo.Desktop.Screens
         private Context database;
         private SplashInfoOverlay splashOverlay;
         private MultipleOptionOverlay optionOverlay;
+        private APIController api;
         private WorkingProject workingProject;
+        private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
         private ImageFinderOverlay imageFinder;
         private ImagePickerOverlay imagePicker;
@@ -53,18 +57,21 @@ namespace GamesToGo.Desktop.Screens
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay)
+        private void load(LargeTextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay, APIController api)
         {
             this.store = store;
             this.database = database;
             this.splashOverlay = splashOverlay;
             this.optionOverlay = optionOverlay;
+            this.api = api;
 
             if (workingProject == null)
             {
-                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto" }, store, textures, database);
+                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures);
                 SaveProject(false);
             }
+
+            initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
 
             dependencies.Cache(workingProject);
             dependencies.Cache(this);
@@ -171,6 +178,8 @@ namespace GamesToGo.Desktop.Screens
 
             database.SaveChanges();
 
+            initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
+
             Random random = new Random();
 
             if (showSplashConfirmation)
@@ -180,6 +189,24 @@ namespace GamesToGo.Desktop.Screens
             {
                 return (byte)(random.NextDouble() * 255);
             }
+        }
+
+        public void UploadProject()
+        {
+            SaveProject(false);
+            splashOverlay.Show("Proyecto guardado localmente, subiendo al servidor...", Color4.ForestGreen);
+            var req = new UploadGameRequest(workingProject.DatabaseObject, store);
+            req.Failure += e =>
+            {
+                splashOverlay.Show("Hubo un problema al subir el proyecto al servidor", Color4.DarkRed);
+            };
+            req.Success += res =>
+            {
+                workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
+                splashOverlay.Show("Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Color4.ForestGreen);
+                database.SaveChanges();
+            };
+            api.Queue(req);
         }
 
         public void AddElement(ProjectElement element, bool startEditing)
@@ -257,6 +284,14 @@ namespace GamesToGo.Desktop.Screens
                         break;
                 }
             }
+
+            if (workingProject.DatabaseObject.Relations != null)
+            {
+                workingProject.DatabaseObject.Relations.Clear();
+                workingProject.DatabaseObject.Relations = initialRelations == null ? null : new List<FileRelation>(initialRelations);
+            }
+
+            database.SaveChanges();
         }
 
         private class CloseButton : Button

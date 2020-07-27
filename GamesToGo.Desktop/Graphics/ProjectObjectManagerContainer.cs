@@ -182,7 +182,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        private class AddElementButton : BasicButton
+        private class AddElementButton : GamesToGoButton
         {
             private readonly Container content = new Container
             {

@@ -12,6 +12,7 @@ using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Project;
 using System.Linq;
 using osu.Framework.Platform;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,13 +24,16 @@ namespace GamesToGo.Desktop.Screens
         private Container userInformation;
         private Context database;
         private Storage store;
+        private APIController api;
         private FillFlowContainer<ProjectSummaryContainer> projectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database, Storage store)
+        private void load(Context database, Storage store, APIController api)
         {
             this.database = database;
             this.store = store;
+            this.api = api;
+            RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -37,7 +41,6 @@ namespace GamesToGo.Desktop.Screens
                     RelativeSizeAxes = Axes.Both,
                     Colour = new Color4 (106,100,104, 255)      //Color fondo general
                 },
-
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -78,12 +81,12 @@ namespace GamesToGo.Desktop.Screens
                                     },
                                     new SpriteText
                                     {
-                                        Text = "StUpIdUsErNaMe27",
+                                        Text = api.LocalUser.Value.Username,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,450)
                                     },
-                                    new BasicButton
+                                    new GamesToGoButton
                                     {
                                         Text = "Perfil",
                                         BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
@@ -96,7 +99,7 @@ namespace GamesToGo.Desktop.Screens
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,600)
                                     },
-                                    new BasicButton
+                                    new GamesToGoButton
                                     {
                                         Text = "Cerrar Sesión",
                                         BackgroundColour = new Color4 (106,100,104, 255),   //Color Boton userInformation
@@ -108,7 +111,7 @@ namespace GamesToGo.Desktop.Screens
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
                                         Position = new Vector2(0,700),
-                                        Action = () => this.Exit(),
+                                        Action = logout,
                                     }
                                 }
                             },
@@ -131,23 +134,35 @@ namespace GamesToGo.Desktop.Screens
                                             ClampExtension = 10,
                                             Padding = new MarginPadding() { Top = 200, Horizontal = 150 },
                                             RelativeSizeAxes = Axes.Both,
-                                            Child = projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                            Child = new FillFlowContainer
                                             {
-                                                BorderColour = Color4.Black,
-                                                BorderThickness = 3f,
-                                                Masking = true,
                                                 Anchor = Anchor.TopCentre,
                                                 Origin = Anchor.TopCentre,
                                                 Spacing = new Vector2(0, 7),
                                                 RelativeSizeAxes = Axes.X,
                                                 AutoSizeAxes = Axes.Y,
                                                 Direction = FillDirection.Vertical,
-                                            },
+                                                Children = new Drawable[]
+                                                {
+                                                    projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                                    {
+                                                        BorderColour = Color4.Black,
+                                                        BorderThickness = 3f,
+                                                        Masking = true,
+                                                        Anchor = Anchor.TopCentre,
+                                                        Origin = Anchor.TopCentre,
+                                                        Spacing = new Vector2(0, 7),
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Direction = FillDirection.Vertical,
+                                                    },
+                                                }
+                                            }
                                         },
                                     },
                                     new Drawable[]
                                     {
-                                        new BasicButton
+                                        new GamesToGoButton
                                         {
                                             Text = "Crear Nuevo Proyecto",
                                             BackgroundColour = new Color4 (145,144,144, 255),
@@ -171,9 +186,25 @@ namespace GamesToGo.Desktop.Screens
             populateProjectList();
         }
 
-        protected override void LoadComplete()
+        private void logout()
         {
-            userInformation.MoveToX(-1).Then().MoveToX(0, 1500, Easing.OutBounce);
+            api.Logout();
+            this.Exit();
+        }
+
+        public override void OnEntering(IScreen last)
+        {
+            base.OnEntering(last);
+
+            this.MoveToX(-1).MoveToX(0, 1000, Easing.InOutQuart);
+            userInformation.MoveToX(-1).Then().Delay(300).MoveToX(0, 1500, Easing.OutBounce);
+        }
+
+        public override bool OnExiting(IScreen next)
+        {
+            this.MoveToX(-1, 1000, Easing.InOutQuart);
+
+            return base.OnExiting(next);
         }
 
         public override void OnResuming(IScreen last)
@@ -194,8 +225,9 @@ namespace GamesToGo.Desktop.Screens
 
         public void OpenProject(WorkingProject project)
         {
-            this.Push(new ProjectEditor(project));
+            LoadComponentAsync(new ProjectEditor(project), pe => this.Push(pe));
         }
+
         public void DeleteProject(ProjectInfo project)
         {
             if (project.Relations != null)
