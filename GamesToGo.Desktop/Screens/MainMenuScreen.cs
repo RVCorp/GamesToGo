@@ -3,7 +3,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
@@ -13,6 +12,7 @@ using GamesToGo.Desktop.Project;
 using System.Linq;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Online;
+using GamesToGo.Desktop.Overlays;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -28,7 +28,7 @@ namespace GamesToGo.Desktop.Screens
         private FillFlowContainer<ProjectSummaryContainer> projectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database, Storage store, APIController api)
+        private void load(Context database, Storage store, APIController api, SplashInfoOverlay infoOverlay)
         {
             this.database = database;
             this.store = store;
@@ -182,6 +182,10 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
+
+            var getGame = new DownloadProjectRequest(1, "A024C54D5D296168B1ED06430428A5CEFF3C2603", store);
+            getGame.Success += filename => infoOverlay.Show(store.GetFullPath(filename), Color4.Black);
+            api.Queue(getGame);
 
             populateProjectList();
         }
