@@ -196,7 +196,7 @@ namespace GamesToGo.Desktop.Overlays
             }
 
             [BackgroundDependencyLoader]
-            private void load(ImageFinderOverlay imageFinder)
+            private void load(ImageFinderOverlay imageFinder, WorkingProject project)
             {
                 if (image == null)
                 {
@@ -207,7 +207,7 @@ namespace GamesToGo.Desktop.Overlays
                         Size = new Vector2(60),
                         Icon = FontAwesome.Solid.Plus
                     });
-                    Action += imageFinder.Show;
+                    Action += () => imageFinder.Show(project);
                 }
                 else
                 {

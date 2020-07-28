@@ -33,6 +33,8 @@ namespace GamesToGo.Desktop.Overlays
 
         private string filesPath;
 
+        private Action<byte[]> selectionAction;
+
         private readonly string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
         private static string lastVisited;
         private FillFlowContainer<DirectoryButton> directoriesContainer;
@@ -47,11 +49,10 @@ namespace GamesToGo.Desktop.Overlays
         }
 
         [BackgroundDependencyLoader]
-        private void load(GameHost host, WorkingProject project, Storage store, Context database, SplashInfoOverlay splashOverlay)
+        private void load(GameHost host, Storage store, Context database, SplashInfoOverlay splashOverlay)
         {
             this.splashOverlay = splashOverlay;
             this.host = host;
-            this.project = project;
             this.store = store;
             this.database = database;
 
@@ -140,6 +141,19 @@ namespace GamesToGo.Desktop.Overlays
 
         public void SelectImage(string path)
         {
+            if (project != null)
+                selectProjectImage(path);
+            if (selectionAction != null)
+                selectArrayImage(path);
+        }
+
+        private void selectArrayImage(string path)
+        {
+            selectionAction?.Invoke(System.IO.File.ReadAllBytes(path));
+        }
+
+        private void selectProjectImage(string path)
+        {
             var finalName = GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(path));
             var destinationPath = filesPath + finalName;
             DatabaseFile file;
@@ -178,6 +192,20 @@ namespace GamesToGo.Desktop.Overlays
 
             project.AddImage(file);
             Hide();
+        }
+
+        public void Show(WorkingProject project)
+        {
+            this.project = project;
+            selectionAction = null;
+            base.Show();
+        }
+
+        public void Show(Action<byte[]> selectionAction)
+        {
+            this.selectionAction = selectionAction;
+            project = null;
+            base.Show();
         }
 
         protected override void PopIn()

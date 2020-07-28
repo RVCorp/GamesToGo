@@ -46,6 +46,7 @@ namespace GamesToGo.Desktop
         private SplashInfoOverlay splashOverlay;
         private LargeTextureStore largeStore;
         private APIController api;
+        private ImageFinderOverlay imageFinder;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
@@ -86,17 +87,21 @@ namespace GamesToGo.Desktop
             dependencies.CacheAs(this);
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
-            Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both });
+            Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both, Depth = 0 });
 
             Add(api = new APIController());
 
             dependencies.Cache(api);
 
-            Add(splashOverlay = new SplashInfoOverlay());
+            Add(splashOverlay = new SplashInfoOverlay() { Depth = -2 });
 
             dependencies.Cache(splashOverlay);
 
-            Add(optionsOverlay = new MultipleOptionOverlay());
+            Add(imageFinder = new ImageFinderOverlay() { Depth = -1 });
+
+            dependencies.Cache(imageFinder);
+
+            Add(optionsOverlay = new MultipleOptionOverlay() { Depth = -3 });
 
             dependencies.Cache(optionsOverlay);
         }
