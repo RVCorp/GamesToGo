@@ -77,10 +77,10 @@ namespace GamesToGo.Desktop.Screens
                                     new CircularContainer
                                     {
                                         Size = new Vector2(250),
-                                        Child = new Box         //Cambiar Box por Sprite
+                                        Child = new Sprite         //Cambiar Box por Sprite
                                         {
-                                            RelativeSizeAxes = Axes.Both
-                                            //FillMode= FillMode.Fill,
+                                            RelativeSizeAxes = Axes.Both,
+                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
                                         },
                                         BorderColour = Color4.Black,
                                         BorderThickness = 3.5f,
@@ -195,7 +195,7 @@ namespace GamesToGo.Desktop.Screens
                                             Height = 100,
                                             Anchor = Anchor.BottomCentre,
                                             Origin = Anchor.BottomCentre,
-                                            Action = createProject,
+                                            Action = createProject
                                         }
                                     }
                                 }
