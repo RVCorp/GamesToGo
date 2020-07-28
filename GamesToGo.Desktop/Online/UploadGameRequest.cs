@@ -42,7 +42,6 @@ namespace GamesToGo.Desktop.Online
 
             using (var ms = new MemoryStream())
             {
-
                 file.Save(ms);
 
                 ms.Seek(0, SeekOrigin.Begin);
@@ -56,7 +55,8 @@ namespace GamesToGo.Desktop.Online
                 req.AddParameter("maxP", project.MaxNumberPlayers.ToString());
                 req.AddParameter("imageName", project.ImageRelation?.File?.NewName ?? "null");
                 req.AddParameter("LastEdited", project.LastEdited.ToUniversalTime().ToString("yyyyMMddHHmmssfff"));
-                req.AddFile("File", ms.ToArray());
+                req.AddParameter("FileName", project.File.NewName);
+                req.AddFile(@"File", ms.ToArray());
             }
 
             return req;

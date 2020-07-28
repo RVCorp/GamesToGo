@@ -3,7 +3,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK.Graphics;
 using osuTK;
@@ -14,6 +13,12 @@ using System.Linq;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Online;
 using System.Collections.Generic;
+using GamesToGo.Desktop.Overlays;
+using System.IO;
+using System;
+using System.Globalization;
+using Ionic.Zip;
+using osu.Framework.Graphics.Textures;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -26,15 +31,17 @@ namespace GamesToGo.Desktop.Screens
         private Context database;
         private Storage store;
         private APIController api;
+        private LargeTextureStore textures;
         private FillFlowContainer<ProjectSummaryContainer> projectsList;
         private FillFlowContainer<OnlineProjectSummaryContainer> onlineProjectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database, Storage store, APIController api)
+        private void load(Context database, Storage store, APIController api, SplashInfoOverlay infoOverlay, LargeTextureStore textures)
         {
             this.database = database;
             this.store = store;
             this.api = api;
+            this.textures = textures;
             RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
@@ -237,12 +244,17 @@ namespace GamesToGo.Desktop.Screens
                 projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
             }
 
+            populateOnlineList();
+        }
+
+        private void populateOnlineList()
+        {
             var getProjects = new GetAllProjectsRequest();
             getProjects.Success += u =>
             {
-                foreach (var proj in u)
+                foreach (var proj in u.Where(u => (!database.Projects.Any(dbp => dbp.OnlineProjectID == u.Id)) && (!onlineProjectsList.Children.Any(opli => opli.ID == u.Id))))
                 {
-                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj.Id));
+                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj.Id) { ImportAction = importProject });
                 }
             };
             api.Queue(getProjects);
@@ -258,10 +270,61 @@ namespace GamesToGo.Desktop.Screens
             if (project.Relations != null)
                 database.Relations.RemoveRange(project.Relations);
             projectsList.Remove(projectsList.Children.First(p => p.ProjectInfo.LocalProjectID == project.LocalProjectID));
+            populateOnlineList();
             store.Delete($"files/{project.File.NewName}");
-            database.Files.Remove(project.File);
-            database.Projects.Remove(project);
+            int[] relationsToRemove = database.Relations.Where(fr => fr.Project.OnlineProjectID == project.LocalProjectID).Select(fr => fr.RelationID).ToArray();
+            project.ImageRelation = null;
             database.SaveChanges();
+            foreach (var relationID in relationsToRemove)
+            {
+                database.Relations.RemoveRange(project.Relations.AsEnumerable());
+                database.SaveChanges();
+            }
+            database.Files.Remove(project.File);
+            database.SaveChanges();
+        }
+
+        private void importProject(OnlineProject onlineProject)
+        {
+            string filename = store.GetFullPath(Path.Combine(@"download", @$"{onlineProject.Hash}.zip"));
+
+            ProjectInfo futureInfo = new ProjectInfo
+            {
+                File = new Database.Models.File { NewName = Path.GetFileNameWithoutExtension(filename), Type = "project" },
+                CreatorID = onlineProject.CreatorId,
+                ComunityStatus = CommunityStatus.Clouded,
+                LastEdited = DateTime.ParseExact(onlineProject.LastEdited, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).ToLocalTime(),
+                MaxNumberPlayers = onlineProject.Maxplayers,
+                MinNumberPlayers = onlineProject.Minplayers,
+                Name = onlineProject.Name,
+                OnlineProjectID = onlineProject.Id,
+            };
+            using (var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open))
+            {
+                using (ZipFile zip = ZipFile.Read(fileStream))
+                {
+                    foreach (ZipEntry e in zip)
+                    {
+                        e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
+                        if (e.FileName != futureInfo.File.NewName)
+                        {
+                            var file = database.Files.FirstOrDefault(f => f.NewName == e.FileName);
+                            if (file == null)
+                                file = new Database.Models.File { NewName = e.FileName, Type = "image" };
+                            futureInfo.Relations.Add(new FileRelation { Project = futureInfo, File = file });
+                        }
+                    }
+                }
+            }
+
+            database.Add(futureInfo);
+            database.SaveChanges();
+            futureInfo.ImageRelation = futureInfo.Relations.FirstOrDefault(r => r.File.NewName == onlineProject.Image);
+            var ret = WorkingProject.Parse(futureInfo, store, textures);
+            database.SaveChanges();
+
+            onlineProjectsList.Remove(onlineProjectsList.Children.First(o => o.ID == onlineProject.Id));
+            projectsList.Add(new ProjectSummaryContainer(futureInfo) { EditAction = OpenProject, DeleteAction = DeleteProject });
         }
 
         private void createProject()

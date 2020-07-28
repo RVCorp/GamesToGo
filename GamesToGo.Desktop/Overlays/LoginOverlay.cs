@@ -145,6 +145,7 @@ namespace GamesToGo.Desktop.Overlays
             this.api = api;
             localUser.BindTo(api.LocalUser);
             localUser.BindValueChanged(_ => nextScreenAction?.Invoke());
+            api.Login("daro31", "1234");
         }
 
         private void checkUserPass(ValueChangedEvent<string> obj)

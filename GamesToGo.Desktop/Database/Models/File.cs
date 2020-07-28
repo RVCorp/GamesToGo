@@ -7,7 +7,7 @@ namespace GamesToGo.Desktop.Database.Models
     {
         public int FileID { get; set; }
 
-        public string OriginalName { get; set; }
+        public string OriginalName { get; set; } = "";
 
         public string Type { get; set; }
 

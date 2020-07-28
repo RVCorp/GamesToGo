@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GamesToGo.Desktop.Online
 {
-    public class GetProjectRequest : APIRequest<Project>
+    public class GetProjectRequest : APIRequest<OnlineProject>
     {
         private int gameID;
         public GetProjectRequest(int id)

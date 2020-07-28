@@ -8,7 +8,6 @@ using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
 using System;
 using osu.Framework.Allocation;
-using GamesToGo.Desktop.Overlays;
 using osu.Framework.Platform;
 using osu.Framework.Graphics.Textures;
 using GamesToGo.Desktop.Online;
@@ -23,9 +22,9 @@ namespace GamesToGo.Desktop.Graphics
         private const float small_height = main_text_size + small_text_size + margin_size * 3;
         private const float expanded_height = main_text_size + small_text_size * 2 + margin_size * 4;
         private Container buttonsContainer;
-        private IconButton deleteButton;
         private IconButton editButton;
         private APIController api;
+        private Storage store;
         public readonly int ID;
 
 
@@ -34,8 +33,9 @@ namespace GamesToGo.Desktop.Graphics
         private SpriteText usernameBox;
         private SpriteText projectName;
         private SpriteIcon loadingIcon;
+        private OnlineProject onlineProject;
 
-        public Action<WorkingProject> EditAction { private get; set; }
+        public Action<OnlineProject> ImportAction { private get; set; }
         public Action<ProjectInfo> DeleteAction { private get; set; }
 
         public OnlineProjectSummaryContainer(int id)
@@ -44,9 +44,10 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, APIController api)
+        private void load(LargeTextureStore textures, APIController api, Storage store)
         {
             this.api = api;
+            this.store = store;
 
             editIcon = FontAwesome.Solid.Download;
 
@@ -167,12 +168,16 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 },
             };
+
+            editButton.Enabled.Value = false;
             loadingIcon.RotateTo(0).Then().RotateTo(360,1500).Loop();
             var getProject = new GetProjectRequest(ID);
             getProject.Success += async u =>
             {
+                onlineProject = u;
                 usernameBox.Text = $"Ultima vez editado {u.LastEdited:dd/MM/yyyy HH:mm}";
                 projectName.Text = u.Name;
+                editButton.Enabled.Value = true;
                 loadingImage(await textures.GetAsync($"https://gamestogo.company/api/Games/DownloadFile/{u.Image}"));
             };
             api.Queue(getProject);
@@ -186,28 +191,22 @@ namespace GamesToGo.Desktop.Graphics
 
         protected void DownloadProject()
         {
-
+            var getGame = new DownloadProjectRequest(onlineProject.Id, onlineProject.Hash, store);
+            getGame.Success += game => ImportAction?.Invoke(onlineProject);
+            api.Queue(getGame);
         }
 
         protected override bool OnHover(HoverEvent e)
         {
             this.ResizeHeightTo(expanded_height, 100, Easing.InQuad);
-            buttonsContainer.FadeIn(100, Easing.InQuad)
-                .OnComplete(_ =>
-                {
-                    editButton.Enabled.Value = true;
-                });
+            buttonsContainer.FadeIn(100, Easing.InQuad);
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
             this.ResizeHeightTo(small_height, 100, Easing.InQuad);
-            buttonsContainer.FadeOut(100, Easing.InQuad)
-                .OnComplete(_ =>
-                {
-                    editButton.Enabled.Value = false;
-                });
+            buttonsContainer.FadeOut(100, Easing.InQuad);
             base.OnHoverLost(e);
         }
 

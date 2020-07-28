@@ -166,7 +166,6 @@ namespace GamesToGo.Desktop.Screens
             {
                 workingProject.DatabaseObject.File = new DatabaseFile
                 {
-                    OriginalName = "",
                     Type = "project",
                 };
 
