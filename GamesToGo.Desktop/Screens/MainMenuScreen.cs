@@ -42,6 +42,7 @@ namespace GamesToGo.Desktop.Screens
             this.store = store;
             this.api = api;
             this.textures = textures;
+
             RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
@@ -275,11 +276,7 @@ namespace GamesToGo.Desktop.Screens
             int[] relationsToRemove = database.Relations.Where(fr => fr.Project.OnlineProjectID == project.LocalProjectID).Select(fr => fr.RelationID).ToArray();
             project.ImageRelation = null;
             database.SaveChanges();
-            foreach (var relationID in relationsToRemove)
-            {
-                database.Relations.RemoveRange(project.Relations.AsEnumerable());
-                database.SaveChanges();
-            }
+            database.Relations.RemoveRange(project.Relations.AsEnumerable());
             database.Files.Remove(project.File);
             database.SaveChanges();
         }

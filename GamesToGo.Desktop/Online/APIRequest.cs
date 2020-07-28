@@ -141,7 +141,7 @@ namespace GamesToGo.Desktop.Online
 
     public delegate void APISuccessHandler();
 
-    public delegate void APIProgressHandler(long current, long total);
+    public delegate void APIProgressHandler(float current);
 
     public delegate void APISuccessHandler<in T>(T content);
 }

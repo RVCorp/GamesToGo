@@ -157,11 +157,11 @@ namespace GamesToGo.Desktop.Graphics
                             Direction = FillDirection.Horizontal,
                             Children = new []
                             {
-                                editButton = new IconButton
+                                editButton = new IconButton(true)
                                 {
                                     Icon = editIcon,
-                                    Action = DownloadProject,
-                                    ButtonColour = Colour4.SkyBlue
+                                    ButtonColour = Color4.SkyBlue,
+                                    ProgressColour = Color4.PowderBlue,
                                 }
                             }
                         }
@@ -172,6 +172,8 @@ namespace GamesToGo.Desktop.Graphics
             editButton.Enabled.Value = false;
             loadingIcon.RotateTo(0).Then().RotateTo(360,1500).Loop();
             var getProject = new GetProjectRequest(ID);
+
+            editButton.Action += DownloadProject;
             getProject.Success += async u =>
             {
                 onlineProject = u;
@@ -193,6 +195,7 @@ namespace GamesToGo.Desktop.Graphics
         {
             var getGame = new DownloadProjectRequest(onlineProject.Id, onlineProject.Hash, store);
             getGame.Success += game => ImportAction?.Invoke(onlineProject);
+            getGame.Progressed += progress => editButton.Progress = progress;
             api.Queue(getGame);
         }
 
