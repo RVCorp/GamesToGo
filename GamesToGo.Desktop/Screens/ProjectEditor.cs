@@ -44,7 +44,6 @@ namespace GamesToGo.Desktop.Screens
         private WorkingProject workingProject;
         private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
-        private ImageFinderOverlay imageFinder;
         private ImagePickerOverlay imagePicker;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)

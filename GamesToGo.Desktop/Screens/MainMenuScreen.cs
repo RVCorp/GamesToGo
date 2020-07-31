@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -73,20 +73,11 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = new Color4 (145,144,144, 255)   //Color userInformation
                                     },
-                                    new CircularContainer
+                                    new UserImageChangerButton
                                     {
-                                        Size = new Vector2(250),
-                                        Child = new Sprite         //Cambiar Box por Sprite
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
-                                        },
-                                        BorderColour = Color4.Black,
-                                        BorderThickness = 3.5f,
+                                        Position = new Vector2(0, 125),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
-                                        Position = new Vector2(0,125),
-                                        Masking = true
                                     },
                                     new SpriteText
                                     {

@@ -150,6 +150,7 @@ namespace GamesToGo.Desktop.Overlays
         private void selectArrayImage(string path)
         {
             selectionAction?.Invoke(System.IO.File.ReadAllBytes(path));
+            Hide();
         }
 
         private void selectProjectImage(string path)
