@@ -1,4 +1,4 @@
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -14,8 +14,6 @@ using osu.Framework.Platform;
 using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using System.IO;
-using System;
-using System.Globalization;
 using Ionic.Zip;
 using osu.Framework.Graphics.Textures;
 
@@ -31,7 +29,7 @@ namespace GamesToGo.Desktop.Screens
         private Storage store;
         private APIController api;
         private LargeTextureStore textures;
-        private FillFlowContainer<ProjectSummaryContainer> projectsList;
+        private FillFlowContainer<LocalProjectSummaryContainer> projectsList;
         private FillFlowContainer<OnlineProjectSummaryContainer> onlineProjectsList;
 
         [BackgroundDependencyLoader]
@@ -144,7 +142,7 @@ namespace GamesToGo.Desktop.Screens
                                                 Direction = FillDirection.Vertical,
                                                 Children = new Drawable[]
                                                 {
-                                                    projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                                    projectsList = new FillFlowContainer<LocalProjectSummaryContainer>
                                                     {
                                                         BorderColour = Color4.Black,
                                                         BorderThickness = 3f,
@@ -232,7 +230,7 @@ namespace GamesToGo.Desktop.Screens
         {
             foreach (var proj in database.Projects)
             {
-                projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
+                projectsList.Add(new LocalProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
             }
 
             populateOnlineList();
@@ -245,7 +243,7 @@ namespace GamesToGo.Desktop.Screens
             {
                 foreach (var proj in u.Where(u => (!database.Projects.Any(dbp => dbp.OnlineProjectID == u.Id)) && (!onlineProjectsList.Children.Any(opli => opli.ID == u.Id))))
                 {
-                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj.Id) { ImportAction = importProject });
+                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj) { ImportAction = importProject });
                 }
             };
             api.Queue(getProjects);
@@ -280,7 +278,7 @@ namespace GamesToGo.Desktop.Screens
                 File = new Database.Models.File { NewName = Path.GetFileNameWithoutExtension(filename), Type = "project" },
                 CreatorID = onlineProject.CreatorId,
                 ComunityStatus = CommunityStatus.Clouded,
-                LastEdited = DateTime.ParseExact(onlineProject.LastEdited, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).ToLocalTime(),
+                LastEdited = onlineProject.DateTimeLastEdited,
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,
                 Name = onlineProject.Name,
@@ -311,7 +309,7 @@ namespace GamesToGo.Desktop.Screens
             database.SaveChanges();
 
             onlineProjectsList.Remove(onlineProjectsList.Children.First(o => o.ID == onlineProject.Id));
-            projectsList.Add(new ProjectSummaryContainer(futureInfo) { EditAction = OpenProject, DeleteAction = DeleteProject });
+            projectsList.Add(new LocalProjectSummaryContainer(futureInfo) { EditAction = OpenProject, DeleteAction = DeleteProject });
         }
 
         private void createProject()
