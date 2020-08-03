@@ -12,11 +12,8 @@ using GamesToGo.Desktop.Project;
 using System.Linq;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Online;
-using System.Collections.Generic;
 using GamesToGo.Desktop.Overlays;
 using System.IO;
-using System;
-using System.Globalization;
 using Ionic.Zip;
 using osu.Framework.Graphics.Textures;
 
@@ -32,7 +29,7 @@ namespace GamesToGo.Desktop.Screens
         private Storage store;
         private APIController api;
         private LargeTextureStore textures;
-        private FillFlowContainer<ProjectSummaryContainer> projectsList;
+        private FillFlowContainer<LocalProjectSummaryContainer> projectsList;
         private FillFlowContainer<OnlineProjectSummaryContainer> onlineProjectsList;
 
         [BackgroundDependencyLoader]
@@ -42,6 +39,7 @@ namespace GamesToGo.Desktop.Screens
             this.store = store;
             this.api = api;
             this.textures = textures;
+
             RelativePositionAxes = Axes.X;
             InternalChildren = new Drawable[]
             {
@@ -73,20 +71,11 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = new Color4 (145,144,144, 255)   //Color userInformation
                                     },
-                                    new CircularContainer
+                                    new UserImageChangerButton
                                     {
-                                        Size = new Vector2(250),
-                                        Child = new Sprite         //Cambiar Box por Sprite
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
-                                        },
-                                        BorderColour = Color4.Black,
-                                        BorderThickness = 3.5f,
+                                        Position = new Vector2(0, 125),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
-                                        Position = new Vector2(0,125),
-                                        Masking = true
                                     },
                                     new SpriteText
                                     {
@@ -153,7 +142,7 @@ namespace GamesToGo.Desktop.Screens
                                                 Direction = FillDirection.Vertical,
                                                 Children = new Drawable[]
                                                 {
-                                                    projectsList = new FillFlowContainer<ProjectSummaryContainer>
+                                                    projectsList = new FillFlowContainer<LocalProjectSummaryContainer>
                                                     {
                                                         BorderColour = Color4.Black,
                                                         BorderThickness = 3f,
@@ -241,7 +230,7 @@ namespace GamesToGo.Desktop.Screens
         {
             foreach (var proj in database.Projects)
             {
-                projectsList.Add(new ProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
+                projectsList.Add(new LocalProjectSummaryContainer(proj) { EditAction = OpenProject, DeleteAction = DeleteProject });
             }
 
             populateOnlineList();
@@ -254,7 +243,7 @@ namespace GamesToGo.Desktop.Screens
             {
                 foreach (var proj in u.Where(u => (!database.Projects.Any(dbp => dbp.OnlineProjectID == u.Id)) && (!onlineProjectsList.Children.Any(opli => opli.ID == u.Id))))
                 {
-                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj.Id) { ImportAction = importProject });
+                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj) { ImportAction = importProject });
                 }
             };
             api.Queue(getProjects);
@@ -275,11 +264,7 @@ namespace GamesToGo.Desktop.Screens
             int[] relationsToRemove = database.Relations.Where(fr => fr.Project.OnlineProjectID == project.LocalProjectID).Select(fr => fr.RelationID).ToArray();
             project.ImageRelation = null;
             database.SaveChanges();
-            foreach (var relationID in relationsToRemove)
-            {
-                database.Relations.RemoveRange(project.Relations.AsEnumerable());
-                database.SaveChanges();
-            }
+            database.Relations.RemoveRange(project.Relations.AsEnumerable());
             database.Files.Remove(project.File);
             database.SaveChanges();
         }
@@ -293,7 +278,7 @@ namespace GamesToGo.Desktop.Screens
                 File = new Database.Models.File { NewName = Path.GetFileNameWithoutExtension(filename), Type = "project" },
                 CreatorID = onlineProject.CreatorId,
                 ComunityStatus = CommunityStatus.Clouded,
-                LastEdited = DateTime.ParseExact(onlineProject.LastEdited, "yyyyMMddHHmmssfff", CultureInfo.InvariantCulture).ToLocalTime(),
+                LastEdited = onlineProject.DateTimeLastEdited,
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,
                 Name = onlineProject.Name,
@@ -324,7 +309,7 @@ namespace GamesToGo.Desktop.Screens
             database.SaveChanges();
 
             onlineProjectsList.Remove(onlineProjectsList.Children.First(o => o.ID == onlineProject.Id));
-            projectsList.Add(new ProjectSummaryContainer(futureInfo) { EditAction = OpenProject, DeleteAction = DeleteProject });
+            projectsList.Add(new LocalProjectSummaryContainer(futureInfo) { EditAction = OpenProject, DeleteAction = DeleteProject });
         }
 
         private void createProject()

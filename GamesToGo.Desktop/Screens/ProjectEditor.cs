@@ -44,7 +44,6 @@ namespace GamesToGo.Desktop.Screens
         private WorkingProject workingProject;
         private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
-        private ImageFinderOverlay imageFinder;
         private ImagePickerOverlay imagePicker;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
@@ -111,16 +110,10 @@ namespace GamesToGo.Desktop.Screens
                         },
                     },
                 },
-                imageFinder = new ImageFinderOverlay
-                {
-                    Depth = 1
-                }
             };
 
             tabsBar.Current.ValueChanged += changeEditorScreen;
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
-
-            dependencies.Cache(imageFinder);
 
             AddInternal(imagePicker = new ImagePickerOverlay
             {

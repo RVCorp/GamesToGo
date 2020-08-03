@@ -26,13 +26,18 @@ namespace GamesToGo.Desktop.Online
             using (var createdFile = File.Create(fullPath)) { }
 
             var request = new FileWebRequest(fullPath, Uri);
+            request.DownloadProgress += request_Progress;
             return request;
         }
+
+        private void request_Progress(long current, long total) => API.Schedule(() => Progressed?.Invoke((float)current / total));
 
         private void onSuccess()
         {
             Success?.Invoke(filename);
         }
+
+        public event APIProgressHandler Progressed;
 
         public new event APISuccessHandler<string> Success;
 
