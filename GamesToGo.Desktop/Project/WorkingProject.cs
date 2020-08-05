@@ -7,6 +7,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Online;
 
 namespace GamesToGo.Desktop.Project
 {
@@ -36,15 +37,25 @@ namespace GamesToGo.Desktop.Project
 
         public ChatRecommendation ChatRecommendation { get; set; }
 
-        protected WorkingProject(ProjectInfo project, TextureStore textures)
+        private int returnableSaves = 0;
+
+        public bool FirstSave => returnableSaves > 0;
+
+        protected WorkingProject(ref ProjectInfo project, TextureStore textures, int userID)
         {
+            if (project == null)
+            {
+                project = new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = userID };
+                returnableSaves = 2;
+            }
+
             DatabaseObject = project;
             this.textures = textures;
         }
 
-        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures)
+        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures, APIController api)
         {
-            WorkingProject ret = new WorkingProject(project, textures);
+            WorkingProject ret = new WorkingProject(ref project, textures, api.LocalUser.Value.ID);
 
             if (project.File != null)
             {
@@ -105,6 +116,8 @@ namespace GamesToGo.Desktop.Project
         /// <returns></returns>
         public string SaveableString()
         {
+            if (FirstSave)
+                returnableSaves--;
             DatabaseObject.ComunityStatus = CommunityStatus.Saved;
 
             StringBuilder builder = new StringBuilder();
@@ -196,7 +209,7 @@ namespace GamesToGo.Desktop.Project
                         if (tokens.Length != 2)
                             return false;
 
-                        switch(tokens[0])
+                        switch (tokens[0])
                         {
                             case "Images":
                                 int amm = int.Parse(tokens[1]);
@@ -233,7 +246,7 @@ namespace GamesToGo.Desktop.Project
                             break;
                         case "Files":
                             int amm = int.Parse(tokens[1]);
-                            for(int j = i + amm; i < j; i++)
+                            for (int j = i + amm; i < j; i++)
                             {
                                 Images.Add(new Image(textures, lines[i + 1]));
                             }

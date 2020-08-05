@@ -14,16 +14,9 @@ namespace GamesToGo.Desktop.Screens
 {
     public class ProjectFileScreen : Screen
     {
-        private Storage store;
-        private Context database;
-        private WorkingProject project;
-
         [BackgroundDependencyLoader]
-        private void load(WorkingProject project, Context database, Storage store, ProjectEditor editor)
+        private void load(ProjectEditor editor)
         {
-            this.store = store;
-            this.database = database;
-            this.project = project;
             InternalChildren = new Drawable[]
             {
                 new Box
