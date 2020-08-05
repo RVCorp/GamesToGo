@@ -12,21 +12,23 @@ using osu.Framework.Input.Events;
 using osuTK;
 using Image = GamesToGo.Desktop.Project.Image;
 using osuTK.Graphics;
+using System;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ElementEditButton<T> : Button where T : ProjectElement
+    public class ElementEditButton : Button
     {
-        public readonly T Element;
+        public readonly ProjectElement Element;
         private readonly Container borderContainer;
         private readonly SpriteText elementName;
 
-        private IBindable<string> elementText = new Bindable<string>();
         private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private Sprite image;
 
         private bool selected => (currentEditing.Value?.ID ?? -1) == Element.ID;
-        public ElementEditButton(T element)
+
+        public Action EditAction { set => Action = value; }
+        public ElementEditButton(ProjectElement element)
         {
             Element = element;
             Size = new Vector2(165);
