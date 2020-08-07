@@ -15,11 +15,13 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ObjectManagerContainer<T> : Container where T : ProjectElement, new()
+    public class ObjectManagerContainer<TElement, TButton> : Container
+        where TElement : ProjectElement, new()
+        where TButton : ElementEditButton, new()
     {
         private IBindableList<ProjectElement> localElements = new BindableList<ProjectElement>();
 
-        private FillFlowContainer<ElementEditButton> allElements;
+        private FillFlowContainer<TButton> allElements;
         private AutoSizeButton addElementButton;
         private readonly string title;
         private readonly string buttonText;
@@ -36,27 +38,27 @@ namespace GamesToGo.Desktop.Graphics
                 editAction = value;
                 foreach(var button in allElements)
                 {
-                    button.EditAction = value;
+                    button.Action = value;
                 }
             }
         }
 
-        public Func<T, bool> Filter { get; set; } = (_) => true;
+        public Func<TElement, bool> Filter { get; set; } = (_) => true;
 
-        public Action<IEnumerable<T>> ItemsAdded { get; set; }
-        public Action<IEnumerable<T>> ItemsRemoved { get; set; }
+        public Action<IEnumerable<TElement>> ItemsAdded { get; set; }
+        public Action<IEnumerable<TElement>> ItemsRemoved { get; set; }
 
         public Color4 BackgroundColour
         {
             get
             {
-                if (typeof(T).Equals(typeof(Card)))
+                if (typeof(TElement).Equals(typeof(Card)))
                     return Color4.Maroon;
-                if (typeof(T).Equals(typeof(Token)))
+                if (typeof(TElement).Equals(typeof(Token)))
                     return Color4.Crimson;
-                if (typeof(T).Equals(typeof(Board)))
+                if (typeof(TElement).Equals(typeof(Board)))
                     return Color4.DarkSeaGreen;
-                if (typeof(T).Equals(typeof(Tile)))
+                if (typeof(TElement).Equals(typeof(Tile)))
                     return Color4.BlueViolet;
                 return Color4.Black;
             }
@@ -127,7 +129,7 @@ namespace GamesToGo.Desktop.Graphics
                                         Origin = Anchor.Centre,
                                         ClampExtension = 30,
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = allElements = new FillFlowContainer<ElementEditButton>
+                                        Child = allElements = new FillFlowContainer<TButton>
                                         {
                                             RelativeSizeAxes = Axes.X,
                                             AutoSizeAxes = Axes.Y,
@@ -159,7 +161,7 @@ namespace GamesToGo.Desktop.Graphics
                                     },
                                     addElementButton = new AutoSizeButton
                                     {
-                                        Action = () => project.AddElement(new T()),
+                                        Action = () => project.AddElement(new TElement()),
                                         Text = buttonText
                                     }
                                 }
@@ -185,13 +187,13 @@ namespace GamesToGo.Desktop.Graphics
 
         private void checkAdded(IEnumerable<ProjectElement> added)
         {
-            var resultingAdded = new List<T>();
+            var resultingAdded = new List<TElement>();
             foreach (var item in added)
             {
-                if (item is T itemT && Filter(itemT))
+                if (item is TElement itemT && Filter(itemT))
                 {
                     resultingAdded.Add(itemT);
-                    allElements.Add(new ElementEditButton(itemT));
+                    allElements.Add(new TButton() { Element = itemT });
                 }
             }
 
@@ -200,10 +202,10 @@ namespace GamesToGo.Desktop.Graphics
 
         private void checkRemoved(IEnumerable<ProjectElement> removed)
         {
-            var resultingRemoved = new List<T>();
+            var resultingRemoved = new List<TElement>();
             foreach (var item in removed)
             {
-                if (item is T itemT && Filter(itemT))
+                if (item is TElement itemT && Filter(itemT))
                 {
                     var deletable = allElements.FirstOrDefault(b => b.Element.ID == item.ID);
 

@@ -4,7 +4,7 @@ using osu.Framework.Allocation;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ProjectObjectManagerContainer<T> : ObjectManagerContainer<T> where T : ProjectElement, new()
+    public class ProjectObjectManagerContainer<T> : ObjectManagerContainer<T, ProjectElementEditButton> where T : ProjectElement, new()
     {
         private bool shouldStartEditing;
 
