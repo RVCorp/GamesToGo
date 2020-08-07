@@ -67,7 +67,7 @@ namespace GamesToGo.Desktop.Screens
                             Position = new Vector2(0, 225),
                             Width = 650,
                             Height = 200,
-                            BackgroundColour = Color4.Linen,
+                            BackgroundColour = Color4.PaleVioletRed,
                             Text = "Quieres un respaldo? Sube tu juego",
                             Action = editor.UploadProject,
                         },

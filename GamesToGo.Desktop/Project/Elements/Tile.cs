@@ -19,9 +19,9 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
 
-        public override string ToSaveable()
+        public override string ToSaveableString()
         {
-            return "2|" + base.ToSaveable();
+            return "2|" + base.ToSaveableString();
         }
     }
 }

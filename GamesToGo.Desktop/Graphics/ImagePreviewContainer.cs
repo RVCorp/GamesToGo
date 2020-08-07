@@ -86,7 +86,7 @@ namespace GamesToGo.Desktop.Graphics
                 {
                     foreach (var image in e.NewValue.Images)
                     {
-                        images.Add(new ImageChangerButton(image.Key, sizedElement.Size.Value));
+                        images.Add(new ImageChangerButton(image.Key, sizedElement.Size));
                     }
                 }
                 else
