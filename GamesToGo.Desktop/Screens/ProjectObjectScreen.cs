@@ -1,6 +1,8 @@
-﻿using GamesToGo.Desktop.Graphics;
+﻿using System.Linq;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
+using Microsoft.EntityFrameworkCore.Internal;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -11,7 +13,6 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
-using SixLabors.ImageSharp;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -19,6 +20,7 @@ namespace GamesToGo.Desktop.Screens
     {
         private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ProjectEditor editor;
+        private WorkingProject project;
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
         private BasicScrollContainer activeEditContainer;
@@ -28,11 +30,13 @@ namespace GamesToGo.Desktop.Screens
         private NumericTextbox sizeTextboxX;
         private NumericTextbox sizeTextboxY;
         private Container elementSubElements;
+        private BoardObjectManagerContainer tilesManagerContainer;
 
         [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor)
+        private void load(ProjectEditor editor, WorkingProject project)
         {
             this.editor = editor;
+            this.project = project;
 
             InternalChildren = new Drawable[]
             {
@@ -193,7 +197,13 @@ namespace GamesToGo.Desktop.Screens
                                                         elementSubElements = new Container
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
+                                                            Width = 1/3f,
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Child = tilesManagerContainer = new BoardObjectManagerContainer()
+                                                            {
 
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -226,6 +236,7 @@ namespace GamesToGo.Desktop.Screens
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
+
         }
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)
@@ -241,6 +252,7 @@ namespace GamesToGo.Desktop.Screens
             {
                 nameTextBox.Text = obj.NewValue.Name.Value;
             }
+
             if(obj.NewValue is IHasSize size)
             {
                 elementSizex2.Show();
@@ -249,13 +261,27 @@ namespace GamesToGo.Desktop.Screens
                 sizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
                 sizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
             }
-            if(obj.NewValue is Board board)
-            {
-
-            }
             else
             {
                 elementSizex2.Hide();
+            }
+
+            if(obj.NewValue is Board board)
+            {
+                elementSubElements.Show();
+                tilesManagerContainer.Filter = (t) =>
+                {
+                    return board.Subelements.Any(ti => ti.ID == t.ID);
+                };
+                tilesManagerContainer.ButtonAction = () =>
+                {
+                    board.Subelements.Add(new Tile());
+                    project.AddElement(board.Subelements.Last());
+                };
+            }
+            else
+            {
+                elementSubElements.Hide();
             }
 
 

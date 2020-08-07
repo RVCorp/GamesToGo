@@ -77,12 +77,18 @@ namespace GamesToGo.Desktop.Graphics
                     Font = new FontUsage(size: 20),
                 },
             };
+            FadeBorder(false, true);
         }
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
         {
             borderContainer.FadeTo(visible ? 1 : 0, instant ? 0 : 125);
             borderContainer.Colour = golden ? Color4.Gold : Color4.White;
+        }
+
+        protected void FadeBorder(bool visible)
+        {
+            borderContainer.FadeTo(visible ? 1 : 0, 125);
         }
 
         protected override bool OnHover(HoverEvent e)

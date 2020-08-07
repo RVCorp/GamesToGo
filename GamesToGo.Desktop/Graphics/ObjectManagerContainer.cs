@@ -15,7 +15,7 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ObjectManagerContainer<TElement, TButton> : Container
+    public abstract class ObjectManagerContainer<TElement, TButton> : Container
         where TElement : ProjectElement, new()
         where TButton : ElementEditButton, new()
     {
@@ -26,23 +26,19 @@ namespace GamesToGo.Desktop.Graphics
         private readonly string title;
         private readonly string buttonText;
 
-        protected Action ButtonAction { set => addElementButton.Action = value; }
+        public Action ButtonAction { set => addElementButton.Action = value; }
 
-        protected Action EditAction
+        private Func<TElement, bool> filter = (_) => true;
+        public Func<TElement, bool> Filter
         {
+            get => filter;
             set
             {
-                foreach(var button in allElements)
-                {
-                    button.Action = value;
-                }
+                filter = value;
+                allElements.Clear();
+                checkAdded(localElements);
             }
         }
-
-        public Func<TElement, bool> Filter { get; set; } = (_) => true;
-
-        public Action<IEnumerable<TElement>> ItemsAdded { get; set; }
-        public Action<IEnumerable<TElement>> ItemsRemoved { get; set; }
 
         public Color4 BackgroundColour
         {
@@ -60,7 +56,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        public ObjectManagerContainer(string title, string buttonText = null)
+        public ObjectManagerContainer(string title, string buttonText = "Añadir nuevo")
         {
             this.title = title;
             this.buttonText = buttonText ?? "Añadir nuevo";
@@ -186,14 +182,15 @@ namespace GamesToGo.Desktop.Graphics
             var resultingAdded = new List<TElement>();
             foreach (var item in added)
             {
-                if (item is TElement itemT && Filter(itemT))
+                if (item is TElement itemT)
                 {
-                    resultingAdded.Add(itemT);
-                    allElements.Add(new TButton() { Element = itemT });
+                    if (Filter(itemT))
+                    {
+                        resultingAdded.Add(itemT);
+                        allElements.Add(new TButton() { Element = itemT });
+                    }
                 }
             }
-
-            ItemsAdded?.Invoke(resultingAdded);
         }
 
         private void checkRemoved(IEnumerable<ProjectElement> removed)
@@ -212,8 +209,6 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 }
             }
-
-            ItemsRemoved?.Invoke(resultingRemoved);
         }
 
         private class ObjectManagerScrollContainer : BasicScrollContainer
