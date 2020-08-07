@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Online;
+using osuTK;
 
 namespace GamesToGo.Desktop.Project
 {
@@ -136,7 +137,7 @@ namespace GamesToGo.Desktop.Project
             builder.AppendLine("[Objects]");
             foreach (ProjectElement elem in ProjectElements)
             {
-                builder.AppendLine($"{elem.ToSaveable()}");
+                builder.AppendLine($"{elem.ToSaveableString()}");
                 builder.AppendLine();
             }
 
@@ -225,6 +226,10 @@ namespace GamesToGo.Desktop.Project
                                     else
                                         return false;
                                 }
+                                break;
+                            case "Size" when parsingElement is IHasSize size:
+                                var xy = tokens[1].Split("|");
+                                size.Size.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
                                 break;
                         }
                     }

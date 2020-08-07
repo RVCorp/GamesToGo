@@ -15,9 +15,9 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>("Miniatura", new Bindable<Image>()),
         });
 
-        public override string ToSaveable()
+        public override string ToSaveableString()
         {
-            return "0|" + base.ToSaveable();
+            return "0|" + base.ToSaveableString();
         }
     }
 }

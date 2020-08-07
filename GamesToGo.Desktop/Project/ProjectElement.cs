@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 
@@ -24,7 +25,7 @@ namespace GamesToGo.Desktop.Project
             DefaultImage = new Image(Textures, "Elements/" + DefaultImageName, false);
         }
 
-        public virtual string ToSaveable()
+        public virtual string ToSaveableString()
         {
             StringBuilder builder = new StringBuilder();
 
@@ -33,6 +34,10 @@ namespace GamesToGo.Desktop.Project
             foreach (var image in Images)
             {
                 builder.AppendLine($"{image.Key}={image.Value.Value?.ImageName ?? "null"}");
+            }
+            if(this is IHasSize sizedElement)
+            {
+                builder.AppendLine(sizedElement.ToSaveable());
             }
 
             return builder.ToString();
