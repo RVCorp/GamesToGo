@@ -20,9 +20,9 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public BindableList<int> Events { get; } = new BindableList<int>();
 
-        public override string ToSaveable()
+        public override string ToSaveableString()
         {
-            return "1|" + base.ToSaveable();
+            return "1|" + base.ToSaveableString();
         }
     }
 }

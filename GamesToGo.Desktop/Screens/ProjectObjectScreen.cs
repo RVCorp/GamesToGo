@@ -23,6 +23,9 @@ namespace GamesToGo.Desktop.Screens
         private BasicScrollContainer activeEditContainer;
         private Container editAreaContainer;
         private Container customElementsContainer;
+        private Container ElementSizex2;
+        private NumericTextbox SizeTextboxX;
+        private NumericTextbox SizeTextboxY;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
@@ -148,13 +151,42 @@ namespace GamesToGo.Desktop.Screens
                                                 customElementsContainer = new Container
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Height = 400,
+                                                    Height = 600,
                                                     Children = new Drawable[]
                                                     {
                                                         new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             Colour = Color4.Fuchsia
+                                                        },
+                                                        ElementSizex2 = new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Children = new Drawable[]
+                                                            {
+                                                                new SpriteText
+                                                                {
+                                                                    Text = "Tamaño X:",
+                                                                    Position = new Vector2(50, 50)
+                                                                },
+                                                                SizeTextboxX = new NumericTextbox(4)
+                                                                {
+                                                                    Height = 35,
+                                                                    Width = 75,
+                                                                    Position = new Vector2(125, 45)
+                                                                },
+                                                                new SpriteText
+                                                                {
+                                                                    Text = "Tamaño Y:",
+                                                                    Position = new Vector2(50, 100)
+                                                                },
+                                                                SizeTextboxY = new NumericTextbox(4)
+                                                                {
+                                                                    Height = 35,
+                                                                    Width = 75,
+                                                                    Position = new Vector2(125, 95)
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -195,11 +227,26 @@ namespace GamesToGo.Desktop.Screens
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
             nameTextBox.Current.UnbindEvents();
+            SizeTextboxX.Current.UnbindEvents();
+            SizeTextboxY.Current.UnbindEvents();
 
             if (obj.NewValue != null)
             {
                 nameTextBox.Text = obj.NewValue.Name.Value;
             }
+            if(obj.NewValue is IHasSize size)
+            {
+                ElementSizex2.Show();
+                SizeTextboxX.Text = size.Size.Value.X.ToString();
+                SizeTextboxY.Text = size.Size.Value.Y.ToString();
+                SizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
+                SizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+            }
+            else
+            {
+                ElementSizex2.Hide();
+            }
+
 
             nameTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Name.Value = obj.NewValue;
         }

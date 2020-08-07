@@ -34,6 +34,8 @@ namespace GamesToGo.Desktop.Graphics
             private set;
         }
 
+        private Bindable<Vector2> size = new Bindable<Vector2>();
+
         public Vector2 TargetSize
         {
             set
@@ -122,7 +124,7 @@ namespace GamesToGo.Desktop.Graphics
             };
         }
 
-        public ImageChangerButton(string name, Vector2 size)
+        public ImageChangerButton(string name, Bindable <Vector2> size)
         {
             isProject = false;
             imageName = name;
@@ -232,10 +234,11 @@ namespace GamesToGo.Desktop.Graphics
                 }
             };
 
-            TargetSize = size;
+            this.size.BindTo(size);
+            this.size.BindValueChanged((obj) => TargetSize = obj.NewValue, true);
         }
 
-        public ImageChangerButton(string name) : this(name, new Vector2(200, 400))
+        public ImageChangerButton(string name) : this(name, new Bindable <Vector2>(new Vector2(200, 400)))
         {
         }
 
