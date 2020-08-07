@@ -11,6 +11,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
+using SixLabors.ImageSharp;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -23,9 +24,10 @@ namespace GamesToGo.Desktop.Screens
         private BasicScrollContainer activeEditContainer;
         private Container editAreaContainer;
         private Container customElementsContainer;
-        private Container ElementSizex2;
-        private NumericTextbox SizeTextboxX;
-        private NumericTextbox SizeTextboxY;
+        private Container elementSizex2;
+        private NumericTextbox sizeTextboxX;
+        private NumericTextbox sizeTextboxY;
+        private Container elementSubElements;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
@@ -159,7 +161,7 @@ namespace GamesToGo.Desktop.Screens
                                                             RelativeSizeAxes = Axes.Both,
                                                             Colour = Color4.Fuchsia
                                                         },
-                                                        ElementSizex2 = new Container
+                                                        elementSizex2 = new Container
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             Children = new Drawable[]
@@ -169,7 +171,7 @@ namespace GamesToGo.Desktop.Screens
                                                                     Text = "Tamaño X:",
                                                                     Position = new Vector2(50, 50)
                                                                 },
-                                                                SizeTextboxX = new NumericTextbox(4)
+                                                                sizeTextboxX = new NumericTextbox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
@@ -180,13 +182,18 @@ namespace GamesToGo.Desktop.Screens
                                                                     Text = "Tamaño Y:",
                                                                     Position = new Vector2(50, 100)
                                                                 },
-                                                                SizeTextboxY = new NumericTextbox(4)
+                                                                sizeTextboxY = new NumericTextbox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
                                                                     Position = new Vector2(125, 95)
                                                                 }
                                                             }
+                                                        },
+                                                        elementSubElements = new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+
                                                         }
                                                     }
                                                 }
@@ -227,8 +234,8 @@ namespace GamesToGo.Desktop.Screens
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
             nameTextBox.Current.UnbindEvents();
-            SizeTextboxX.Current.UnbindEvents();
-            SizeTextboxY.Current.UnbindEvents();
+            sizeTextboxX.Current.UnbindEvents();
+            sizeTextboxY.Current.UnbindEvents();
 
             if (obj.NewValue != null)
             {
@@ -236,15 +243,19 @@ namespace GamesToGo.Desktop.Screens
             }
             if(obj.NewValue is IHasSize size)
             {
-                ElementSizex2.Show();
-                SizeTextboxX.Text = size.Size.Value.X.ToString();
-                SizeTextboxY.Text = size.Size.Value.Y.ToString();
-                SizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
-                SizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+                elementSizex2.Show();
+                sizeTextboxX.Text = size.Size.Value.X.ToString();
+                sizeTextboxY.Text = size.Size.Value.Y.ToString();
+                sizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
+                sizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+            }
+            if(obj.NewValue is Board board)
+            {
+
             }
             else
             {
-                ElementSizex2.Hide();
+                elementSizex2.Hide();
             }
 
 

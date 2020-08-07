@@ -1,11 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public interface IHasElements<T> where T : ProjectElement
+    public interface IHasElements
     {
-        void AddElement(int ID);
+        public void QueueSubelement(int ID)
+        {
+            PendingSubelements.Enqueue(ID);
+        }
+
+        public Queue<int> PendingSubelements { get; }
+    }
+
+    public interface IHasElements<T> : IHasElements where T : ProjectElement
+    {
+        List<T> Subelements { get; }
     }
 }

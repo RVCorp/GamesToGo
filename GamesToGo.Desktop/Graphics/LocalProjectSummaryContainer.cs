@@ -75,7 +75,7 @@ namespace GamesToGo.Desktop.Graphics
             ProjectName.Text = ProjectInfo.Name;
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
-            var getCreator = new GetUserRequest(workingProject.DatabaseObject.CreatorID);
+            var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
             getCreator.Success += u => UsernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
             api.Queue(getCreator);
         }

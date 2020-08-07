@@ -28,14 +28,10 @@ namespace GamesToGo.Desktop.Graphics
 
         protected Action ButtonAction { set => addElementButton.Action = value; }
 
-        private Action editAction;
-
         protected Action EditAction
         {
-            get => editAction;
             set
             {
-                editAction = value;
                 foreach(var button in allElements)
                 {
                     button.Action = value;
