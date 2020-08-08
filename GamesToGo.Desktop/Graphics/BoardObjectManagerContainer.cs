@@ -7,7 +7,7 @@ using osu.Framework.Allocation;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class BoardObjectManagerContainer : ObjectManagerContainer<Tile, ElementEditButton>
+    public class BoardObjectManagerContainer : ObjectManagerContainer<Tile, TileButton>
     {
         public BoardObjectManagerContainer() : base("Casillas de la escena")
         {

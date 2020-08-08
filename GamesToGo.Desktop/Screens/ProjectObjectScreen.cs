@@ -1,5 +1,6 @@
+using GamesToGo.Desktop.Overlays;
+﻿using GamesToGo.Desktop.Graphics;
 ﻿using System.Linq;
-using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -31,14 +32,21 @@ namespace GamesToGo.Desktop.Screens
         private NumericTextbox sizeTextboxY;
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
+        private TileEditorOverlay tileOverlay;
+        private DependencyContainer dependencies;
         private BasicTextBox descriptionTextBox;
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        {
+            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+        }
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor, WorkingProject project)
         {
             this.editor = editor;
             this.project = project;
-
+            dependencies.Cache(tileOverlay = new TileEditorOverlay());
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -211,6 +219,7 @@ namespace GamesToGo.Desktop.Screens
                                             }
                                         }
                                     },
+                                    tileOverlay,
                                     noSelectionContainer = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -224,7 +233,7 @@ namespace GamesToGo.Desktop.Screens
                                         },
                                     },
                                 }
-                            }
+                            } 
                         }
                     },
                     ColumnDimensions = new Dimension[]
@@ -234,7 +243,6 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
-
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
 
@@ -286,7 +294,7 @@ namespace GamesToGo.Desktop.Screens
             {
                 elementSubElements.Hide();
             }
-
+            tileOverlay.Hide();
             descriptionTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Description.Value = obj.NewValue;
             nameTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Name.Value = obj.NewValue;
         }
