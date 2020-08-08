@@ -13,6 +13,8 @@ namespace GamesToGo.Desktop.Project
 
         public abstract Bindable<string> Name { get; set; }
 
+        public abstract Bindable<string> Description { get; set; }
+
         protected abstract string DefaultImageName { get; }
 
         public readonly Image DefaultImage;
@@ -31,15 +33,19 @@ namespace GamesToGo.Desktop.Project
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"{ID}|{Name}");
+            builder.AppendLine($"Desc={Description}");
             builder.AppendLine($"Images={Images.Count}");
+
             foreach (var image in Images)
             {
                 builder.AppendLine($"{image.Key}={image.Value.Value?.ImageName ?? "null"}");
             }
+
             if(this is IHasSize sizedElement)
             {
                 builder.AppendLine(sizedElement.ToSaveable());
             }
+
             if(this is IHasElements elementedElement)
             {
                 List<int> elementList = new List<int>();

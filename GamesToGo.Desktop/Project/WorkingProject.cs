@@ -277,6 +277,11 @@ namespace GamesToGo.Desktop.Project
                                 }
                                 break;
                             }
+                            case "Desc":
+                            {
+                                parsingElement.Description.Value = tokens[1];
+                                break;
+                            }
                             case "Size" when parsingElement is IHasSize size:
                             {
                                 var xy = tokens[1].Split("|");

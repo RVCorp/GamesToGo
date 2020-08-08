@@ -7,6 +7,7 @@ namespace GamesToGo.Desktop.Project.Elements
     public class Board : ProjectElement, IHasSize, IHasElements<Tile>
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
+        public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe este tablero para poder identificarlo mejor!");
 
         protected override string DefaultImageName => @"Board";
 

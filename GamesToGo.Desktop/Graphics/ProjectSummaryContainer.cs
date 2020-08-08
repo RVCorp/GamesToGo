@@ -5,6 +5,7 @@ using osuTK.Graphics;
 using osuTK;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Allocation;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -13,121 +14,142 @@ namespace GamesToGo.Desktop.Graphics
         public const float MARGIN_SIZE = 5;
         public const float MAIN_TEXT_SIZE = 35;
         public const float SMALL_TEXT_SIZE = 20;
-        public const float SMALL_HEIGHT = MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE * 3;
         public const float EXPANDED_HEIGHT = MAIN_TEXT_SIZE + SMALL_TEXT_SIZE * 2 + MARGIN_SIZE * 4;
         private Container buttonsContainer;
+        private FillFlowContainer smallContainer;
+        private Container expandedContainer;
+        private Container sizedContainer;
+
         protected Sprite ProjectImage { get; }
-        protected SpriteText UsernameBox { get; }
         protected FillFlowContainer<IconButton> ButtonFlowContainer { get; }
 
-        protected Container BottomContainer { get; }
         protected SpriteText ProjectName { get; }
+        protected SpriteText ProjectDescription { get; }
+        protected SpriteText UsernameBox { get; }
+        protected Container BottomContainer { get; }
 
         public Container ImageContainer { get; }
 
         public ProjectSummaryContainer()
         {
-            Masking = true;
-            CornerRadius = MARGIN_SIZE;
-            BorderColour = Color4.DarkGray;
-            BorderThickness = 3;
+            Padding = new MarginPadding { Vertical = 3.5f };
+            AutoSizeAxes = Axes.Y;
             RelativeSizeAxes = Axes.X;
-            Height = SMALL_HEIGHT;
             Children = new Drawable[]
             {
-                new Box
+                sizedContainer = new Container()
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(55, 55, 55, 255),
-                    Alpha = 0.8f,
-                },
-                new Container
-                {
+                    Masking = true,
+                    CornerRadius = MARGIN_SIZE,
+                    BorderColour = Color4.DarkGray,
+                    BorderThickness = 3,
                     RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Padding = new MarginPadding(MARGIN_SIZE),
                     Children = new Drawable[]
                     {
-                        new FillFlowContainer
+                        new Box
                         {
-                            Direction = FillDirection.Vertical,
-                            Spacing = new Vector2(MARGIN_SIZE),
-                            AutoSizeAxes = Axes.Both,
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = new Color4(55, 55, 55, 255),
+                            Alpha = 0.8f,
+                        },
+                        expandedContainer = new Container
+                        {
+                            RelativeSizeAxes = Axes.X,
+                            AutoSizeAxes = Axes.Y,
+                            Padding = new MarginPadding(MARGIN_SIZE),
                             Children = new Drawable[]
                             {
                                 new FillFlowContainer
                                 {
-                                    Direction = FillDirection.Horizontal,
+                                    Direction = FillDirection.Vertical,
                                     Spacing = new Vector2(MARGIN_SIZE),
                                     AutoSizeAxes = Axes.Both,
                                     Children = new Drawable[]
                                     {
-                                        ImageContainer = new Container
+                                        smallContainer = new FillFlowContainer
                                         {
-                                            Size = new Vector2(MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE),
-                                            Masking = true,
-                                            CornerRadius = 20 * (MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE) / 150,
-                                            Child = ProjectImage = new Sprite
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                FillMode = FillMode.Fit,
-                                                Anchor = Anchor.Centre,
-                                                Origin = Anchor.Centre,
-                                            }
-                                        },
-                                        new FillFlowContainer
-                                        {
-                                            Direction = FillDirection.Vertical,
+                                            Direction = FillDirection.Horizontal,
                                             Spacing = new Vector2(MARGIN_SIZE),
                                             AutoSizeAxes = Axes.Both,
-                                            Children = new[]
+                                            Children = new Drawable[]
                                             {
-                                                ProjectName = new SpriteText
+                                                ImageContainer = new Container
                                                 {
-                                                    Font = new FontUsage(size: MAIN_TEXT_SIZE),
+                                                    Size = new Vector2(MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE),
+                                                    Masking = true,
+                                                    CornerRadius = 20 * (MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE) / 150,
+                                                    Child = ProjectImage = new Sprite
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        FillMode = FillMode.Fit,
+                                                        Anchor = Anchor.Centre,
+                                                        Origin = Anchor.Centre,
+                                                    }
                                                 },
-                                                UsernameBox = new SpriteText
+                                                new FillFlowContainer
                                                 {
-                                                    Font = new FontUsage(size: SMALL_TEXT_SIZE),
-                                                },
+                                                    Direction = FillDirection.Vertical,
+                                                    Spacing = new Vector2(MARGIN_SIZE),
+                                                    AutoSizeAxes = Axes.Both,
+                                                    Children = new[]
+                                                    {
+                                                        ProjectName = new SpriteText
+                                                        {
+                                                            Font = new FontUsage(size: MAIN_TEXT_SIZE),
+                                                        },
+                                                        ProjectDescription = new SpriteText
+                                                        {
+                                                            Font = new FontUsage(size: SMALL_TEXT_SIZE),
+                                                        }
+                                                    }
+                                                }
                                             }
+                                        },
+                                        UsernameBox = new SpriteText
+                                        {
+                                            Font = new FontUsage(size: SMALL_TEXT_SIZE),
+                                        },
+                                        BottomContainer = new Container
+                                        {
+                                            Height = SMALL_TEXT_SIZE,
+                                            AutoSizeAxes = Axes.X,
                                         }
                                     }
-                                },
-                                BottomContainer = new Container
-                                {
-                                    Height = SMALL_TEXT_SIZE,
-                                    AutoSizeAxes = Axes.X,
                                 }
-                            }
-                        }
-                    },
-                },
-                buttonsContainer = new Container
-                {
-                    Padding = new MarginPadding(MARGIN_SIZE),
-                    Anchor = Anchor.CentreRight,
-                    Origin = Anchor.CentreRight,
-                    AutoSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    Children = new Drawable[]
-                    {
-                        ButtonFlowContainer = new FillFlowContainer<IconButton>
+                            },
+                        },
+                        buttonsContainer = new Container
                         {
-                            AutoSizeAxes = Axes.Both,
+                            Padding = new MarginPadding(MARGIN_SIZE),
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.CentreRight,
-                            Spacing = new Vector2(MARGIN_SIZE),
-                            Direction = FillDirection.Horizontal,
-                        }
+                            AutoSizeAxes = Axes.Both,
+                            Alpha = 0,
+                            Children = new Drawable[]
+                            {
+                                ButtonFlowContainer = new FillFlowContainer<IconButton>
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Anchor = Anchor.CentreRight,
+                                    Origin = Anchor.CentreRight,
+                                    Spacing = new Vector2(MARGIN_SIZE),
+                                    Direction = FillDirection.Horizontal,
+                                }
+                            }
+                        },
                     }
-                },
+                }
             };
+        }
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            sizedContainer.Height = smallContainer.Height + MARGIN_SIZE * 2;
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            this.ResizeHeightTo(EXPANDED_HEIGHT, 100, Easing.InQuad);
+            sizedContainer.ResizeHeightTo(expandedContainer.Height, 100, Easing.InQuad);
             buttonsContainer.FadeIn(100, Easing.InQuad)
                 .OnComplete(_ =>
                 {
@@ -139,7 +161,7 @@ namespace GamesToGo.Desktop.Graphics
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            this.ResizeHeightTo(SMALL_HEIGHT, 100, Easing.InQuad);
+            sizedContainer.ResizeHeightTo(smallContainer.Height + MARGIN_SIZE * 2, 100, Easing.InQuad);
             buttonsContainer.FadeOut(100, Easing.InQuad)
                 .OnComplete(_ =>
                 {

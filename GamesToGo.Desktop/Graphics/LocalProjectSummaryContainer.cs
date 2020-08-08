@@ -73,6 +73,7 @@ namespace GamesToGo.Desktop.Graphics
             });
 
             ProjectName.Text = ProjectInfo.Name;
+            ProjectDescription.Text = ProjectInfo.Description;
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
             var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
