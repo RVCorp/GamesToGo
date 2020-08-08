@@ -33,13 +33,19 @@ namespace GamesToGo.Desktop.Screens
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
         private TileEditorOverlay tileOverlay;
+        private DependencyContainer dependencies;
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        {
+            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+        }
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor, WorkingProject project)
         {
             this.editor = editor;
             this.project = project;
-
+            dependencies.Cache(tileOverlay = new TileEditorOverlay());
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -91,7 +97,6 @@ namespace GamesToGo.Desktop.Screens
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    tileOverlay = new TileEditorOverlay(),
                                     activeEditContainer = new BasicScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -205,7 +210,7 @@ namespace GamesToGo.Desktop.Screens
                                                             Origin = Anchor.TopRight,
                                                             Child = tilesManagerContainer = new BoardObjectManagerContainer()
                                                             {
-                                                                EditAction = tileOverlay.Show
+
                                                             }
                                                         }
                                                     }
@@ -213,6 +218,7 @@ namespace GamesToGo.Desktop.Screens
                                             }
                                         }
                                     },
+                                    tileOverlay,
                                     noSelectionContainer = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -236,7 +242,6 @@ namespace GamesToGo.Desktop.Screens
                     }
                 }
             };
-
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
 

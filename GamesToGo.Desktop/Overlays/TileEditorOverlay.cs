@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -17,22 +19,16 @@ namespace GamesToGo.Desktop.Overlays
         private BasicScrollContainer activeEditContainer;
         private BasicTextBox nameTextBox;
         private Container customElementsContainer;
-        private Container noSelectionContainer;
+        public Container ElementSizex2;
+        public NumericTextbox SizeTextboxX;
+        public NumericTextbox SizeTextboxY;
 
         public TileEditorOverlay()
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
-                new GamesToGoButton
-                {
-                    Height = 35,
-                    Width = 175,
-                    Text = "Regresar",
-                    Position = new Vector2(20,20),
-                    Action = this.Hide
-                },
-                activeEditContainer = new BasicScrollContainer
+                new BasicScrollContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Child = new FillFlowContainer
@@ -142,22 +138,48 @@ namespace GamesToGo.Desktop.Overlays
                         }
                     }
                 },
+                new GamesToGoButton
+                {
+                    Height = 35,
+                    Width = 175,
+                    Text = "Regresar",
+                    Position = new Vector2(10,10),
+                    Action = this.Hide
+                },
             };
         }
 
-        public Container ElementSizex2 { get; }
-        public NumericTextbox SizeTextboxX { get; }
-        public NumericTextbox SizeTextboxY { get; }
+        public void ShowElement(ProjectElement element)
+        {
+            Show();
+            nameTextBox.Current.UnbindEvents();
+            SizeTextboxX.Current.UnbindEvents();
+            SizeTextboxY.Current.UnbindEvents();
+
+            if (element != null)
+            {
+                nameTextBox.Text = element.Name.Value;
+            }
+
+            if (element is IHasSize size)
+            {
+                ElementSizex2.Show();
+                SizeTextboxX.Text = size.Size.Value.X.ToString();
+                SizeTextboxY.Text = size.Size.Value.Y.ToString();
+                SizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
+                SizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+            }
+            nameTextBox.Current.ValueChanged += (obj) => element.Name.Value = obj.NewValue;
+        }
 
         protected override void PopIn()
         {
-            activeEditContainer.Delay(150)
-                .MoveToX(0, 250, Easing.OutQuint);
+            this.FadeIn();
         }
 
         protected override void PopOut()
         {
-            activeEditContainer.MoveToX(1, 250, Easing.OutExpo);
+            this.FadeOut();
         }
     }
 }
