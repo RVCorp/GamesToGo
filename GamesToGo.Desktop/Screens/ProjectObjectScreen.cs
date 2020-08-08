@@ -32,6 +32,7 @@ namespace GamesToGo.Desktop.Screens
         private NumericTextbox sizeTextboxY;
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
+        private TileEditorOverlay tileOverlay;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor, WorkingProject project)
@@ -90,7 +91,7 @@ namespace GamesToGo.Desktop.Screens
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    new TileEditorOverlay(),
+                                    tileOverlay = new TileEditorOverlay(),
                                     activeEditContainer = new BasicScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -204,7 +205,7 @@ namespace GamesToGo.Desktop.Screens
                                                             Origin = Anchor.TopRight,
                                                             Child = tilesManagerContainer = new BoardObjectManagerContainer()
                                                             {
-
+                                                                EditAction = tileOverlay.Show
                                                             }
                                                         }
                                                     }

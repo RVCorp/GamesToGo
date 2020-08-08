@@ -29,7 +29,8 @@ namespace GamesToGo.Desktop.Overlays
                     Height = 35,
                     Width = 175,
                     Text = "Regresar",
-                    Position = new Vector2(20,20)
+                    Position = new Vector2(20,20),
+                    Action = this.Hide
                 },
                 activeEditContainer = new BasicScrollContainer
                 {

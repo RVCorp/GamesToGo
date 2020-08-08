@@ -25,8 +25,20 @@ namespace GamesToGo.Desktop.Graphics
         private AutoSizeButton addElementButton;
         private readonly string title;
         private readonly string buttonText;
+        private Action receivedAction = null;
 
         public Action ButtonAction { set => addElementButton.Action = value; }
+
+        public Action EditAction
+        {
+            set
+            {
+                if (allElements != null)
+                    foreach (var element in allElements)
+                        element.Action = value;
+                receivedAction = value;
+            }
+        }
 
         private Func<TElement, bool> filter = (_) => true;
         public Func<TElement, bool> Filter
@@ -187,7 +199,7 @@ namespace GamesToGo.Desktop.Graphics
                     if (Filter(itemT))
                     {
                         resultingAdded.Add(itemT);
-                        allElements.Add(new TButton() { Element = itemT });
+                        allElements.Add(new TButton() { Element = itemT , Action = receivedAction});
                     }
                 }
             }
