@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
@@ -38,6 +39,31 @@ namespace GamesToGo.Desktop.Project
             if(this is IHasSize sizedElement)
             {
                 builder.AppendLine(sizedElement.ToSaveable());
+            }
+            if(this is IHasElements elementedElement)
+            {
+                List<int> elementList = new List<int>();
+                switch(elementedElement)
+                {
+                    case IHasElements<Board> boardedElement:
+                        elementList = boardedElement.Subelements.Select(e => e.ID).ToList();
+                        break;
+                    case IHasElements<Card> cardedElement:
+                        elementList = cardedElement.Subelements.Select(e => e.ID).ToList();
+                        break;
+                    case IHasElements<Tile> tiledElement:
+                        elementList = tiledElement.Subelements.Select(e => e.ID).ToList();
+                        break;
+                    case IHasElements<Token> tokenedElement:
+                        elementList = tokenedElement.Subelements.Select(e => e.ID).ToList();
+                        break;
+                }
+
+                builder.AppendLine($"SubElems={elementList.Count}");
+                foreach (var element in elementList)
+                {
+                    builder.AppendLine($"{element}");
+                }
             }
 
             return builder.ToString();

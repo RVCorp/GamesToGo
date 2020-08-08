@@ -7,6 +7,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Online;
 using osuTK;
 
 namespace GamesToGo.Desktop.Project
@@ -37,15 +38,25 @@ namespace GamesToGo.Desktop.Project
 
         public ChatRecommendation ChatRecommendation { get; set; }
 
-        protected WorkingProject(ProjectInfo project, TextureStore textures)
+        private int returnableSaves = 0;
+
+        public bool FirstSave => returnableSaves > 0;
+
+        protected WorkingProject(ref ProjectInfo project, TextureStore textures, int userID)
         {
+            if (project == null)
+            {
+                project = new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = userID };
+                returnableSaves = 2;
+            }
+
             DatabaseObject = project;
             this.textures = textures;
         }
 
-        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures)
+        public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures, APIController api)
         {
-            WorkingProject ret = new WorkingProject(project, textures);
+            WorkingProject ret = new WorkingProject(ref project, textures, api.LocalUser.Value.ID);
 
             if (project.File != null)
             {
@@ -53,7 +64,7 @@ namespace GamesToGo.Desktop.Project
                 {
                     if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
                         return null;
-                    if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
+                    if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))) || !ret.postParse())
                         return null;
                 }
                 catch
@@ -106,6 +117,8 @@ namespace GamesToGo.Desktop.Project
         /// <returns></returns>
         public string SaveableString()
         {
+            if (FirstSave)
+                returnableSaves--;
             DatabaseObject.ComunityStatus = CommunityStatus.Saved;
 
             StringBuilder builder = new StringBuilder();
@@ -129,6 +142,54 @@ namespace GamesToGo.Desktop.Project
             }
 
             return builder.ToString();
+        }
+
+        private bool postParse()
+        {
+            foreach (var element in projectElements)
+            {
+                if (element is IHasElements elementedElement)
+                {
+                    var elementQueue = elementedElement.PendingSubelements;
+                    while (elementQueue.Count > 0)
+                    {
+                        int nextElement = elementQueue.Dequeue();
+                        switch (element)
+                        {
+                            case IHasElements<Board> boardedElement:
+                            {
+                                if (ProjectBoards.All(b => b.ID != nextElement))
+                                    return false;
+                                boardedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
+                                break;
+                            }
+                            case IHasElements<Card> cardedElement:
+                            {
+                                if (ProjectCards.All(b => b.ID != nextElement))
+                                    return false;
+                                cardedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
+                                break;
+                            }
+                            case IHasElements<Tile> tiledElement:
+                            {
+                                if (ProjectTiles.All(b => b.ID != nextElement))
+                                    return false;
+                                tiledElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
+                                break;
+                            }
+                            case IHasElements<Token> tokenedElement:
+                            {
+                                if (ProjectTokens.All(b => b.ID != nextElement))
+                                    return false;
+                                tokenedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
 
         private bool parse(string[] lines)
@@ -197,9 +258,10 @@ namespace GamesToGo.Desktop.Project
                         if (tokens.Length != 2)
                             return false;
 
-                        switch(tokens[0])
+                        switch (tokens[0])
                         {
                             case "Images":
+                            {
                                 int amm = int.Parse(tokens[1]);
                                 for (int j = i + amm; i < j; i++)
                                 {
@@ -214,10 +276,22 @@ namespace GamesToGo.Desktop.Project
                                         return false;
                                 }
                                 break;
+                            }
                             case "Size" when parsingElement is IHasSize size:
+                            {
                                 var xy = tokens[1].Split("|");
                                 size.Size.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
                                 break;
+                            }
+                            case "SubElems" when parsingElement is IHasElements elementedElement:
+                            {
+                                int amm = int.Parse(tokens[1]);
+                                for (int j = i + amm; i < j; i++)
+                                {
+                                    elementedElement.QueueSubelement(int.Parse(lines[i + 1]));
+                                }
+                                break;
+                            }
                         }
                     }
                 }
@@ -238,7 +312,7 @@ namespace GamesToGo.Desktop.Project
                             break;
                         case "Files":
                             int amm = int.Parse(tokens[1]);
-                            for(int j = i + amm; i < j; i++)
+                            for (int j = i + amm; i < j; i++)
                             {
                                 Images.Add(new Image(textures, lines[i + 1]));
                             }

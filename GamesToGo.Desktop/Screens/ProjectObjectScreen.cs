@@ -1,6 +1,8 @@
-﻿using GamesToGo.Desktop.Graphics;
+﻿using System.Linq;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
+using Microsoft.EntityFrameworkCore.Internal;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -18,19 +20,23 @@ namespace GamesToGo.Desktop.Screens
     {
         private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ProjectEditor editor;
+        private WorkingProject project;
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
         private BasicScrollContainer activeEditContainer;
         private Container editAreaContainer;
         private Container customElementsContainer;
-        private Container ElementSizex2;
-        private NumericTextbox SizeTextboxX;
-        private NumericTextbox SizeTextboxY;
+        private Container elementSizex2;
+        private NumericTextbox sizeTextboxX;
+        private NumericTextbox sizeTextboxY;
+        private Container elementSubElements;
+        private BoardObjectManagerContainer tilesManagerContainer;
 
         [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor)
+        private void load(ProjectEditor editor, WorkingProject project)
         {
             this.editor = editor;
+            this.project = project;
 
             InternalChildren = new Drawable[]
             {
@@ -159,7 +165,7 @@ namespace GamesToGo.Desktop.Screens
                                                             RelativeSizeAxes = Axes.Both,
                                                             Colour = Color4.Fuchsia
                                                         },
-                                                        ElementSizex2 = new Container
+                                                        elementSizex2 = new Container
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             Children = new Drawable[]
@@ -169,7 +175,7 @@ namespace GamesToGo.Desktop.Screens
                                                                     Text = "Tamaño X:",
                                                                     Position = new Vector2(50, 50)
                                                                 },
-                                                                SizeTextboxX = new NumericTextbox(4)
+                                                                sizeTextboxX = new NumericTextbox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
@@ -180,12 +186,23 @@ namespace GamesToGo.Desktop.Screens
                                                                     Text = "Tamaño Y:",
                                                                     Position = new Vector2(50, 100)
                                                                 },
-                                                                SizeTextboxY = new NumericTextbox(4)
+                                                                sizeTextboxY = new NumericTextbox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
                                                                     Position = new Vector2(125, 95)
                                                                 }
+                                                            }
+                                                        },
+                                                        elementSubElements = new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Width = 1/3f,
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Child = tilesManagerContainer = new BoardObjectManagerContainer()
+                                                            {
+
                                                             }
                                                         }
                                                     }
@@ -219,6 +236,7 @@ namespace GamesToGo.Desktop.Screens
 
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
+
         }
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)
@@ -227,24 +245,43 @@ namespace GamesToGo.Desktop.Screens
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
             nameTextBox.Current.UnbindEvents();
-            SizeTextboxX.Current.UnbindEvents();
-            SizeTextboxY.Current.UnbindEvents();
+            sizeTextboxX.Current.UnbindEvents();
+            sizeTextboxY.Current.UnbindEvents();
 
             if (obj.NewValue != null)
             {
                 nameTextBox.Text = obj.NewValue.Name.Value;
             }
+
             if(obj.NewValue is IHasSize size)
             {
-                ElementSizex2.Show();
-                SizeTextboxX.Text = size.Size.Value.X.ToString();
-                SizeTextboxY.Text = size.Size.Value.Y.ToString();
-                SizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
-                SizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+                elementSizex2.Show();
+                sizeTextboxX.Text = size.Size.Value.X.ToString();
+                sizeTextboxY.Text = size.Size.Value.Y.ToString();
+                sizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
+                sizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
             }
             else
             {
-                ElementSizex2.Hide();
+                elementSizex2.Hide();
+            }
+
+            if(obj.NewValue is Board board)
+            {
+                elementSubElements.Show();
+                tilesManagerContainer.Filter = (t) =>
+                {
+                    return board.Subelements.Any(ti => ti.ID == t.ID);
+                };
+                tilesManagerContainer.ButtonAction = () =>
+                {
+                    board.Subelements.Add(new Tile());
+                    project.AddElement(board.Subelements.Last());
+                };
+            }
+            else
+            {
+                elementSubElements.Hide();
             }
 
 
