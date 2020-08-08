@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
@@ -83,6 +84,7 @@ namespace GamesToGo.Desktop.Screens
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
+                                    new TileEditorOverlay(),
                                     activeEditContainer = new BasicScrollContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
@@ -206,7 +208,7 @@ namespace GamesToGo.Desktop.Screens
                                         },
                                     },
                                 }
-                            }
+                            } 
                         }
                     },
                     ColumnDimensions = new Dimension[]
