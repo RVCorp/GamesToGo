@@ -35,7 +35,7 @@ namespace GamesToGo.Desktop.Graphics
             this.optionsOverlay = optionsOverlay;
             this.api = api;
 
-            workingProject = WorkingProject.Parse(ProjectInfo, store, textures);
+            workingProject = WorkingProject.Parse(ProjectInfo, store, textures, api);
             if (workingProject == null)
                 editIcon = FontAwesome.Solid.ExclamationTriangle;
             else
@@ -75,7 +75,7 @@ namespace GamesToGo.Desktop.Graphics
             ProjectName.Text = ProjectInfo.Name;
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
-            var getCreator = new GetUserRequest(workingProject.DatabaseObject.CreatorID);
+            var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
             getCreator.Success += u => UsernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
             api.Queue(getCreator);
         }
@@ -122,6 +122,18 @@ namespace GamesToGo.Desktop.Graphics
 
         private void showConfirmation()
         {
+            if (api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            {
+                optionsOverlay.Show("Este proyecto no te pertenece, no puedes eliminarlo", new[]
+                {
+                    new OptionItem
+                    {
+                        Text = "Enterado",
+                        Type = OptionType.Neutral,
+                    }
+                });
+                return;
+            }
             optionsOverlay.Show($"Seguro que quieres eliminar el proyecto \'{ProjectInfo.Name}\'", new[]
             {
                 new OptionItem

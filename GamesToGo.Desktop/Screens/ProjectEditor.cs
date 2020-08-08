@@ -67,7 +67,7 @@ namespace GamesToGo.Desktop.Screens
 
             if (workingProject == null)
             {
-                workingProject = WorkingProject.Parse(new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = api.LocalUser.Value.ID }, store, textures);
+                workingProject = WorkingProject.Parse(null, store, textures, api);
                 SaveProject(false);
             }
 
@@ -286,6 +286,13 @@ namespace GamesToGo.Desktop.Screens
             {
                 workingProject.DatabaseObject.Relations.Clear();
                 workingProject.DatabaseObject.Relations = initialRelations == null ? null : new List<FileRelation>(initialRelations);
+            }
+
+            if(workingProject.FirstSave)
+            {
+                workingProject.DatabaseObject.File = null;
+                workingProject.DatabaseObject.ImageRelation = null;
+                database.Remove(workingProject.DatabaseObject);
             }
 
             database.SaveChanges();

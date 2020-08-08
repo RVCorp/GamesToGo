@@ -305,7 +305,7 @@ namespace GamesToGo.Desktop.Screens
             database.Add(futureInfo);
             database.SaveChanges();
             futureInfo.ImageRelation = futureInfo.Relations.FirstOrDefault(r => r.File.NewName == onlineProject.Image);
-            var ret = WorkingProject.Parse(futureInfo, store, textures);
+            var ret = WorkingProject.Parse(futureInfo, store, textures, api);
             database.SaveChanges();
 
             onlineProjectsList.Remove(onlineProjectsList.Children.First(o => o.ID == onlineProject.Id));

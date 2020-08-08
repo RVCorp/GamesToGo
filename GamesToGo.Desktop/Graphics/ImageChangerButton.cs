@@ -238,7 +238,7 @@ namespace GamesToGo.Desktop.Graphics
             this.size.BindValueChanged((obj) => TargetSize = obj.NewValue, true);
         }
 
-        public ImageChangerButton(string name) : this(name, new Bindable <Vector2>(new Vector2(200, 400)))
+        public ImageChangerButton(string name) : this(name, new Bindable <Vector2>(new Vector2(400, 400)))
         {
         }
 

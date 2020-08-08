@@ -1,8 +1,5 @@
 ﻿using System.Linq;
 using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Screens;
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -10,25 +7,34 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using Image = GamesToGo.Desktop.Project.Image;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ElementEditButton<T> : Button where T : ProjectElement
+    public class ElementEditButton : Button
     {
-        public readonly T Element;
+        private ProjectElement element;
+        public ProjectElement Element
+        {
+            get => element;
+            set
+            {
+                if (value == element)
+                    return;
+
+                element = value;
+                elementName.Text = value.Name.Value;
+                elementName.Current.BindTo(value.Name);
+                value.Images.Values.First().BindValueChanged((val) => image.Texture = val.NewValue?.Texture ?? value.DefaultImage.Texture, true);
+            }
+        }
         private readonly Container borderContainer;
         private readonly SpriteText elementName;
 
-        private IBindable<string> elementText = new Bindable<string>();
-        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private Sprite image;
 
-        private bool selected => (currentEditing.Value?.ID ?? -1) == Element.ID;
-        public ElementEditButton(T element)
+        public ElementEditButton()
         {
-            Element = element;
             Size = new Vector2(165);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -67,38 +73,27 @@ namespace GamesToGo.Desktop.Graphics
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Position = new Vector2(0, 135),
-                    Text = element.Name.Value,
                     MaxWidth = 150,
                     Font = new FontUsage(size: 20),
                 },
             };
+            FadeBorder(false, true);
         }
 
-        [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor)
+        protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
         {
-            Action = () => editor.SelectElement(Element);
-            elementName.Current.BindTo(Element.Name);
-
-            currentEditing.BindTo(editor.CurrentEditingElement);
-            currentEditing.BindValueChanged((_) => editingChanged(), true);
-            Element.Images.Values.First().BindValueChanged(imageChanged, true);
-            borderContainer.Alpha = selected ? 1 : 0;
-        }
-        private void editingChanged()
-        {
-            borderContainer.Colour = selected ? Color4.Gold : Color4.White;
-            borderContainer.FadeTo(selected ? 1 : IsHovered ? 1 : 0, 125);
+            borderContainer.FadeTo(visible ? 1 : 0, instant ? 0 : 125);
+            borderContainer.Colour = golden ? Color4.Gold : Color4.White;
         }
 
-        private void imageChanged(ValueChangedEvent<Image> value)
+        protected void FadeBorder(bool visible)
         {
-            image.Texture = value.NewValue?.Texture ?? Element.DefaultImage.Texture;
+            borderContainer.FadeTo(visible ? 1 : 0, 125);
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            borderContainer.FadeIn(125);
+            FadeBorder(true);
             return true;
         }
 
@@ -106,8 +101,7 @@ namespace GamesToGo.Desktop.Graphics
         {
             base.OnHoverLost(e);
 
-            if (!selected)
-                borderContainer.FadeOut(125);
+            FadeBorder(false);
         }
     }
 }
