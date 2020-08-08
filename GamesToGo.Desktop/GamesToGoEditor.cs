@@ -52,6 +52,7 @@ namespace GamesToGo.Desktop
         [BackgroundDependencyLoader]
         private void load(FrameworkConfigManager config, Storage store) //Esta es la manera en la que se acceden a elementos de las dependencias, su tipo y un nombre local.
         {
+            Host.Window.Title = Name;
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");

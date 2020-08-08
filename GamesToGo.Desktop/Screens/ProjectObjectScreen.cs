@@ -31,6 +31,7 @@ namespace GamesToGo.Desktop.Screens
         private NumericTextbox sizeTextboxY;
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
+        private BasicTextBox descriptionTextBox;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor, WorkingProject project)
@@ -142,7 +143,7 @@ namespace GamesToGo.Desktop.Screens
                                                                     Text = "Descripcion:",
                                                                     Colour = Color4.Black
                                                                 },
-                                                                new BasicTextBox
+                                                                descriptionTextBox = new BasicTextBox
                                                                 {
                                                                     Anchor = Anchor.TopRight,
                                                                     Origin = Anchor.TopRight,
@@ -247,10 +248,12 @@ namespace GamesToGo.Desktop.Screens
             nameTextBox.Current.UnbindEvents();
             sizeTextboxX.Current.UnbindEvents();
             sizeTextboxY.Current.UnbindEvents();
+            descriptionTextBox.Current.UnbindEvents();
 
             if (obj.NewValue != null)
             {
                 nameTextBox.Text = obj.NewValue.Name.Value;
+                descriptionTextBox.Text = obj.NewValue.Description.Value;
             }
 
             if(obj.NewValue is IHasSize size)
@@ -284,7 +287,7 @@ namespace GamesToGo.Desktop.Screens
                 elementSubElements.Hide();
             }
 
-
+            descriptionTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Description.Value = obj.NewValue;
             nameTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Name.Value = obj.NewValue;
         }
     }

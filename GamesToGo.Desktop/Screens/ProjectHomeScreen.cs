@@ -21,6 +21,7 @@ namespace GamesToGo.Desktop.Screens
         private WorkingProject project;
         private NumericTextbox maxPlayersTextBox;
         private NumericTextbox minPlayersTextBox;
+        private BasicTextBox descriptionTextBox;
 
         [BackgroundDependencyLoader]
         private void load(WorkingProject project)
@@ -125,10 +126,11 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = "Descripción:",
                                                 Position = new Vector2(245,70)
                                             },
-                                            new BasicTextBox        //Textbox de varios renglones
+                                            descriptionTextBox = new BasicTextBox        //Textbox de varios renglones
                                             {
+                                                Text = project.DatabaseObject.Description,
                                                 Position = new Vector2(340,70),
-                                                Height = 100,
+                                                Height = 35,
                                                 Width = 1732
                                             }
                                         }
@@ -169,6 +171,7 @@ namespace GamesToGo.Desktop.Screens
                 }
             };
 
+            descriptionTextBox.Current.ValueChanged += (obj) => project.DatabaseObject.Description = obj.NewValue;
             titleTextBox.Current.ValueChanged += (obj) => project.DatabaseObject.Name = obj.NewValue;
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);

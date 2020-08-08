@@ -8,6 +8,8 @@ namespace GamesToGo.Desktop.Project.Elements
     {
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Carta");
 
+        public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe esta carta para poder identificarla mejor!");
+
         protected override string DefaultImageName => @"Card";
 
         public override Dictionary<string, Bindable<Image>> Images { get; } = new Dictionary<string, Bindable<Image>>(new List<KeyValuePair<string, Bindable<Image>>>
