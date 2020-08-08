@@ -22,6 +22,7 @@ namespace GamesToGo.Desktop.Overlays
         public Container ElementSizex2;
         public NumericTextbox SizeTextboxX;
         public NumericTextbox SizeTextboxY;
+        private BasicTextBox descriptionTextBox;
 
         public TileEditorOverlay()
         {
@@ -81,7 +82,7 @@ namespace GamesToGo.Desktop.Overlays
                                                 Text = "Descripcion:",
                                                 Colour = Color4.Black
                                             },
-                                            new BasicTextBox
+                                            descriptionTextBox = new BasicTextBox
                                             {
                                                 Anchor = Anchor.TopRight,
                                                 Origin = Anchor.TopRight,
@@ -155,10 +156,12 @@ namespace GamesToGo.Desktop.Overlays
             nameTextBox.Current.UnbindEvents();
             SizeTextboxX.Current.UnbindEvents();
             SizeTextboxY.Current.UnbindEvents();
+            descriptionTextBox.Current.UnbindEvents();
 
             if (element != null)
             {
                 nameTextBox.Text = element.Name.Value;
+                descriptionTextBox.Text = element.Description.Value;
             }
 
             if (element is IHasSize size)
@@ -169,6 +172,7 @@ namespace GamesToGo.Desktop.Overlays
                 SizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
                 SizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
             }
+            descriptionTextBox.Current.ValueChanged += (obj) => element.Description.Value = obj.NewValue;
             nameTextBox.Current.ValueChanged += (obj) => element.Name.Value = obj.NewValue;
         }
 
