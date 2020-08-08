@@ -33,6 +33,7 @@ namespace GamesToGo.Desktop.Project
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"{ID}|{Name}");
+            builder.AppendLine($"Desc={Description}");
             builder.AppendLine($"Images={Images.Count}");
 
             foreach (var image in Images)
