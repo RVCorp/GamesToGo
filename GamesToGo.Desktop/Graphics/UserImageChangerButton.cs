@@ -19,6 +19,7 @@ namespace GamesToGo.Desktop.Graphics
     {
         private Container hoverContainer;
         private Sprite image;
+        public Vector2 ButtonSize;
 
         [BackgroundDependencyLoader]
         private void load(LargeTextureStore textures, APIController api, ImageFinderOverlay imageFinder, SplashInfoOverlay infoOverlay)
@@ -29,7 +30,7 @@ namespace GamesToGo.Desktop.Graphics
                 BorderColour = Color4.Black,
                 BorderThickness = 3.5f,
                 Masking = true,
-                Size = new Vector2(250),
+                Size = ButtonSize,
                 Children = new Drawable[]
                 {
                     image = new Sprite

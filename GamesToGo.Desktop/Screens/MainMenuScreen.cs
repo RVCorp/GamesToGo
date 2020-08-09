@@ -76,6 +76,7 @@ namespace GamesToGo.Desktop.Screens
                                         Position = new Vector2(0, 125),
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
+                                        ButtonSize = new Vector2(250)
                                     },
                                     new SpriteText
                                     {
@@ -95,7 +96,8 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 40,
                                         Anchor = Anchor.TopCentre,
                                         Origin = Anchor.TopCentre,
-                                        Position = new Vector2(0,600)
+                                        Position = new Vector2(0,600),
+                                        Action = showProfile
                                     },
                                     new GamesToGoButton
                                     {
@@ -200,6 +202,11 @@ namespace GamesToGo.Desktop.Screens
         {
             api.Logout();
             this.Exit();
+        }
+
+        private void showProfile()
+        {
+            LoadComponentAsync(new ProfileScreen(), ps => this.Push(ps));
         }
 
         public override void OnEntering(IScreen last)
