@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Bindables;
 using osuTK;
 
@@ -20,7 +22,9 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
 
-        public BindableList<int> Events { get; } = new BindableList<int>();
+        public BindableList<Event> Events { get; } = new BindableList<Event>();
+
+        public Type[] CompatibleEvents { get; } = Array.Empty<Type>();
 
         public override string ToSaveableString()
         {

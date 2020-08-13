@@ -26,7 +26,6 @@ namespace GamesToGo.Desktop.Project
 
         public int NumberBoards { get; set; }
 
-
         public int OnlineProjectID { get; set; }
 
         public int ModerationStatus { get; set; }

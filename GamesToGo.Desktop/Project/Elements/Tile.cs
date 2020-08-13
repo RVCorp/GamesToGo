@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Bindables;
 using osuTK;
 
@@ -17,7 +19,9 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>("Frente", new Bindable<Image>())
         });
 
-        public BindableList<int> Events { get; } = new BindableList<int>();
+        public BindableList<Event> Events { get; } = new BindableList<Event>();
+
+        public Type[] CompatibleEvents { get; } = Array.Empty<Type>();
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
 

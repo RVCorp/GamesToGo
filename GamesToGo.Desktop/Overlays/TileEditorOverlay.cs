@@ -145,7 +145,7 @@ namespace GamesToGo.Desktop.Overlays
                     Width = 175,
                     Text = "Regresar",
                     Position = new Vector2(10,10),
-                    Action = this.Hide
+                    Action = Hide
                 },
             };
         }
