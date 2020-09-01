@@ -10,9 +10,9 @@ namespace GamesToGo.Desktop.Project
 
         public int CreatorID { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "Nuevo Proyecto";
 
-        public string Description { get; set; }
+        public string Description { get; set; } = "¡¨Decribe tu proyecto en una frase!";
 
         public int MinNumberPlayers { get; set; }
 
