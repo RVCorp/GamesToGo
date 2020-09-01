@@ -176,8 +176,6 @@ namespace GamesToGo.Desktop.Project
                                     return false;
                                 elementedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
                                 break;
-                            default:
-                                break;
                         }
                     }
                 }

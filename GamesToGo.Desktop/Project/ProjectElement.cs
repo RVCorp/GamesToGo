@@ -53,13 +53,7 @@ namespace GamesToGo.Desktop.Project
 
             if(this is IHasElements elementedElement)
             {
-                List<int> elementList = elementedElement.Subelements.Select(e => e.ID).ToList();
-
-                builder.AppendLine($"SubElems={elementList.Count}");
-                foreach (var element in elementList)
-                {
-                    builder.AppendLine($"{element}");
-                }
+                builder.AppendLine(elementedElement.ToSaveable());
             }
 
             return builder.ToString();

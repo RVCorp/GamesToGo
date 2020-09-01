@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
@@ -14,5 +16,18 @@ namespace GamesToGo.Desktop.Project.Elements
         List<ProjectElement> Subelements { get; }
 
         ElementType SubelementType { get; }
+
+        public string ToSaveable()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine($"SubElems={Subelements.Count}");
+            foreach (var element in Subelements.Select(e => e.ID).ToList())
+            {
+                builder.AppendLine($"{element}");
+            }
+
+            return builder.ToString();
+        }
     }
 }
