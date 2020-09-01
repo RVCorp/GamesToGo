@@ -11,6 +11,8 @@ namespace GamesToGo.Desktop.Project
     {
         public int ID { get; set; }
 
+        public abstract ElementType Type { get; }
+
         public abstract Bindable<string> Name { get; set; }
 
         public abstract Bindable<string> Description { get; set; }
@@ -28,11 +30,11 @@ namespace GamesToGo.Desktop.Project
             DefaultImage = new Image(Textures, "Elements/" + DefaultImageName, false);
         }
 
-        public virtual string ToSaveableString()
+        public string ToSaveableString()
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine($"{ID}|{Name}");
+            builder.AppendLine($"{(int)Type}|{ID}|{Name}");
             builder.AppendLine($"Desc={Description}");
             builder.AppendLine($"Images={Images.Count}");
 

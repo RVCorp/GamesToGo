@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Bindables;
@@ -8,6 +8,8 @@ namespace GamesToGo.Desktop.Project.Elements
 {
     public class Card : ProjectElement, IHasSize, IHasEvents
     {
+        public override ElementType Type => ElementType.Card;
+
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Carta");
 
         public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe esta carta para poder identificarla mejor!");
@@ -25,10 +27,5 @@ namespace GamesToGo.Desktop.Project.Elements
         public BindableList<Event> Events { get; } = new BindableList<Event>();
 
         public Type[] CompatibleEvents { get; } = Array.Empty<Type>();
-
-        public override string ToSaveableString()
-        {
-            return "1|" + base.ToSaveableString();
-        }
     }
 }

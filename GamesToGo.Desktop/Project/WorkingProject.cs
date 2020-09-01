@@ -224,20 +224,22 @@ namespace GamesToGo.Desktop.Project
                         var idents = line.Split('|', 3);
                         if (idents.Length != 3)
                             return false;
-                        switch (int.Parse(idents[0]))
+                        switch (Enum.Parse<ElementType>(idents[0]))
                         {
-                            case 0:
+                            case ElementType.Token:
                                 parsingElement = new Token();
                                 break;
-                            case 1:
+                            case ElementType.Card:
                                 parsingElement = new Card();
                                 break;
-                            case 2:
+                            case ElementType.Tile:
                                 parsingElement = new Tile();
                                 break;
-                            case 3:
+                            case ElementType.Board:
                                 parsingElement = new Board();
                                 break;
+                            default:
+                                return false;
                         }
                         parsingElement.ID = int.Parse(idents[1]);
                         parsingElement.Name.Value = idents[2];

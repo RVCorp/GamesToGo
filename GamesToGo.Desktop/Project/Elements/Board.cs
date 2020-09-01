@@ -6,6 +6,7 @@ namespace GamesToGo.Desktop.Project.Elements
 {
     public class Board : ProjectElement, IHasSize, IHasElements
     {
+        public override ElementType Type => ElementType.Board;
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
         public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe este tablero para poder identificarlo mejor!");
 
@@ -23,10 +24,5 @@ namespace GamesToGo.Desktop.Project.Elements
         public Queue<int> PendingSubelements { get; } = new Queue<int>();
 
         public ElementType SubelementType => ElementType.Tile;
-
-        public override string ToSaveableString()
-        {
-            return "3|" + base.ToSaveableString();
-        }
     }
 }
