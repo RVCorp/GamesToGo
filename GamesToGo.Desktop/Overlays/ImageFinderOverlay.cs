@@ -66,7 +66,7 @@ namespace GamesToGo.Desktop.Overlays
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(100, 112, 206, 255),
+                    Colour = new Colour4(100, 112, 206, 255),
                 },
                 itemsScrollContainer = new BasicScrollContainer
                 {
@@ -119,7 +119,7 @@ namespace GamesToGo.Desktop.Overlays
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Color4(130, 138, 230, 255)
+                            Colour = new Colour4(130, 138, 230, 255)
                         },
                         currentDirectoryText = new SpriteText
                         {
@@ -130,8 +130,8 @@ namespace GamesToGo.Desktop.Overlays
                         {
                             Action = Hide,
                             Icon = FontAwesome.Solid.Times,
-                            ButtonColour = new Color4(145, 151, 243, 255),
-                            BackgroundColour = new Color4(100, 112, 206, 255),
+                            ButtonColour = new Colour4(145, 151, 243, 255),
+                            BackgroundColour = new Colour4(100, 112, 206, 255),
                             X = -10,
                         }
                     }
@@ -230,7 +230,7 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ShowError(string error)
         {
-            splashOverlay.Show(error, new Color4(44, 53, 119, 255));
+            splashOverlay.Show(error, new Colour4(44, 53, 119, 255));
         }
 
         public void ChangeToParent()

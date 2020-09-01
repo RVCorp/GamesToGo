@@ -4,7 +4,6 @@ using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -12,7 +11,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -35,7 +33,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Colour4 (106,100,104, 255)      //Color fondo general
                 },
                 new GridContainer
                 {
@@ -71,7 +69,7 @@ namespace GamesToGo.Desktop.Screens
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = Color4.Black.Opacity(0.8f),
+                                                Colour = Colour4.Black.Opacity(0.8f),
                                             },
                                             new Container
                                             {

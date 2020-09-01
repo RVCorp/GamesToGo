@@ -5,13 +5,11 @@ using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -52,19 +50,19 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        public Color4 BackgroundColour
+        public Colour4 BackgroundColour
         {
             get
             {
                 if (typeof(TElement).Equals(typeof(Card)))
-                    return Color4.Maroon;
+                    return Colour4.Maroon;
                 if (typeof(TElement).Equals(typeof(Token)))
-                    return Color4.Crimson;
+                    return Colour4.Crimson;
                 if (typeof(TElement).Equals(typeof(Board)))
-                    return Color4.DarkSeaGreen;
+                    return Colour4.DarkSeaGreen;
                 if (typeof(TElement).Equals(typeof(Tile)))
-                    return Color4.BlueViolet;
-                return Color4.Black;
+                    return Colour4.BlueViolet;
+                return Colour4.Black;
             }
         }
 
@@ -161,7 +159,7 @@ namespace GamesToGo.Desktop.Graphics
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Beige
+                                        Colour = Colour4.Beige
                                     },
                                     addElementButton = new AutoSizeButton
                                     {
@@ -228,7 +226,7 @@ namespace GamesToGo.Desktop.Graphics
             public ObjectManagerScrollContainer()
             {
                 Scrollbar.Blending = BlendingParameters.Additive;
-                Scrollbar.Child.Colour = new Color4(50, 50, 50, 255);
+                Scrollbar.Child.Colour = new Colour4(50, 50, 50, 255);
             }
         }
     }

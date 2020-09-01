@@ -36,8 +36,8 @@ namespace GamesToGo.Desktop.Graphics
             ButtonFlowContainer.Add(editButton = new IconButton(true)
             {
                 Icon = FontAwesome.Solid.Download,
-                ButtonColour = Color4.SkyBlue,
-                ProgressColour = Color4.PowderBlue,
+                ButtonColour = Colour4.SkyBlue,
+                ProgressColour = Colour4.PowderBlue,
             });
 
             BottomContainer.Add(new SpriteText

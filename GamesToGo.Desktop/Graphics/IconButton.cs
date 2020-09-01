@@ -29,18 +29,18 @@ namespace GamesToGo.Desktop.Graphics
                 colourBox = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(100, 100, 100, 255),
+                    Colour = new Colour4(100, 100, 100, 255),
                 },
                 hoverBox = new Box
                 {
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(100, 100, 100, 255),
+                    Colour = new Colour4(100, 100, 100, 255),
                 },
                 progressBox = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4(80, 80, 80, 255),
+                    Colour = new Colour4(80, 80, 80, 255),
                     Width = 0,
                 },
                 new Container
@@ -94,11 +94,11 @@ namespace GamesToGo.Desktop.Graphics
 
         public IconUsage Icon { set => icon.Icon = value; }
 
-        public Color4 ButtonColour { set => hoverBox.Colour = value; }
+        public Colour4 ButtonColour { set => hoverBox.Colour = value; }
 
-        public Color4 BackgroundColour { set => colourBox.Colour = value; }
+        public Colour4 BackgroundColour { set => colourBox.Colour = value; }
 
-        public Color4 ProgressColour { set => progressBox.Colour = value; }
+        public Colour4 ProgressColour { set => progressBox.Colour = value; }
 
         public float Progress { set => progressBox.Width = value; }
 

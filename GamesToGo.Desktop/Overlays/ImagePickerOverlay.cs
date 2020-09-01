@@ -1,7 +1,6 @@
 ﻿using GamesToGo.Desktop.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -10,10 +9,8 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using Image = GamesToGo.Desktop.Project.Image;
 using osuTK;
-using osuTK.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using GamesToGo.Desktop.Screens;
-using System;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -23,8 +20,8 @@ namespace GamesToGo.Desktop.Overlays
         private IBindable<ProjectElement> editing = new Bindable<ProjectElement>();
         private FillFlowContainer<ItemButton> itemsContainer;
         private string targetElementImage;
-        private readonly Color4 gradientLight = Color4.Black.Opacity(0);
-        private readonly Color4 gradientDark = Color4.Black.Opacity(0.8f);
+        private readonly Colour4 gradientLight = Colour4.Black.Opacity(0);
+        private readonly Colour4 gradientDark = Colour4.Black.Opacity(0.8f);
 
         public const float ITEM_SIZE = 300;
 
@@ -185,13 +182,13 @@ namespace GamesToGo.Desktop.Overlays
                 Masking = true;
                 CornerRadius = 10;
                 BorderThickness = 2;
-                BorderColour = Color4.White;
+                BorderColour = Colour4.White;
                 Anchor = Anchor.CentreLeft;
                 Origin = Anchor.CentreLeft;
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Black.Opacity(0),
+                    Colour = Colour4.Black.Opacity(0),
                 };
             }
 

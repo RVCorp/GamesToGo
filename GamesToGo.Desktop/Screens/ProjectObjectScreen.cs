@@ -52,7 +52,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106, 100, 104, 255),
+                    Colour = new Colour4 (106, 100, 104, 255),
                 },
                 new GridContainer
                 {
@@ -70,7 +70,7 @@ namespace GamesToGo.Desktop.Screens
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Gray
+                                        Colour = Colour4.Gray
                                     },
                                     new ProjectObjectManagerContainer<Card>("Cartas", true)
                                     {
@@ -117,7 +117,7 @@ namespace GamesToGo.Desktop.Screens
                                                         new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Colour = Color4.Cyan
+                                                            Colour = Colour4.Cyan
                                                         },
                                                         new Container
                                                         {
@@ -133,7 +133,7 @@ namespace GamesToGo.Desktop.Screens
                                                                     Origin = Anchor.TopRight,
                                                                     Position = new Vector2(-675,10),
                                                                     Text = "Nombre:",
-                                                                    Colour = Color4.Black
+                                                                    Colour = Colour4.Black
                                                                 },
                                                                 nameTextBox = new BasicTextBox
                                                                 {
@@ -149,7 +149,7 @@ namespace GamesToGo.Desktop.Screens
                                                                     Origin = Anchor.TopRight,
                                                                     Position = new Vector2(-675,80),
                                                                     Text = "Descripcion:",
-                                                                    Colour = Color4.Black
+                                                                    Colour = Colour4.Black
                                                                 },
                                                                 descriptionTextBox = new BasicTextBox
                                                                 {
@@ -172,7 +172,7 @@ namespace GamesToGo.Desktop.Screens
                                                         new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Colour = Color4.Fuchsia
+                                                            Colour = Colour4.Fuchsia
                                                         },
                                                         elementSizex2 = new Container
                                                         {

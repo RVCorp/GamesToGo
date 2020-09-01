@@ -2,7 +2,6 @@
 using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,7 +10,6 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -26,7 +24,7 @@ namespace GamesToGo.Desktop.Graphics
             AutoSizeAxes = Axes.Both;
             Child = new CircularContainer
             {
-                BorderColour = Color4.Black,
+                BorderColour = Colour4.Black,
                 BorderThickness = 3.5f,
                 Masking = true,
                 Size = new Vector2(250),
@@ -46,7 +44,7 @@ namespace GamesToGo.Desktop.Graphics
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Black.Opacity(0.5f)
+                                Colour = Colour4.Black.Opacity(0.5f)
                             },
                             new SpriteIcon
                             {
@@ -71,7 +69,7 @@ namespace GamesToGo.Desktop.Graphics
             {
                 var req = new UploadUserImageRequest(image);
                 req.Success += () => this.image.Texture = Texture.FromStream(new MemoryStream(image));
-                req.Failure += e => infoOverlay.Show("Falló como siempre", Color4.DarkRed);
+                req.Failure += e => infoOverlay.Show("Falló como siempre", Colour4.DarkRed);
                 api.Queue(req);
             });
         }

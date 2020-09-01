@@ -33,7 +33,7 @@ namespace GamesToGo.Desktop.Graphics
                 Truncate = true,
                 Text = Path.GetFileName(path),
                 MaxWidth = ImageFinderOverlay.ENTRY_WIDTH - 20,
-                Colour = Color4.Black,
+                Colour = Colour4.Black,
             });
 
             Add(displayContainer = new Container
@@ -69,7 +69,7 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.Centre,
                     Size = new Vector2(50),
                     Icon = FontAwesome.Solid.File,
-                    Colour = Color4.Black,
+                    Colour = Colour4.Black,
                 });
             }
             else

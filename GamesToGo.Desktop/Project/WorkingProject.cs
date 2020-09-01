@@ -46,7 +46,7 @@ namespace GamesToGo.Desktop.Project
         {
             if (project == null)
             {
-                project = new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = userID };
+                project = new ProjectInfo { CreatorID = userID };
                 returnableSaves = 2;
             }
 

@@ -28,7 +28,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)
+                    Colour = new Colour4 (106,100,104, 255)
                 },
                 new Container
                 {
@@ -43,7 +43,7 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Color4(80, 75, 74, 255)
+                            Colour = new Colour4(80, 75, 74, 255)
                         },
                         new SpriteText
                         {
@@ -55,8 +55,8 @@ namespace GamesToGo.Desktop.Screens
                         new GamesToGoButton
                         {
                             Text = "Registrarse",
-                            BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
-                            BorderColour = Color4.Black,
+                            BackgroundColour = new Colour4 (106,100,104, 255),  //Color Boton userInformation
+                            BorderColour = Colour4.Black,
                             BorderThickness = 2f,
                             Masking = true,
                             Height = 40,
@@ -69,8 +69,8 @@ namespace GamesToGo.Desktop.Screens
                         new GamesToGoButton
                         {
                             Text = "Iniciar Sesión",
-                            BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
-                            BorderColour = Color4.Black,
+                            BackgroundColour = new Colour4 (106,100,104, 255),  //Color Boton userInformation
+                            BorderColour = Colour4.Black,
                             BorderThickness = 2f,
                             Masking = true,
                             Height = 40,
@@ -90,7 +90,7 @@ namespace GamesToGo.Desktop.Screens
                     RelativePositionAxes = Axes.X,
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreRight,
-                    Colour = new Color4 (106,100,104, 255),
+                    Colour = new Colour4 (106,100,104, 255),
                     Width = 1,
                 }
             };

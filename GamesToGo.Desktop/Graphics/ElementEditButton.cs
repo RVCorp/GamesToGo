@@ -46,7 +46,7 @@ namespace GamesToGo.Desktop.Graphics
                     Masking = true,
                     CornerRadius = 10,
                     BorderThickness = 2,
-                    BorderColour = Color4.White,
+                    BorderColour = Colour4.White,
                     RelativeSizeAxes = Axes.Both,
                     Child = new Box
                     {
@@ -83,7 +83,7 @@ namespace GamesToGo.Desktop.Graphics
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
         {
             borderContainer.FadeTo(visible ? 1 : 0, instant ? 0 : 125);
-            borderContainer.Colour = golden ? Color4.Gold : Color4.White;
+            borderContainer.Colour = golden ? Colour4.Gold : Colour4.White;
         }
 
         protected void FadeBorder(bool visible)
