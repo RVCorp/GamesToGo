@@ -291,6 +291,16 @@ namespace GamesToGo.Desktop.Project
                                 }
                                 break;
                             }
+                            case "Orient" when parsingElement is IHasOrientation orientedElement:
+                            {
+                                orientedElement.DefaultOrientation = Enum.Parse<ElementOrientation>(tokens[1]);
+                                break;
+                            }
+                            case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
+                            {
+                                privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
+                                break;
+                            }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Bindables;
@@ -6,7 +6,7 @@ using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Card : ProjectElement, IHasSize, IHasEvents
+    public class Card : ProjectElement, IHasSize, IHasEvents, IHasPrivacy, IHasOrientation
     {
         public override ElementType Type => ElementType.Card;
 
@@ -23,6 +23,10 @@ namespace GamesToGo.Desktop.Project.Elements
         });
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
+
+        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
+
+        public ElementOrientation DefaultOrientation { get; set; } = ElementOrientation.Vertical;
 
         public BindableList<Event> Events { get; } = new BindableList<Event>();
 

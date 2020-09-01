@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Token : ProjectElement
+    public class Token : ProjectElement, IHasPrivacy
     {
         public override ElementType Type => ElementType.Token;
 
@@ -18,6 +18,6 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>("Frente", new Bindable<Image>()),
             new KeyValuePair<string, Bindable<Image>>("Miniatura", new Bindable<Image>()),
         });
-
+        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
     }
 }

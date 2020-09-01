@@ -53,6 +53,11 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine(privacySetElement.ToSaveable());
             }
 
+            if(this is IHasOrientation orientedElement)
+            {
+                builder.AppendLine(orientedElement.ToSaveable());
+            }
+
             if(this is IHasElements elementedElement)
             {
                 builder.AppendLine(elementedElement.ToSaveable());
