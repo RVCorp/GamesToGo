@@ -154,36 +154,30 @@ namespace GamesToGo.Desktop.Project
                     while (elementQueue.Count > 0)
                     {
                         int nextElement = elementQueue.Dequeue();
-                        switch (element)
+                        switch (elementedElement.SubelementType)
                         {
-                            case IHasElements<Board> boardedElement:
-                            {
-                                if (ProjectBoards.All(b => b.ID != nextElement))
-                                    return false;
-                                boardedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Card> cardedElement:
-                            {
-                                if (ProjectCards.All(b => b.ID != nextElement))
-                                    return false;
-                                cardedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Tile> tiledElement:
-                            {
-                                if (ProjectTiles.All(b => b.ID != nextElement))
-                                    return false;
-                                tiledElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Token> tokenedElement:
-                            {
+                            case ElementType.Token:
                                 if (ProjectTokens.All(b => b.ID != nextElement))
                                     return false;
-                                tokenedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
+                                elementedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
                                 break;
-                            }
+                            case ElementType.Card:
+                                if (ProjectCards.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
+                                break;
+                            case ElementType.Tile:
+                                if (ProjectTiles.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
+                                break;
+                            case ElementType.Board:
+                                if (ProjectBoards.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }

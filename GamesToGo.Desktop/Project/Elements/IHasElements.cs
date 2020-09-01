@@ -10,10 +10,9 @@ namespace GamesToGo.Desktop.Project.Elements
         }
 
         public Queue<int> PendingSubelements { get; }
-    }
 
-    public interface IHasElements<T> : IHasElements where T : ProjectElement
-    {
-        List<T> Subelements { get; }
+        List<ProjectElement> Subelements { get; }
+
+        ElementType SubelementType { get; }
     }
 }
