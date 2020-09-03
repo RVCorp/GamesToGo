@@ -55,6 +55,7 @@ namespace GamesToGo.Desktop.Online
                 req.AddParameter("maxP", project.MaxNumberPlayers.ToString());
                 req.AddParameter("imageName", project.ImageRelation?.File?.NewName ?? "null");
                 req.AddParameter("LastEdited", project.LastEdited.ToUniversalTime().ToString("yyyyMMddHHmmssfff"));
+                req.AddParameter("Status",((int)project.ComunityStatus).ToString());
                 req.AddParameter("FileName", project.File.NewName);
                 req.AddFile(@"File", ms.ToArray());
             }
