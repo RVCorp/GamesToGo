@@ -4,17 +4,27 @@ using System.Text;
 
 namespace GamesToGo.Desktop.Project.Events
 {
-    public abstract class EventAction
+    public abstract class Argument
     {
-        public abstract int TypeID { get; }
+        public abstract int ArgumentTypeID { get; }
+
+        public abstract ArgumentType Type { get; }
+
+        public abstract bool HasResult { get; }
 
         public abstract IEnumerable<ArgumentType> ExpectedArguments { get; }
 
         public Argument[] Arguments { get; }
 
-        public Argument Condition { get; set; } = null;
+        private int? result = null;
 
-        public EventAction()
+        public int? Result
+        {
+            get => HasResult ? result : result;
+            set => result = HasResult ? value : null;
+        }
+
+        public Argument()
         {
             Arguments = new Argument[ExpectedArguments.Count()];
         }
@@ -23,13 +33,12 @@ namespace GamesToGo.Desktop.Project.Events
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.Append('|');
-            //Tipo de accion
-            builder.Append(TypeID);
+            //Tipo de argumento
+            builder.Append(ArgumentTypeID);
 
             //Argumentos o resultado
             builder.Append('(');
-            if (ExpectedArguments != null)
+            if (!HasResult)
             {
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
@@ -40,13 +49,11 @@ namespace GamesToGo.Desktop.Project.Events
                         builder.Append(',');
                 }
             }
-            builder.Append(')');
-
-            if (Condition != null)
+            else
             {
-                builder.Append('|');
-                builder.Append(Condition.ToString());
+                builder.Append(Result);
             }
+            builder.Append(')');
 
             return builder.ToString();
         }
