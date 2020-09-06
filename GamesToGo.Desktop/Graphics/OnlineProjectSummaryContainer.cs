@@ -60,6 +60,7 @@ namespace GamesToGo.Desktop.Graphics
             loadingIcon.RotateTo(0).Then().RotateTo(360, 1500).Loop();
 
             ProjectName.Text = onlineProject.Name;
+            ProjectDescription.Text = onlineProject.Description;
             editButton.Enabled.Value = true;
             Schedule(async () =>
             {

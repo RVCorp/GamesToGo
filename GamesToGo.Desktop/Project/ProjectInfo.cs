@@ -12,7 +12,7 @@ namespace GamesToGo.Desktop.Project
 
         public string Name { get; set; } = "Nuevo Proyecto";
 
-        public string Description { get; set; } = "¡¨Decribe tu proyecto en una frase!";
+        public string Description { get; set; } = "¡Decribe tu proyecto en una frase!";
 
         public int MinNumberPlayers { get; set; }
 

@@ -282,6 +282,7 @@ namespace GamesToGo.Desktop.Screens
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,
                 Name = onlineProject.Name,
+                Description = onlineProject.Description,
                 OnlineProjectID = onlineProject.Id,
             };
             using (var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open))
