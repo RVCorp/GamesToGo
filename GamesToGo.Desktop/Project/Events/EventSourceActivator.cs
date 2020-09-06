@@ -1,6 +1,6 @@
 ﻿namespace GamesToGo.Desktop.Project.Events
 {
-    public enum EventType
+    public enum EventSourceActivator
     {
         Single = 0,
         Multiple = 1,

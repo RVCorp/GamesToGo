@@ -63,6 +63,11 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine(elementedElement.ToSaveable());
             }
 
+            if(this is IHasEvents eventedElement)
+            {
+                builder.AppendLine(eventedElement.ToSaveable());
+            }
+
             return builder.ToString();
         }
     }
