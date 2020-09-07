@@ -19,12 +19,12 @@ namespace GamesToGo.Desktop.Graphics
             {
                 new Box
                 {
-                    Colour = new Color4(145, 151, 243, 255),
+                    Colour = new Colour4(145, 151, 243, 255),
                     RelativeSizeAxes = Axes.Both,
                 },
                 hoverBox = new Box
                 {
-                    Colour = Color4.White,
+                    Colour = Colour4.White,
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both,
                 },

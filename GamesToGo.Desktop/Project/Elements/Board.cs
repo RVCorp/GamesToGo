@@ -4,8 +4,9 @@ using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Board : ProjectElement, IHasSize, IHasElements<Tile>
+    public class Board : ProjectElement, IHasSize, IHasElements
     {
+        public override ElementType Type => ElementType.Board;
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nuevo Tablero");
         public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe este tablero para poder identificarlo mejor!");
 
@@ -18,13 +19,10 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(1920, 1080));
 
-        public List<Tile> Subelements { get; } = new List<Tile>();
+        public List<ProjectElement> Subelements { get; } = new List<ProjectElement>();
 
         public Queue<int> PendingSubelements { get; } = new Queue<int>();
 
-        public override string ToSaveableString()
-        {
-            return "3|" + base.ToSaveableString();
-        }
+        public ElementType SubelementType => ElementType.Tile;
     }
 }

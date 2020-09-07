@@ -36,8 +36,8 @@ namespace GamesToGo.Desktop.Graphics
             ButtonFlowContainer.Add(editButton = new IconButton(true)
             {
                 Icon = FontAwesome.Solid.Download,
-                ButtonColour = Color4.SkyBlue,
-                ProgressColour = Color4.PowderBlue,
+                ButtonColour = Colour4.SkyBlue,
+                ProgressColour = Colour4.PowderBlue,
             });
 
             BottomContainer.Add(new SpriteText
@@ -60,6 +60,7 @@ namespace GamesToGo.Desktop.Graphics
             loadingIcon.RotateTo(0).Then().RotateTo(360, 1500).Loop();
 
             ProjectName.Text = onlineProject.Name;
+            ProjectDescription.Text = onlineProject.Description;
             editButton.Enabled.Value = true;
             Schedule(async () =>
             {

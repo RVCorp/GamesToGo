@@ -43,7 +43,7 @@ namespace GamesToGo.Desktop.Overlays
             };
         }
 
-        public void Show(string text, Color4 color)
+        public void Show(string text, Colour4 color)
         {
             spriteText.Text = text;
             if (LatestTransformEndTime > Clock.CurrentTime)

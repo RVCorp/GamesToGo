@@ -1,9 +1,7 @@
-﻿using GamesToGo.Desktop.Overlays;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,7 +9,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 using GamesToGo.Desktop.Project.Elements;
 
 namespace GamesToGo.Desktop.Graphics
@@ -37,7 +34,7 @@ namespace GamesToGo.Desktop.Graphics
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Black,
+                    Colour = Colour4.Black,
                     Alpha = 0.3f,
                 },
                 images = new FillFlowContainer<ImageChangerButton>
@@ -128,7 +125,7 @@ namespace GamesToGo.Desktop.Graphics
                     hoverBox = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.White.Opacity(0.2f),
+                        Colour = Colour4.White.Opacity(0.2f),
                         Alpha = 0,
                     },
                     new SpriteIcon
@@ -145,7 +142,7 @@ namespace GamesToGo.Desktop.Graphics
 
             private void enabledChanged(ValueChangedEvent<bool> obj)
             {
-                Colour = obj.NewValue ? Color4.White : new Color4(100, 100, 100, 255);
+                Colour = obj.NewValue ? Colour4.White : new Colour4(100, 100, 100, 255);
             }
 
             protected override bool OnHover(HoverEvent e)

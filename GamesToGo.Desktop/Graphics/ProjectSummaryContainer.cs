@@ -41,7 +41,7 @@ namespace GamesToGo.Desktop.Graphics
                 {
                     Masking = true,
                     CornerRadius = MARGIN_SIZE,
-                    BorderColour = Color4.DarkGray,
+                    BorderColour = Colour4.DarkGray,
                     BorderThickness = 3,
                     RelativeSizeAxes = Axes.X,
                     Children = new Drawable[]
@@ -49,7 +49,7 @@ namespace GamesToGo.Desktop.Graphics
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Color4(55, 55, 55, 255),
+                            Colour = new Colour4(55, 55, 55, 255),
                             Alpha = 0.8f,
                         },
                         expandedContainer = new Container

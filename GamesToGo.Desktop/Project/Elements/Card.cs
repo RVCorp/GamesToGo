@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Bindables;
 using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Card : ProjectElement, IHasSize, IHasEvents
+    public class Card : ProjectElement, IHasSize, IHasEvents, IHasPrivacy, IHasOrientation
     {
+        public override ElementType Type => ElementType.Card;
+
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Carta");
 
         public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe esta carta para poder identificarla mejor!");
@@ -20,11 +24,12 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
 
-        public BindableList<int> Events { get; } = new BindableList<int>();
+        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
 
-        public override string ToSaveableString()
-        {
-            return "1|" + base.ToSaveableString();
-        }
+        public ElementOrientation DefaultOrientation { get; set; } = ElementOrientation.Vertical;
+
+        public BindableList<Event> Events { get; } = new BindableList<Event>();
+
+        public Type[] CompatibleEvents { get; } = Array.Empty<Type>();
     }
 }

@@ -15,6 +15,8 @@ using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using System.Reflection;
 using GamesToGo.Desktop.Online;
+using osu.Framework.Graphics.Containers;
+using osuTK;
 
 namespace GamesToGo.Desktop
 {
@@ -47,6 +49,7 @@ namespace GamesToGo.Desktop
         private LargeTextureStore largeStore;
         private APIController api;
         private ImageFinderOverlay imageFinder;
+        private DrawSizePreservingFillContainer content;
 
         //Cargar dependencias, configuración, etc., necesarias para el proyecto.
         [BackgroundDependencyLoader]
@@ -87,22 +90,24 @@ namespace GamesToGo.Desktop
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
 
-            //Cargamos y agregamos nuestra pila de pantallas a la ventana.
-            Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both, Depth = 0 });
+            base.Content.Add(content = new DrawSizePreservingFillContainer() { TargetDrawSize = new Vector2(1920, 1080) });
 
-            Add(api = new APIController());
+            //Cargamos y agregamos nuestra pila de pantallas a la ventana.
+            content.Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both, Depth = 0 });
+
+            content.Add(api = new APIController());
 
             dependencies.Cache(api);
 
-            Add(splashOverlay = new SplashInfoOverlay() { Depth = -2 });
+            content.Add(splashOverlay = new SplashInfoOverlay() { Depth = -2 });
 
             dependencies.Cache(splashOverlay);
 
-            Add(imageFinder = new ImageFinderOverlay() { Depth = -1 });
+            content.Add(imageFinder = new ImageFinderOverlay() { Depth = -1 });
 
             dependencies.Cache(imageFinder);
 
-            Add(optionsOverlay = new MultipleOptionOverlay() { Depth = -3 });
+            content.Add(optionsOverlay = new MultipleOptionOverlay() { Depth = -3 });
 
             dependencies.Cache(optionsOverlay);
         }

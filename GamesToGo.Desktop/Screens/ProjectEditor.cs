@@ -101,7 +101,7 @@ namespace GamesToGo.Desktop.Screens
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.Gray
+                            Colour = Colour4.Gray
                         },
                         tabsBar = new EditorTabChanger(),
                         new CloseButton
@@ -180,7 +180,7 @@ namespace GamesToGo.Desktop.Screens
             Random random = new Random();
 
             if (showSplashConfirmation)
-                splashOverlay.Show("Se ha guardado el proyecto localmente", new Color4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Color4(80, 80, 80, 255)*/);
+                splashOverlay.Show("Se ha guardado el proyecto localmente", new Colour4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Colour4(80, 80, 80, 255)*/);
 
             byte randomNumber()
             {
@@ -191,16 +191,16 @@ namespace GamesToGo.Desktop.Screens
         public void UploadProject()
         {
             SaveProject(false);
-            splashOverlay.Show("Proyecto guardado localmente, subiendo al servidor...", Color4.ForestGreen);
+            splashOverlay.Show("Proyecto guardado localmente, subiendo al servidor...", Colour4.ForestGreen);
             var req = new UploadGameRequest(workingProject.DatabaseObject, store);
             req.Failure += e =>
             {
-                splashOverlay.Show("Hubo un problema al subir el proyecto al servidor", Color4.DarkRed);
+                splashOverlay.Show("Hubo un problema al subir el proyecto al servidor", Colour4.DarkRed);
             };
             req.Success += res =>
             {
                 workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
-                splashOverlay.Show("Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Color4.ForestGreen);
+                splashOverlay.Show("Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
                 database.SaveChanges();
             };
             api.Queue(req);
@@ -313,7 +313,7 @@ namespace GamesToGo.Desktop.Screens
                     hoverBox = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.Red,
+                        Colour = Colour4.Red,
                         Alpha = 0,
                     },
                     new SpriteText

@@ -50,7 +50,7 @@ namespace GamesToGo.Desktop.Online
                 req.Method = HttpMethod.Post;
                 req.AddParameter("ID", (project.OnlineProjectID == 0 ? -1 : project.OnlineProjectID).ToString());
                 req.AddParameter("Name", project.Name);
-                req.AddParameter("description", "NoDesc");
+                req.AddParameter("description", project.Description);
                 req.AddParameter("minP", project.MinNumberPlayers.ToString());
                 req.AddParameter("maxP", project.MaxNumberPlayers.ToString());
                 req.AddParameter("imageName", project.ImageRelation?.File?.NewName ?? "null");

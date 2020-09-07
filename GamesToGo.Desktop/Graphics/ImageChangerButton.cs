@@ -3,7 +3,6 @@ using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,7 +10,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 using Image = GamesToGo.Desktop.Project.Image;
 
 namespace GamesToGo.Desktop.Graphics
@@ -81,7 +79,7 @@ namespace GamesToGo.Desktop.Graphics
                                 {
                                     new Box
                                     {
-                                        Colour = new Color4(93, 107, 110, 200),
+                                        Colour = new Colour4(93, 107, 110, 200),
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new Container
@@ -110,7 +108,7 @@ namespace GamesToGo.Desktop.Graphics
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.Black.Opacity(0.5f)
+                            Colour = Colour4.Black.Opacity(0.5f)
                         },
                         new SpriteIcon
                         {
@@ -160,14 +158,14 @@ namespace GamesToGo.Desktop.Graphics
                                         Child = new Container
                                         {
                                             Masking = true,
-                                            BorderColour = Color4.White,
+                                            BorderColour = Colour4.White,
                                             BorderThickness = 3.5f,
                                             RelativeSizeAxes = Axes.Both,
                                             Children = new Drawable[]
                                             {
                                                 new Box
                                                 {
-                                                    Colour = Color4.Black.Opacity(0),
+                                                    Colour = Colour4.Black.Opacity(0),
                                                     RelativeSizeAxes = Axes.Both,
                                                 },
                                                 new Container
@@ -215,7 +213,7 @@ namespace GamesToGo.Desktop.Graphics
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Color4.Black.Opacity(0.5f)
+                            Colour = Colour4.Black.Opacity(0.5f)
                         },
                         new SpriteIcon
                         {

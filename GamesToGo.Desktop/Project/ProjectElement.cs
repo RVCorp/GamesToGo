@@ -11,6 +11,8 @@ namespace GamesToGo.Desktop.Project
     {
         public int ID { get; set; }
 
+        public abstract ElementType Type { get; }
+
         public abstract Bindable<string> Name { get; set; }
 
         public abstract Bindable<string> Description { get; set; }
@@ -28,11 +30,11 @@ namespace GamesToGo.Desktop.Project
             DefaultImage = new Image(Textures, "Elements/" + DefaultImageName, false);
         }
 
-        public virtual string ToSaveableString()
+        public string ToSaveableString()
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine($"{ID}|{Name}");
+            builder.AppendLine($"{(int)Type}|{ID}|{Name}");
             builder.AppendLine($"Desc={Description}");
             builder.AppendLine($"Images={Images.Count}");
 
@@ -46,30 +48,24 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine(sizedElement.ToSaveable());
             }
 
+            if(this is IHasPrivacy privacySetElement)
+            {
+                builder.AppendLine(privacySetElement.ToSaveable());
+            }
+
+            if(this is IHasOrientation orientedElement)
+            {
+                builder.AppendLine(orientedElement.ToSaveable());
+            }
+
             if(this is IHasElements elementedElement)
             {
-                List<int> elementList = new List<int>();
-                switch(elementedElement)
-                {
-                    case IHasElements<Board> boardedElement:
-                        elementList = boardedElement.Subelements.Select(e => e.ID).ToList();
-                        break;
-                    case IHasElements<Card> cardedElement:
-                        elementList = cardedElement.Subelements.Select(e => e.ID).ToList();
-                        break;
-                    case IHasElements<Tile> tiledElement:
-                        elementList = tiledElement.Subelements.Select(e => e.ID).ToList();
-                        break;
-                    case IHasElements<Token> tokenedElement:
-                        elementList = tokenedElement.Subelements.Select(e => e.ID).ToList();
-                        break;
-                }
+                builder.AppendLine(elementedElement.ToSaveable());
+            }
 
-                builder.AppendLine($"SubElems={elementList.Count}");
-                foreach (var element in elementList)
-                {
-                    builder.AppendLine($"{element}");
-                }
+            if(this is IHasEvents eventedElement)
+            {
+                builder.AppendLine(eventedElement.ToSaveable());
             }
 
             return builder.ToString();

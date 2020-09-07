@@ -48,7 +48,7 @@ namespace GamesToGo.Desktop.Overlays
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Cyan
+                                        Colour = Colour4.Cyan
                                     },
                                     new Container
                                     {
@@ -64,7 +64,7 @@ namespace GamesToGo.Desktop.Overlays
                                                 Origin = Anchor.TopRight,
                                                 Position = new Vector2(-675,10),
                                                 Text = "Nombre:",
-                                                Colour = Color4.Black
+                                                Colour = Colour4.Black
                                             },
                                             nameTextBox = new BasicTextBox
                                             {
@@ -80,7 +80,7 @@ namespace GamesToGo.Desktop.Overlays
                                                 Origin = Anchor.TopRight,
                                                 Position = new Vector2(-675,80),
                                                 Text = "Descripcion:",
-                                                Colour = Color4.Black
+                                                Colour = Colour4.Black
                                             },
                                             descriptionTextBox = new BasicTextBox
                                             {
@@ -103,7 +103,7 @@ namespace GamesToGo.Desktop.Overlays
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Fuchsia
+                                        Colour = Colour4.Fuchsia
                                     },
                                     ElementSizex2 = new Container
                                     {
@@ -145,7 +145,7 @@ namespace GamesToGo.Desktop.Overlays
                     Width = 175,
                     Text = "Regresar",
                     Position = new Vector2(10,10),
-                    Action = this.Hide
+                    Action = Hide
                 },
             };
         }

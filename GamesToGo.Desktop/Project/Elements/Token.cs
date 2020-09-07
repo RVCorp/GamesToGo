@@ -3,8 +3,10 @@ using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Token : ProjectElement
+    public class Token : ProjectElement, IHasPrivacy
     {
+        public override ElementType Type => ElementType.Token;
+
         public override Bindable<string> Name { get; set; } = new Bindable<string>("Nueva Ficha");
 
         public override Bindable<string> Description { get; set; } = new Bindable<string>("¡Describe esta ficha para poder identificarla mejor!");
@@ -16,10 +18,6 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>("Frente", new Bindable<Image>()),
             new KeyValuePair<string, Bindable<Image>>("Miniatura", new Bindable<Image>()),
         });
-
-        public override string ToSaveableString()
-        {
-            return "0|" + base.ToSaveableString();
-        }
+        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
     }
 }

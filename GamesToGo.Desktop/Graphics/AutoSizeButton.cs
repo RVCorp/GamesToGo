@@ -22,20 +22,20 @@ namespace GamesToGo.Desktop.Graphics
             Anchor = Anchor.BottomRight;
             Origin = Anchor.BottomRight;
             AutoSizeAxes = Axes.X;
-            BackgroundColour = Color4.Black;
-            HoverColour = new Color4(55, 55, 55, 255);
+            BackgroundColour = Colour4.Black;
+            HoverColour = new Colour4(55, 55, 55, 255);
 
             content.Masking = true;
             content.CornerRadius = 5;
             content.BorderThickness = 3f;
-            content.BorderColour = Color4.Black;
+            content.BorderColour = Colour4.Black;
         }
 
         protected override SpriteText CreateText()
         {
             var text = base.CreateText();
 
-            text.Colour = Color4.White;
+            text.Colour = Colour4.White;
             text.Font = new FontUsage(size: 25);
             text.Margin = new MarginPadding { Horizontal = 6.5f };
 

@@ -47,7 +47,7 @@ namespace GamesToGo.Desktop.Graphics
                 {
                     Icon = FontAwesome.Solid.TrashAlt,
                     Action = showConfirmation,
-                    ButtonColour = Color4.DarkRed,
+                    ButtonColour = Colour4.DarkRed,
                 },
                 new IconButton
                 {

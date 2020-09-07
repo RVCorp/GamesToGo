@@ -6,9 +6,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -136,7 +134,7 @@ namespace GamesToGo.Desktop.Screens
                 backButton.Text = last?.GetType().Name ?? "Exit";
 
                 //Mismo metodo para agregar color a los botones que a los botones de pantallas posteriores.
-                backButton.BackgroundColour = last == null ? Color4.IndianRed : getColorFor(last.GetType().Name);
+                backButton.BackgroundColour = last == null ? Colour4.IndianRed : getColorFor(last.GetType().Name);
                 backButton.HoverColour = backButton.BackgroundColour.Lighten(0.2f);
 
                 //Para la acción, usamos la salida de nuestra pantalla si es posible, si no es posible, la salida de la ventana.
@@ -145,13 +143,13 @@ namespace GamesToGo.Desktop.Screens
         }
 
         //Manera de obtener un color diferente para cada nobre de pantalla.
-        private static Color4 getColorFor(object type)
+        private static Colour4 getColorFor(object type)
         {
             int hash = type.GetHashCode();
             byte r = (byte)Math.Clamp(((hash & 0xFF0000) >> 16) * 0.8f, 20, 255);
             byte g = (byte)Math.Clamp(((hash & 0x00FF00) >> 8) * 0.8f, 20, 255);
             byte b = (byte)Math.Clamp((hash & 0x0000FF) * 0.8f, 20, 255);
-            return new Color4(r, g, b, 255);
+            return new Colour4(r, g, b, 255);
         }
     }
 }

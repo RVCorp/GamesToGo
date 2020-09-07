@@ -46,7 +46,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Colour4 (106,100,104, 255)      //Color fondo general
                 },
                 new GridContainer
                 {
@@ -69,7 +69,7 @@ namespace GamesToGo.Desktop.Screens
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = new Color4 (145,144,144, 255)   //Color userInformation
+                                        Colour = new Colour4 (145,144,144, 255)   //Color userInformation
                                     },
                                     new UserImageChangerButton
                                     {
@@ -88,8 +88,8 @@ namespace GamesToGo.Desktop.Screens
                                     new GamesToGoButton
                                     {
                                         Text = "Perfil",
-                                        BackgroundColour = new Color4 (106,100,104, 255),  //Color Boton userInformation
-                                        BorderColour = Color4.Black,
+                                        BackgroundColour = new Colour4 (106,100,104, 255),  //Color Boton userInformation
+                                        BorderColour = Colour4.Black,
                                         BorderThickness = 2f,
                                         RelativeSizeAxes = Axes.X,
                                         Masking = true,
@@ -102,8 +102,8 @@ namespace GamesToGo.Desktop.Screens
                                     new GamesToGoButton
                                     {
                                         Text = "Cerrar Sesión",
-                                        BackgroundColour = new Color4 (106,100,104, 255),   //Color Boton userInformation
-                                        BorderColour = Color4.Black,
+                                        BackgroundColour = new Colour4 (106,100,104, 255),   //Color Boton userInformation
+                                        BorderColour = Colour4.Black,
                                         BorderThickness = 2f,
                                         RelativeSizeAxes = Axes.X,
                                         Masking = true,
@@ -146,7 +146,7 @@ namespace GamesToGo.Desktop.Screens
                                                 {
                                                     projectsList = new FillFlowContainer<LocalProjectSummaryContainer>
                                                     {
-                                                        BorderColour = Color4.Black,
+                                                        BorderColour = Colour4.Black,
                                                         BorderThickness = 3f,
                                                         Masking = true,
                                                         Anchor = Anchor.TopCentre,
@@ -158,7 +158,7 @@ namespace GamesToGo.Desktop.Screens
                                                     },
                                                     onlineProjectsList = new FillFlowContainer<OnlineProjectSummaryContainer>
                                                     {
-                                                        BorderColour = Color4.Black,
+                                                        BorderColour = Colour4.Black,
                                                         BorderThickness = 3f,
                                                         Masking = true,
                                                         Anchor = Anchor.TopCentre,
@@ -177,8 +177,8 @@ namespace GamesToGo.Desktop.Screens
                                         new GamesToGoButton
                                         {
                                             Text = "Crear Nuevo Proyecto",
-                                            BackgroundColour = new Color4 (145,144,144, 255),
-                                            BorderColour = Color4.Black,
+                                            BackgroundColour = new Colour4 (145,144,144, 255),
+                                            BorderColour = Colour4.Black,
                                             BorderThickness = 2f,
                                             RelativeSizeAxes = Axes.X,
                                             Masking = true,
@@ -289,6 +289,7 @@ namespace GamesToGo.Desktop.Screens
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,
                 Name = onlineProject.Name,
+                Description = onlineProject.Description,
                 OnlineProjectID = onlineProject.Id,
             };
             using (var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open))

@@ -22,7 +22,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)
+                    Colour = new Colour4 (106,100,104, 255)
                 },
                 new Container
                 {
@@ -40,7 +40,7 @@ namespace GamesToGo.Desktop.Screens
                         {
                             RelativeSizeAxes = Axes.Y,
                             Width = 650,
-                            BackgroundColour = Color4.DarkGreen,
+                            BackgroundColour = Colour4.DarkGreen,
                             Text = "Quieres compartir tu juego con la comunidad? Publica tu juego"
                         },
                         new GamesToGoButton
@@ -48,19 +48,22 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
                             Width = 650,
-                            Height = 200,
-                            BackgroundColour = Color4.DodgerBlue,
+                            RelativeSizeAxes = Axes.Y,
+                            Padding = new MarginPadding() { Bottom = 10 },
+                            Height = 1/3f,
+                            BackgroundColour = Colour4.DodgerBlue,
                             Text = "Incompleto? Guarda y termina después",
                             Action = () => editor.SaveProject(),
                         },
                         new GamesToGoButton
                         {
-                            Anchor = Anchor.TopRight,
-                            Origin = Anchor.TopRight,
-                            Position = new Vector2(0, 225),
+                            Anchor = Anchor.CentreRight,
+                            Origin = Anchor.CentreRight,
+                            RelativeSizeAxes = Axes.Y,
+                            Padding = new MarginPadding() { Vertical = 5 },
+                            Height = 1/3f,
                             Width = 650,
-                            Height = 200,
-                            BackgroundColour = Color4.PaleVioletRed,
+                            BackgroundColour = Colour4.PaleVioletRed,
                             Text = "Quieres un respaldo? Sube tu juego",
                             Action = editor.UploadProject,
                         },
@@ -69,8 +72,10 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.BottomRight,
                             Origin = Anchor.BottomRight,
                             Width = 650,
-                            Height = 200,
-                            BackgroundColour = Color4.DarkSalmon,
+                            RelativeSizeAxes = Axes.Y,
+                            Padding = new MarginPadding() { Top = 10 },
+                            Height = 1/3f,
+                            BackgroundColour = Colour4.DarkSalmon,
                             Text = "Listo para publicar? Primero prueba tu juego"
                         }
                     }

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
@@ -10,10 +12,22 @@ namespace GamesToGo.Desktop.Project.Elements
         }
 
         public Queue<int> PendingSubelements { get; }
-    }
 
-    public interface IHasElements<T> : IHasElements where T : ProjectElement
-    {
-        List<T> Subelements { get; }
+        List<ProjectElement> Subelements { get; }
+
+        ElementType SubelementType { get; }
+
+        public string ToSaveable()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendLine($"SubElems={Subelements.Count}");
+            foreach (var element in Subelements.Select(e => e.ID).ToList())
+            {
+                builder.AppendLine($"{element}");
+            }
+
+            return builder.ToString();
+        }
     }
 }

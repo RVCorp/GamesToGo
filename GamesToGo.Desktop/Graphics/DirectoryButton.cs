@@ -42,7 +42,7 @@ namespace GamesToGo.Desktop.Graphics
                 new SpriteIcon
                 {
                     Icon = icon,
-                    Colour = Color4.Black,
+                    Colour = Colour4.Black,
                     Size = new Vector2(35),
                     X = 10,
                     Anchor = Anchor.CentreLeft,
@@ -55,7 +55,7 @@ namespace GamesToGo.Desktop.Graphics
                     Origin = Anchor.CentreLeft,
                     Truncate = true,
                     MaxWidth = ImageFinderOverlay.ENTRY_WIDTH - 50 - 10,
-                    Colour = Color4.Black,
+                    Colour = Colour4.Black,
                     Text = directory,
                     Font = new FontUsage(size: 30),
                 }

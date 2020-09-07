@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,7 +11,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -22,6 +21,7 @@ namespace GamesToGo.Desktop.Screens
         private NumericTextbox maxPlayersTextBox;
         private NumericTextbox minPlayersTextBox;
         private BasicTextBox descriptionTextBox;
+        private BasicDropdown<ChatRecommendation> chatDropdown;
 
         [BackgroundDependencyLoader]
         private void load(WorkingProject project)
@@ -33,7 +33,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Colour4 (106,100,104, 255)      //Color fondo general
                 },
                 new GridContainer
                 {
@@ -53,6 +53,7 @@ namespace GamesToGo.Desktop.Screens
                         {
                             new Container
                             {
+                                Depth = 0,
                                 AutoSizeAxes = Axes.Y,
                                 RelativeSizeAxes = Axes.X,
                                 Children = new Drawable[]
@@ -68,7 +69,7 @@ namespace GamesToGo.Desktop.Screens
                                             new Box
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Colour = Color4.Black.Opacity(0.8f),
+                                                Colour = Colour4.Black.Opacity(0.8f),
                                             },
                                             new Container
                                             {
@@ -126,13 +127,25 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = "Descripción:",
                                                 Position = new Vector2(245,70)
                                             },
-                                            descriptionTextBox = new BasicTextBox        //Textbox de varios renglones
+                                            descriptionTextBox = new BasicTextBox
                                             {
                                                 Text = project.DatabaseObject.Description,
                                                 Position = new Vector2(340,70),
                                                 Height = 35,
                                                 Width = 1732
-                                            }
+                                            },
+                                            new SpriteText
+                                            {
+                                                Origin = Anchor.TopRight,
+                                                Text = "Chat recomendado:",
+                                                Position = new Vector2(329, 130),
+                                            },
+                                            chatDropdown = new GamesToGoDropdown<ChatRecommendation>
+                                            {
+                                                Width = 200,
+                                                Position = new Vector2(340, 130),
+                                                Items = (IEnumerable<ChatRecommendation>)Enum.GetValues(typeof(ChatRecommendation)),
+                                            },
                                         }
                                     },
                                 }
@@ -142,6 +155,7 @@ namespace GamesToGo.Desktop.Screens
                         {
                             new Container
                             {
+                                Depth = 1,
                                 RelativeSizeAxes = Axes.Both,
                                 Width = 0.5f,
                                 Children = new Drawable[]
@@ -171,8 +185,10 @@ namespace GamesToGo.Desktop.Screens
                 }
             };
 
-            descriptionTextBox.Current.ValueChanged += (obj) => project.DatabaseObject.Description = obj.NewValue;
-            titleTextBox.Current.ValueChanged += (obj) => project.DatabaseObject.Name = obj.NewValue;
+
+            chatDropdown.Current.Value = project.ChatRecommendation;
+            chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
+            descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
 

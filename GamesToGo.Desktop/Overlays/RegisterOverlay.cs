@@ -24,7 +24,7 @@ namespace GamesToGo.Desktop.Overlays
         private GamesToGoButton registerButton;
         private APIController api;
         private SplashInfoOverlay infoOverlay;
-        private readonly Color4 confirmationColor = new Color4(47, 69, 33, 255);
+        private readonly Colour4 confirmationColor = new Colour4(47, 69, 33, 255);
 
         public RegisterOverlay()
         {
@@ -37,7 +37,7 @@ namespace GamesToGo.Desktop.Overlays
                 shadowBox = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Black,
+                    Colour = Colour4.Black,
                     Alpha = 0
                 },
                 popUpContent = new Container
@@ -54,7 +54,7 @@ namespace GamesToGo.Desktop.Overlays
                         AutoSizeAxes = Axes.Y,
                         RelativeSizeAxes = Axes.X,
                         Width = 3/4f,
-                        BorderColour = new Color4(70, 68, 66, 255),
+                        BorderColour = new Colour4(70, 68, 66, 255),
                         BorderThickness = 4,
                         Masking = true,
                         CornerRadius = 15,
@@ -63,7 +63,7 @@ namespace GamesToGo.Desktop.Overlays
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = new Color4(106, 100, 104, 255)
+                                Colour = new Colour4(106, 100, 104, 255)
                             },
                             new Container
                             {

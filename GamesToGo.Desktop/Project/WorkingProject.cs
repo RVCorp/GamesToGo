@@ -46,7 +46,7 @@ namespace GamesToGo.Desktop.Project
         {
             if (project == null)
             {
-                project = new ProjectInfo { Name = "Nuevo Proyecto", CreatorID = userID };
+                project = new ProjectInfo { CreatorID = userID };
                 returnableSaves = 2;
             }
 
@@ -154,36 +154,28 @@ namespace GamesToGo.Desktop.Project
                     while (elementQueue.Count > 0)
                     {
                         int nextElement = elementQueue.Dequeue();
-                        switch (element)
+                        switch (elementedElement.SubelementType)
                         {
-                            case IHasElements<Board> boardedElement:
-                            {
-                                if (ProjectBoards.All(b => b.ID != nextElement))
-                                    return false;
-                                boardedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Card> cardedElement:
-                            {
-                                if (ProjectCards.All(b => b.ID != nextElement))
-                                    return false;
-                                cardedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Tile> tiledElement:
-                            {
-                                if (ProjectTiles.All(b => b.ID != nextElement))
-                                    return false;
-                                tiledElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
-                                break;
-                            }
-                            case IHasElements<Token> tokenedElement:
-                            {
+                            case ElementType.Token:
                                 if (ProjectTokens.All(b => b.ID != nextElement))
                                     return false;
-                                tokenedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
+                                elementedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
                                 break;
-                            }
+                            case ElementType.Card:
+                                if (ProjectCards.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
+                                break;
+                            case ElementType.Tile:
+                                if (ProjectTiles.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
+                                break;
+                            case ElementType.Board:
+                                if (ProjectBoards.All(b => b.ID != nextElement))
+                                    return false;
+                                elementedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
+                                break;
                         }
                     }
                 }
@@ -232,20 +224,22 @@ namespace GamesToGo.Desktop.Project
                         var idents = line.Split('|', 3);
                         if (idents.Length != 3)
                             return false;
-                        switch (int.Parse(idents[0]))
+                        switch (Enum.Parse<ElementType>(idents[0]))
                         {
-                            case 0:
+                            case ElementType.Token:
                                 parsingElement = new Token();
                                 break;
-                            case 1:
+                            case ElementType.Card:
                                 parsingElement = new Card();
                                 break;
-                            case 2:
+                            case ElementType.Tile:
                                 parsingElement = new Tile();
                                 break;
-                            case 3:
+                            case ElementType.Board:
                                 parsingElement = new Board();
                                 break;
+                            default:
+                                return false;
                         }
                         parsingElement.ID = int.Parse(idents[1]);
                         parsingElement.Name.Value = idents[2];
@@ -295,6 +289,16 @@ namespace GamesToGo.Desktop.Project
                                 {
                                     elementedElement.QueueSubelement(int.Parse(lines[i + 1]));
                                 }
+                                break;
+                            }
+                            case "Orient" when parsingElement is IHasOrientation orientedElement:
+                            {
+                                orientedElement.DefaultOrientation = Enum.Parse<ElementOrientation>(tokens[1]);
+                                break;
+                            }
+                            case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
+                            {
+                                privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
                                 break;
                             }
                         }
