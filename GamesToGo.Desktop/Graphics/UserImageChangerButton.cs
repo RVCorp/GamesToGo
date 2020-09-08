@@ -20,7 +20,7 @@ namespace GamesToGo.Desktop.Graphics
         public Vector2 ButtonSize;
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, APIController api, ImageFinderOverlay imageFinder, SplashInfoOverlay infoOverlay)
+        private void load(TextureStore textures, APIController api, ImageFinderOverlay imageFinder, SplashInfoOverlay infoOverlay)
         {
             AutoSizeAxes = Axes.Both;
             Child = new CircularContainer

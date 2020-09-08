@@ -28,12 +28,12 @@ namespace GamesToGo.Desktop.Screens
         private Context database;
         private Storage store;
         private APIController api;
-        private LargeTextureStore textures;
+        private TextureStore textures;
         private FillFlowContainer<LocalProjectSummaryContainer> projectsList;
         private FillFlowContainer<OnlineProjectSummaryContainer> onlineProjectsList;
 
         [BackgroundDependencyLoader]
-        private void load(Context database, Storage store, APIController api, SplashInfoOverlay infoOverlay, LargeTextureStore textures)
+        private void load(Context database, Storage store, APIController api, SplashInfoOverlay infoOverlay, TextureStore textures)
         {
             this.database = database;
             this.store = store;

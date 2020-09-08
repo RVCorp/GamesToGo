@@ -30,7 +30,7 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(Storage store, LargeTextureStore textures, MultipleOptionOverlay optionsOverlay, APIController api)
+        private void load(Storage store, TextureStore textures, MultipleOptionOverlay optionsOverlay, APIController api)
         {
             this.optionsOverlay = optionsOverlay;
             this.api = api;

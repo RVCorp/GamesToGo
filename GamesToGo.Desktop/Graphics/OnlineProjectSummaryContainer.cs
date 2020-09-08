@@ -28,7 +28,7 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, APIController api, Storage store)
+        private void load(TextureStore textures, APIController api, Storage store)
         {
             this.api = api;
             this.store = store;

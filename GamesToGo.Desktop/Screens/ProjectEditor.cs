@@ -57,7 +57,7 @@ namespace GamesToGo.Desktop.Screens
         }
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay, APIController api)
+        private void load(TextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay, APIController api)
         {
             this.store = store;
             this.database = database;

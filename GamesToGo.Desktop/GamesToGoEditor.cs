@@ -46,7 +46,7 @@ namespace GamesToGo.Desktop
         private Context dbContext;
         private MultipleOptionOverlay optionsOverlay;
         private SplashInfoOverlay splashOverlay;
-        private LargeTextureStore largeStore;
+        private TextureStore textures;
         private APIController api;
         private ImageFinderOverlay imageFinder;
         private DrawSizePreservingFillContainer content;
@@ -57,14 +57,10 @@ namespace GamesToGo.Desktop
         {
             Host.Window.Title = Name;
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
+            Textures.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
-
-            largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
-            largeStore.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
-            largeStore.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
-            dependencies.Cache(largeStore);
 
             try
             {
@@ -129,7 +125,7 @@ namespace GamesToGo.Desktop
         {
             base.LoadComplete();
 
-            ProjectElement.Textures = largeStore;
+            ProjectElement.Textures = Textures;
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);

@@ -19,13 +19,13 @@ namespace GamesToGo.Desktop.Screens
 {
     class ProfileScreen : Screen
     {
-        private LargeTextureStore textures;
+        private TextureStore textures;
         private APIController api;
         private Context database;
         private FillFlowContainer<PublishedProjectSummaryContainer> publishedProjectsList;
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, APIController api, Context database)
+        private void load(TextureStore textures, APIController api, Context database)
         {
             this.textures = textures;
             this.api = api;
