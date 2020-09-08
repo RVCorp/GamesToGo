@@ -27,7 +27,7 @@ namespace GamesToGo.Desktop.Project.Elements
                 builder.AppendLine($"{element}");
             }
 
-            return builder.ToString();
+            return builder.ToString().TrimEnd('\n', '\r');
         }
     }
 }

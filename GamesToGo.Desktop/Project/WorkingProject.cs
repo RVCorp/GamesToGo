@@ -137,11 +137,10 @@ namespace GamesToGo.Desktop.Project
             builder.AppendLine("[Objects]");
             foreach (ProjectElement elem in ProjectElements)
             {
-                builder.AppendLine($"{elem.ToSaveableString()}");
-                builder.AppendLine();
+                builder.AppendLine(elem.ToSaveableString());
             }
 
-            return builder.ToString();
+            return builder.ToString().Trim('\n', '\r');
         }
 
         private bool postParse()
