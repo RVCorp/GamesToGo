@@ -7,7 +7,7 @@ namespace GamesToGo.Desktop.Project.Events
     {
         public override int TypeID => 1;
 
-        public override EventSourceActivator Source => EventSourceActivator.SingleBoard;
+        public override EventSourceActivator Source => EventSourceActivator.SingleTile;
 
         public override EventSourceActivator Activator => EventSourceActivator.SingleCard;
 

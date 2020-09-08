@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -63,13 +62,13 @@ namespace GamesToGo.Desktop.Graphics
                 Spacing = new Vector2(MARGIN_SIZE),
                 AutoSizeAxes = Axes.Both,
                 Children = new Drawable[]
-                    {
-                        new StatText(FontAwesome.Regular.Clone, ProjectInfo.NumberCards),
-                        new StatText(FontAwesome.Solid.Coins, ProjectInfo.NumberTokens),
-                        new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
-                        new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
-                        new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
-                    }
+                {
+                    new StatText(FontAwesome.Regular.Clone, ProjectInfo.NumberCards),
+                    new StatText(FontAwesome.Solid.Coins, ProjectInfo.NumberTokens),
+                    new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
+                    new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
+                    new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
+                }
             });
 
             ProjectName.Text = ProjectInfo.Name;
@@ -104,7 +103,7 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 });
             }
-            else if (api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            else if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
                 optionsOverlay.Show("Este proyecto no te pertenece, no puedes editarlo", new[]
                 {
@@ -123,7 +122,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private void showConfirmation()
         {
-            if (api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
                 optionsOverlay.Show("Este proyecto no te pertenece, no puedes eliminarlo", new[]
                 {
