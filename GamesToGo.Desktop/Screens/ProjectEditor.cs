@@ -113,7 +113,12 @@ namespace GamesToGo.Desktop.Screens
             };
 
             tabsBar.Current.ValueChanged += changeEditorScreen;
-            CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = EditorScreenOption.Objetos;
+            CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = tabsBar.Current.Value switch
+            {
+                EditorScreenOption.Objetos => EditorScreenOption.Objetos,
+                EditorScreenOption.Eventos => EditorScreenOption.Eventos,
+                _ => EditorScreenOption.Objetos
+            };
 
             AddInternal(imagePicker = new ImagePickerOverlay
             {
@@ -226,6 +231,9 @@ namespace GamesToGo.Desktop.Screens
                     break;
                 case EditorScreenOption.Objetos:
                     currentScreen = new ProjectObjectScreen();
+                    break;
+                case EditorScreenOption.Eventos:
+                    currentScreen = new ProjectEventsScreen();
                     break;
             }
 
