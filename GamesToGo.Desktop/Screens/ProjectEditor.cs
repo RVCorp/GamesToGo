@@ -242,35 +242,40 @@ namespace GamesToGo.Desktop.Screens
 
         private void confirmClose()
         {
-            optionOverlay.Show("¿Estás seguro que quieres volver al menú principal?",
-                new OptionItem[]
+            if (!workingProject.HasUnsavedChanges)
+            {
+                this.Exit();
+                return;
+            }
+
+            optionOverlay.Show("¿Estás seguro que quieres volver al menú principal?", new OptionItem[]
+            {
+                new OptionItem
                 {
-                    new OptionItem
+                    Action = () =>
                     {
-                        Action = () =>
-                        {
-                            SaveProject(false);
-                            this.Exit();
-                        },
-                        Text = "Guardar y salir",
-                        Type = OptionType.Additive,
+                        SaveProject(false);
+                        this.Exit();
                     },
-                    new OptionItem
+                    Text = "Guardar y salir",
+                    Type = OptionType.Additive,
+                },
+                new OptionItem
+                {
+                    Action = () =>
                     {
-                        Action = () =>
-                        {
-                            discardChanges();
-                            this.Exit();
-                        },
-                        Text = "Salir sin guardar",
-                        Type = OptionType.Destructive,
+                        discardChanges();
+                        this.Exit();
                     },
-                    new OptionItem
-                    {
-                        Text = "Volver al editor",
-                        Type = OptionType.Neutral
-                    }
-                });
+                    Text = "Salir sin guardar",
+                    Type = OptionType.Destructive,
+                },
+                new OptionItem
+                {
+                    Text = "Volver al editor",
+                    Type = OptionType.Neutral
+                }
+            });
         }
 
         private void discardChanges()
@@ -296,7 +301,7 @@ namespace GamesToGo.Desktop.Screens
                 workingProject.DatabaseObject.Relations = initialRelations == null ? null : new List<FileRelation>(initialRelations);
             }
 
-            if(workingProject.FirstSave)
+            if (workingProject.FirstSave)
             {
                 workingProject.DatabaseObject.File = null;
                 workingProject.DatabaseObject.ImageRelation = null;

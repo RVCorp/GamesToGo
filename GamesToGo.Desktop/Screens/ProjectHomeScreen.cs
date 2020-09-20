@@ -189,6 +189,7 @@ namespace GamesToGo.Desktop.Screens
             chatDropdown.Current.Value = project.ChatRecommendation;
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
             descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
+            titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
 

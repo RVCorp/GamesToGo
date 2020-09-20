@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Project.Elements;
@@ -9,6 +9,7 @@ using osu.Framework.Platform;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Online;
 using osuTK;
+using Newtonsoft.Json;
 
 namespace GamesToGo.Desktop.Project
 {
@@ -41,6 +42,10 @@ namespace GamesToGo.Desktop.Project
         private int returnableSaves = 0;
 
         public bool FirstSave => returnableSaves > 0;
+
+        public string LastSavedState { get; private set; }
+
+        public bool HasUnsavedChanges => LastSavedState != StateHash();
 
         protected WorkingProject(ref ProjectInfo project, TextureStore textures, int userID)
         {
@@ -91,6 +96,8 @@ namespace GamesToGo.Desktop.Project
 
             ret.updateDatabaseObjectInfo();
 
+            ret.LastSavedState = ret.StateHash();
+
             return ret;
         }
 
@@ -113,6 +120,11 @@ namespace GamesToGo.Desktop.Project
             Images.Add(new Image(textures, image.NewName));
         }
 
+        public string StateHash()
+        {
+            return GamesToGoEditor.HashBytes(Encoding.UTF8.GetBytes(stateString() + JsonConvert.SerializeObject(DatabaseObject)));
+        }
+
         /// <summary>
         /// Solo llamar cuando se quiera guardar
         /// </summary>
@@ -121,8 +133,16 @@ namespace GamesToGo.Desktop.Project
         {
             if (FirstSave)
                 returnableSaves--;
+
             DatabaseObject.ComunityStatus = CommunityStatus.Saved;
 
+            LastSavedState = StateHash();
+
+            return stateString(true);
+        }
+
+        private string stateString(bool includeDate = false)
+        {
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine("[Info]");
@@ -133,7 +153,10 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine($"{img.ImageName}");
             }
             builder.AppendLine($"Image={Image.Value?.ImageName ?? "null"}");
-            builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
+
+            if (includeDate)
+                builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
+
             builder.AppendLine();
 
             builder.AppendLine("[Objects]");

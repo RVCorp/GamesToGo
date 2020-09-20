@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GamesToGo.Desktop.Database.Models;
+using Newtonsoft.Json;
 
 namespace GamesToGo.Desktop.Project
 {
@@ -34,14 +35,18 @@ namespace GamesToGo.Desktop.Project
 
         public DateTime LastEdited { get; set; }
 
+        [JsonIgnore]
         public FileRelation ImageRelation { get; set; }
 
         public int? ImageRelationID { get; set; }
 
+        [JsonIgnore]
         public File File { get; set; }
 
+        [JsonIgnore]
         public int FileID { get; set; }
 
+        [JsonIgnore]
         public ICollection<FileRelation> Relations { get; set; } = new List<FileRelation>();
     }
 }

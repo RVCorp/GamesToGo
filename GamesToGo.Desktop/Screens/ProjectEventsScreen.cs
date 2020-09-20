@@ -10,21 +10,20 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
-    class ProjectEventsScreen : Screen
+    public class ProjectEventsScreen : Screen
     {
         private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ProjectEditor editor;
         private WorkingProject project;
         private Container editEventAreaContainer;
         private Container noSelectionContainer;
-        private FillFlowContainer EventGraphicsContainer;
+        private FillFlowContainer eventGraphicsContainer;
         private FillFlowContainer<ProjectObjectEventContainer> eventsContainer;
         private EventCreationOverlay eventEditOverlay;
         private DependencyContainer dependencies;
@@ -65,23 +64,17 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Color4.Gray
                                     },
-                                    new ProjectObjectManagerContainer<Card>(true)
+                                    new ProjectObjectManagerContainer<Card>
                                     {
                                         Anchor = Anchor.TopLeft,
                                         Origin = Anchor.TopLeft,
-                                        Height = 1/3f,
+                                        Height = 1/2f,
                                     },
-                                    new ProjectObjectManagerContainer<Token>(true)
-                                    {
-                                        Anchor = Anchor.CentreLeft,
-                                        Origin = Anchor.CentreLeft,
-                                        Height = 1/3f,
-                                    },
-                                    new ProjectObjectManagerContainer<Board>(true)
+                                    new ProjectObjectListingContainer<Tile>
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
-                                        Height = 1/3f,
+                                        Height = 1/2f,
                                     }
                                 }
                             },
@@ -90,7 +83,7 @@ namespace GamesToGo.Desktop.Screens
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    EventGraphicsContainer = new FillFlowContainer
+                                    eventGraphicsContainer = new FillFlowContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Direction = FillDirection.Vertical,
@@ -225,7 +218,7 @@ namespace GamesToGo.Desktop.Screens
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)
         {
-            EventGraphicsContainer.FadeTo(obj.NewValue == null ? 0 : 1);
+            eventGraphicsContainer.FadeTo(obj.NewValue == null ? 0 : 1);
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
         }
     }
