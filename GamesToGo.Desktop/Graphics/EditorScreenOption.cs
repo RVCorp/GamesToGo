@@ -10,5 +10,7 @@ namespace GamesToGo.Desktop.Graphics
         Inicio,
         [Description("Objetos")]
         Objetos,
+        [Description("Eventos")]
+        Eventos,
     }
 }
