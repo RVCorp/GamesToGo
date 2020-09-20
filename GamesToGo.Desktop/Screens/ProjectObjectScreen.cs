@@ -72,19 +72,19 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = Colour4.Gray
                                     },
-                                    new ProjectObjectManagerContainer<Card>("Cartas", true)
+                                    new ProjectObjectManagerContainer<Card>(true)
                                     {
                                         Anchor = Anchor.TopLeft,
                                         Origin = Anchor.TopLeft,
                                         Height = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Token>("Fichas", true)
+                                    new ProjectObjectManagerContainer<Token>(true)
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
                                         Height = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Board>("Tableros", true)
+                                    new ProjectObjectManagerContainer<Board>(true)
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,

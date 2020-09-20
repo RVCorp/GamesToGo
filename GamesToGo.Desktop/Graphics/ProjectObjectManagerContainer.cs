@@ -8,7 +8,7 @@ namespace GamesToGo.Desktop.Graphics
     {
         private bool shouldStartEditing;
 
-        public ProjectObjectManagerContainer(string name, bool shouldStartEditing = false) : base(name)
+        public ProjectObjectManagerContainer(bool shouldStartEditing = false)
         {
             this.shouldStartEditing = shouldStartEditing;
         }

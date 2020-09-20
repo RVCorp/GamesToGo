@@ -9,7 +9,7 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class BoardObjectManagerContainer : ObjectManagerContainer<Tile, TileButton>
     {
-        public BoardObjectManagerContainer() : base("Casillas de la escena")
+        public BoardObjectManagerContainer()
         {
         }
 

@@ -160,19 +160,19 @@ namespace GamesToGo.Desktop.Screens
                                 Width = 0.5f,
                                 Children = new Drawable[]
                                 {
-                                    new ProjectObjectManagerContainer<Card>("Cartas")
+                                    new ProjectObjectManagerContainer<Card>
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
                                         Width = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Token>("Fichas")
+                                    new ProjectObjectManagerContainer<Token>
                                     {
                                         Anchor = Anchor.BottomCentre,
                                         Origin = Anchor.BottomCentre,
                                         Width = 1/3f,
                                     },
-                                    new ProjectObjectManagerContainer<Board>("Tableros")
+                                    new ProjectObjectManagerContainer<Board>
                                     {
                                         Anchor = Anchor.BottomRight,
                                         Origin = Anchor.BottomRight,
