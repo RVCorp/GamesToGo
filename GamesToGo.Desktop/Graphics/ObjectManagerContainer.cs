@@ -19,7 +19,6 @@ namespace GamesToGo.Desktop.Graphics
 
         protected override Container<Drawable> Content => content;
 
-
         public ObjectManagerContainer(string buttonText = "Añadir nuevo")
         {
             AddInternal(new GridContainer

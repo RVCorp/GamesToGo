@@ -14,7 +14,7 @@ using osuTK;
 namespace GamesToGo.Desktop.Graphics
 {
     public class ObjectListingContainer<TElement, TButton> : Container
-        where TElement : ProjectElement, new()
+        where TElement : ProjectElement
         where TButton : ElementEditButton, new()
     {
         private IBindableList<ProjectElement> localElements = new BindableList<ProjectElement>();

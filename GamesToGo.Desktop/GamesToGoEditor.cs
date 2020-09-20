@@ -1,4 +1,4 @@
-﻿using osu.Framework;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Configuration;
@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Linq;
 using osu.Framework.IO.Stores;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
@@ -46,7 +45,6 @@ namespace GamesToGo.Desktop
         private Context dbContext;
         private MultipleOptionOverlay optionsOverlay;
         private SplashInfoOverlay splashOverlay;
-        private TextureStore textures;
         private APIController api;
         private ImageFinderOverlay imageFinder;
         private DrawSizePreservingFillContainer content;
