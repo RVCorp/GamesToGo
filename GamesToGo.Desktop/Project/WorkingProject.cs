@@ -64,7 +64,9 @@ namespace GamesToGo.Desktop.Project
                 {
                     if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
                         return null;
-                    if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))) || !ret.postParse())
+                    if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
+                        return null;
+                    if (!ret.postParse())
                         return null;
                 }
                 catch
@@ -334,6 +336,9 @@ namespace GamesToGo.Desktop.Project
                     }
                 }
             }
+
+            if (parsingElement != null)
+                AddElement(parsingElement);
 
             return true;
         }
