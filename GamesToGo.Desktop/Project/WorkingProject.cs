@@ -136,9 +136,11 @@ namespace GamesToGo.Desktop.Project
 
             DatabaseObject.ComunityStatus = CommunityStatus.Saved;
 
+            var ret = stateString(true);
+
             LastSavedState = StateHash();
 
-            return stateString(true);
+            return ret;
         }
 
         private string stateString(bool includeDate = false)
