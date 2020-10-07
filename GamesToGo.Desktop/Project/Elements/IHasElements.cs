@@ -6,23 +6,23 @@ namespace GamesToGo.Desktop.Project.Elements
 {
     public interface IHasElements
     {
-        public void QueueSubelement(int ID)
+        public void QueueElement(int id)
         {
-            PendingSubelements.Enqueue(ID);
+            PendingElements.Enqueue(id);
         }
 
-        public Queue<int> PendingSubelements { get; }
+        public Queue<int> PendingElements { get; }
 
-        List<ProjectElement> Subelements { get; }
+        List<ProjectElement> Elements { get; }
 
-        ElementType SubelementType { get; }
+        ElementType NestedElementType { get; }
 
         public string ToSaveable()
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine($"SubElems={Subelements.Count}");
-            foreach (var element in Subelements.Select(e => e.ID).ToList())
+            builder.AppendLine($"SubElems={Elements.Count}");
+            foreach (var element in Elements.Select(e => e.ID).ToList())
             {
                 builder.AppendLine($"{element}");
             }

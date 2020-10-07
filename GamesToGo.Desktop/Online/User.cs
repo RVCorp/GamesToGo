@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace GamesToGo.Desktop.Online
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class User
     {
         [JsonProperty(@"Id")]
@@ -14,15 +16,18 @@ namespace GamesToGo.Desktop.Online
         [JsonProperty(@"UsertypeId")]
         public UserType UserType { get; set; }
 
+        // ReSharper disable once UnusedMember.Global
         public string Image { get; set; }
 
     }
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class PasswordedUser : User
     {
         public string Password { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum UserType
     {
         User = 1,

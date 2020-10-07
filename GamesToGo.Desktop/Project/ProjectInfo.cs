@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GamesToGo.Desktop.Database.Models;
 using Newtonsoft.Json;
+// ReSharper disable All
 
 namespace GamesToGo.Desktop.Project
 {
@@ -11,9 +12,9 @@ namespace GamesToGo.Desktop.Project
 
         public int CreatorID { get; set; }
 
-        public string Name { get; set; } = "Nuevo Proyecto";
+        public string Name { get; set; } = @"Nuevo Proyecto";
 
-        public string Description { get; set; } = "¡Decribe tu proyecto en una frase!";
+        public string Description { get; set; } = @"¡Decribe tu proyecto en una frase!";
 
         public int MinNumberPlayers { get; set; }
 

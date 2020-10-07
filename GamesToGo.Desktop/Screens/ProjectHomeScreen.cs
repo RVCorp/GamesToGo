@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
@@ -17,37 +17,37 @@ namespace GamesToGo.Desktop.Screens
     public class ProjectHomeScreen : Screen
     {
         private BasicTextBox titleTextBox;
-        private WorkingProject project;
-        private NumericTextbox maxPlayersTextBox;
-        private NumericTextbox minPlayersTextBox;
+
+        [Resolved]
+        private WorkingProject project { get; set; }
+        private NumericTextBox maxPlayersTextBox;
+        private NumericTextBox minPlayersTextBox;
         private BasicTextBox descriptionTextBox;
         private BasicDropdown<ChatRecommendation> chatDropdown;
 
         [BackgroundDependencyLoader]
-        private void load(WorkingProject project)
+        private void load()
         {
-            this.project = project;
-
             InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Colour4 (106,100,104, 255),      //Color fondo general
                 },
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ColumnDimensions = new Dimension[]
+                    ColumnDimensions = new[]
                     {
                         new Dimension(),
                     },
-                    RowDimensions = new Dimension[]
+                    RowDimensions = new[]
                     {
                         new Dimension(GridSizeMode.AutoSize),
-                        new Dimension()
+                        new Dimension(),
                     },
-                    Content = new Drawable[][]
+                    Content = new[]
                     {
                         new Drawable[]
                         {
@@ -75,15 +75,15 @@ namespace GamesToGo.Desktop.Screens
                                             {
                                                 Padding = new MarginPadding(15),
                                                 Size = new Vector2(180),
-                                                Child = new ImageChangerButton()
+                                                Child = new ImageChangerButton
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                }
+                                                },
                                             },
                                             new SpriteText
                                             {
-                                                Text = "Nombre del proyecto:",
-                                                Position = new Vector2(180, 17)
+                                                Text = @"Nombre del proyecto:",
+                                                Position = new Vector2(180, 17),
                                             },
                                             titleTextBox = new BasicTextBox
                                             {
@@ -95,10 +95,10 @@ namespace GamesToGo.Desktop.Screens
                                             new SpriteText
                                             {
                                                 Anchor = Anchor.TopCentre,
-                                                Text = "Minimo Jugadores:",
-                                                Position = new Vector2(560, 17)
+                                                Text = @"Minimo Jugadores:",
+                                                Position = new Vector2(560, 17),
                                             },
-                                            minPlayersTextBox = new NumericTextbox(2)        //Restringir la cantidad de digitos a 2 
+                                            minPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
                                             {
                                                 Text = Math.Max(2, project.DatabaseObject.MinNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
@@ -110,10 +110,10 @@ namespace GamesToGo.Desktop.Screens
                                             new SpriteText
                                             {
                                                 Anchor = Anchor.TopCentre,
-                                                Text = "Maximo Jugadores:",
-                                                Position = new Vector2(760, 17)
+                                                Text = @"Maximo Jugadores:",
+                                                Position = new Vector2(760, 17),
                                             },
-                                            maxPlayersTextBox = new NumericTextbox(2)        //Restringir la cantidad de digitos a 2 
+                                            maxPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
                                             {
                                                 Text = Math.Min(32, project.DatabaseObject.MaxNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
@@ -124,32 +124,32 @@ namespace GamesToGo.Desktop.Screens
                                             },
                                             new SpriteText
                                             {
-                                                Text = "Descripción:",
-                                                Position = new Vector2(245,70)
+                                                Text = @"Descripción:",
+                                                Position = new Vector2(245,70),
                                             },
                                             descriptionTextBox = new BasicTextBox
                                             {
                                                 Text = project.DatabaseObject.Description,
                                                 Position = new Vector2(340,70),
                                                 Height = 35,
-                                                Width = 1732
+                                                Width = 1732,
                                             },
                                             new SpriteText
                                             {
                                                 Origin = Anchor.TopRight,
-                                                Text = "Chat recomendado:",
+                                                Text = @"Chat recomendado:",
                                                 Position = new Vector2(329, 130),
                                             },
                                             chatDropdown = new GamesToGoDropdown<ChatRecommendation>
                                             {
                                                 Width = 200,
                                                 Position = new Vector2(340, 130),
-                                                Items = (IEnumerable<ChatRecommendation>)Enum.GetValues(typeof(ChatRecommendation)),
+                                                Items = Enum.GetValues(typeof(ChatRecommendation)).Cast<ChatRecommendation>(),
                                             },
-                                        }
+                                        },
                                     },
-                                }
-                            }
+                                },
+                            },
                         },
                         new Drawable[]
                         {
@@ -178,11 +178,11 @@ namespace GamesToGo.Desktop.Screens
                                         Origin = Anchor.BottomRight,
                                         Width = 1/3f,
                                     },
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     },
-                }
+                },
             };
 
 

@@ -1,53 +1,60 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Project.Elements;
 using System.Linq;
+using System.Text;
+using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Online;
+using GamesToGo.Desktop.Project.Elements;
+using GamesToGo.Desktop.Project.Events;
+using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
-using GamesToGo.Desktop.Database.Models;
-using GamesToGo.Desktop.Online;
 using osuTK;
-using Newtonsoft.Json;
 
 namespace GamesToGo.Desktop.Project
 {
     public class WorkingProject
     {
-        private readonly TextureStore textures;
+        public static List<Type> AvailableEvents { get; } = new List<Type>
+        {
+            typeof(SetCardOnTileEvent),
+            typeof(SetCardTypeOnTileEvent),
+            typeof(CardMovedToTileEvent),
+        };
 
+        private readonly TextureStore textures;
         public ProjectInfo DatabaseObject { get; }
 
         private int latestElementID = 1;
 
         private readonly BindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
-        public IEnumerable<Card> ProjectCards => projectElements.Where(e => e is Card).Select(e => (Card)e);
+        private IEnumerable<Card> ProjectCards => projectElements.OfType<Card>();
 
-        public IEnumerable<Token> ProjectTokens => projectElements.Where(e => e is Token).Select(e => (Token)e);
+        private IEnumerable<Token> ProjectTokens => projectElements.OfType<Token>();
 
-        public IEnumerable<Board> ProjectBoards => projectElements.Where(e => e is Board).Select(e => (Board)e);
+        private IEnumerable<Board> ProjectBoards => projectElements.OfType<Board>();
 
-        public IEnumerable<Tile> ProjectTiles => projectElements.Where(e => e is Tile).Select(e => (Tile)e);
+        private IEnumerable<Tile> ProjectTiles => projectElements.OfType<Tile>();
 
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
-        public BindableList<Image> Images = new BindableList<Image>();
+        public readonly BindableList<Image> Images = new BindableList<Image>();
 
-        public Bindable<Image> Image { get; set; } = new Bindable<Image>();
+        public Bindable<Image> Image { get; } = new Bindable<Image>();
 
         public ChatRecommendation ChatRecommendation { get; set; }
 
-        private int returnableSaves = 0;
+        private int returnableSaves;
 
         public bool FirstSave => returnableSaves > 0;
 
-        public string LastSavedState { get; private set; }
+        private string lastSavedState { get; set; }
 
-        public bool HasUnsavedChanges => LastSavedState != StateHash();
+        public bool HasUnsavedChanges => lastSavedState != stateHash();
 
-        protected WorkingProject(ref ProjectInfo project, TextureStore textures, int userID)
+        private WorkingProject(ref ProjectInfo project, TextureStore textures, int userID)
         {
             if (project == null)
             {
@@ -83,10 +90,10 @@ namespace GamesToGo.Desktop.Project
                 {
                     if (project.Relations.Count != ret.Images.Count)
                         return null;
-                    foreach (var image in project.Relations)
+
+                    if (project.Relations.Any(image => ret.Images.All(im => im.ImageName != image.File.NewName)))
                     {
-                        if (!ret.Images.Any(im => im.ImageName == image.File.NewName))
-                            return null;
+                        return null;
                     }
                 }
             }
@@ -96,7 +103,7 @@ namespace GamesToGo.Desktop.Project
 
             ret.updateDatabaseObjectInfo();
 
-            ret.LastSavedState = ret.StateHash();
+            ret.lastSavedState = ret.stateHash();
 
             return ret;
         }
@@ -120,7 +127,7 @@ namespace GamesToGo.Desktop.Project
             Images.Add(new Image(textures, image.NewName));
         }
 
-        public string StateHash()
+        private string stateHash()
         {
             return GamesToGoEditor.HashBytes(Encoding.UTF8.GetBytes(stateString() + JsonConvert.SerializeObject(DatabaseObject)));
         }
@@ -138,7 +145,7 @@ namespace GamesToGo.Desktop.Project
 
             var ret = stateString(true);
 
-            LastSavedState = StateHash();
+            lastSavedState = stateHash();
 
             return ret;
         }
@@ -174,35 +181,33 @@ namespace GamesToGo.Desktop.Project
         {
             foreach (var element in projectElements)
             {
-                if (element is IHasElements elementedElement)
+                if (!(element is IHasElements elementedElement)) continue;
+                var elementQueue = elementedElement.PendingElements;
+                while (elementQueue.Count > 0)
                 {
-                    var elementQueue = elementedElement.PendingSubelements;
-                    while (elementQueue.Count > 0)
+                    int nextElement = elementQueue.Dequeue();
+                    switch (elementedElement.NestedElementType)
                     {
-                        int nextElement = elementQueue.Dequeue();
-                        switch (elementedElement.SubelementType)
-                        {
-                            case ElementType.Token:
-                                if (ProjectTokens.All(b => b.ID != nextElement))
-                                    return false;
-                                elementedElement.Subelements.Add(ProjectTokens.First(b => b.ID == nextElement));
-                                break;
-                            case ElementType.Card:
-                                if (ProjectCards.All(b => b.ID != nextElement))
-                                    return false;
-                                elementedElement.Subelements.Add(ProjectCards.First(b => b.ID == nextElement));
-                                break;
-                            case ElementType.Tile:
-                                if (ProjectTiles.All(b => b.ID != nextElement))
-                                    return false;
-                                elementedElement.Subelements.Add(ProjectTiles.First(b => b.ID == nextElement));
-                                break;
-                            case ElementType.Board:
-                                if (ProjectBoards.All(b => b.ID != nextElement))
-                                    return false;
-                                elementedElement.Subelements.Add(ProjectBoards.First(b => b.ID == nextElement));
-                                break;
-                        }
+                        case ElementType.Token:
+                            if (ProjectTokens.All(b => b.ID != nextElement))
+                                return false;
+                            elementedElement.Elements.Add(ProjectTokens.First(b => b.ID == nextElement));
+                            break;
+                        case ElementType.Card:
+                            if (ProjectCards.All(b => b.ID != nextElement))
+                                return false;
+                            elementedElement.Elements.Add(ProjectCards.First(b => b.ID == nextElement));
+                            break;
+                        case ElementType.Tile:
+                            if (ProjectTiles.All(b => b.ID != nextElement))
+                                return false;
+                            elementedElement.Elements.Add(ProjectTiles.First(b => b.ID == nextElement));
+                            break;
+                        case ElementType.Board:
+                            if (ProjectBoards.All(b => b.ID != nextElement))
+                                return false;
+                            elementedElement.Elements.Add(ProjectBoards.First(b => b.ID == nextElement));
+                            break;
                     }
                 }
             }
@@ -210,26 +215,24 @@ namespace GamesToGo.Desktop.Project
             return true;
         }
 
-        private bool parse(string[] lines)
+        private bool parse(IReadOnlyList<string> lines)
         {
             bool isParsingObjects = false;
 
             ProjectElement parsingElement = null;
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
                 if (line.StartsWith('['))
                 {
-                    switch (line.Trim(new char[] { '[', ']' }))
+                    isParsingObjects = line.Trim('[', ']') switch
                     {
-                        case "Info":
-                            isParsingObjects = false;
-                            break;
-                        case "Objects":
-                            isParsingObjects = true;
-                            break;
-                    }
+                        "Info" => false,
+                        "Objects" => true,
+                        _ => isParsingObjects,
+                    };
+
                     continue;
                 }
 
@@ -269,7 +272,6 @@ namespace GamesToGo.Desktop.Project
                         }
                         parsingElement.ID = int.Parse(idents[1]);
                         parsingElement.Name.Value = idents[2];
-                        continue;
                     }
                     else
                     {
@@ -313,7 +315,7 @@ namespace GamesToGo.Desktop.Project
                                 int amm = int.Parse(tokens[1]);
                                 for (int j = i + amm; i < j; i++)
                                 {
-                                    elementedElement.QueueSubelement(int.Parse(lines[i + 1]));
+                                    elementedElement.QueueElement(int.Parse(lines[i + 1]));
                                 }
                                 break;
                             }
@@ -325,6 +327,20 @@ namespace GamesToGo.Desktop.Project
                             case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
                             {
                                 privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
+                                break;
+                            }
+                            case "Events" when parsingElement is IHasEvents eventedElement:
+                            {
+                                int amm = int.Parse(tokens[1]);
+                                for (int j = i + amm; i < j; i++)
+                                {
+                                    var splits = lines[i + 1].Split('|');
+                                    int type = int.Parse(splits[1].Split('(')[0]);
+
+                                    ProjectEvent toBeEvent = Activator.CreateInstance(AvailableEvents[type - 1]) as ProjectEvent;
+                                    toBeEvent.Name.Value = splits[2];
+                                    eventedElement.Events.Add(toBeEvent);
+                                }
                                 break;
                             }
                         }
@@ -343,7 +359,10 @@ namespace GamesToGo.Desktop.Project
                     switch (tokens[0])
                     {
                         case "ChatRecommendation":
-                            ChatRecommendation = Enum.Parse<ChatRecommendation>(tokens[1]);
+                            if (tokens[1] == @"Presential")
+                                ChatRecommendation = ChatRecommendation.FaceToFace;
+                            else
+                                ChatRecommendation = Enum.Parse<ChatRecommendation>(tokens[1]);
                             break;
                         case "Files":
                             int amm = int.Parse(tokens[1]);

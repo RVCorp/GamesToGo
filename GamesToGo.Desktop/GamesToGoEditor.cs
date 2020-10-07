@@ -4,7 +4,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Configuration;
 using osu.Framework.Screens;
 using GamesToGo.Desktop.Screens;
-using GamesToGo.Desktop.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Linq;
@@ -13,6 +12,7 @@ using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using System.Reflection;
+using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Online;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -72,9 +72,15 @@ namespace GamesToGo.Desktop
             }
             finally
             {
-                foreach (var _ in dbContext.Projects) ;
-                foreach (var _ in dbContext.Files) ;
-                foreach (var _ in dbContext.Relations) ;
+                foreach (var _ in dbContext.Projects)
+                {
+                }
+                foreach (var _ in dbContext.Files)
+                {
+                }
+                foreach (var _ in dbContext.Relations)
+                {
+                }
             }
 
             //Ventana sin bordes, sin requerir modo exclusivo.
@@ -84,24 +90,24 @@ namespace GamesToGo.Desktop
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
 
-            base.Content.Add(content = new DrawSizePreservingFillContainer() { TargetDrawSize = new Vector2(1920, 1080) });
+            base.Content.Add(content = new DrawSizePreservingFillContainer { TargetDrawSize = new Vector2(1920, 1080) });
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
-            content.Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both, Depth = 0 });
+            content.Add(stack = new ScreenStack { RelativeSizeAxes = Axes.Both, Depth = 0 });
 
             content.Add(api = new APIController());
 
             dependencies.Cache(api);
 
-            content.Add(splashOverlay = new SplashInfoOverlay() { Depth = -2 });
+            content.Add(splashOverlay = new SplashInfoOverlay { Depth = -2 });
 
             dependencies.Cache(splashOverlay);
 
-            content.Add(imageFinder = new ImageFinderOverlay() { Depth = -1 });
+            content.Add(imageFinder = new ImageFinderOverlay { Depth = -1 });
 
             dependencies.Cache(imageFinder);
 
-            content.Add(optionsOverlay = new MultipleOptionOverlay() { Depth = -3 });
+            content.Add(optionsOverlay = new MultipleOptionOverlay { Depth = -3 });
 
             dependencies.Cache(optionsOverlay);
         }

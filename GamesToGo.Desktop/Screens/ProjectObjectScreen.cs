@@ -1,9 +1,9 @@
+using System.Globalization;
+using System.Linq;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Overlays;
-﻿using GamesToGo.Desktop.Graphics;
-﻿using System.Linq;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
-using Microsoft.EntityFrameworkCore.Internal;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -13,40 +13,31 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
     public class ProjectObjectScreen : Screen
     {
-        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
-        private ProjectEditor editor;
-        private WorkingProject project;
+        private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
+
+        [Resolved]
+        private WorkingProject project { get; set; }
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
         private BasicScrollContainer activeEditContainer;
-        private Container editAreaContainer;
-        private Container customElementsContainer;
-        private Container elementSizex2;
-        private NumericTextbox sizeTextboxX;
-        private NumericTextbox sizeTextboxY;
+        private Container elementSize;
+        private NumericTextBox sizeTextBoxX;
+        private NumericTextBox sizeTextBoxY;
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
-        private TileEditorOverlay tileOverlay;
-        private DependencyContainer dependencies;
         private BasicTextBox descriptionTextBox;
 
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-        }
+        [Cached]
+        private TileEditorOverlay tileOverlay = new TileEditorOverlay();
 
         [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor, WorkingProject project)
+        private void load(ProjectEditor editor)
         {
-            this.editor = editor;
-            this.project = project;
-            dependencies.Cache(tileOverlay = new TileEditorOverlay());
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -70,7 +61,7 @@ namespace GamesToGo.Desktop.Screens
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Colour4.Gray
+                                        Colour = Colour4.Gray,
                                     },
                                     new ProjectObjectManagerContainer<Card>(true)
                                     {
@@ -89,11 +80,11 @@ namespace GamesToGo.Desktop.Screens
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
                                         Height = 1/3f,
-                                    }
-                                }
+                                    },
+                                },
                             },
                             //Area de edición
-                            editAreaContainer = new Container
+                            new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
@@ -117,13 +108,13 @@ namespace GamesToGo.Desktop.Screens
                                                         new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Colour = Colour4.Cyan
+                                                            Colour = Colour4.Cyan,
                                                         },
                                                         new Container
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
-                                                            Padding = new MarginPadding() { Horizontal = 60, Vertical = 50 },
+                                                            Padding = new MarginPadding { Horizontal = 60, Vertical = 50 },
                                                             Children = new Drawable[]
                                                             {
                                                                 new ImagePreviewContainer(),
@@ -132,8 +123,8 @@ namespace GamesToGo.Desktop.Screens
                                                                     Anchor = Anchor.TopRight,
                                                                     Origin = Anchor.TopRight,
                                                                     Position = new Vector2(-675,10),
-                                                                    Text = "Nombre:",
-                                                                    Colour = Colour4.Black
+                                                                    Text = @"Nombre:",
+                                                                    Colour = Colour4.Black,
                                                                 },
                                                                 nameTextBox = new BasicTextBox
                                                                 {
@@ -148,8 +139,8 @@ namespace GamesToGo.Desktop.Screens
                                                                     Anchor = Anchor.TopRight,
                                                                     Origin = Anchor.TopRight,
                                                                     Position = new Vector2(-675,80),
-                                                                    Text = "Descripcion:",
-                                                                    Colour = Colour4.Black
+                                                                    Text = @"Descripción:",
+                                                                    Colour = Colour4.Black,
                                                                 },
                                                                 descriptionTextBox = new BasicTextBox
                                                                 {
@@ -158,12 +149,12 @@ namespace GamesToGo.Desktop.Screens
                                                                     Position = new Vector2(-250, 70),
                                                                     Height = 35,
                                                                     Width = 400,
-                                                                }
-                                                            }
-                                                        }
-                                                    }
+                                                                },
+                                                            },
+                                                        },
+                                                    },
                                                 },
-                                                customElementsContainer = new Container
+                                                new Container
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     Height = 600,
@@ -172,36 +163,36 @@ namespace GamesToGo.Desktop.Screens
                                                         new Box
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Colour = Colour4.Fuchsia
+                                                            Colour = Colour4.Fuchsia,
                                                         },
-                                                        elementSizex2 = new Container
+                                                        elementSize = new Container
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             Children = new Drawable[]
                                                             {
                                                                 new SpriteText
                                                                 {
-                                                                    Text = "Tamaño X:",
-                                                                    Position = new Vector2(50, 50)
+                                                                    Text = @"Tamaño X:",
+                                                                    Position = new Vector2(50, 50),
                                                                 },
-                                                                sizeTextboxX = new NumericTextbox(4)
+                                                                sizeTextBoxX = new NumericTextBox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
-                                                                    Position = new Vector2(125, 45)
+                                                                    Position = new Vector2(125, 45),
                                                                 },
                                                                 new SpriteText
                                                                 {
-                                                                    Text = "Tamaño Y:",
-                                                                    Position = new Vector2(50, 100)
+                                                                    Text = @"Tamaño Y:",
+                                                                    Position = new Vector2(50, 100),
                                                                 },
-                                                                sizeTextboxY = new NumericTextbox(4)
+                                                                sizeTextBoxY = new NumericTextBox(4)
                                                                 {
                                                                     Height = 35,
                                                                     Width = 75,
-                                                                    Position = new Vector2(125, 95)
-                                                                }
-                                                            }
+                                                                    Position = new Vector2(125, 95),
+                                                                },
+                                                            },
                                                         },
                                                         elementSubElements = new Container
                                                         {
@@ -209,15 +200,12 @@ namespace GamesToGo.Desktop.Screens
                                                             Width = 1/3f,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
-                                                            Child = tilesManagerContainer = new BoardObjectManagerContainer()
-                                                            {
-
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                                            Child = tilesManagerContainer = new BoardObjectManagerContainer(),
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
                                     },
                                     tileOverlay,
                                     noSelectionContainer = new Container
@@ -229,19 +217,19 @@ namespace GamesToGo.Desktop.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Text = "Selecciona un objeto para editarlo",
+                                            Text = @"Selecciona un objeto para editarlo",
                                         },
                                     },
-                                }
-                            } 
-                        }
+                                },
+                            },
+                        },
                     },
-                    ColumnDimensions = new Dimension[]
+                    ColumnDimensions = new[]
                     {
                         new Dimension(GridSizeMode.Relative, 0.25f),
-                        new Dimension(GridSizeMode.Distributed)
-                    }
-                }
+                        new Dimension(),
+                    },
+                },
             };
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
@@ -254,8 +242,8 @@ namespace GamesToGo.Desktop.Screens
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
             nameTextBox.Current.UnbindEvents();
-            sizeTextboxX.Current.UnbindEvents();
-            sizeTextboxY.Current.UnbindEvents();
+            sizeTextBoxX.Current.UnbindEvents();
+            sizeTextBoxY.Current.UnbindEvents();
             descriptionTextBox.Current.UnbindEvents();
 
             if (obj.NewValue != null)
@@ -266,28 +254,28 @@ namespace GamesToGo.Desktop.Screens
 
             if(obj.NewValue is IHasSize size)
             {
-                elementSizex2.Show();
-                sizeTextboxX.Text = size.Size.Value.X.ToString();
-                sizeTextboxY.Text = size.Size.Value.Y.ToString();
-                sizeTextboxX.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)), size.Size.Value.Y);
-                sizeTextboxY.Current.ValueChanged += (obj) => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse((string.IsNullOrEmpty(obj.NewValue) ? obj.OldValue : obj.NewValue)));
+                elementSize.Show();
+                sizeTextBoxX.Text = size.Size.Value.X.ToString(CultureInfo.InvariantCulture);
+                sizeTextBoxY.Text = size.Size.Value.Y.ToString(CultureInfo.InvariantCulture);
+                sizeTextBoxX.Current.ValueChanged += sizeObj => size.Size.Value = new Vector2(float.Parse(string.IsNullOrEmpty(sizeObj.NewValue) ? sizeObj.OldValue : sizeObj.NewValue), size.Size.Value.Y);
+                sizeTextBoxY.Current.ValueChanged += sizeObj => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse(string.IsNullOrEmpty(sizeObj.NewValue) ? sizeObj.OldValue : sizeObj.NewValue));
             }
             else
             {
-                elementSizex2.Hide();
+                elementSize.Hide();
             }
 
             if(obj.NewValue is Board board)
             {
                 elementSubElements.Show();
-                tilesManagerContainer.Filter = (t) =>
+                tilesManagerContainer.Filter = t =>
                 {
-                    return board.Subelements.Any(ti => ti.ID == t.ID);
+                    return board.Elements.Any(ti => ti.ID == t.ID);
                 };
                 tilesManagerContainer.ButtonAction = () =>
                 {
-                    board.Subelements.Add(new Tile());
-                    project.AddElement(board.Subelements.Last());
+                    board.Elements.Add(new Tile());
+                    project.AddElement(board.Elements.Last());
                 };
             }
             else
@@ -295,8 +283,8 @@ namespace GamesToGo.Desktop.Screens
                 elementSubElements.Hide();
             }
             tileOverlay.Hide();
-            descriptionTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Description.Value = obj.NewValue;
-            nameTextBox.Current.ValueChanged += (obj) => currentEditing.Value.Name.Value = obj.NewValue;
+            descriptionTextBox.Current.ValueChanged += text => currentEditing.Value.Description.Value = text.NewValue;
+            nameTextBox.Current.ValueChanged += text => currentEditing.Value.Name.Value = text.NewValue;
         }
     }
 }

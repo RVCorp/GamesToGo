@@ -1,9 +1,9 @@
-﻿using GamesToGo.Desktop.Overlays;
+﻿using System.Linq;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Graphics;
-using System.Linq;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
-using Microsoft.EntityFrameworkCore.Internal;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -11,34 +11,30 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
-using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
+    [Cached]
     public class ProjectEventsScreen : Screen
     {
-        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
-        private ProjectEditor editor;
-        private WorkingProject project;
-        private Container editEventAreaContainer;
-        private Container noSelectionContainer;
-        private FillFlowContainer eventGraphicsContainer;
-        private FillFlowContainer<ProjectObjectEventContainer> eventsContainer;
-        private EventCreationOverlay eventEditOverlay;
-        private DependencyContainer dependencies;
+        private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
 
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-        }
+        [Resolved]
+        private ProjectEditor editor { get; set; }
+
+        [Resolved]
+        private WorkingProject project { get; set; }
+
+        private Container noSelectionContainer;
+        private Container eventGraphicsContainer;
+
+        [Cached]
+        private EventEditionOverlay eventEditOverlay = new EventEditionOverlay();
 
         [BackgroundDependencyLoader]
-        private void load(ProjectEditor editor, WorkingProject project)
+        private void load()
         {
-            this.editor = editor;
-            this.project = project;
-            dependencies.Cache(eventEditOverlay = new EventCreationOverlay());
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -62,7 +58,7 @@ namespace GamesToGo.Desktop.Screens
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Color4.Gray
+                                        Colour = Color4.Gray,
                                     },
                                     new ProjectObjectManagerContainer<Card>
                                     {
@@ -75,113 +71,34 @@ namespace GamesToGo.Desktop.Screens
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
                                         Height = 1/2f,
-                                    }
-                                }
+                                    },
+                                },
                             },
-                            editEventAreaContainer = new Container
+                            new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    eventGraphicsContainer = new FillFlowContainer
+                                    eventGraphicsContainer = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Vertical,
                                         Children = new Drawable[]
                                         {
+                                            new Box
+                                            {
+                                                RelativeSizeAxes = Axes.Both,
+                                                Colour = Color4.Cyan,
+                                            },
                                             new Container
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Children = new Drawable[]
+                                                Padding = new MarginPadding { Horizontal = 60, Vertical = 50 },
+                                                Child = new EventListing
                                                 {
-                                                    new Box
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Colour = Color4.Cyan
-                                                    },
-                                                    new Container
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Padding = new MarginPadding() { Horizontal = 60, Vertical = 50 },
-                                                        Children = new Drawable[]
-                                                        {
-                                                            new Container
-                                                            {
-                                                                RelativeSizeAxes = Axes.Both,
-                                                                Masking = true,
-                                                                BorderThickness = 3f,
-                                                                Children = new Drawable[]
-                                                                {
-                                                                    new Box
-                                                                    {
-                                                                        RelativeSizeAxes = Axes.Both,
-                                                                        Colour = Color4.DarkGoldenrod
-                                                                    },
-                                                                    new GridContainer
-                                                                    {
-                                                                        RelativeSizeAxes = Axes.Both,
-                                                                        RowDimensions = new Dimension[]
-                                                                        {
-                                                                            new Dimension(),
-                                                                            new Dimension(GridSizeMode.AutoSize)
-                                                                        },
-                                                                        Content = new Drawable[][]
-                                                                        {
-                                                                            new Drawable[]
-                                                                            {
-                                                                                new BasicScrollContainer
-                                                                                {
-                                                                                    ClampExtension = 10,
-                                                                                    RelativeSizeAxes = Axes.Both,
-                                                                                    Child = eventsContainer = new FillFlowContainer<ProjectObjectEventContainer>
-                                                                                    {
-                                                                                        Spacing = Vector2.Zero,
-                                                                                        RelativeSizeAxes = Axes.X,
-                                                                                        AutoSizeAxes = Axes.Y,
-                                                                                        Direction = FillDirection.Vertical,
-                                                                                    },
-                                                                                }
-                                                                            },
-                                                                            new Drawable[]
-                                                                            {
-                                                                                new Container
-                                                                                {
-                                                                                    Anchor = Anchor.BottomCentre,
-                                                                                    Origin = Anchor.BottomCentre,
-                                                                                    RelativeSizeAxes = Axes.X,
-                                                                                    Height = 30,
-                                                                                    Children = new Drawable[]
-                                                                                    {
-                                                                                        new Box
-                                                                                        {
-                                                                                            RelativeSizeAxes = Axes.Both,
-                                                                                            Colour = Color4.Honeydew
-                                                                                        },
-                                                                                        new Container
-                                                                                        {
-                                                                                            Anchor = Anchor.BottomRight,
-                                                                                            Origin = Anchor.BottomRight,
-                                                                                            RelativeSizeAxes = Axes.Y,
-                                                                                            Width = 100,
-                                                                                            Child = new GamesToGoButton
-                                                                                            {
-                                                                                                RelativeSizeAxes = Axes.Both,
-                                                                                                Text = "Añadir evento",
-                                                                                                Action = eventOverlay
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                                    RelativeSizeAxes = Axes.Both,
+                                                },
                                             },
-                                        }
+                                        },
                                     },
                                     noSelectionContainer = new Container
                                     {
@@ -192,34 +109,48 @@ namespace GamesToGo.Desktop.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Text = "Selecciona un objeto para editarlo",
+                                            Text = @"Selecciona un objeto con eventos para editarlo",
                                         },
                                     },
                                     eventEditOverlay,
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     },
-                    ColumnDimensions = new Dimension[]
+                    ColumnDimensions = new[]
                     {
                         new Dimension(GridSizeMode.Relative, 0.25f),
-                        new Dimension(GridSizeMode.Distributed)
-                    }
-                }
+                        new Dimension(),
+                    },
+                },
             };
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
         }
 
-        private void eventOverlay()
+        public void CreateEvent(ProjectEvent projectEvent)
         {
-            eventEditOverlay.Show();
+            if (!(currentEditing.Value is IHasEvents evented)) return;
+
+            projectEvent.ID = evented.Events.LastOrDefault()?.ID + 1 ?? 1;
+            evented.Events.Add(projectEvent);
+            eventEditOverlay.ShowEvent(projectEvent);
         }
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)
         {
-            eventGraphicsContainer.FadeTo(obj.NewValue == null ? 0 : 1);
-            noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
+            eventEditOverlay.Hide();
+
+            if (!(obj.NewValue is IHasEvents))
+            {
+                eventGraphicsContainer.FadeTo(0);
+                noSelectionContainer.FadeTo(1);
+
+                return;
+            }
+
+            eventGraphicsContainer.FadeTo(1);
+            noSelectionContainer.FadeTo(0);
         }
     }
 }

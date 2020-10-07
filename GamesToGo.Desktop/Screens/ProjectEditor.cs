@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Online;
@@ -20,11 +21,11 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osuTK.Graphics;
 using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
 namespace GamesToGo.Desktop.Screens
 {
+    [Cached]
     public class ProjectEditor : Screen
     {
         private Screen currentScreen;
@@ -35,21 +36,27 @@ namespace GamesToGo.Desktop.Screens
 
         public IBindable<ProjectElement> CurrentEditingElement => currentEditingElement;
 
-        private DependencyContainer dependencies;
-        private Storage store;
-        private Context database;
-        private SplashInfoOverlay splashOverlay;
-        private MultipleOptionOverlay optionOverlay;
-        private APIController api;
+        [Resolved]
+        private Storage store { get; set; }
+
+        [Resolved]
+        private Context database { get; set; }
+
+        [Resolved]
+        private SplashInfoOverlay splashOverlay { get; set; }
+
+        [Resolved]
+        private MultipleOptionOverlay optionOverlay { get; set; }
+
+        [Resolved]
+        private APIController api { get; set; }
+
+        [Cached]
         private WorkingProject workingProject;
         private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
-        private ImagePickerOverlay imagePicker;
-
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-        }
+        [Cached]
+        private ImagePickerOverlay imagePicker = new ImagePickerOverlay { Depth = 2 };
 
         public ProjectEditor(WorkingProject project)
         {
@@ -57,14 +64,8 @@ namespace GamesToGo.Desktop.Screens
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, Storage store, Context database, SplashInfoOverlay splashOverlay, MultipleOptionOverlay optionOverlay, APIController api)
+        private void load(TextureStore textures)
         {
-            this.store = store;
-            this.database = database;
-            this.splashOverlay = splashOverlay;
-            this.optionOverlay = optionOverlay;
-            this.api = api;
-
             if (workingProject == null)
             {
                 workingProject = WorkingProject.Parse(null, store, textures, api);
@@ -72,9 +73,6 @@ namespace GamesToGo.Desktop.Screens
             }
 
             initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
-
-            dependencies.Cache(workingProject);
-            dependencies.Cache(this);
 
             InternalChildren = new[]
             {
@@ -101,12 +99,12 @@ namespace GamesToGo.Desktop.Screens
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.Gray
+                            Colour = Colour4.Gray,
                         },
                         tabsBar = new EditorTabChanger(),
                         new CloseButton
                         {
-                            Action = confirmClose
+                            Action = confirmClose,
                         },
                     },
                 },
@@ -117,14 +115,10 @@ namespace GamesToGo.Desktop.Screens
             {
                 EditorScreenOption.Objetos => EditorScreenOption.Objetos,
                 EditorScreenOption.Eventos => EditorScreenOption.Eventos,
-                _ => EditorScreenOption.Objetos
+                _ => EditorScreenOption.Objetos,
             };
 
-            AddInternal(imagePicker = new ImagePickerOverlay
-            {
-                Depth = 2
-            });
-            dependencies.Cache(imagePicker);
+            AddInternal(imagePicker);
 
             tabsBar.Current.Value = EditorScreenOption.Inicio;
         }
@@ -185,7 +179,7 @@ namespace GamesToGo.Desktop.Screens
             Random random = new Random();
 
             if (showSplashConfirmation)
-                splashOverlay.Show("Se ha guardado el proyecto localmente", new Colour4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Colour4(80, 80, 80, 255)*/);
+                splashOverlay.Show(@"Se ha guardado el proyecto localmente", new Colour4(randomNumber(), randomNumber(), randomNumber(), 255)/*new Colour4(80, 80, 80, 255)*/);
 
             byte randomNumber()
             {
@@ -196,16 +190,16 @@ namespace GamesToGo.Desktop.Screens
         public void UploadProject()
         {
             SaveProject(false);
-            splashOverlay.Show("Proyecto guardado localmente, subiendo al servidor...", Colour4.ForestGreen);
+            splashOverlay.Show(@"Proyecto guardado localmente, subiendo al servidor...", Colour4.ForestGreen);
             var req = new UploadGameRequest(workingProject.DatabaseObject, store);
             req.Failure += e =>
             {
-                splashOverlay.Show("Hubo un problema al subir el proyecto al servidor", Colour4.DarkRed);
+                splashOverlay.Show(@"Hubo un problema al subir el proyecto al servidor", Colour4.DarkRed);
             };
             req.Success += res =>
             {
                 workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
-                splashOverlay.Show("Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
+                splashOverlay.Show(@"Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
                 database.SaveChanges();
             };
             api.Queue(req);
@@ -221,23 +215,17 @@ namespace GamesToGo.Desktop.Screens
         private void changeEditorScreen(ValueChangedEvent<EditorScreenOption> value)
         {
             currentScreen?.Exit();
-            switch (value.NewValue)
-            {
-                case EditorScreenOption.Archivo:
-                    currentScreen = new ProjectFileScreen();
-                    break;
-                case EditorScreenOption.Inicio:
-                    currentScreen = new ProjectHomeScreen();
-                    break;
-                case EditorScreenOption.Objetos:
-                    currentScreen = new ProjectObjectScreen();
-                    break;
-                case EditorScreenOption.Eventos:
-                    currentScreen = new ProjectEventsScreen();
-                    break;
-            }
 
-            LoadComponentAsync(currentScreen, screenContainer.Push);
+            currentScreen = value.NewValue switch
+            {
+                EditorScreenOption.Archivo => new ProjectFileScreen(),
+                EditorScreenOption.Inicio => new ProjectHomeScreen(),
+                EditorScreenOption.Objetos => new ProjectObjectScreen(),
+                EditorScreenOption.Eventos => new ProjectEventsScreen(),
+                _ => currentScreen,
+            };
+
+            LoadComponentAsync(currentScreen!, screenContainer.Push);
         }
 
         private void confirmClose()
@@ -248,7 +236,7 @@ namespace GamesToGo.Desktop.Screens
                 return;
             }
 
-            optionOverlay.Show("¿Estás seguro que quieres volver al menú principal?", new OptionItem[]
+            optionOverlay.Show(@"¿Estás seguro que quieres volver al menú principal?", new[]
             {
                 new OptionItem
                 {
@@ -257,7 +245,7 @@ namespace GamesToGo.Desktop.Screens
                         SaveProject(false);
                         this.Exit();
                     },
-                    Text = "Guardar y salir",
+                    Text = @"Guardar y salir",
                     Type = OptionType.Additive,
                 },
                 new OptionItem
@@ -267,14 +255,14 @@ namespace GamesToGo.Desktop.Screens
                         discardChanges();
                         this.Exit();
                     },
-                    Text = "Salir sin guardar",
+                    Text = @"Salir sin guardar",
                     Type = OptionType.Destructive,
                 },
                 new OptionItem
                 {
-                    Text = "Volver al editor",
-                    Type = OptionType.Neutral
-                }
+                    Text = @"Volver al editor",
+                    Type = OptionType.Neutral,
+                },
             });
         }
 
@@ -315,7 +303,8 @@ namespace GamesToGo.Desktop.Screens
         {
             private Box hoverBox;
 
-            public CloseButton()
+            [BackgroundDependencyLoader]
+            private void load()
             {
                 RelativeSizeAxes = Axes.Y;
                 AutoSizeAxes = Axes.X;
@@ -334,8 +323,8 @@ namespace GamesToGo.Desktop.Screens
                         Margin = new MarginPadding { Horizontal = 5 },
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Text = "Volver al inicio",
-                    }
+                        Text = @"Volver al inicio",
+                    },
                 };
             }
 

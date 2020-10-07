@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -15,7 +13,8 @@ namespace GamesToGo.Desktop.Overlays
         private SpriteText spriteText;
         private Box backgroundBox;
 
-        public SplashInfoOverlay()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             RelativeSizeAxes = Axes.X;
             Height = 80;
@@ -38,8 +37,8 @@ namespace GamesToGo.Desktop.Overlays
                         Margin = new MarginPadding(12),
                         Font = new FontUsage(size: 30),
                         Truncate = true,
-                    }
-                }
+                    },
+                },
             };
         }
 
@@ -58,7 +57,7 @@ namespace GamesToGo.Desktop.Overlays
                 backgroundBox.Colour = color;
             }
 
-            if (Y == -80)
+            if (Math.Abs(Y - -80) < 0.0001f)
                 ClearTransforms();
 
             this.MoveToY(-80, 400, Easing.OutCubic)

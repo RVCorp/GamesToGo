@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Project.Events
 {
-    public class SetCardOnTileEvent : Event
+    public class SetCardOnTileEvent : ProjectEvent
     {
         public override int TypeID => 1;
 
@@ -11,8 +10,8 @@ namespace GamesToGo.Desktop.Project.Events
 
         public override EventSourceActivator Activator => EventSourceActivator.SingleCard;
 
-        public override IEnumerable<string> Text => new[] { "Al colocar una carta" };
+        public override string[] Text => new[] { @"Al colocar una carta" };
 
-        public override IEnumerable<ArgumentType> ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
     }
 }

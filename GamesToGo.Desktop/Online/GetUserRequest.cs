@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GamesToGo.Desktop.Online
+﻿namespace GamesToGo.Desktop.Online
 {
     public class GetUserRequest : APIRequest<User>
     {
-        private int userID;
+        private readonly int userID;
 
         public GetUserRequest(int id)
         {

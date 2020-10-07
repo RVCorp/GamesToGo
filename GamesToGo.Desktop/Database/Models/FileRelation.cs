@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Desktop.Project;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace GamesToGo.Desktop.Database.Models
 {

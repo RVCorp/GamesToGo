@@ -1,6 +1,5 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 using osuTK;
 using System;
 using osu.Framework.Allocation;
@@ -12,12 +11,15 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class OnlineProjectSummaryContainer : ProjectSummaryContainer
     {
-        private APIController api;
-        private Storage store;
+        [Resolved]
+        private APIController api { get; set; }
+
+        [Resolved]
+        private Storage store { get; set; }
         public int ID => onlineProject.Id;
 
         private SpriteIcon loadingIcon;
-        private OnlineProject onlineProject;
+        private readonly OnlineProject onlineProject;
         private IconButton editButton;
 
         public Action<OnlineProject> ImportAction { private get; set; }
@@ -28,22 +30,14 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, APIController api, Storage store)
+        private void load(TextureStore textures)
         {
-            this.api = api;
-            this.store = store;
-
-            ButtonFlowContainer.Add(editButton = new IconButton(true)
-            {
-                Icon = FontAwesome.Solid.Download,
-                ButtonColour = Colour4.SkyBlue,
-                ProgressColour = Colour4.PowderBlue,
-            });
+            ButtonFlowContainer.Add(editButton = new IconButton(FontAwesome.Solid.Download, Colour4.SkyBlue, true, Colour4.PowderBlue));
 
             BottomContainer.Add(new SpriteText
             {
                 Font = new FontUsage(size: SMALL_TEXT_SIZE),
-                Text = "Este proyecto está en el servidor, descargalo para editarlo!",
+                Text = @"Este proyecto está en el servidor, descargalo para editarlo!",
             });
 
             ImageContainer.Add(loadingIcon = new SpriteIcon
@@ -53,7 +47,7 @@ namespace GamesToGo.Desktop.Graphics
                 FillMode = FillMode.Fit,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Icon = FontAwesome.Solid.Spinner
+                Icon = FontAwesome.Solid.Spinner,
             });
 
             editButton.Enabled.Value = false;
@@ -64,17 +58,18 @@ namespace GamesToGo.Desktop.Graphics
             editButton.Enabled.Value = true;
             Schedule(async () =>
             {
-                ProjectImage.Texture = await textures.GetAsync($"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
+                ProjectImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
                 loadingIcon.FadeOut();
             });
 
-            editButton.Action += DownloadProject;
+            editButton.Action += downloadProject;
 
             var userRequest = new GetUserRequest(onlineProject.CreatorId);
-            userRequest.Success += user => UsernameBox.Text = $"De {user.Username} (Ultima vez editado {onlineProject.DateTimeLastEdited:dd/MM/yyyy HH:mm})";
+            userRequest.Success += user => UsernameBox.Text = @$"De {user.Username} (Ultima vez editado {onlineProject.DateTimeLastEdited:dd/MM/yyyy HH:mm})";
             api.Queue(userRequest);
         }
-        protected void DownloadProject()
+
+        private void downloadProject()
         {
             var getGame = new DownloadProjectRequest(onlineProject.Id, onlineProject.Hash, store);
             getGame.Success += game => ImportAction?.Invoke(onlineProject);

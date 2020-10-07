@@ -8,7 +8,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -19,13 +18,25 @@ namespace GamesToGo.Desktop.Overlays
         private BasicTextBox usernameBox;
         private BasicPasswordTextBox passwordBox;
         private GamesToGoButton loginButton;
-        private APIController api;
-        private Action nextScreenAction;
-        private Bindable<User> localUser = new Bindable<User>();
+        [Resolved]
+        private APIController api { get; set; }
+        private readonly Action nextScreenAction;
+        private readonly Bindable<User> localUser = new Bindable<User>();
 
         public LoginOverlay(Action nextScreen)
         {
             nextScreenAction = nextScreen;
+        }
+
+        public void Reset()
+        {
+            passwordBox.Text = string.Empty;
+            usernameBox.Text = string.Empty;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
             Origin = Anchor.TopRight;
             Anchor = Anchor.TopRight;
             RelativeSizeAxes = Axes.Both;
@@ -36,7 +47,7 @@ namespace GamesToGo.Desktop.Overlays
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black,
-                    Alpha = 0
+                    Alpha = 0,
                 },
                 popUpContent = new Container
                 {
@@ -61,7 +72,7 @@ namespace GamesToGo.Desktop.Overlays
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = new Colour4(106, 100, 104, 255)
+                                Colour = new Colour4(106, 100, 104, 255),
                             },
                             new Container
                             {
@@ -79,7 +90,7 @@ namespace GamesToGo.Desktop.Overlays
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Usuario:"
+                                            Text = @"Usuario:",
                                         },
                                         usernameBox = new BasicTextBox
                                         {
@@ -87,13 +98,13 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding{ Bottom = 20 }
+                                            Margin = new MarginPadding{ Bottom = 20 },
                                         },
                                         new SpriteText
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Contraseña:",
+                                            Text = @"Contraseña:",
                                         },
                                         passwordBox = new BasicPasswordTextBox
                                         {
@@ -101,7 +112,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding { Bottom = 50 }
+                                            Margin = new MarginPadding { Bottom = 50 },
                                         },
                                         new Container
                                         {
@@ -113,39 +124,28 @@ namespace GamesToGo.Desktop.Overlays
                                             {
                                                 Origin = Anchor.BottomCentre,
                                                 Anchor = Anchor.BottomCentre,
-                                                Text = "Iniciar Sesión",
+                                                Text = @"Iniciar Sesión",
                                                 Width = 100,
                                                 Height = 35,
                                                 Action = () => api.Login(usernameBox.Text, passwordBox.Text),
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
 
             loginButton.Enabled.Value = false;
 
             passwordBox.Current.BindValueChanged(checkUserPass);
             usernameBox.Current.BindValueChanged(checkUserPass);
-        }
 
-        public void Reset()
-        {
-            passwordBox.Text = string.Empty;
-            usernameBox.Text = string.Empty;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(APIController api)
-        {
-            this.api = api;
             localUser.BindTo(api.LocalUser);
             localUser.BindValueChanged(_ => nextScreenAction?.Invoke());
-            api.Login("daro31", "1234");
+            api.Login(@"daro31", @"1234");
         }
 
         private void checkUserPass(ValueChangedEvent<string> obj)

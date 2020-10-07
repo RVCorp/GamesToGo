@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+using GamesToGo.Desktop.Project.Elements;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project.Events
 {
@@ -8,16 +8,31 @@ namespace GamesToGo.Desktop.Project.Events
     {
         public abstract int TypeID { get; }
 
-        public abstract IEnumerable<ArgumentType> ExpectedArguments { get; }
+        public abstract ArgumentType[] ExpectedArguments { get; }
 
-        public Argument[] Arguments { get; }
+        private Bindable<Argument>[] arguments;
+
+        public Bindable<Argument>[] Arguments
+        {
+            get
+            {
+                if (arguments != null)
+                    return arguments;
+
+                arguments = new Bindable<Argument>[ExpectedArguments.Length];
+
+                for(int i = 0; i < arguments.Length; i++)
+                {
+                    arguments[i] = new Bindable<Argument>(new DefaultArgument());
+                }
+
+                return arguments;
+            }
+        }
+
+        public abstract string[] Text { get; }
 
         public Argument Condition { get; set; } = null;
-
-        public EventAction()
-        {
-            Arguments = new Argument[ExpectedArguments.Count()];
-        }
 
         public override string ToString()
         {
@@ -34,7 +49,7 @@ namespace GamesToGo.Desktop.Project.Events
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
                 {
-                    builder.Append(Arguments[argIndex].ToString());
+                    builder.Append(Arguments[argIndex].Value);
 
                     if (++argIndex < Arguments.Length)
                         builder.Append(',');
@@ -45,7 +60,7 @@ namespace GamesToGo.Desktop.Project.Events
             if (Condition != null)
             {
                 builder.Append('|');
-                builder.Append(Condition.ToString());
+                builder.Append(Condition);
             }
 
             return builder.ToString();

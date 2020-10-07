@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
@@ -13,28 +14,16 @@ using osuTK;
 
 namespace GamesToGo.Desktop.Graphics
 {
+    [SuppressMessage("ReSharper", "ConvertIfStatementToReturnStatement")]
     public class ObjectListingContainer<TElement, TButton> : Container
         where TElement : ProjectElement
         where TButton : ElementEditButton, new()
     {
-        private IBindableList<ProjectElement> localElements = new BindableList<ProjectElement>();
+        private readonly IBindableList<ProjectElement> localElements = new BindableList<ProjectElement>();
 
         private FillFlowContainer<TButton> allElements;
 
-        private Action receivedAction = null;
-
-        public Action EditAction
-        {
-            set
-            {
-                if (allElements != null)
-                    foreach (var element in allElements)
-                        element.Action = value;
-                receivedAction = value;
-            }
-        }
-
-        private Func<TElement, bool> filter = (_) => true;
+        private Func<TElement, bool> filter = _ => true;
         public Func<TElement, bool> Filter
         {
             get => filter;
@@ -46,35 +35,35 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        public Colour4 BackgroundColour
+        private static Colour4 BackgroundColour
         {
             get
             {
-                if (typeof(TElement).Equals(typeof(Card)))
+                if (typeof(TElement) == typeof(Card))
                     return Colour4.Maroon;
-                if (typeof(TElement).Equals(typeof(Token)))
+                if (typeof(TElement) == typeof(Token))
                     return Colour4.Crimson;
-                if (typeof(TElement).Equals(typeof(Board)))
+                if (typeof(TElement) == typeof(Board))
                     return Colour4.DarkSeaGreen;
-                if (typeof(TElement).Equals(typeof(Tile)))
+                if (typeof(TElement) == typeof(Tile))
                     return Colour4.BlueViolet;
                 return Colour4.Black;
             }
         }
 
-        public string Title
+        private static string Title
         {
             get
             {
-                if (typeof(TElement).Equals(typeof(Card)))
-                    return "Cartas";
-                if (typeof(TElement).Equals(typeof(Token)))
-                    return "Fichas";
-                if (typeof(TElement).Equals(typeof(Board)))
-                    return "Tableros";
-                if (typeof(TElement).Equals(typeof(Tile)))
-                    return "Casillas";
-                return "Elementos raros";
+                if (typeof(TElement) == typeof(Card))
+                    return @"Cartas";
+                if (typeof(TElement) == typeof(Token))
+                    return @"Fichas";
+                if (typeof(TElement) == typeof(Board))
+                    return @"Tableros";
+                if (typeof(TElement) == typeof(Tile))
+                    return @"Casillas";
+                return @"Elementos raros";
             }
         }
 
@@ -85,12 +74,12 @@ namespace GamesToGo.Desktop.Graphics
             Add(new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                RowDimensions = new Dimension[]
+                RowDimensions = new[]
                 {
                     new Dimension(GridSizeMode.AutoSize),
                     new Dimension(),
                 },
-                Content = new Drawable[][]
+                Content = new[]
                 {
                     new Drawable[]
                     {
@@ -113,7 +102,7 @@ namespace GamesToGo.Desktop.Graphics
                                     Position = new Vector2(5, 2.5f),
                                     Shadow = true,
                                 },
-                            }
+                            },
                         },
                     },
                     new Drawable[]
@@ -145,49 +134,39 @@ namespace GamesToGo.Desktop.Graphics
                                         Spacing = new Vector2(5),
                                     },
                                 },
-                            }
-                        }
-
+                            },
+                        },
                     },
-                }
+                },
             });
         }
 
         private void checkAdded(IEnumerable<ProjectElement> added)
         {
-            var resultingAdded = new List<TElement>();
             foreach (var item in added)
             {
-                if (item is TElement itemT)
-                {
-                    if (Filter(itemT))
-                    {
-                        resultingAdded.Add(itemT);
-                        allElements.Add(new TButton() { Element = itemT, Action = receivedAction });
-                    }
-                }
+                if (!(item is TElement itemT))
+                    continue;
+                if (Filter(itemT))
+                    allElements.Add(new TButton {Element = itemT});
             }
         }
 
         private void checkRemoved(IEnumerable<ProjectElement> removed)
         {
-            var resultingRemoved = new List<TElement>();
             foreach (var item in removed)
             {
-                if (item is TElement itemT && Filter(itemT))
-                {
-                    var deletable = allElements.FirstOrDefault(b => b.Element.ID == item.ID);
+                if (!(item is TElement itemT) || !Filter(itemT))
+                    continue;
 
-                    if (deletable != null)
-                    {
-                        resultingRemoved.Add(itemT);
-                        allElements.Remove(deletable);
-                    }
-                }
+                var deletable = allElements.FirstOrDefault(b => b.Element.ID == item.ID);
+
+                if (deletable != null)
+                    allElements.Remove(deletable);
             }
         }
 
-        public void BindToList(IBindableList<ProjectElement> elements)
+        protected void BindToList(IBindableList<ProjectElement> elements)
         {
             localElements.UnbindAll();
 

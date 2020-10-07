@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
@@ -13,19 +14,23 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osuTK;
-using osuTK.Graphics;
 using DatabaseFile = GamesToGo.Desktop.Database.Models.File;
 
 namespace GamesToGo.Desktop.Overlays
 {
+    [Cached]
     public class ImageFinderOverlay : OverlayContainer
     {
-        private SplashInfoOverlay splashOverlay;
-        private GameHost host;
-        private Storage store;
-        private Context database;
+        [Resolved]
+        private SplashInfoOverlay splashOverlay { get; set; }
+        [Resolved]
+        private GameHost host { get; set; }
+        [Resolved]
+        private Storage store { get; set; }
+        [Resolved]
+        private Context database { get; set; }
         private const float entries_per_row = 5;
-        public const float ENTRY_WIDTH = (1920 - 100 - ((entries_per_row - 1) * entry_spacing)) / entries_per_row;
+        public const float ENTRY_WIDTH = (1920 - 100 - (entries_per_row - 1) * entry_spacing) / entries_per_row;
         private const float entry_spacing = 10;
         private const float entry_padding = 50;
 
@@ -42,22 +47,9 @@ namespace GamesToGo.Desktop.Overlays
         private BasicScrollContainer itemsScrollContainer;
         private SpriteText currentDirectoryText;
 
-        private DependencyContainer dependencies;
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            return dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-        }
-
         [BackgroundDependencyLoader]
-        private void load(GameHost host, Storage store, Context database, SplashInfoOverlay splashOverlay)
+        private void load()
         {
-            this.splashOverlay = splashOverlay;
-            this.host = host;
-            this.store = store;
-            this.database = database;
-
-            dependencies.Cache(this);
-
             filesPath = store.GetFullPath("files/", true);
 
             RelativeSizeAxes = Axes.Both;
@@ -106,9 +98,9 @@ namespace GamesToGo.Desktop.Overlays
                                     Origin = Anchor.TopLeft,
                                     Spacing = new Vector2(entry_spacing),
                                 },
-                            }
+                            },
                         },
-                    }
+                    },
                 },
                 new Container
                 {
@@ -119,23 +111,20 @@ namespace GamesToGo.Desktop.Overlays
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Colour4(130, 138, 230, 255)
+                            Colour = new Colour4(130, 138, 230, 255),
                         },
                         currentDirectoryText = new SpriteText
                         {
                             Font = new FontUsage(size: 40),
                             Margin = new MarginPadding(15),
                         },
-                        new IconButton
+                        new IconButton(FontAwesome.Solid.Times, new Colour4(145, 151, 243, 255), backgroundColour: new Colour4(100, 112, 206, 255))
                         {
                             Action = Hide,
-                            Icon = FontAwesome.Solid.Times,
-                            ButtonColour = new Colour4(145, 151, 243, 255),
-                            BackgroundColour = new Colour4(100, 112, 206, 255),
                             X = -10,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
         }
 
@@ -161,7 +150,7 @@ namespace GamesToGo.Desktop.Overlays
 
             if (project.Images.Any(i => i.ImageName == finalName))
             {
-                ShowError("Esta imagen ya ha sido agregada");
+                ShowError(@"Esta imagen ya ha sido agregada");
                 return;
             }
 
@@ -195,16 +184,16 @@ namespace GamesToGo.Desktop.Overlays
             Hide();
         }
 
-        public void Show(WorkingProject project)
+        public void Show(WorkingProject importProject)
         {
-            this.project = project;
+            project = importProject;
             selectionAction = null;
             base.Show();
         }
 
-        public void Show(Action<byte[]> selectionAction)
+        public void Show(Action<byte[]> onSelection)
         {
-            this.selectionAction = selectionAction;
+            selectionAction = onSelection;
             project = null;
             base.Show();
         }
@@ -212,10 +201,7 @@ namespace GamesToGo.Desktop.Overlays
         protected override void PopIn()
         {
             this.FadeIn(250);
-            if (string.IsNullOrEmpty(lastVisited))
-                ChangeToDirectory(startingPath);
-            else
-                ChangeToDirectory(lastVisited);
+            ChangeToDirectory(string.IsNullOrEmpty(lastVisited) ? startingPath : lastVisited);
         }
 
         protected override void PopOut()
@@ -233,15 +219,19 @@ namespace GamesToGo.Desktop.Overlays
             splashOverlay.Show(error, new Colour4(44, 53, 119, 255));
         }
 
+/*
         public void ChangeToParent()
         {
             ChangeToDirectory(Path.GetDirectoryName(lastVisited));
         }
+*/
 
+/*
         public void ChangeToSubdirectory(string subdirectory)
         {
             ChangeToDirectory(Path.Combine(lastVisited, subdirectory));
         }
+*/
 
         public void ChangeToDirectory(string directory)
         {
@@ -250,29 +240,28 @@ namespace GamesToGo.Desktop.Overlays
 
             if (string.IsNullOrEmpty(directory))
             {
-                foreach (string drive in Directory.GetLogicalDrives())
-                    newDirectories.Add(new DirectoryButton(drive, DirectoryType.Drive));
+                newDirectories.AddRange(Directory.GetLogicalDrives().Select(drive =>
+                    new DirectoryButton(drive, DirectoryType.Drive)));
             }
             else
             {
                 try
                 {
-                    foreach (var sub in Directory.GetDirectories(directory, "*", new EnumerationOptions() { }))
-                        newDirectories.Add(new DirectoryButton(sub, DirectoryType.Directory));
+                    newDirectories.AddRange(Directory.GetDirectories(directory, "*", new EnumerationOptions())
+                        .Select(sub => new DirectoryButton(sub, DirectoryType.Directory)));
 
-                    List<string> possibleFiles = new List<string>(Directory.GetFiles(directory, "*.png", new EnumerationOptions { }));
-                    possibleFiles.AddRange(Directory.GetFiles(directory, "*jpg", new EnumerationOptions { }));
+                    List<string> possibleFiles = new List<string>(Directory.GetFiles(directory, "*.png", new EnumerationOptions()));
+                    possibleFiles.AddRange(Directory.GetFiles(directory, "*jpg", new EnumerationOptions()));
 
-                    foreach (var file in possibleFiles)
-                        newFiles.Add(new ImageButton(file));
+                    newFiles.AddRange(possibleFiles.Select(file => new ImageButton(file)));
 
                     newDirectories.Insert(0, new DirectoryButton(Path.GetDirectoryName(directory) ?? "", DirectoryType.ParentDirectory));
                 }
                 catch (IOException e)
                 {
-                    Logger.Log($"Error intentando obtener imagenes: {e.Message}", LoggingTarget.Runtime, LogLevel.Important);
+                    Logger.Log(@$"Error intentando obtener imagenes: {e.Message}", LoggingTarget.Runtime, LogLevel.Important);
 
-                    ShowError($"No se puede acceder a {directory}");
+                    ShowError(@$"No se puede acceder a {directory}");
 
                     return;
                 }
@@ -282,23 +271,23 @@ namespace GamesToGo.Desktop.Overlays
                 currentDirectoryText.Text = string.IsNullOrEmpty(newDirectory) ? directory : newDirectory;
             }
 
-            alreadyloaded = false;
+            alreadyLoaded = false;
             lastVisited = directory;
 
             itemsScrollContainer.FadeOut(100);
 
-            LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(nd, newFiles));
-            LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, nf));
+            LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(newDirectories, newFiles));
+            LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, newFiles));
         }
 
-        private bool alreadyloaded = false;
+        private bool alreadyLoaded;
 
-        private void ensureAllLoaded(IEnumerable<DirectoryButton> dir, IEnumerable<ImageButton> file)
+        private void ensureAllLoaded(IReadOnlyCollection<DirectoryButton> dir, IReadOnlyCollection<ImageButton> file)
         {
-            if (dir.Any(db => db.LoadState != LoadState.Ready) || file.Any(ib => ib.LoadState != LoadState.Ready) || alreadyloaded)
+            if (dir.Any(db => db.LoadState != LoadState.Ready) || file.Any(ib => ib.LoadState != LoadState.Ready) || alreadyLoaded)
                 return;
 
-            alreadyloaded = true;
+            alreadyLoaded = true;
 
             directoriesContainer.Clear();
             filesContainer.Clear();
@@ -309,7 +298,7 @@ namespace GamesToGo.Desktop.Overlays
             itemsScrollContainer.FadeIn(100);
 
             string target = Path.GetFileName(lastVisited);
-            currentDirectoryText.Text = string.IsNullOrEmpty(lastVisited) ? "Este equipo" : string.IsNullOrEmpty(target) ? lastVisited : target;
+            currentDirectoryText.Text = string.IsNullOrEmpty(lastVisited) ? @"Este equipo" : string.IsNullOrEmpty(target) ? lastVisited : target;
 
             host.Collect();
         }

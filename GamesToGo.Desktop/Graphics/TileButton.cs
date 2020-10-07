@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Overlays;
+﻿using GamesToGo.Desktop.Overlays;
 using osu.Framework.Allocation;
 
 namespace GamesToGo.Desktop.Graphics

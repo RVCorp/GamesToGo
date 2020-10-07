@@ -6,7 +6,7 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectObjectManagerContainer<T> : ObjectManagerContainer<T, ProjectElementEditButton> where T : ProjectElement, new()
     {
-        private bool shouldStartEditing;
+        private readonly bool shouldStartEditing;
 
         public ProjectObjectManagerContainer(bool shouldStartEditing = false)
         {

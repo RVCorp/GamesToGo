@@ -11,32 +11,39 @@ namespace GamesToGo.Desktop.Graphics
         where TElement : ProjectElement, new()
         where TButton : ElementEditButton, new()
     {
+        private readonly string buttonText;
         private AutoSizeButton addElementButton;
 
-        private Container content;
+        private readonly Container content = new Container
+        {
+            RelativeSizeAxes = Axes.Both,
+        };
 
         public Action ButtonAction { set => addElementButton.Action = value; }
 
         protected override Container<Drawable> Content => content;
 
-        public ObjectManagerContainer(string buttonText = "Añadir nuevo")
+        protected ObjectManagerContainer(string buttonText = @"Añadir nuevo")
+        {
+            this.buttonText = buttonText;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(WorkingProject project)
         {
             AddInternal(new GridContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                RowDimensions = new Dimension[]
+                RowDimensions = new[]
                 {
                     new Dimension(),
-                    new Dimension(GridSizeMode.Absolute, 50), 
+                    new Dimension(GridSizeMode.Absolute, 50),
                 },
-                Content = new Drawable[][]
+                Content = new[]
                 {
                     new Drawable[]
                     {
-                        content = new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                        },
+                        content,
                     },
                     new Drawable[]
                     {
@@ -50,23 +57,18 @@ namespace GamesToGo.Desktop.Graphics
                                 new Box
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.Beige
+                                    Colour = Colour4.Beige,
                                 },
                                 addElementButton = new AutoSizeButton
                                 {
-                                    Text = buttonText ?? "Añadir nuevo"
-                                }
-                            }
-                        }
+                                    Text = buttonText ?? @"Añadir nuevo",
+                                },
+                            },
+                        },
                     },
-                }
+                },
             });
 
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(WorkingProject project)
-        {
             addElementButton.Action = () => project.AddElement(new TElement());
         }
     }

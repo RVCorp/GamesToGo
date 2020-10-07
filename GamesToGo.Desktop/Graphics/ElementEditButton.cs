@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GamesToGo.Desktop.Project;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -7,33 +8,19 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class ElementEditButton : Button
     {
-        private ProjectElement element;
-        public ProjectElement Element
-        {
-            get => element;
-            set
-            {
-                if (value == element)
-                    return;
-
-                element = value;
-                elementName.Text = value.Name.Value;
-                elementName.Current.BindTo(value.Name);
-                value.Images.Values.First().BindValueChanged((val) => image.Texture = val.NewValue?.Texture ?? value.DefaultImage.Texture, true);
-            }
-        }
-        private readonly Container borderContainer;
-        private readonly SpriteText elementName;
+        public ProjectElement Element { get; set; }
+        private Container borderContainer;
+        private SpriteText elementName;
 
         private Sprite image;
 
-        public ElementEditButton()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Size = new Vector2(165);
             Anchor = Anchor.Centre;
@@ -51,8 +38,8 @@ namespace GamesToGo.Desktop.Graphics
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Alpha = 0.1f
-                    }
+                        Alpha = 0.1f,
+                    },
                 },
                 new Container
                 {
@@ -66,7 +53,7 @@ namespace GamesToGo.Desktop.Graphics
                         Origin = Anchor.Centre,
                         RelativeSizeAxes = Axes.Both,
                         FillMode = FillMode.Fit,
-                    }
+                    },
                 },
                 elementName = new SpriteText
                 {
@@ -78,6 +65,10 @@ namespace GamesToGo.Desktop.Graphics
                 },
             };
             FadeBorder(false, true);
+
+            elementName.Text = Element.Name.Value;
+            elementName.Current.BindTo(Element.Name);
+            Element.Images.Values.First().BindValueChanged(val => image.Texture = val.NewValue?.Texture ?? Element.DefaultImage.Texture, true);
         }
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
@@ -86,14 +77,14 @@ namespace GamesToGo.Desktop.Graphics
             borderContainer.Colour = golden ? Colour4.Gold : Colour4.White;
         }
 
-        protected void FadeBorder(bool visible)
+        private void fadeBorder(bool visible)
         {
             borderContainer.FadeTo(visible ? 1 : 0, 125);
         }
 
         protected override bool OnHover(HoverEvent e)
         {
-            FadeBorder(true);
+            fadeBorder(true);
             return true;
         }
 
@@ -101,7 +92,7 @@ namespace GamesToGo.Desktop.Graphics
         {
             base.OnHoverLost(e);
 
-            FadeBorder(false);
+            fadeBorder(false);
         }
     }
 }

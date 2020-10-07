@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.Graphics.UserInterface;
+﻿using osu.Framework.Graphics.UserInterface;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class NumericTextbox : BasicTextBox
+    public class NumericTextBox : BasicTextBox
     {
-        private int length;
-        public NumericTextbox (int n)
+        private readonly int length;
+        public NumericTextBox (int n)
         {
             length = n;
         }

@@ -34,7 +34,7 @@ namespace GamesToGo.Desktop.Graphics
                     image = new Sprite
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
+                        Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}"),
                     },
                     hoverContainer = new Container
                     {
@@ -45,7 +45,7 @@ namespace GamesToGo.Desktop.Graphics
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = Colour4.Black.Opacity(0.5f)
+                                Colour = Colour4.Black.Opacity(0.5f),
                             },
                             new SpriteIcon
                             {
@@ -59,18 +59,18 @@ namespace GamesToGo.Desktop.Graphics
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.TopCentre,
                                 Font = new FontUsage(size: 40),
-                                Text = "Cambiar imagen"
-                            }
-                        }
-                    }
-                }
+                                Text = @"Cambiar imagen",
+                            },
+                        },
+                    },
+                },
             };
 
-            Action = () => imageFinder.Show(image =>
+            Action = () => imageFinder.Show(i =>
             {
-                var req = new UploadUserImageRequest(image);
-                req.Success += () => this.image.Texture = Texture.FromStream(new MemoryStream(image));
-                req.Failure += e => infoOverlay.Show("Falló como siempre", Colour4.DarkRed);
+                var req = new UploadUserImageRequest(i);
+                req.Success += () => image.Texture = Texture.FromStream(new MemoryStream(i));
+                req.Failure += e => infoOverlay.Show(@"Falló como siempre", Colour4.DarkRed);
                 api.Queue(req);
             });
         }
