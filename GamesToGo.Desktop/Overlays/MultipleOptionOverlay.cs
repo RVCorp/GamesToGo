@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using GamesToGo.Desktop.Graphics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -17,7 +18,8 @@ namespace GamesToGo.Desktop.Overlays
         private Container popUpContent;
         private FillFlowContainer<OptionButton> options;
 
-        public MultipleOptionOverlay()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
@@ -45,7 +47,7 @@ namespace GamesToGo.Desktop.Overlays
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Colour4(106, 100, 104, 255)
+                            Colour = new Colour4(106, 100, 104, 255),
                         },
                         new FillFlowContainer
                         {
@@ -61,7 +63,7 @@ namespace GamesToGo.Desktop.Overlays
                                 new SpriteText
                                 {
                                     Font = new FontUsage(size: 60),
-                                    Text = "¡Cuidado!",
+                                    Text = @"¡Cuidado!",
                                     Anchor = Anchor.TopCentre,
                                     Origin = Anchor.TopCentre,
                                 },
@@ -71,7 +73,7 @@ namespace GamesToGo.Desktop.Overlays
                                     RelativeSizeAxes = Axes.X,
                                     Anchor = Anchor.TopCentre,
                                     Origin = Anchor.TopCentre,
-                                    Padding = new MarginPadding() { Horizontal = 20 },
+                                    Padding = new MarginPadding { Horizontal = 20 },
                                     TextAnchor = Anchor.TopCentre,
                                 },
                                 options = new FillFlowContainer<OptionButton>
@@ -83,28 +85,32 @@ namespace GamesToGo.Desktop.Overlays
                                     Origin = Anchor.TopCentre,
                                     Spacing = Vector2.Zero,
                                 },
-                            }
-                        }
-                    }
-                }
+                            },
+                        },
+                    },
+                },
             };
         }
 
-        private void recreateItems(OptionItem[] items)
+        private void recreateItems(IEnumerable<OptionItem> items)
         {
             options.Clear();
             foreach (var item in items)
             {
                 Action closeAction = Hide;
                 closeAction += item.Action;
-                var toAddButton = new OptionButton(item, closeAction);
+                var toAddButton = new OptionButton(item, closeAction)
+                {
+                    RelativeSizeAxes = Axes.X,
+                    Height = 80,
+                };
                 toAddButton.Enabled.Value = false;
                 toAddButton.Action += Hide;
                 options.Add(toAddButton);
             }
         }
 
-        public void Show(string textUpper, OptionItem[] items)
+        public void Show(string textUpper, IEnumerable<OptionItem> items)
         {
             if (shadowBox.LatestTransformEndTime > Clock.CurrentTime)
                 Scheduler.AddDelayed(() => show(textUpper, items), shadowBox.LatestTransformEndTime - Clock.CurrentTime);
@@ -112,7 +118,7 @@ namespace GamesToGo.Desktop.Overlays
                 show(textUpper, items);
         }
 
-        private void show(string textUpper, OptionItem[] items)
+        private void show(string textUpper, IEnumerable<OptionItem> items)
         {
             upperText.Text = textUpper;
             recreateItems(items);

@@ -8,7 +8,7 @@ namespace GamesToGo.Desktop.Online
     {
         protected override WebRequest CreateWebRequest() => new BaseJsonWebRequest<T>(Uri);
 
-        public T Result { get; private set; }
+        private T result { get; set; }
 
         /// <summary>
         /// Invoked on successful completion of an API request.
@@ -19,23 +19,13 @@ namespace GamesToGo.Desktop.Online
         protected override void PostProcess()
         {
             base.PostProcess();
-            Result = ((BaseJsonWebRequest<T>)WebRequest)?.ResponseObject;
-        }
-
-        internal void TriggerSuccess(T result)
-        {
-            if (Result != null)
-                throw new InvalidOperationException("Attempted to trigger success more than once");
-
-            Result = result;
-
-            TriggerSuccess();
+            result = ((BaseJsonWebRequest<T>)WebRequest)?.ResponseObject;
         }
 
         internal override void TriggerSuccess()
         {
             base.TriggerSuccess();
-            Success?.Invoke(Result);
+            Success?.Invoke(result);
         }
     }
 
@@ -45,12 +35,10 @@ namespace GamesToGo.Desktop.Online
 
         protected virtual WebRequest CreateWebRequest() => new BaseWebRequest(Uri);
 
-        protected virtual string Uri => $@"{API.Endpoint}/api/{Target}";
+        protected string Uri => $@"{APIController.Endpoint}/api/{Target}";
 
         protected APIController API;
         protected WebRequest WebRequest;
-
-        protected User User { get; private set; }
 
         public event APISuccessHandler Success;
 
@@ -63,7 +51,6 @@ namespace GamesToGo.Desktop.Online
         public void Perform(APIController api)
         {
             API = api;
-            User = api.LocalUser.Value;
 
             if (checkAndScheduleFailure())
                 return;
@@ -107,8 +94,6 @@ namespace GamesToGo.Desktop.Online
             Success?.Invoke();
         }
 
-        public void Cancel() => Fail(new OperationCanceledException(@"Request cancelled"));
-
         public void Fail(Exception e)
         {
             if (WebRequest?.Completed == true)
@@ -120,7 +105,7 @@ namespace GamesToGo.Desktop.Online
             cancelled = true;
             WebRequest?.Abort();
 
-            string responseString = WebRequest?.GetResponseString();
+            WebRequest?.GetResponseString();
 
             Logger.Log($@"Failing request {this} ({e})", LoggingTarget.Network);
             pendingFailure = () => Failure?.Invoke(e);

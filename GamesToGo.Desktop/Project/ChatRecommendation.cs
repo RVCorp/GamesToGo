@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+// ReSharper disable UnusedMember.Global
 
 namespace GamesToGo.Desktop.Project
 {
@@ -13,6 +14,6 @@ namespace GamesToGo.Desktop.Project
         [Description("Chat de voz y texto")]
         Both = Voice | Text,
         [Description("Frente a frente")]
-        Presential = 4,
+        FaceToFace = 4,
     }
 }

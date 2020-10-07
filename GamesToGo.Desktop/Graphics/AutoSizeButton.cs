@@ -1,7 +1,7 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
@@ -14,7 +14,9 @@ namespace GamesToGo.Desktop.Graphics
         };
 
         protected override Container<Drawable> Content => content;
-        public AutoSizeButton()
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             AddInternal(content);
             Padding = new MarginPadding(7);

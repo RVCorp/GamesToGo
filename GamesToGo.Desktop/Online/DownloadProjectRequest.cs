@@ -23,7 +23,8 @@ namespace GamesToGo.Desktop.Online
             var fullPath = store.GetFullPath(filename, true);
             if (store.Exists(filename))
                 File.Delete(fullPath);
-            using (var createdFile = File.Create(fullPath)) { }
+            using (File.Create(fullPath))
+            { }
 
             var request = new FileWebRequest(fullPath, Uri);
             request.DownloadProgress += request_Progress;

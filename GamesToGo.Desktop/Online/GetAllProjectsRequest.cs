@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Online
 {
     public class GetAllProjectsRequest : APIRequest<List<OnlineProject>>
     {
-        protected override string Target => $"games/AllGames";
+        protected override string Target => "games/AllGames";
     }
 }

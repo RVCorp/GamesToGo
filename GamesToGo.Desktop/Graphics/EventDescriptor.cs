@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Linq;
+using GamesToGo.Desktop.Project.Events;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -9,36 +9,77 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    class EventDescriptor : Container
+    public class EventDescriptor : Container
     {
-        public EventDescriptor()
+        private FillFlowContainer descriptionContainer;
+        private readonly ProjectEvent model;
+        private BasicScrollContainer scrollContainer;
+
+        public EventDescriptor(ProjectEvent model)
         {
-            Height = 40;
-            Width = 300;
+            this.model = model;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            RelativeSizeAxes = Axes.X;
+            AutoSizeAxes = Axes.Y;
+            Masking = true;
+            CornerRadius = 4;
+
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Red
+                    Colour = Color4.Coral,
                 },
-                new FillFlowContainer
+                scrollContainer = new BasicScrollContainer(Direction.Horizontal)
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Direction = FillDirection.Horizontal,
-                    Children = new Drawable[]
+                    RelativeSizeAxes = Axes.X,
+                    AutoSizeAxes = Axes.Y,
+                    ScrollbarVisible = false,
+                    Child = descriptionContainer = new FillFlowContainer
                     {
-                        new SpriteText
-                        {
-                            Text = "Texto kkkkkkkkk"
-                        },
-                        new ArgumentDescriptor
-                        {
-
-                        }
-                    }
-                }
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        AutoSizeAxes = Axes.Both,
+                        Direction = FillDirection.Horizontal,
+                    },
+                },
             };
+
+            scrollContainer.ScrollContent.RelativeSizeAxes = Axes.None;
+            scrollContainer.ScrollContent.AutoSizeAxes = Axes.Both;
+
+            for (int i = 0; i < model.ExpectedArguments.Length; i++)
+            {
+                descriptionContainer.AddRange(new Drawable[]
+                {
+                    new SpriteText
+                    {
+                        Padding = new MarginPadding(4),
+                        Text = model.Text[i],
+                        Font = new FontUsage(size: 25),
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                    },
+                    new ArgumentChanger(model.ExpectedArguments[i], model.Arguments[i]),
+                });
+            }
+
+            if (model.ExpectedArguments.Length < model.Text.Length)
+            {
+                descriptionContainer.Add(new SpriteText
+                {
+                    Padding = new MarginPadding(4),
+                    Text = model.Text.Last(),
+                    Font = new FontUsage(size: 25),
+                    Anchor = Anchor.CentreLeft,
+                    Origin = Anchor.CentreLeft,
+                });
+            }
         }
     }
 }

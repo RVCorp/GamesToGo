@@ -1,5 +1,4 @@
-﻿using System;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
@@ -12,7 +11,7 @@ namespace GamesToGo.Desktop.Graphics
 
         protected override DropdownMenu CreateMenu() => new GamesToGoDropdownMenu();
 
-        public class GamesToGoDropdownHeader : DropdownHeader
+        private class GamesToGoDropdownHeader : DropdownHeader
         {
             private readonly SpriteText label;
 
@@ -39,7 +38,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        public class GamesToGoDropdownMenu : DropdownMenu
+        private class GamesToGoDropdownMenu : DropdownMenu
         {
             protected override Menu CreateSubMenu() => new BasicMenu(Direction.Vertical);
 

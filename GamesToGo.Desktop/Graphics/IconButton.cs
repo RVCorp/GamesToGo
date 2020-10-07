@@ -1,23 +1,46 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class IconButton : Button
     {
-        private readonly SpriteIcon icon;
-        private readonly Box colourBox;
+        private readonly IconUsage buttonIcon;
+        private readonly Colour4 backgroundColour;
+        private readonly Colour4 buttonColour;
+        private readonly Colour4 progressColour;
+        private SpriteIcon icon;
         private Box hoverBox;
         private Box progressBox;
-        private readonly SpriteIcon loadingIcon;
+        private SpriteIcon loadingIcon;
 
-        public IconButton(bool progressAction = false)
+
+        public IconButton(IconUsage buttonIcon, Colour4 buttonColour = default, bool progressAction = false, Colour4 progressColour = default, Colour4 backgroundColour = default)
+        {
+            this.buttonIcon = buttonIcon;
+            this.backgroundColour = backgroundColour == default ? new Colour4(100, 100, 100, 255) : backgroundColour;
+            this.buttonColour = buttonColour == default ? new Colour4(100, 100, 100, 255) : buttonColour;
+            this.progressColour = progressColour == default ? new Colour4(80, 80, 80, 255) : progressColour;
+
+            if (!progressAction) return;
+
+            Action += () =>
+            {
+                Enabled.Value = false;
+                loadingIcon.FadeIn(100);
+                icon.FadeOut(100);
+                fadeToWait();
+            };
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Masking = true;
             CornerRadius = 5;
@@ -26,21 +49,21 @@ namespace GamesToGo.Desktop.Graphics
             Size = new Vector2(35 * 1.5f, 35);
             Children = new Drawable[]
             {
-                colourBox = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4(100, 100, 100, 255),
+                    Colour = backgroundColour,
                 },
                 hoverBox = new Box
                 {
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4(100, 100, 100, 255),
+                    Colour = buttonColour,
                 },
                 progressBox = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4(80, 80, 80, 255),
+                    Colour = progressColour,
                     Width = 0,
                 },
                 new Container
@@ -60,9 +83,10 @@ namespace GamesToGo.Desktop.Graphics
                         icon = new SpriteIcon
                         {
                             RelativeSizeAxes = Axes.Both,
-                        }
-                    }
-                }
+                            Icon = buttonIcon,
+                        },
+                    },
+                },
             };
 
             Enabled.ValueChanged += e =>
@@ -72,17 +96,6 @@ namespace GamesToGo.Desktop.Graphics
                 else
                     fadeToWait();
             };
-
-            Action += () =>
-            {
-                if (progressAction)
-                {
-                    Enabled.Value = false;
-                    loadingIcon.FadeIn(100);
-                    icon.FadeOut(100);
-                    fadeToWait();
-                }
-            };
         }
 
         protected override void LoadComplete()
@@ -91,14 +104,6 @@ namespace GamesToGo.Desktop.Graphics
 
             loadingIcon.RotateTo(0).Then().RotateTo(360, 1500).Loop();
         }
-
-        public IconUsage Icon { set => icon.Icon = value; }
-
-        public Colour4 ButtonColour { set => hoverBox.Colour = value; }
-
-        public Colour4 BackgroundColour { set => colourBox.Colour = value; }
-
-        public Colour4 ProgressColour { set => progressBox.Colour = value; }
 
         public float Progress { set => progressBox.Width = value; }
 

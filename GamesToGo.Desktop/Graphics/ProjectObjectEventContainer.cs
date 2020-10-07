@@ -1,26 +1,25 @@
 ﻿using GamesToGo.Desktop.Overlays;
-using GamesToGo.Desktop.Graphics;
-using System.Linq;
-using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Project.Elements;
-using Microsoft.EntityFrameworkCore.Internal;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Screens;
-using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    class ProjectObjectEventContainer: Container
+    public class ProjectObjectEventContainer : Container
     {
-        public ProjectObjectEventContainer()
+        public readonly ProjectEvent Event;
+        private SpriteText nameText;
+
+        [Resolved]
+        private EventEditionOverlay eventOverlay { get; set; }
+
+        public ProjectObjectEventContainer(ProjectEvent projectEvent)
         {
+            Event = projectEvent;
         }
 
         [BackgroundDependencyLoader]
@@ -30,17 +29,18 @@ namespace GamesToGo.Desktop.Graphics
             Height = 80;
             Masking = true;
             BorderThickness = 3f;
+
             Children = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.SlateGray
+                    Colour = Color4.SlateGray,
                 },
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Content = new Drawable[][]
+                    Content = new[]
                     {
                         new Drawable[]
                         {
@@ -49,52 +49,53 @@ namespace GamesToGo.Desktop.Graphics
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    new SpriteText
+                                    nameText = new SpriteText
                                     {
-                                        Margin = new MarginPadding{ Left = 5, Right = 2, Top = 2, Bottom =2},
-                                        Text = "Nombre del evento JAJAJAJA salu2",
-                                        Font = new FontUsage(size: 35)
+                                        Margin = new MarginPadding(2) { Left = 5 },
+                                        Text = Event.Name.Value,
+                                        Font = new FontUsage(size: 35),
                                     },
-                                    new SpriteText
+                                    new SpriteText //ToDo: fijate que esto, como que no se que iria aqui
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
-                                        Margin = new MarginPadding{ Left = 5, Right = 2, Top = 2, Bottom = 7},
-                                        Text = "Aquí va la información del evento, al chile si vas a decir puras mamadas mejor duermete un rato jaja salu2",
-                                        Font = new FontUsage(size: 20)
+                                        Margin = new MarginPadding { Left = 5, Right = 2, Top = 2, Bottom = 7},
+                                        Text = @"Aquí debería haber información del evento, pero soy demasiado lento como para poder hacer eso",
+                                        Font = new FontUsage(size: 20),
                                     },
-                                }
+                                },
                             },
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = new IconButton
+                                Child = new IconButton(FontAwesome.Solid.Edit)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Icon = FontAwesome.Solid.Edit
-                                }
+                                    Action = () => eventOverlay.ShowEvent(Event),
+                                },
                             },
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = new IconButton
+                                Child = new IconButton(FontAwesome.Solid.TrashAlt)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Icon = FontAwesome.Solid.TrashAlt
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     },
-                    ColumnDimensions = new Dimension[]
+                    ColumnDimensions = new[]
                     {
                         new Dimension(GridSizeMode.Relative, 0.85f),
                         new Dimension(GridSizeMode.Relative, 0.075f),
-                        new Dimension(GridSizeMode.Distributed)
-                    }
-                }
+                        new Dimension(),
+                    },
+                },
             };
+
+            nameText.Current.BindTo(Event.Name);
         }
     }
 }

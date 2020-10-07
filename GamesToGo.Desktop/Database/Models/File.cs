@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using GamesToGo.Desktop.Project;
+// ReSharper disable CollectionNeverUpdated.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace GamesToGo.Desktop.Database.Models
 {

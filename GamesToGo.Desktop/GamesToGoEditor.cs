@@ -1,19 +1,18 @@
-﻿using osu.Framework;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Configuration;
 using osu.Framework.Screens;
 using GamesToGo.Desktop.Screens;
-using GamesToGo.Desktop.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Linq;
 using osu.Framework.IO.Stores;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using System.Reflection;
+using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Online;
 using osu.Framework.Graphics.Containers;
 using osuTK;
@@ -46,7 +45,6 @@ namespace GamesToGo.Desktop
         private Context dbContext;
         private MultipleOptionOverlay optionsOverlay;
         private SplashInfoOverlay splashOverlay;
-        private LargeTextureStore largeStore;
         private APIController api;
         private ImageFinderOverlay imageFinder;
         private DrawSizePreservingFillContainer content;
@@ -57,14 +55,10 @@ namespace GamesToGo.Desktop
         {
             Host.Window.Title = Name;
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Desktop.dll"));
+            Textures.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
-
-            largeStore = new LargeTextureStore(Host.CreateTextureLoaderStore(new NamespacedResourceStore<byte[]>(Resources, @"Textures")));
-            largeStore.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
-            largeStore.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
-            dependencies.Cache(largeStore);
 
             try
             {
@@ -78,9 +72,15 @@ namespace GamesToGo.Desktop
             }
             finally
             {
-                foreach (var _ in dbContext.Projects) ;
-                foreach (var _ in dbContext.Files) ;
-                foreach (var _ in dbContext.Relations) ;
+                foreach (var _ in dbContext.Projects)
+                {
+                }
+                foreach (var _ in dbContext.Files)
+                {
+                }
+                foreach (var _ in dbContext.Relations)
+                {
+                }
             }
 
             //Ventana sin bordes, sin requerir modo exclusivo.
@@ -90,24 +90,24 @@ namespace GamesToGo.Desktop
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
 
-            base.Content.Add(content = new DrawSizePreservingFillContainer() { TargetDrawSize = new Vector2(1920, 1080) });
+            base.Content.Add(content = new DrawSizePreservingFillContainer { TargetDrawSize = new Vector2(1920, 1080) });
 
             //Cargamos y agregamos nuestra pila de pantallas a la ventana.
-            content.Add(stack = new ScreenStack() { RelativeSizeAxes = Axes.Both, Depth = 0 });
+            content.Add(stack = new ScreenStack { RelativeSizeAxes = Axes.Both, Depth = 0 });
 
             content.Add(api = new APIController());
 
             dependencies.Cache(api);
 
-            content.Add(splashOverlay = new SplashInfoOverlay() { Depth = -2 });
+            content.Add(splashOverlay = new SplashInfoOverlay { Depth = -2 });
 
             dependencies.Cache(splashOverlay);
 
-            content.Add(imageFinder = new ImageFinderOverlay() { Depth = -1 });
+            content.Add(imageFinder = new ImageFinderOverlay { Depth = -1 });
 
             dependencies.Cache(imageFinder);
 
-            content.Add(optionsOverlay = new MultipleOptionOverlay() { Depth = -3 });
+            content.Add(optionsOverlay = new MultipleOptionOverlay { Depth = -3 });
 
             dependencies.Cache(optionsOverlay);
         }
@@ -129,7 +129,7 @@ namespace GamesToGo.Desktop
         {
             base.LoadComplete();
 
-            ProjectElement.Textures = largeStore;
+            ProjectElement.Textures = Textures;
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);

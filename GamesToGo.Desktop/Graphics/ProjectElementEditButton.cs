@@ -8,18 +8,15 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ProjectElementEditButton : ElementEditButton
     {
-        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
+        private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private bool selected => (currentEditing.Value?.ID ?? -1) == Element.ID;
-        public ProjectElementEditButton()
-        {
-        }
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
         {
             Action = () => editor.SelectElement(Element);
             currentEditing.BindTo(editor.CurrentEditingElement);
-            currentEditing.BindValueChanged((_) =>
+            currentEditing.BindValueChanged(_ =>
             {
                 FadeBorder(selected || IsHovered, golden: selected);
             });

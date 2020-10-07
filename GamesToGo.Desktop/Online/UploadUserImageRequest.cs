@@ -5,7 +5,7 @@ namespace GamesToGo.Desktop.Online
 {
     public class UploadUserImageRequest : APIRequest
     {
-        private byte[] image;
+        private readonly byte[] image;
 
         public UploadUserImageRequest(byte[] image)
         {
@@ -16,7 +16,7 @@ namespace GamesToGo.Desktop.Online
         {
             var req = base.CreateWebRequest();
             req.Method = HttpMethod.Post;
-            req.AddParameter("Name", "salchipapa");
+            req.AddParameter("Name", @"salchipapa");
             req.AddFile("File", image);
             return req;
         }

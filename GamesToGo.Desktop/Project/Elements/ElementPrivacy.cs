@@ -1,4 +1,5 @@
-﻿namespace GamesToGo.Desktop.Project.Elements
+﻿// ReSharper disable UnusedMember.Global
+namespace GamesToGo.Desktop.Project.Elements
 {
     public enum ElementPrivacy
     {

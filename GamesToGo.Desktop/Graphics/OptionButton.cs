@@ -27,8 +27,6 @@ namespace GamesToGo.Desktop.Graphics
                     BackgroundColour = Colour4.DarkGreen;
                     break;
             }
-            RelativeSizeAxes = Axes.X;
-            Height = 80;
             Padding = new MarginPadding { Horizontal = 10 };
 
             SpriteText.Font = new FontUsage(size: 40);

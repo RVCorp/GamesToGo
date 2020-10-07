@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.IO.Network;
+﻿using osu.Framework.IO.Network;
 
 namespace GamesToGo.Desktop.Online
 {
@@ -12,7 +9,7 @@ namespace GamesToGo.Desktop.Online
         {
         }
 
-        public BaseJsonWebRequest()
+        protected BaseJsonWebRequest()
         {
         }
 

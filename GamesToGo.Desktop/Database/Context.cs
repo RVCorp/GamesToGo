@@ -1,9 +1,11 @@
-﻿using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Database.Models;
+using GamesToGo.Desktop.Project;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using DbContext = Microsoft.EntityFrameworkCore.DbContext;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace GamesToGo.Desktop.Database.Models
+namespace GamesToGo.Desktop.Database
 {
     public class Context : DbContext
     {
@@ -15,7 +17,7 @@ namespace GamesToGo.Desktop.Database.Models
 
         public Context() : this("DataSource=:memory:")
         {
-            
+
         }
 
         public Context(string connectionString)

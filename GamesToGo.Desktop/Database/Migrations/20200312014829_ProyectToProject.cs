@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+// ReSharper disable All
 
 namespace GamesToGo.Desktop.Database.Migrations
 {

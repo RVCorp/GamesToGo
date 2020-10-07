@@ -1,4 +1,5 @@
-﻿namespace GamesToGo.Desktop.Project.Events
+﻿// ReSharper disable UnusedMember.Global
+namespace GamesToGo.Desktop.Project.Events
 {
     public enum EventSourceActivator
     {

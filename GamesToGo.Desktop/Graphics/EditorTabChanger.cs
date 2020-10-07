@@ -1,19 +1,18 @@
 ﻿using System;
-using osu.Framework.Bindables;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class EditorTabChanger : TabControl<EditorScreenOption>
     {
-        public readonly Bindable<EditorScreenOption> Options = new Bindable<EditorScreenOption>();
-        public EditorTabChanger()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Height = 30;
             AutoSizeAxes = Axes.X;
@@ -25,17 +24,18 @@ namespace GamesToGo.Desktop.Graphics
                 AddItem(val);
         }
 
-        protected virtual bool AddEnumEntriesAutomatically => true;
-
         protected override Dropdown<EditorScreenOption> CreateDropdown() => null;
 
         protected override TabItem<EditorScreenOption> CreateTabItem(EditorScreenOption value) => new EditorTabItem(value);
 
         private class EditorTabItem : TabItem<EditorScreenOption>
         {
-            private readonly Box colorBox;
+            private Box colorBox;
 
-            public EditorTabItem(EditorScreenOption value) : base(value)
+            public EditorTabItem(EditorScreenOption value) : base(value) { }
+
+            [BackgroundDependencyLoader]
+            private void load()
             {
                 AutoSizeAxes = Axes.X;
                 RelativeSizeAxes = Axes.Y;
@@ -53,8 +53,8 @@ namespace GamesToGo.Desktop.Graphics
                         Margin = new MarginPadding { Horizontal = 5 },
                         Origin = Anchor.CentreLeft,
                         Anchor = Anchor.CentreLeft,
-                        Text = value.GetDescription(),
-                        Font = new FontUsage(size: 20)
+                        Text = Value.GetDescription(),
+                        Font = new FontUsage(size: 20),
                     },
                 };
             }
