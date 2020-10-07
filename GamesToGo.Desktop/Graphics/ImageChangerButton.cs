@@ -16,42 +16,42 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ImageChangerButton : Button
     {
-        private const float draw_size = 400;
+        public const float DRAW_SIZE = 400;
         private readonly bool isProject;
-        private string imageName;
-        private Container content;
-        private Container hoverContainer;
-        private Bindable<Image> editing = new Bindable<Image>();
-        private Sprite image;
-        private SpriteText changeImageText;
-        private SpriteText noImageText;
+        private readonly string imageName;
+        private readonly Container content;
+        private readonly Container hoverContainer;
+        private readonly Bindable<Image> editing = new Bindable<Image>();
+        private readonly Sprite image;
+        private readonly SpriteText changeImageText;
+        private readonly SpriteText noImageText;
 
-        public Vector2 RenderSize
+        private Vector2 renderSize
         {
             get;
-            private set;
+            set;
         }
 
-        private Bindable<Vector2> size = new Bindable<Vector2>();
+        private readonly Bindable<Vector2> size = new Bindable<Vector2>();
 
-        public Vector2 TargetSize
+        private Vector2 targetSize
         {
             set
             {
                 float ratio = 1;
-                if (value.Y / (draw_size - 50) > value.X / draw_size)
+                if (value.Y / (DRAW_SIZE - 50) > value.X / DRAW_SIZE)
                 {
-                    if (value.Y > draw_size - 50)
-                        ratio = value.Y / (draw_size - 50);
+                    if (value.Y > DRAW_SIZE - 50)
+                        ratio = value.Y / (DRAW_SIZE - 50);
                 }
                 else
                 {
-                    if (value.X > draw_size)
-                        ratio = value.X / draw_size;
+                    if (value.X > DRAW_SIZE)
+                        ratio = value.X / DRAW_SIZE;
                 }
 
-                RenderSize = new Vector2(value.X / ratio, value.Y / ratio);
-                content.Padding = new MarginPadding { Horizontal = (400 - RenderSize.X) / 2, Vertical = (400 - 50 - RenderSize.Y) / 2 };
+                renderSize = new Vector2(value.X / ratio, value.Y / ratio);
+                content.Padding = new MarginPadding { Horizontal = (400 - renderSize.X) / 2, Vertical = (400 - 50 - renderSize.Y) / 2 };
             }
         }
 
@@ -94,8 +94,8 @@ namespace GamesToGo.Desktop.Graphics
                                             FillMode = FillMode.Fit,
                                         },
                                     },
-                                }
-                            }
+                                },
+                            },
                         },
                     },
                 },
@@ -108,7 +108,7 @@ namespace GamesToGo.Desktop.Graphics
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.Black.Opacity(0.5f)
+                            Colour = Colour4.Black.Opacity(0.5f),
                         },
                         new SpriteIcon
                         {
@@ -117,31 +117,30 @@ namespace GamesToGo.Desktop.Graphics
                             Icon = FontAwesome.Regular.Images,
                             Size = new Vector2(60),
                         },
-                    }
-                }
+                    },
+                },
             };
         }
 
-        public ImageChangerButton(string name, Bindable <Vector2> size)
+        public ImageChangerButton(string name, Bindable<Vector2> size)
         {
             isProject = false;
             imageName = name;
-            Size = new Vector2(draw_size);
             Children = new Drawable[]
             {
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    RowDimensions = new Dimension[]
+                    RowDimensions = new[]
                     {
                         new Dimension(),
-                        new Dimension(GridSizeMode.Absolute, 50)
+                        new Dimension(GridSizeMode.Absolute, 50),
                     },
-                    ColumnDimensions = new Dimension[]
+                    ColumnDimensions = new[]
                     {
                         new Dimension(),
                     },
-                    Content = new Drawable[][]
+                    Content = new[]
                     {
                         new Drawable[]
                         {
@@ -178,19 +177,19 @@ namespace GamesToGo.Desktop.Graphics
                                                         Origin = Anchor.Centre,
                                                         FillMode = FillMode.Fit,
                                                     },
-                                                }
-                                            }
-                                        }
+                                                },
+                                            },
+                                        },
                                     },
                                     noImageText = new SpriteText
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Font = new FontUsage(size: 40),
-                                        Text = "No se ha agregado imagen"
-                                    }
+                                        Text = @"No se ha agregado imagen",
+                                    },
                                 },
-                            }
+                            },
                         },
                         new Drawable[]
                         {
@@ -199,10 +198,10 @@ namespace GamesToGo.Desktop.Graphics
                                 Text = name,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Font = new FontUsage(size: 40)
-                            }
-                        }
-                    }
+                                Font = new FontUsage(size: 40),
+                            },
+                        },
+                    },
                 },
                 hoverContainer = new Container
                 {
@@ -213,7 +212,7 @@ namespace GamesToGo.Desktop.Graphics
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.Black.Opacity(0.5f)
+                            Colour = Colour4.Black.Opacity(0.5f),
                         },
                         new SpriteIcon
                         {
@@ -226,14 +225,14 @@ namespace GamesToGo.Desktop.Graphics
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.TopCentre,
-                            Font = new FontUsage(size: 40)
-                        }
-                    }
-                }
+                            Font = new FontUsage(size: 40),
+                        },
+                    },
+                },
             };
 
             this.size.BindTo(size);
-            this.size.BindValueChanged((obj) => TargetSize = obj.NewValue, true);
+            this.size.BindValueChanged(obj => targetSize = obj.NewValue, true);
         }
 
         public ImageChangerButton(string name) : this(name, new Bindable <Vector2>(new Vector2(400, 400)))
@@ -257,7 +256,7 @@ namespace GamesToGo.Desktop.Graphics
                 {
                     if (newVal.NewValue?.Texture != null)
                     {
-                        if (newVal.NewValue.Texture.Size.X > RenderSize.X - 2 || newVal.NewValue.Texture.Size.Y > RenderSize.Y - 2)
+                        if (newVal.NewValue.Texture.Size.X > renderSize.X - 2 || newVal.NewValue.Texture.Size.Y > renderSize.Y - 2)
                         {
                             image.Size = Vector2.One;
                             image.RelativeSizeAxes = Axes.Both;
@@ -269,16 +268,16 @@ namespace GamesToGo.Desktop.Graphics
                             image.RelativeSizeAxes = Axes.None;
                         }
                     }
-                    image.Texture = newVal?.NewValue?.Texture;
+                    image.Texture = newVal.NewValue?.Texture;
                     if (image.Texture == null)
                     {
-                        changeImageText.Text = "Añadir Imagen";
+                        changeImageText.Text = @"Añadir Imagen";
                         noImageText.Alpha = 1;
                         content.Alpha = 0;
                     }
                     else
                     {
-                        changeImageText.Text = "Cambiar Imagen";
+                        changeImageText.Text = @"Cambiar Imagen";
                         noImageText.Alpha = 0;
                         content.Alpha = 1;
                     }

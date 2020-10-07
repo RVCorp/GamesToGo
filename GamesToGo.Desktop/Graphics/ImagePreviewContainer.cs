@@ -15,10 +15,10 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ImagePreviewContainer : Container
     {
-        private IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
+        private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private FillFlowContainer<ImageChangerButton> images;
         private Container<MovementButton> arrowsContainer;
-        private Bindable<int> imagesIndex = new Bindable<int>(0);
+        private readonly Bindable<int> imagesIndex = new Bindable<int>();
         private MovementButton leftMovementButton;
         private MovementButton rightMovementButton;
 
@@ -42,7 +42,7 @@ namespace GamesToGo.Desktop.Graphics
                     Direction = FillDirection.Horizontal,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding { Horizontal = 50 },
-                    Spacing = new Vector2(100)
+                    Spacing = new Vector2(100),
                 },
                 arrowsContainer = new Container<MovementButton>
                 {
@@ -52,14 +52,14 @@ namespace GamesToGo.Desktop.Graphics
                     {
                         leftMovementButton = new MovementButton(true)
                         {
-                            Action = () => imagesIndex.Value--
+                            Action = () => imagesIndex.Value--,
                         },
                         rightMovementButton = new MovementButton(false)
                         {
-                            Action = () => imagesIndex.Value++
+                            Action = () => imagesIndex.Value++,
                         },
-                    }
-                }
+                    },
+                },
             };
             currentEditing.BindTo(editor.CurrentEditingElement);
             imagesIndex.BindValueChanged(val => move(val.NewValue));
@@ -75,27 +75,27 @@ namespace GamesToGo.Desktop.Graphics
 
         private void loadElement(ValueChangedEvent<ProjectElement> e)
         {
-            if (e.NewValue != null)
-            {
-                images.Clear();
+            if (e.NewValue == null)
+                return;
 
-                if (e.NewValue is IHasSize sizedElement)
+            images.Clear();
+
+            if (e.NewValue is IHasSize sizedElement)
+            {
+                foreach (var image in e.NewValue.Images)
                 {
-                    foreach (var image in e.NewValue.Images)
-                    {
-                        images.Add(new ImageChangerButton(image.Key, sizedElement.Size));
-                    }
+                    images.Add(new ImageChangerButton(image.Key, sizedElement.Size) { Size = new Vector2(ImageChangerButton.DRAW_SIZE) });
                 }
-                else
-                {
-                    foreach (var image in e.NewValue.Images)
-                    {
-                        images.Add(new ImageChangerButton(image.Key));
-                    }
-                }
-                imagesIndex.Value = 0;
-                imagesIndex.TriggerChange();
             }
+            else
+            {
+                foreach (var image in e.NewValue.Images)
+                {
+                    images.Add(new ImageChangerButton(image.Key) { Size = new Vector2(ImageChangerButton.DRAW_SIZE) });
+                }
+            }
+            imagesIndex.Value = 0;
+            imagesIndex.TriggerChange();
         }
 
         protected override bool OnHover(HoverEvent e)
@@ -112,9 +112,16 @@ namespace GamesToGo.Desktop.Graphics
 
         private class MovementButton : Button
         {
-            private readonly Box hoverBox;
+            private readonly bool left;
+            private Box hoverBox;
 
             public MovementButton(bool left)
+            {
+                this.left = left;
+            }
+
+            [BackgroundDependencyLoader]
+            private void load()
             {
                 Anchor = left ? Anchor.CentreLeft : Anchor.CentreRight;
                 Origin = left ? Anchor.CentreLeft : Anchor.CentreRight;
@@ -134,7 +141,7 @@ namespace GamesToGo.Desktop.Graphics
                         Origin = Anchor.Centre,
                         Icon = left ? FontAwesome.Solid.CaretLeft : FontAwesome.Solid.CaretRight,
                         Size = new Vector2(40),
-                    }
+                    },
                 };
 
                 Enabled.BindValueChanged(enabledChanged);

@@ -8,20 +8,23 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Logging;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     [LongRunningLoad]
     public class ImageButton : ImageOverlayButton
     {
-        private readonly Container displayContainer;
-        private string path;
+        private Container displayContainer;
+        private readonly string path;
 
         public ImageButton(string path)
         {
             this.path = path;
+        }
 
+        [BackgroundDependencyLoader]
+        private void load(ImageFinderOverlay imageFinder)
+        {
             Height = ImageFinderOverlay.ENTRY_WIDTH;
 
             Add(new SpriteText
@@ -43,11 +46,7 @@ namespace GamesToGo.Desktop.Graphics
                 Origin = Anchor.TopCentre,
                 Padding = new MarginPadding(15) { Bottom = 55 },
             });
-        }
 
-        [BackgroundDependencyLoader]
-        private void load(ImageFinderOverlay imageFinder)
-        {
             Texture tex = null;
             try
             {
@@ -57,12 +56,12 @@ namespace GamesToGo.Desktop.Graphics
             }
             catch (Exception e)
             {
-                Logger.Log($"No se puede abrir {path}: {e.Message}", LoggingTarget.Runtime, LogLevel.Error);
+                Logger.Log(@$"No se puede abrir {path}: {e.Message}", LoggingTarget.Runtime, LogLevel.Error);
             }
 
             if (tex == null)
             {
-                Action = () => imageFinder.ShowError($"No se puede abrir la imagen: {path}");
+                Action = () => imageFinder.ShowError(@$"No se puede abrir la imagen: {path}");
                 displayContainer.Add(new SpriteIcon
                 {
                     Anchor = Anchor.Centre,

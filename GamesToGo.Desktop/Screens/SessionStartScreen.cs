@@ -2,9 +2,7 @@
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
-using osuTK.Graphics;
 using osuTK;
 using GamesToGo.Desktop.Overlays;
 using osu.Framework.Input.Events;
@@ -17,8 +15,8 @@ namespace GamesToGo.Desktop.Screens
     /// </summary>
     public class SessionStartScreen : Screen
     {
-        private LoginOverlay loginOverlay;
-        private RegisterOverlay registerOverlay;
+        private readonly LoginOverlay loginOverlay;
+        private readonly RegisterOverlay registerOverlay;
 
         public SessionStartScreen()
         {
@@ -28,7 +26,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255)
+                    Colour = new Colour4 (106,100,104, 255),
                 },
                 new Container
                 {
@@ -43,18 +41,18 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Colour4(80, 75, 74, 255)
+                            Colour = new Colour4(80, 75, 74, 255),
                         },
                         new SpriteText
                         {
                             Text = "Bienvenido a Games To Go",
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
-                            Position = new Vector2(0,100)
+                            Position = new Vector2(0,100),
                         },
                         new GamesToGoButton
                         {
-                            Text = "Registrarse",
+                            Text = @"Registrarse",
                             BackgroundColour = new Colour4 (106,100,104, 255),  //Color Boton userInformation
                             BorderColour = Colour4.Black,
                             BorderThickness = 2f,
@@ -64,11 +62,11 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.TopLeft,
                             Origin = Anchor.TopLeft,
                             Position = new Vector2(100,200),
-                            Action = showRegistration
+                            Action = showRegistration,
                         },
                         new GamesToGoButton
                         {
-                            Text = "Iniciar Sesión",
+                            Text = @"Iniciar Sesión",
                             BackgroundColour = new Colour4 (106,100,104, 255),  //Color Boton userInformation
                             BorderColour = Colour4.Black,
                             BorderThickness = 2f,
@@ -78,11 +76,11 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
                             Position = new Vector2(-100,200),
-                            Action = showLogin
+                            Action = showLogin,
                         },
-                    }
+                    },
                 },
-                loginOverlay = new LoginOverlay(() => loginIntoServer()),
+                loginOverlay = new LoginOverlay(loginIntoServer),
                 registerOverlay = new RegisterOverlay(),
                 new Box
                 {
@@ -92,7 +90,7 @@ namespace GamesToGo.Desktop.Screens
                     Origin = Anchor.CentreRight,
                     Colour = new Colour4 (106,100,104, 255),
                     Width = 1,
-                }
+                },
             };
         }
 
@@ -135,7 +133,7 @@ namespace GamesToGo.Desktop.Screens
 
         private void loginIntoServer()
         {
-            LoadComponentAsync(new MainMenuScreen(), mms => this.Push(mms));
+            LoadComponentAsync(new MainMenuScreen(), this.Push);
         }
     }
 }

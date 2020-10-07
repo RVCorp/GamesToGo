@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
@@ -13,22 +12,17 @@ namespace GamesToGo.Desktop.Project
 
         public abstract ElementType Type { get; }
 
-        public abstract Bindable<string> Name { get; set; }
+        public abstract Bindable<string> Name { get; }
 
-        public abstract Bindable<string> Description { get; set; }
+        public abstract Bindable<string> Description { get; }
 
         protected abstract string DefaultImageName { get; }
 
-        public readonly Image DefaultImage;
+        public Image DefaultImage => new Image(Textures, "Elements/" + DefaultImageName, false);
 
         public abstract Dictionary<string, Bindable<Image>> Images { get; }
 
         public static TextureStore Textures { protected get; set; }
-
-        public ProjectElement()
-        {
-            DefaultImage = new Image(Textures, "Elements/" + DefaultImageName, false);
-        }
 
         public string ToSaveableString()
         {
@@ -43,27 +37,27 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine($"{image.Key}={image.Value.Value?.ImageName ?? "null"}");
             }
 
-            if(this is IHasSize sizedElement)
+            if (this is IHasSize sizedElement)
             {
                 builder.AppendLine(sizedElement.ToSaveable());
             }
 
-            if(this is IHasPrivacy privacySetElement)
+            if (this is IHasPrivacy privacySetElement)
             {
                 builder.AppendLine(privacySetElement.ToSaveable());
             }
 
-            if(this is IHasOrientation orientedElement)
+            if (this is IHasOrientation orientedElement)
             {
                 builder.AppendLine(orientedElement.ToSaveable());
             }
 
-            if(this is IHasElements elementedElement)
+            if (this is IHasElements elementedElement)
             {
                 builder.AppendLine(elementedElement.ToSaveable());
             }
 
-            if(this is IHasEvents eventedElement)
+            if (this is IHasEvents eventedElement)
             {
                 builder.AppendLine(eventedElement.ToSaveable());
             }

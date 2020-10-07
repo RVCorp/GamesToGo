@@ -1,16 +1,17 @@
 ﻿using GamesToGo.Desktop.Overlays;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class ImageOverlayButton : Button
     {
         private Box hoverBox;
-        public ImageOverlayButton()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Width = ImageFinderOverlay.ENTRY_WIDTH;
             Masking = true;

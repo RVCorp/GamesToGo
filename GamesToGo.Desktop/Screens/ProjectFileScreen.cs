@@ -1,14 +1,9 @@
-﻿using GamesToGo.Desktop.Database.Models;
-using GamesToGo.Desktop.Graphics;
-using GamesToGo.Desktop.Project;
+﻿using GamesToGo.Desktop.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -22,7 +17,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255)
+                    Colour = new Colour4 (106,100,104, 255),
                 },
                 new Container
                 {
@@ -32,7 +27,7 @@ namespace GamesToGo.Desktop.Screens
                         Top = 200f,
                         Left = 300f,
                         Right = 300f,
-                        Bottom = 200f
+                        Bottom = 200f,
                     },
                     Children = new Drawable[]
                     {
@@ -41,7 +36,7 @@ namespace GamesToGo.Desktop.Screens
                             RelativeSizeAxes = Axes.Y,
                             Width = 650,
                             BackgroundColour = Colour4.DarkGreen,
-                            Text = "Quieres compartir tu juego con la comunidad? Publica tu juego"
+                            Text = @"Quieres compartir tu juego con la comunidad? Publica tu juego",
                         },
                         new GamesToGoButton
                         {
@@ -49,10 +44,10 @@ namespace GamesToGo.Desktop.Screens
                             Origin = Anchor.TopRight,
                             Width = 650,
                             RelativeSizeAxes = Axes.Y,
-                            Padding = new MarginPadding() { Bottom = 10 },
+                            Padding = new MarginPadding { Bottom = 10 },
                             Height = 1/3f,
                             BackgroundColour = Colour4.DodgerBlue,
-                            Text = "Incompleto? Guarda y termina después",
+                            Text = @"Incompleto? Guarda y termina después",
                             Action = () => editor.SaveProject(),
                         },
                         new GamesToGoButton
@@ -60,11 +55,11 @@ namespace GamesToGo.Desktop.Screens
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.CentreRight,
                             RelativeSizeAxes = Axes.Y,
-                            Padding = new MarginPadding() { Vertical = 5 },
+                            Padding = new MarginPadding { Vertical = 5 },
                             Height = 1/3f,
                             Width = 650,
                             BackgroundColour = Colour4.PaleVioletRed,
-                            Text = "Quieres un respaldo? Sube tu juego",
+                            Text = @"Quieres un respaldo? Sube tu juego",
                             Action = editor.UploadProject,
                         },
                         new GamesToGoButton
@@ -73,13 +68,13 @@ namespace GamesToGo.Desktop.Screens
                             Origin = Anchor.BottomRight,
                             Width = 650,
                             RelativeSizeAxes = Axes.Y,
-                            Padding = new MarginPadding() { Top = 10 },
+                            Padding = new MarginPadding { Top = 10 },
                             Height = 1/3f,
                             BackgroundColour = Colour4.DarkSalmon,
-                            Text = "Listo para publicar? Primero prueba tu juego"
-                        }
-                    }
-                }
+                            Text = @"Listo para publicar? Primero prueba tu juego",
+                        },
+                    },
+                },
             };
         }
     }

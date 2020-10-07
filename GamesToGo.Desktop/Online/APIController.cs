@@ -14,24 +14,24 @@ namespace GamesToGo.Desktop.Online
         public string Token;
         private string password;
         private string username;
-        private AddUserRequest registrableUser = null;
+        private AddUserRequest registrableUser;
 
-        public static string UserAgent { get; set; } = "gtg";
+        public static string UserAgent { get; } = "gtg";
 
-        public string Endpoint => @"https://gamestogo.company";
+        public static string Endpoint => @"https://gamestogo.company";
 
         private readonly Queue<APIRequest> queue = new Queue<APIRequest>();
 
-        public Bindable<User> LocalUser { get; } = new Bindable<User>(null);
+        public Bindable<User> LocalUser { get; } = new Bindable<User>();
 
-        public APIState State
+        private APIState State
         {
             get;
-            private set;
+            set;
         }
 
-        public bool IsLoggedIn => LocalUser.Value?.ID > 0;
-        private bool hasLogin => hasValidToken || (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password));
+        private bool isLoggedIn => LocalUser.Value?.ID > 0;
+        private bool hasLogin => hasValidToken || !string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password);
 
         private bool hasValidToken => !string.IsNullOrEmpty(Token);
 
@@ -42,7 +42,7 @@ namespace GamesToGo.Desktop.Online
             var thread = new Thread(run)
             {
                 Name = "APIController",
-                IsBackground = true
+                IsBackground = true,
             };
 
             thread.Start();
@@ -62,7 +62,7 @@ namespace GamesToGo.Desktop.Online
                         //todo: replace this with a ping request.
                         Thread.Sleep(5000);
 
-                        if (!IsLoggedIn) goto case APIState.Connecting;
+                        if (!isLoggedIn) goto case APIState.Connecting;
 
                         break;
 
@@ -145,7 +145,7 @@ namespace GamesToGo.Desktop.Online
             {
                 req.Perform(this);
 
-                if (IsLoggedIn) State = APIState.Online;
+                if (isLoggedIn) State = APIState.Online;
 
                 failureCount = 0;
                 return true;
@@ -161,7 +161,7 @@ namespace GamesToGo.Desktop.Online
             }
         }
 
-        private bool handleWebException(WebException we)
+        private void handleWebException(WebException we)
         {
             HttpStatusCode statusCode = (we.Response as HttpWebResponse)?.StatusCode ?? (we.Status == WebExceptionStatus.UnknownError ? HttpStatusCode.NotAcceptable : HttpStatusCode.RequestTimeout);
 
@@ -177,24 +177,19 @@ namespace GamesToGo.Desktop.Online
             {
                 case HttpStatusCode.Unauthorized:
                     Logout();
-                    return true;
+                    return;
 
                 case HttpStatusCode.RequestTimeout:
                     failureCount++;
 
-                    if (failureCount < 3)
-                        return false;
+                    if (failureCount < 3) return;
 
-                    if (State == APIState.Online)
-                    {
-                        State = APIState.Failing;
-                        flushQueue();
-                    }
+                    if (State != APIState.Online) return;
+                    State = APIState.Failing;
+                    flushQueue();
 
-                    return true;
+                    return;
             }
-
-            return true;
         }
 
         private int authenticate()
@@ -202,24 +197,23 @@ namespace GamesToGo.Desktop.Online
             if (string.IsNullOrEmpty(username)) return -1;
             if (string.IsNullOrEmpty(password)) return -1;
 
-            using (var req = new AccessRequest(username, password)
+            using var req = new AccessRequest(username, password)
             {
                 Url = $@"{Endpoint}/api/Login",
                 Method = HttpMethod.Get,
-            })
-            {
-                try
-                {
-                    req.Perform();
-                }
-                catch
-                {
-                    return -1;
-                }
+            };
 
-                Token = req.ResponseObject.Token;
-                return req.ResponseObject.ID;
+            try
+            {
+                req.Perform();
             }
+            catch
+            {
+                return -1;
+            }
+
+            Token = req.ResponseObject.Token;
+            return req.ResponseObject.ID;
         }
 
         public void Queue(APIRequest request)
@@ -235,17 +229,17 @@ namespace GamesToGo.Desktop.Online
 
                 queue.Clear();
 
-                if (failOldRequests)
-                {
-                    foreach (var req in oldQueueRequests)
-                        req.Fail(new WebException(@"Disconnected from server"));
-                }
+                if (!failOldRequests)
+                    return;
+
+                foreach (var req in oldQueueRequests)
+                    req.Fail(new WebException(@"Disconnected from server"));
             }
         }
-        public void Login(string username, string password)
+        public void Login(string user, string pass)
         {
-            this.username = username;
-            this.password = password;
+            username = user;
+            password = pass;
         }
 
         public void Register(AddUserRequest userRequest)
@@ -266,18 +260,18 @@ namespace GamesToGo.Desktop.Online
 
         private class AccessRequest : BaseJsonWebRequest<AuthToken>
         {
-            public readonly string Username;
-            public readonly string Password;
+            private readonly string username;
+            private readonly string password;
 
             public AccessRequest(string username, string password)
             {
-                Username = username;
-                Password = password;
+                this.username = username;
+                this.password = password;
             }
             protected override void PrePerform()
             {
-                AddParameter("username", Username);
-                AddParameter("pass", Password);
+                AddParameter("username", username);
+                AddParameter("pass", password);
 
                 base.PrePerform();
             }
@@ -298,6 +292,6 @@ namespace GamesToGo.Desktop.Online
         Offline,
         Failing,
         Connecting,
-        Online
+        Online,
     }
 }

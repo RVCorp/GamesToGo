@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+using GamesToGo.Desktop.Project.Elements;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project.Events
 {
+    /// <summary>
+    /// ActionDescriptor(ctor: Action)
+    /// -ArgumentChanger(ctor: ArgumentType)
+    /// --BindableArgument
+    /// --ArgumentDescriptor(ctor: Argument)
+    /// </summary>
     public abstract class Argument
     {
         public abstract int ArgumentTypeID { get; }
@@ -12,21 +18,36 @@ namespace GamesToGo.Desktop.Project.Events
 
         public abstract bool HasResult { get; }
 
-        public abstract IEnumerable<ArgumentType> ExpectedArguments { get; }
+        public abstract ArgumentType[] ExpectedArguments { get; }
 
-        public Argument[] Arguments { get; }
+        private Bindable<Argument>[] arguments;
 
-        private int? result = null;
+        public Bindable<Argument>[] Arguments
+        {
+            get
+            {
+                if (arguments != null)
+                    return arguments;
+
+                arguments = new Bindable<Argument>[ExpectedArguments.Length];
+
+                for(int i = 0; i < arguments.Length; i++)
+                {
+                    arguments[i] = new Bindable<Argument>(new DefaultArgument());
+                }
+
+                return arguments;
+            }
+        }
+
+        public abstract string[] Text { get; }
+
+        private int? result;
 
         public int? Result
         {
-            get => HasResult ? result : result;
+            get => result;
             set => result = HasResult ? value : null;
-        }
-
-        public Argument()
-        {
-            Arguments = new Argument[ExpectedArguments.Count()];
         }
 
         public override string ToString()
@@ -43,7 +64,7 @@ namespace GamesToGo.Desktop.Project.Events
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
                 {
-                    builder.Append(Arguments[argIndex].ToString());
+                    builder.Append(Arguments[argIndex].Value);
 
                     if (++argIndex < Arguments.Length)
                         builder.Append(',');

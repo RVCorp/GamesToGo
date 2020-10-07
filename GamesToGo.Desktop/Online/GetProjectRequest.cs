@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GamesToGo.Desktop.Online
+﻿namespace GamesToGo.Desktop.Online
 {
+    // ReSharper disable once UnusedType.Global
     public class GetProjectRequest : APIRequest<OnlineProject>
     {
-        private int gameID;
+        private readonly int gameID;
         public GetProjectRequest(int id)
         {
             gameID = id;

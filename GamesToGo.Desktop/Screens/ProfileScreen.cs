@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GamesToGo.Desktop.Database.Models;
+﻿using System.Linq;
+using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Online;
 using osu.Framework.Allocation;
@@ -17,26 +14,25 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Screens
 {
-    class ProfileScreen : Screen
+    public class ProfileScreen : Screen
     {
-        private LargeTextureStore textures;
-        private APIController api;
-        private Context database;
+        [Resolved]
+        public APIController api { get; set; }
+
+        [Resolved]
+        private Context database { get; set; }
+
         private FillFlowContainer<PublishedProjectSummaryContainer> publishedProjectsList;
 
         [BackgroundDependencyLoader]
-        private void load(LargeTextureStore textures, APIController api, Context database)
+        private void load(TextureStore textures)
         {
-            this.textures = textures;
-            this.api = api;
-            this.database = database;
-
             InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255)      //Color fondo general
+                    Colour = new Color4 (106,100,104, 255),      //Color fondo general
                 },
                 new FillFlowContainer
                 {
@@ -60,10 +56,10 @@ namespace GamesToGo.Desktop.Screens
                                 {
                                     RelativeSizeAxes = Axes.Y,
                                     Width = 100,
-                                    Text = "Regresar",
-                                    Action = this.Exit
-                                }
-                            }
+                                    Text = @"Regresar",
+                                    Action = this.Exit,
+                                },
+                            },
                         },
                         new BasicScrollContainer
                         {
@@ -84,7 +80,7 @@ namespace GamesToGo.Desktop.Screens
                                             new Sprite
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Texture = textures.Get($"https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg")
+                                                Texture = textures.Get("https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg"),
                                             },
                                             new FillFlowContainer
                                             {
@@ -101,18 +97,18 @@ namespace GamesToGo.Desktop.Screens
                                                     {
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre,
-                                                        ButtonSize = new Vector2(400)
+                                                        ButtonSize = new Vector2(400),
                                                     },
                                                     new SpriteText
                                                     {
                                                         Text = api.LocalUser.Value.Username,
                                                         Anchor = Anchor.TopCentre,
                                                         Origin = Anchor.TopCentre,
-                                                        Font =  new FontUsage(null, 60, null, false, false)
-                                                    }
-                                                }
-                                            }
-                                        }
+                                                        Font =  new FontUsage(size:60),
+                                                    },
+                                                },
+                                            },
+                                        },
                                     },
                                     new FillFlowContainer
                                     {
@@ -141,15 +137,15 @@ namespace GamesToGo.Desktop.Screens
                                                                 {
                                                                     RelativeSizeAxes = Axes.Both,
                                                                     Colour = Color4.DarkGray,
-                                                                    Margin = new MarginPadding() { Right = 2.5f}
+                                                                    Margin = new MarginPadding { Right = 2.5f },
                                                                 },
                                                                 new SpriteText
                                                                 {
-                                                                    Text = "Juegos Publicados",
-                                                                    Font = new FontUsage(null, 35, null, false, false),
-                                                                    Padding = new MarginPadding() { Left = 5}
-                                                                }
-                                                            }
+                                                                    Text = @"Juegos Publicados",
+                                                                    Font = new FontUsage(size: 35),
+                                                                    Padding = new MarginPadding { Left = 5 },
+                                                                },
+                                                            },
                                                         },
                                                         publishedProjectsList = new FillFlowContainer<PublishedProjectSummaryContainer>
                                                         {
@@ -163,9 +159,9 @@ namespace GamesToGo.Desktop.Screens
                                                             AutoSizeAxes = Axes.Y,
                                                             Direction = FillDirection.Vertical,
 
-                                                        }
-                                                    }
-                                                }
+                                                        },
+                                                    },
+                                                },
                                             },
                                             new Container
                                             {
@@ -187,26 +183,26 @@ namespace GamesToGo.Desktop.Screens
                                                                 {
                                                                     RelativeSizeAxes = Axes.Both,
                                                                     Colour = Color4.DarkGray,
-                                                                    Margin = new MarginPadding() { Left = 2.5f}
+                                                                    Margin = new MarginPadding{ Left = 2.5f },
                                                                 },
                                                                 new SpriteText
                                                                 {
-                                                                    Text = "Estadisticas",
-                                                                    Font = new FontUsage(null, 35, null, false, false),
-                                                                    Padding = new MarginPadding(){ Left = 5}
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                                                    Text = @"Estadisticas",
+                                                                    Font = new FontUsage(size: 35),
+                                                                    Padding = new MarginPadding { Left = 5 },
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
             populateOnlineList();
         }
@@ -224,7 +220,7 @@ namespace GamesToGo.Desktop.Screens
             var getProjects = new GetAllPublishedProjectsRequest();
             getProjects.Success += u =>
             {
-                foreach (var proj in u.Where(u => (!database.Projects.Any(dbp => dbp.OnlineProjectID == u.Id)) && (!publishedProjectsList.Children.Any(opli => opli.ID == u.Id))))
+                foreach (var proj in u.Where(project => !database.Projects.Any(dbp => dbp.OnlineProjectID == project.Id) && publishedProjectsList.Children.All(published => published.ID != project.Id)))
                 {
                     publishedProjectsList.Add(new PublishedProjectSummaryContainer(proj));
                 }

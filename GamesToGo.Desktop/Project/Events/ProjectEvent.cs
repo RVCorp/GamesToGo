@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Desktop.Project.Events
 {
-    public abstract class Event
+    public abstract class ProjectEvent
     {
         public int ID { get; set; }
 
@@ -15,22 +14,37 @@ namespace GamesToGo.Desktop.Project.Events
 
         public abstract EventSourceActivator Activator { get; }
 
-        public abstract IEnumerable<string> Text { get; }
+        public abstract string[] Text { get; }
 
-        public abstract IEnumerable<ArgumentType> ExpectedArguments { get; }
+        public Bindable<string> Name { get; } = new Bindable<string>();
 
-        public Argument[] Arguments { get; }
+        public abstract ArgumentType[] ExpectedArguments { get; }
+
+        private Bindable<Argument>[] arguments;
+
+        public Bindable<Argument>[] Arguments
+        {
+            get
+            {
+                if (arguments != null)
+                    return arguments;
+
+                arguments = new Bindable<Argument>[ExpectedArguments.Length];
+
+                for(int i = 0; i < arguments.Length; i++)
+                {
+                    arguments[i] = new Bindable<Argument>(new DefaultArgument());
+                }
+
+                return arguments;
+            }
+        }
 
         public int Priority { get; set; }
 
         public Argument Condition { get; set; } = null;
 
         public BindableList<EventAction> Actions { get; } = new BindableList<EventAction>();
-
-        public Event()
-        {
-            Arguments = new Argument[ExpectedArguments.Count()];
-        }
 
         public override string ToString()
         {
@@ -44,7 +58,7 @@ namespace GamesToGo.Desktop.Project.Events
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
                 {
-                    builder.Append(Arguments[argIndex].ToString());
+                    builder.Append(Arguments[argIndex].Value);
 
                     if (++argIndex < Arguments.Length)
                         builder.Append(',');
@@ -52,22 +66,15 @@ namespace GamesToGo.Desktop.Project.Events
                 builder.Append(')');
             }
 
-            builder.Append($"|{Priority}");
-
-            if (Condition != null)
-            {
-                builder.Append('|');
-                builder.Append(Condition.ToString());
-            }
-
-            builder.AppendLine();
+            builder.Append($"|{Name.Value}|{Priority}|{Condition?.ToString() ?? "null"}|{Actions.Count}");
 
             foreach(var action in Actions)
             {
-                builder.AppendLine(action.ToString());
+                builder.AppendLine();
+                builder.Append(action);
             }
 
-            return base.ToString();
+            return builder.ToString();
         }
     }
 }

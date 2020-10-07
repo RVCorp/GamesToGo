@@ -11,8 +11,8 @@ namespace GamesToGo.Desktop.Online
 {
     public class UploadGameRequest : APIRequest<UploadGameResult>
     {
-        private ProjectInfo project;
-        private Storage store;
+        private readonly ProjectInfo project;
+        private readonly Storage store;
 
         public UploadGameRequest(ProjectInfo project, Storage store)
         {
@@ -32,12 +32,11 @@ namespace GamesToGo.Desktop.Online
             }
             foreach (var projectFile in project.Relations.Select(fr => fr.File))
             {
-                using (var fileMemoryStream = new MemoryStream())
-                {
-                    using (var fileStream = store.GetStream(projectFile.NewName))
-                        fileStream.CopyTo(fileMemoryStream);
-                    file.AddEntry(projectFile.NewName, fileMemoryStream.ToArray());
-                }
+                using var fileMemoryStream = new MemoryStream();
+
+                using (var fileStream = store.GetStream(projectFile.NewName))
+                    fileStream.CopyTo(fileMemoryStream);
+                file.AddEntry(projectFile.NewName, fileMemoryStream.ToArray());
             }
 
             using (var ms = new MemoryStream())
@@ -54,7 +53,7 @@ namespace GamesToGo.Desktop.Online
                 req.AddParameter("minP", project.MinNumberPlayers.ToString());
                 req.AddParameter("maxP", project.MaxNumberPlayers.ToString());
                 req.AddParameter("imageName", project.ImageRelation?.File?.NewName ?? "null");
-                req.AddParameter("LastEdited", project.LastEdited.ToUniversalTime().ToString("yyyyMMddHHmmssfff"));
+                req.AddParameter("LastEdited", project.LastEdited.ToUniversalTime().ToString(@"yyyyMMddHHmmssfff"));
                 req.AddParameter("Status",((int)project.ComunityStatus).ToString());
                 req.AddParameter("FileName", project.File.NewName);
                 req.AddFile(@"File", ms.ToArray());

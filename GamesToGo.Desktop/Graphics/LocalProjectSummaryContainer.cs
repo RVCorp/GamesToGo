@@ -9,16 +9,20 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osuTK;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class LocalProjectSummaryContainer : ProjectSummaryContainer
     {
         private IconUsage editIcon;
-        public ProjectInfo ProjectInfo;
-        private MultipleOptionOverlay optionsOverlay;
-        private APIController api;
+        public readonly ProjectInfo ProjectInfo;
+
+        [Resolved]
+        private MultipleOptionOverlay optionsOverlay { get; set; }
+
+        [Resolved]
+        public APIController api { get; private set; }
+
         private WorkingProject workingProject;
 
         public Action<WorkingProject> EditAction { get; set; }
@@ -30,31 +34,22 @@ namespace GamesToGo.Desktop.Graphics
         }
 
         [BackgroundDependencyLoader]
-        private void load(Storage store, LargeTextureStore textures, MultipleOptionOverlay optionsOverlay, APIController api)
+        private void load(Storage store, TextureStore textures)
         {
-            this.optionsOverlay = optionsOverlay;
-            this.api = api;
-
             workingProject = WorkingProject.Parse(ProjectInfo, store, textures, api);
-            if (workingProject == null)
-                editIcon = FontAwesome.Solid.ExclamationTriangle;
-            else
-                editIcon = FontAwesome.Solid.Edit;
+
+            editIcon = workingProject == null ? FontAwesome.Solid.ExclamationTriangle : FontAwesome.Solid.Edit;
 
             ButtonFlowContainer.AddRange(new[]
             {
-                new IconButton
+                new IconButton(FontAwesome.Solid.TrashAlt, Colour4.DarkRed)
                 {
-                    Icon = FontAwesome.Solid.TrashAlt,
                     Action = showConfirmation,
-                    ButtonColour = Colour4.DarkRed,
                 },
-                new IconButton
+                new IconButton(editIcon, workingProject == null ? FrameworkColour.YellowDark : FrameworkColour.Green)
                 {
-                    Icon = editIcon,
                     Action = checkValidWorkingProject,
-                    ButtonColour = workingProject == null ? FrameworkColour.YellowDark : FrameworkColour.Green,
-                }
+                },
             });
 
             BottomContainer.Add(new FillFlowContainer
@@ -63,13 +58,13 @@ namespace GamesToGo.Desktop.Graphics
                 Spacing = new Vector2(MARGIN_SIZE),
                 AutoSizeAxes = Axes.Both,
                 Children = new Drawable[]
-                    {
-                        new StatText(FontAwesome.Regular.Clone, ProjectInfo.NumberCards),
-                        new StatText(FontAwesome.Solid.Coins, ProjectInfo.NumberTokens),
-                        new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
-                        new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
-                        new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
-                    }
+                {
+                    new StatText(FontAwesome.Regular.Clone, ProjectInfo.NumberCards),
+                    new StatText(FontAwesome.Solid.Coins, ProjectInfo.NumberTokens),
+                    new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
+                    new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
+                    new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
+                },
             });
 
             ProjectName.Text = ProjectInfo.Name;
@@ -77,42 +72,42 @@ namespace GamesToGo.Desktop.Graphics
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
             var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
-            getCreator.Success += u => UsernameBox.Text = $"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
+            getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
             api.Queue(getCreator);
         }
         private void checkValidWorkingProject()
         {
             if (workingProject == null)
             {
-                optionsOverlay.Show("Este proyecto no se puede abrir. ¿Qué deseas hacer con el?", new[]
+                optionsOverlay.Show(@"Este proyecto no se puede abrir. ¿Qué deseas hacer con el?", new[]
                 {
                     new OptionItem
                     {
-                        Text = "Eliminarlo",
+                        Text = @"Eliminarlo",
                         Action = showConfirmation,
                         Type = OptionType.Destructive,
                     },
                     new OptionItem
                     {
-                        Text = "Buscarlo en el servidor",
+                        Text = @"Buscarlo en el servidor",
                         Type = OptionType.Additive,
                     },
                     new OptionItem
                     {
                         Text = "Nada",
                         Type = OptionType.Neutral,
-                    }
+                    },
                 });
             }
-            else if (api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            else if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
-                optionsOverlay.Show("Este proyecto no te pertenece, no puedes editarlo", new[]
+                optionsOverlay.Show(@"Este proyecto no te pertenece, no puedes editarlo", new[]
                 {
                     new OptionItem
                     {
-                        Text = "Enterado",
+                        Text = @"Enterado",
                         Type = OptionType.Neutral,
-                    }
+                    },
                 });
             }
             else
@@ -123,32 +118,32 @@ namespace GamesToGo.Desktop.Graphics
 
         private void showConfirmation()
         {
-            if (api.LocalUser.Value.ID != workingProject.DatabaseObject.CreatorID)
+            if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
-                optionsOverlay.Show("Este proyecto no te pertenece, no puedes eliminarlo", new[]
+                optionsOverlay.Show(@"Este proyecto no te pertenece, no puedes eliminarlo", new[]
                 {
                     new OptionItem
                     {
-                        Text = "Enterado",
+                        Text = @"Enterado",
                         Type = OptionType.Neutral,
-                    }
+                    },
                 });
                 return;
             }
-            optionsOverlay.Show($"Seguro que quieres eliminar el proyecto \'{ProjectInfo.Name}\'", new[]
+            optionsOverlay.Show(@$"Seguro que quieres eliminar el proyecto \'{ProjectInfo.Name}\'", new[]
             {
                 new OptionItem
                 {
-                    Text = "¡A la basura!",
+                    Text = @"¡A la basura!",
                     Action = () => DeleteAction?.Invoke(ProjectInfo),
                     Type = OptionType.Destructive,
                 },
                 new OptionItem
                 {
-                    Text = "Mejor me lo quedo",
+                    Text = @"Mejor me lo quedo",
                     Action = () => { },
                     Type = OptionType.Neutral,
-                }
+                },
             });
         }
         private class StatText : FillFlowContainer
@@ -163,7 +158,7 @@ namespace GamesToGo.Desktop.Graphics
                     new SpriteIcon
                     {
                         Size = new Vector2(SMALL_TEXT_SIZE),
-                        Icon = icon
+                        Icon = icon,
                     },
                     new SpriteText
                     {

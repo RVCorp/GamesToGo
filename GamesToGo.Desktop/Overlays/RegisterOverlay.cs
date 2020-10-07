@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -22,11 +21,14 @@ namespace GamesToGo.Desktop.Overlays
         private BasicPasswordTextBox passwordBox;
         private BasicPasswordTextBox confirmPasswordBox;
         private GamesToGoButton registerButton;
-        private APIController api;
-        private SplashInfoOverlay infoOverlay;
+        [Resolved]
+        private APIController api { get; set; }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
         private readonly Colour4 confirmationColor = new Colour4(47, 69, 33, 255);
 
-        public RegisterOverlay()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Origin = Anchor.TopLeft;
             Anchor = Anchor.TopLeft;
@@ -38,7 +40,7 @@ namespace GamesToGo.Desktop.Overlays
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black,
-                    Alpha = 0
+                    Alpha = 0,
                 },
                 popUpContent = new Container
                 {
@@ -63,7 +65,7 @@ namespace GamesToGo.Desktop.Overlays
                             new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = new Colour4(106, 100, 104, 255)
+                                Colour = new Colour4(106, 100, 104, 255),
                             },
                             new Container
                             {
@@ -81,7 +83,7 @@ namespace GamesToGo.Desktop.Overlays
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Usuario:"
+                                            Text = @"Usuario:",
                                         },
                                         usernameBox = new BasicTextBox
                                         {
@@ -89,13 +91,13 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding{ Bottom = 20 }
+                                            Margin = new MarginPadding{ Bottom = 20 },
                                         },
                                         new SpriteText
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Correo:"
+                                            Text = @"Correo:",
                                         },
                                         emailBox = new BasicTextBox
                                         {
@@ -103,13 +105,13 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding{ Bottom = 20 }
+                                            Margin = new MarginPadding{ Bottom = 20 },
                                         },
                                         new SpriteText
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Contraseña:",
+                                            Text = @"Contraseña:",
                                         },
                                         passwordBox = new BasicPasswordTextBox
                                         {
@@ -117,13 +119,13 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding { Bottom = 20 }
+                                            Margin = new MarginPadding { Bottom = 20 },
                                         },
                                         new SpriteText
                                         {
                                             Origin = Anchor.TopLeft,
                                             Anchor = Anchor.TopLeft,
-                                            Text = "Verificar Contraseña:"
+                                            Text = @"Verificar Contraseña:",
                                         },
                                         confirmPasswordBox = new BasicPasswordTextBox
                                         {
@@ -131,7 +133,7 @@ namespace GamesToGo.Desktop.Overlays
                                             Anchor = Anchor.TopLeft,
                                             Height = 35,
                                             Width = 380,
-                                            Margin = new MarginPadding{ Bottom = 20 }
+                                            Margin = new MarginPadding{ Bottom = 20 },
                                         },
                                         new Container
                                         {
@@ -143,18 +145,18 @@ namespace GamesToGo.Desktop.Overlays
                                             {
                                                 Origin = Anchor.BottomCentre,
                                                 Anchor = Anchor.BottomCentre,
-                                                Text = "Registrarse",
+                                                Text = @"Registrarse",
                                                 Width = 100,
                                                 Height = 35,
-                                                Action = registerUser
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                                Action = registerUser,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
 
             registerButton.Enabled.Value = false;
@@ -163,13 +165,6 @@ namespace GamesToGo.Desktop.Overlays
             usernameBox.Current.BindValueChanged(checkUserPass);
             confirmPasswordBox.Current.BindValueChanged(checkUserPass);
             emailBox.Current.BindValueChanged(checkUserPass);
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(APIController api, SplashInfoOverlay infoOverlay)
-        {
-            this.api = api;
-            this.infoOverlay = infoOverlay;
         }
 
         private void registerUser()
@@ -182,20 +177,23 @@ namespace GamesToGo.Desktop.Overlays
 
         private void registerSuccess()
         {
-            infoOverlay.Show("El usuario fue añadido exitosamente, intenta iniciar sesión", confirmationColor);
+            infoOverlay.Show(@"El usuario fue añadido exitosamente, intenta iniciar sesión", confirmationColor);
         }
 
         private void registerFailure(Exception e)
         {
-            if (e.Message == "BadRequest")
-                infoOverlay.Show("El usuario o correo ya están en uso", confirmationColor);
-            else
-                infoOverlay.Show("Hubo un problema al registrar al usuario", confirmationColor);
+            infoOverlay.Show(
+                e.Message == "BadRequest"
+                    ? @"El usuario o correo ya están en uso"
+                    : @"Hubo un problema al registrar al usuario", confirmationColor);
         }
 
         public void Reset()
         {
-
+            passwordBox.Text = "";
+            usernameBox.Text = "";
+            emailBox.Text = "";
+            confirmPasswordBox.Text = "";
         }
 
         private void checkUserPass(ValueChangedEvent<string> obj)
@@ -204,7 +202,7 @@ namespace GamesToGo.Desktop.Overlays
                 string.IsNullOrEmpty(emailBox.Text) || string.IsNullOrWhiteSpace(emailBox.Text) || string.IsNullOrEmpty(confirmPasswordBox.Text) || string.IsNullOrWhiteSpace(confirmPasswordBox.Text)
                 || !new Regex("[^ ]{1,}\\@[^ ]{1,}\\.[^ ]{2,}").IsMatch(emailBox.Text) || passwordBox.Text != confirmPasswordBox.Text)
                 registerButton.Enabled.Value = false;
-            else 
+            else
                 registerButton.Enabled.Value = true;
         }
 

@@ -16,20 +16,20 @@ namespace GamesToGo.Desktop.Overlays
 {
     public class ImagePickerOverlay : OverlayContainer
     {
-        private WorkingProject project;
-        private IBindable<ProjectElement> editing = new Bindable<ProjectElement>();
+        [Resolved]
+        private WorkingProject project { get; set; }
+        private readonly IBindable<ProjectElement> editing = new Bindable<ProjectElement>();
         private FillFlowContainer<ItemButton> itemsContainer;
         private string targetElementImage;
         private readonly Colour4 gradientLight = Colour4.Black.Opacity(0);
         private readonly Colour4 gradientDark = Colour4.Black.Opacity(0.8f);
 
-        public const float ITEM_SIZE = 300;
+        private const float item_size = 300;
 
         [BackgroundDependencyLoader]
-        private void load(WorkingProject project, ProjectEditor editor)
+        private void load(ProjectEditor editor)
         {
             RelativeSizeAxes = Axes.Both;
-            this.project = project;
             editing.BindTo(editor.CurrentEditingElement);
 
             Alpha = 0;
@@ -41,13 +41,13 @@ namespace GamesToGo.Desktop.Overlays
                     RelativeSizeAxes = Axes.Both,
                     ColumnDimensions = new[]
                     {
-                        new Dimension()
+                        new Dimension(),
                     },
                     RowDimensions = new[]
                     {
                         new Dimension(),
                         new Dimension(GridSizeMode.Absolute, 60),
-                        new Dimension(GridSizeMode.Absolute, ITEM_SIZE + 10)
+                        new Dimension(GridSizeMode.Absolute, item_size + 10),
                     },
                     Content = new[]
                     {
@@ -57,7 +57,7 @@ namespace GamesToGo.Desktop.Overlays
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = gradientLight,
-                            }
+                            },
                         },
                         new Drawable[]
                         {
@@ -76,10 +76,10 @@ namespace GamesToGo.Desktop.Overlays
                                         Font = new FontUsage(size: 50),
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        Text = "Selecciona una imagen",
-                                    }
-                                }
-                            }
+                                        Text = @"Selecciona una imagen",
+                                    },
+                                },
+                            },
                         },
                         new Drawable[]
                         {
@@ -107,13 +107,13 @@ namespace GamesToGo.Desktop.Overlays
                                             Origin = Anchor.CentreLeft,
                                             RelativeSizeAxes = Axes.Y,
                                             AutoSizeAxes = Axes.X,
-                                        }
-                                    }
-                                }
-                            }
+                                        },
+                                    },
+                                },
+                            },
                         },
-                    }
-                }
+                    },
+                },
             };
 
             project.Images.CollectionChanged += (_, __) => recreateItems();
@@ -128,7 +128,7 @@ namespace GamesToGo.Desktop.Overlays
             {
                 itemsContainer.Add(new ItemButton(image)
                 {
-                    Action = () => setImage(image)
+                    Action = () => setImage(image),
                 });
             }
 
@@ -174,11 +174,16 @@ namespace GamesToGo.Desktop.Overlays
 
         private class ItemButton : Button
         {
-            private Image image;
+            private readonly Image image;
             public ItemButton(Image image)
             {
                 this.image = image;
-                Size = new Vector2(ITEM_SIZE);
+            }
+
+            [BackgroundDependencyLoader]
+            private void load(ImageFinderOverlay imageFinder, WorkingProject project)
+            {
+                Size = new Vector2(item_size);
                 Masking = true;
                 CornerRadius = 10;
                 BorderThickness = 2;
@@ -190,11 +195,7 @@ namespace GamesToGo.Desktop.Overlays
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black.Opacity(0),
                 };
-            }
 
-            [BackgroundDependencyLoader]
-            private void load(ImageFinderOverlay imageFinder, WorkingProject project)
-            {
                 if (image == null)
                 {
                     Add(new SpriteIcon
@@ -202,7 +203,7 @@ namespace GamesToGo.Desktop.Overlays
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Size = new Vector2(60),
-                        Icon = FontAwesome.Solid.Plus
+                        Icon = FontAwesome.Solid.Plus,
                     });
                     Action += () => imageFinder.Show(project);
                 }

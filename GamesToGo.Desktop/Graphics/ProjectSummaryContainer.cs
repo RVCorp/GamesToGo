@@ -1,43 +1,42 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 using osuTK;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Allocation;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public abstract class ProjectSummaryContainer : Container
     {
-        public const float MARGIN_SIZE = 5;
-        public const float MAIN_TEXT_SIZE = 35;
-        public const float SMALL_TEXT_SIZE = 20;
-        public const float EXPANDED_HEIGHT = MAIN_TEXT_SIZE + SMALL_TEXT_SIZE * 2 + MARGIN_SIZE * 4;
+        protected const float MARGIN_SIZE = 5;
+        private const float main_text_size = 35;
+        protected const float SMALL_TEXT_SIZE = 20;
         private Container buttonsContainer;
         private FillFlowContainer smallContainer;
         private Container expandedContainer;
         private Container sizedContainer;
 
-        protected Sprite ProjectImage { get; }
-        protected FillFlowContainer<IconButton> ButtonFlowContainer { get; }
+        protected Sprite ProjectImage { get; private set; }
+        protected FillFlowContainer<IconButton> ButtonFlowContainer { get; private set; }
 
-        protected SpriteText ProjectName { get; }
-        protected SpriteText ProjectDescription { get; }
-        protected SpriteText UsernameBox { get; }
-        protected Container BottomContainer { get; }
+        protected SpriteText ProjectName { get; private set; }
+        protected SpriteText ProjectDescription { get; private set; }
+        protected SpriteText UsernameBox { get; private set; }
+        protected Container BottomContainer { get; private set; }
 
-        public Container ImageContainer { get; }
+        protected Container ImageContainer { get; private set; }
 
-        public ProjectSummaryContainer()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Padding = new MarginPadding { Vertical = 3.5f };
             AutoSizeAxes = Axes.Y;
             RelativeSizeAxes = Axes.X;
             Children = new Drawable[]
             {
-                sizedContainer = new Container()
+                sizedContainer = new Container
                 {
                     Masking = true,
                     CornerRadius = MARGIN_SIZE,
@@ -75,16 +74,16 @@ namespace GamesToGo.Desktop.Graphics
                                             {
                                                 ImageContainer = new Container
                                                 {
-                                                    Size = new Vector2(MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE),
+                                                    Size = new Vector2(main_text_size + SMALL_TEXT_SIZE + MARGIN_SIZE),
                                                     Masking = true,
-                                                    CornerRadius = 20 * (MAIN_TEXT_SIZE + SMALL_TEXT_SIZE + MARGIN_SIZE) / 150,
+                                                    CornerRadius = 20 * (main_text_size + SMALL_TEXT_SIZE + MARGIN_SIZE) / 150,
                                                     Child = ProjectImage = new Sprite
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
                                                         FillMode = FillMode.Fit,
                                                         Anchor = Anchor.Centre,
                                                         Origin = Anchor.Centre,
-                                                    }
+                                                    },
                                                 },
                                                 new FillFlowContainer
                                                 {
@@ -95,15 +94,15 @@ namespace GamesToGo.Desktop.Graphics
                                                     {
                                                         ProjectName = new SpriteText
                                                         {
-                                                            Font = new FontUsage(size: MAIN_TEXT_SIZE),
+                                                            Font = new FontUsage(size: main_text_size),
                                                         },
                                                         ProjectDescription = new SpriteText
                                                         {
                                                             Font = new FontUsage(size: SMALL_TEXT_SIZE),
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                                        },
+                                                    },
+                                                },
+                                            },
                                         },
                                         UsernameBox = new SpriteText
                                         {
@@ -113,9 +112,9 @@ namespace GamesToGo.Desktop.Graphics
                                         {
                                             Height = SMALL_TEXT_SIZE,
                                             AutoSizeAxes = Axes.X,
-                                        }
-                                    }
-                                }
+                                        },
+                                    },
+                                },
                             },
                         },
                         buttonsContainer = new Container
@@ -134,11 +133,11 @@ namespace GamesToGo.Desktop.Graphics
                                     Origin = Anchor.CentreRight,
                                     Spacing = new Vector2(MARGIN_SIZE),
                                     Direction = FillDirection.Horizontal,
-                                }
-                            }
+                                },
+                            },
                         },
-                    }
-                }
+                    },
+                },
             };
         }
         protected override void LoadComplete()

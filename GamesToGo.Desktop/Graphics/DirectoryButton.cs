@@ -1,7 +1,6 @@
 ﻿using GamesToGo.Desktop.Overlays;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
-using osuTK.Graphics;
 using osuTK;
 using osu.Framework.Allocation;
 using System.IO;
@@ -10,20 +9,17 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class DirectoryButton : ImageOverlayButton
     {
-        private IconUsage icon;
-        private string target;
+        private readonly IconUsage icon;
+        private readonly string target;
         public DirectoryButton(string directory, DirectoryType type)
         {
             target = directory;
-
-            Height = 50;
-            Name = directory;
 
             switch (type)
             {
                 case DirectoryType.Directory:
                     icon = FontAwesome.Solid.Folder;
-                    directory = Path.GetFileName(directory);
+                    Name = Path.GetFileName(directory);
                     break;
                 case DirectoryType.Drive:
                     icon = FontAwesome.Solid.Hdd;
@@ -31,12 +27,18 @@ namespace GamesToGo.Desktop.Graphics
                 case DirectoryType.ParentDirectory:
                     icon = FontAwesome.Solid.Reply;
                     if (directory == string.Empty)
-                        directory = "Este Equipo";
+                        Name = @"Este Equipo";
                     else if(!directory.EndsWith('\\'))
-                        directory = Path.GetFileName(directory);
+                        Name = Path.GetFileName(directory);
                     break;
             }
+        }
 
+        [BackgroundDependencyLoader]
+        private void load(ImageFinderOverlay imageFinder)
+        {
+            Height = 50;
+            Action = () => imageFinder.ChangeToDirectory(target);
             AddRange(new Drawable[]
             {
                 new SpriteIcon
@@ -56,16 +58,10 @@ namespace GamesToGo.Desktop.Graphics
                     Truncate = true,
                     MaxWidth = ImageFinderOverlay.ENTRY_WIDTH - 50 - 10,
                     Colour = Colour4.Black,
-                    Text = directory,
+                    Text = Name,
                     Font = new FontUsage(size: 30),
-                }
+                },
             });
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(ImageFinderOverlay imageFinder)
-        {
-            Action = () => imageFinder.ChangeToDirectory(target);
         }
     }
 

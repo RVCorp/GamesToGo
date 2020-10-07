@@ -14,7 +14,7 @@ namespace GamesToGo.Desktop.Project
 
         public readonly string ImageName;
 
-        private TextureStore textures;
+        private readonly TextureStore textures;
 
         private Image(string imageName, bool fromStorage)
         {
