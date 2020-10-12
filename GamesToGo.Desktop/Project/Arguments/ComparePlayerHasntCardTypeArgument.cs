@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GamesToGo.Desktop.Project.Events.Arguments
+﻿namespace GamesToGo.Desktop.Project.Arguments
 {
     public class ComparePlayerHasntCardTypeArgument : Argument
     {
