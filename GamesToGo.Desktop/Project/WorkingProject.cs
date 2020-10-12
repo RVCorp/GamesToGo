@@ -6,6 +6,7 @@ using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Project.Events.Arguments;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
@@ -21,6 +22,56 @@ namespace GamesToGo.Desktop.Project
             typeof(SetCardOnTileEvent),
             typeof(SetCardTypeOnTileEvent),
             typeof(CardMovedToTileEvent),
+            typeof(DrawCardTypeOffTileEvent),
+            typeof(DrawCardOffTileEvent)
+        };
+
+        public static List<Type> AvailableActions { get; } = new List<Type>
+        {
+            typeof(AddCardToTileAction),
+            typeof(ChangeCardPrivacyAction),
+            typeof(ChangeTokenPrivacyAction),
+            typeof(DelayGameAction),
+            typeof(DelayTileAction),
+            typeof(GiveCardFromPlayerToPlayerAction),
+            typeof(GivePlayerATokenTypeAction),
+            typeof(GivePlayerATokenTypeFromPlayerAction),
+            typeof(GivePlayerXCardsFromTileAction),
+            typeof(GivePlayerXTokensTypeAction),
+            typeof(GiveXCardsATokenAction),
+            typeof(MoveCardFromPlayerTileToTileAction),
+            typeof(MoveCardFromPlayerToTileAction),
+            typeof(MoveCardFromPlayerToTileInXPositionAction),
+            typeof(MoveXCardsFromPlayerToTileAction),
+            typeof(RemovePlayerAction),
+            typeof(RemoveTokenTypeFromCardAction),
+            typeof(ShuffleTileAction),
+            typeof(StopTileDelayAction),
+            typeof(StopTileEventsAction),
+            typeof(WaitForPlayerConfirmationAction),
+        };
+
+        public static List<Type> AvailableArguments { get; } = new List<Type>
+        {
+            typeof(CardsWithTokenArgument),
+            typeof(CardTypeArgument),
+            typeof(CompareCardTypesArgument),
+            typeof(ComparePlayerHasCardTypeArgument),
+            typeof(ComparePlayerHasntCardTypeArgument),
+            typeof(ComparePlayerHasTokenTypeArgument),
+            typeof(ComparePlayerWithTokenHasMoreThanXTokensArgument),
+            typeof(ComparePlayerWithTokenHasXTokensArgument),
+            typeof(CompareXPositionInTileIsntCardTypeArgument),
+            typeof(FirstXCardsFromTileArgument),
+            typeof(NumberArgument),
+            typeof(PlayerCardsWithTokenArgument),
+            typeof(PlayerChosenByPlayerArgument),
+            typeof(PlayerRightOfPlayerWithTokenArgument),
+            typeof(PlayerWithTokenArgument),
+            typeof(PrivacyTypeArgument),
+            typeof(SinglePlayerArgument),
+            typeof(TileTypeArgument),
+            typeof(TokenTypeArgument),
         };
 
         private readonly TextureStore textures;

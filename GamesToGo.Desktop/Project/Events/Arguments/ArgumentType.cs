@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedMember.Global
-namespace GamesToGo.Desktop.Project.Events
+namespace GamesToGo.Desktop.Project.Events.Arguments
 {
     public enum ArgumentType
     {
@@ -16,6 +16,9 @@ namespace GamesToGo.Desktop.Project.Events
         Token = 1 << 7,
         Board = 1 << 8,
         Comparison = 1 << 9,
+
+        Privacy = 1 << 10,
+        Orientation = 1 << 11,
 
         SinglePlayer = Single | Player,
         MultiplePlayer = Multiple | Player,
