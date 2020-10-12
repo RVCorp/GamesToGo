@@ -2,7 +2,8 @@
 using System.Linq;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Project.Actions;
+using GamesToGo.Desktop.Project.Arguments;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -57,7 +58,13 @@ namespace GamesToGo.Desktop.Graphics
             };
 
             currentEditing.BindTo(editor.CurrentEditingElement);
-            currentEditing.BindValueChanged(obj => showAvailableEvents(obj.NewValue), true);
+            currentEditing.BindValueChanged(_ => possibleEventsList.Hide(), true);
+
+            foreach (var type in WorkingProject.AvailableActions.Values)
+            {
+                var defaultAction = Activator.CreateInstance(type) as EventAction;
+                possibleEventsList.AddPossibility(defaultAction);
+            }
         }
 
         private void toggleAvailableEvents()
@@ -65,20 +72,7 @@ namespace GamesToGo.Desktop.Graphics
             possibleEventsList.ToggleVisibility();
         }
 
-        private void showAvailableEvents(ProjectElement element)
-        {
-            possibleEventsList.Hide();
-
-            if (element == null)
-                return;
-
-            foreach (var type in WorkingProject.AvailableActions)
-            {
-                var defaultAction = Activator.CreateInstance(type) as EventAction;
-                possibleEventsList.AddPossibility(defaultAction);
-            }
-        }
-
+        [Cached]
         private class ActionListContainer : VisibilityContainer
         {
             private FillFlowContainer<ActionTypeList> lists;
@@ -91,11 +85,13 @@ namespace GamesToGo.Desktop.Graphics
                 Alpha = 1;
                 Anchor = Anchor.TopRight;
                 Origin = Anchor.BottomRight;
-                AutoSizeAxes = Axes.Both;
+                AutoSizeAxes = Axes.Y;
+                RelativeSizeAxes = Axes.X;
                 Child = new Container
                 {
                     Masking = true,
-                    AutoSizeAxes = Axes.Both,
+                    AutoSizeAxes = Axes.Y,
+                    RelativeSizeAxes = Axes.X,
                     Children = new Drawable[]
                     {
                         new Box
@@ -105,8 +101,10 @@ namespace GamesToGo.Desktop.Graphics
                         },
                         lists = new FillFlowContainer<ActionTypeList>
                         {
-                            AutoSizeAxes = Axes.Both,
-                            Direction = FillDirection.Horizontal,
+                            AutoSizeAxes = Axes.Y,
+                            Direction = FillDirection.Full,
+                            RelativeSizeAxes = Axes.X,
+                            Spacing = new Vector2(15),
                         },
                     },
                 };
@@ -116,9 +114,8 @@ namespace GamesToGo.Desktop.Graphics
                     new ActionTypeList(@"Jugador", ArgumentType.Player),
                     new ActionTypeList(@"Cartas", ArgumentType.Card),
                     new ActionTypeList(@"Casillas", ArgumentType.Tile),
-                    new ActionTypeList(@"Tableros", ArgumentType.Board),
                     new ActionTypeList(@"Fichas", ArgumentType.Token),
-                    new ActionTypeList(@"Otros", ArgumentType.Default),
+                    new ActionTypeList(@"Otros", ArgumentType.Default | ArgumentType.Privacy | ArgumentType.Orientation),
                 });
             }
 
@@ -143,10 +140,14 @@ namespace GamesToGo.Desktop.Graphics
 
                 foreach (var list in lists)
                 {
+                    var added = ArgumentType.Default;
                     foreach(var arg in defaultEvent.ExpectedArguments)
                     {
-                        if ((arg & list.ExpectedType) > 0)
-                            list.AddPossibility(defaultEvent);
+                        if ((arg & list.ExpectedType) <= 0 || (added & list.ExpectedType) != 0)
+                            continue;
+
+                        list.AddPossibility(defaultEvent);
+                        added |= list.ExpectedType;
                     }
                 }
             }
@@ -190,14 +191,16 @@ namespace GamesToGo.Desktop.Graphics
         {
             private readonly Container content = new Container
             {
-                RelativeSizeAxes = Axes.Y,
-                AutoSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Both,
             };
 
             private readonly EventAction type;
 
             [Resolved]
             private EventEditionOverlay events { get; set; }
+
+            [Resolved]
+            private ActionListContainer actionList { get; set; }
 
             public ActionTypeButton(EventAction type)
             {
@@ -210,10 +213,14 @@ namespace GamesToGo.Desktop.Graphics
             private void load()
             {
                 AddInternal(content);
-                AutoSizeAxes = Axes.X;
+                AutoSizeAxes = Axes.Both;
                 BackgroundColour = Colour4.Transparent;
                 HoverColour = new Colour4(55, 55, 55, 255);
-                Action = () => events.AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
+                Action = () =>
+                {
+                    events.AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
+                    actionList.Hide();
+                };
                 SpriteText.Text = string.Join(' ', type.Text);
             }
 

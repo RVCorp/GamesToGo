@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Online;
+using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
-using GamesToGo.Desktop.Project.Events.Arguments;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
@@ -17,62 +17,11 @@ namespace GamesToGo.Desktop.Project
 {
     public class WorkingProject
     {
-        public static List<Type> AvailableEvents { get; } = new List<Type>
-        {
-            typeof(SetCardOnTileEvent),
-            typeof(SetCardTypeOnTileEvent),
-            typeof(CardMovedToTileEvent),
-            typeof(DrawCardTypeOffTileEvent),
-            typeof(DrawCardOffTileEvent)
-        };
+        public static Dictionary<int, Type> AvailableEvents { get; } = new Dictionary<int, Type>();
 
-        public static List<Type> AvailableActions { get; } = new List<Type>
-        {
-            typeof(AddCardToTileAction),
-            typeof(ChangeCardPrivacyAction),
-            typeof(ChangeTokenPrivacyAction),
-            typeof(DelayGameAction),
-            typeof(DelayTileAction),
-            typeof(GiveCardFromPlayerToPlayerAction),
-            typeof(GivePlayerATokenTypeAction),
-            typeof(GivePlayerATokenTypeFromPlayerAction),
-            typeof(GivePlayerXCardsFromTileAction),
-            typeof(GivePlayerXTokensTypeAction),
-            typeof(GiveXCardsATokenAction),
-            typeof(MoveCardFromPlayerTileToTileAction),
-            typeof(MoveCardFromPlayerToTileAction),
-            typeof(MoveCardFromPlayerToTileInXPositionAction),
-            typeof(MoveXCardsFromPlayerToTileAction),
-            typeof(RemovePlayerAction),
-            typeof(RemoveTokenTypeFromCardAction),
-            typeof(ShuffleTileAction),
-            typeof(StopTileDelayAction),
-            typeof(StopTileEventsAction),
-            typeof(WaitForPlayerConfirmationAction),
-        };
+        public static Dictionary<int, Type> AvailableActions { get; } = new Dictionary<int, Type>();
 
-        public static List<Type> AvailableArguments { get; } = new List<Type>
-        {
-            typeof(CardsWithTokenArgument),
-            typeof(CardTypeArgument),
-            typeof(CompareCardTypesArgument),
-            typeof(ComparePlayerHasCardTypeArgument),
-            typeof(ComparePlayerHasntCardTypeArgument),
-            typeof(ComparePlayerHasTokenTypeArgument),
-            typeof(ComparePlayerWithTokenHasMoreThanXTokensArgument),
-            typeof(ComparePlayerWithTokenHasXTokensArgument),
-            typeof(CompareXPositionInTileIsntCardTypeArgument),
-            typeof(FirstXCardsFromTileArgument),
-            typeof(NumberArgument),
-            typeof(PlayerCardsWithTokenArgument),
-            typeof(PlayerChosenByPlayerArgument),
-            typeof(PlayerRightOfPlayerWithTokenArgument),
-            typeof(PlayerWithTokenArgument),
-            typeof(PrivacyTypeArgument),
-            typeof(SinglePlayerArgument),
-            typeof(TileTypeArgument),
-            typeof(TokenTypeArgument),
-        };
+        public static Dictionary<int, Type> AvailableArguments { get; } = new Dictionary<int, Type>();
 
         private readonly TextureStore textures;
         public ProjectInfo DatabaseObject { get; }
@@ -388,8 +337,22 @@ namespace GamesToGo.Desktop.Project
                                     var splits = lines[i + 1].Split('|');
                                     int type = int.Parse(splits[1].Split('(')[0]);
 
-                                    ProjectEvent toBeEvent = Activator.CreateInstance(AvailableEvents[type - 1]) as ProjectEvent;
+                                    ProjectEvent toBeEvent = Activator.CreateInstance(AvailableEvents[type]) as ProjectEvent;
+                                    toBeEvent.ID = int.Parse(splits[0]);
                                     toBeEvent.Name.Value = splits[2];
+                                    int actAmm = int.Parse(splits[5]);
+                                    j += actAmm;
+
+                                    for (int k = i + actAmm; i < k; i++)
+                                    {
+                                        var action = lines[i + 2].Split('|');
+                                        int actType = int.Parse(action[1].Split('(')[0]);
+
+                                        EventAction toBeAction = Activator.CreateInstance(AvailableActions[actType]) as EventAction;
+
+                                        toBeEvent.Actions.Add(toBeAction);
+                                    }
+
                                     eventedElement.Events.Add(toBeEvent);
                                 }
                                 break;

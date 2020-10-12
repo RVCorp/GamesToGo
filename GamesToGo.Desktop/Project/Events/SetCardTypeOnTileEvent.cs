@@ -1,4 +1,6 @@
-﻿namespace GamesToGo.Desktop.Project.Events
+﻿using GamesToGo.Desktop.Project.Arguments;
+
+namespace GamesToGo.Desktop.Project.Events
 {
     public class SetCardTypeOnTileEvent : ProjectEvent
     {

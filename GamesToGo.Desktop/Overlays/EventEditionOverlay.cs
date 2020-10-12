@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -94,7 +95,7 @@ namespace GamesToGo.Desktop.Overlays
                                 {
                                     new BasicScrollContainer
                                     {
-                                        RelativeSizeAxes = Axes.X,
+                                        RelativeSizeAxes = Axes.Both,
                                         ClampExtension = 30,
                                         Child = actionFillFlow = new FillFlowContainer<ActionDescriptor>
                                         {
@@ -131,9 +132,22 @@ namespace GamesToGo.Desktop.Overlays
             eventNameBox.Text = model.Name.Value;
             Current.Value.Name.BindTo(eventNameBox.Current);
 
+            Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
+
             eventDescriptorContainer.Child = new EventDescriptor(model);
 
+            recreateActions();
+
             Show();
+        }
+
+        private void recreateActions()
+        {
+            actionFillFlow.Clear();
+            foreach (var action in Current.Value.Actions)
+            {
+                actionFillFlow.Add(new ActionDescriptor(action));
+            }
         }
 
         public void AddActionToCurrent(EventAction action)

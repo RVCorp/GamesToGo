@@ -80,7 +80,7 @@ namespace GamesToGo.Desktop.Graphics
                 _ => EventSourceActivator.Player,
             };
 
-            foreach (var type in WorkingProject.AvailableEvents)
+            foreach (var type in WorkingProject.AvailableEvents.Values)
             {
                 var defaultEvent = Activator.CreateInstance(type) as ProjectEvent;
 
@@ -89,6 +89,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
+        [Cached]
         private class EventListContainer : VisibilityContainer
         {
             private FillFlowContainer<EventTypeButton> list;
@@ -159,6 +160,9 @@ namespace GamesToGo.Desktop.Graphics
             [Resolved]
             private ProjectEventsScreen events { get; set; }
 
+            [Resolved]
+            private EventListContainer eventList { get; set; }
+
             public EventTypeButton(ProjectEvent type)
             {
                 this.type = type;
@@ -173,7 +177,11 @@ namespace GamesToGo.Desktop.Graphics
                 AutoSizeAxes = Axes.X;
                 BackgroundColour = Colour4.Transparent;
                 HoverColour = new Colour4(55, 55, 55, 255);
-                Action = () => events.CreateEvent(Activator.CreateInstance(type.GetType()) as ProjectEvent);
+                Action = () =>
+                {
+                    eventList.Hide();
+                    events.CreateEvent(Activator.CreateInstance(type.GetType()) as ProjectEvent);
+                };
                 SpriteText.Text = string.Join(' ', type.Text);
             }
 
