@@ -21,6 +21,7 @@ namespace GamesToGo.Desktop.Project
             typeof(SetCardOnTileEvent),
             typeof(SetCardTypeOnTileEvent),
             typeof(CardMovedToTileEvent),
+            typeof(DrawCardTypeOffTileEvent)
         };
 
         private readonly TextureStore textures;

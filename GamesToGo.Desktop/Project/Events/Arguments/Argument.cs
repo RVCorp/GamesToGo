@@ -2,7 +2,7 @@
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
 
-namespace GamesToGo.Desktop.Project.Events
+namespace GamesToGo.Desktop.Project.Events.Arguments
 {
     /// <summary>
     /// ActionDescriptor(ctor: Action)
