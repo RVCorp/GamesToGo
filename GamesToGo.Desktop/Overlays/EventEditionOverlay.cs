@@ -1,6 +1,7 @@
 ﻿using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -11,14 +12,15 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Overlays
 {
-    public class EventEditionOverlay : OverlayContainer
+    public class EventEditionOverlay : OverlayContainer, IHasCurrentValue<ProjectEvent>
     {
         private FillFlowContainer<ActionDescriptor> actionFillFlow;
         private Box shadowBox;
         private Container contentContainer;
         private BasicTextBox eventNameBox;
         private Container eventDescriptorContainer;
-        private ProjectEvent currentModel;
+
+        public Bindable<ProjectEvent> Current { get; set; } = new Bindable<ProjectEvent>();
 
         [BackgroundDependencyLoader]
         private void load()
@@ -107,14 +109,10 @@ namespace GamesToGo.Desktop.Overlays
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = new GamesToGoButton
+                                        Child = new ActionTypeListing
                                         {
-                                            Anchor = Anchor.BottomRight,
-                                            Origin = Anchor.BottomRight,
-                                            Text = @"Añadir accion",
-                                            Height = 30,
-                                            Width = 100,
-                                            Action = addAction,
+                                            Anchor = Anchor.BottomCentre,
+                                            Origin = Anchor.BottomCentre,
                                         },
                                     },
                                 },
@@ -127,19 +125,20 @@ namespace GamesToGo.Desktop.Overlays
 
         public void ShowEvent(ProjectEvent model)
         {
-            currentModel?.Name.UnbindAll();
+            Current.Value?.Name.UnbindAll();
 
-            currentModel = model;
+            Current.Value = model;
             eventNameBox.Text = model.Name.Value;
-            currentModel.Name.BindTo(eventNameBox.Current);
+            Current.Value.Name.BindTo(eventNameBox.Current);
 
             eventDescriptorContainer.Child = new EventDescriptor(model);
 
             Show();
         }
 
-        private void addAction()
+        public void AddActionToCurrent(EventAction action)
         {
+            Current.Value.Actions.Add(action);
         }
 
         protected override void PopIn()
