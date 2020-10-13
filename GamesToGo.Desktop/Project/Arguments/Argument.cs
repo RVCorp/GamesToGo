@@ -1,23 +1,21 @@
 ﻿using System.Text;
-using GamesToGo.Desktop.Project.Actions;
-using GamesToGo.Desktop.Project.Arguments;
 using osu.Framework.Bindables;
 
-namespace GamesToGo.Desktop.Project.Events
+namespace GamesToGo.Desktop.Project.Arguments
 {
-    public abstract class ProjectEvent
+    /// <summary>
+    /// ActionDescriptor(ctor: Action)
+    /// -ArgumentChanger(ctor: ArgumentType)
+    /// --BindableArgument
+    /// --ArgumentDescriptor(ctor: Argument)
+    /// </summary>
+    public abstract class Argument
     {
-        public int ID { get; set; }
+        public abstract int ArgumentTypeID { get; }
 
-        public abstract int TypeID { get; }
+        public abstract ArgumentType Type { get; }
 
-        public abstract EventSourceActivator Source { get; }
-
-        public abstract EventSourceActivator Activator { get; }
-
-        public abstract string[] Text { get; }
-
-        public Bindable<string> Name { get; } = new Bindable<string>();
+        public abstract bool HasResult { get; }
 
         public abstract ArgumentType[] ExpectedArguments { get; }
 
@@ -41,21 +39,27 @@ namespace GamesToGo.Desktop.Project.Events
             }
         }
 
-        public int Priority { get; set; }
+        public abstract string[] Text { get; }
 
-        public Argument Condition { get; set; } = null;
+        private int? result;
 
-        public BindableList<EventAction> Actions { get; } = new BindableList<EventAction>();
+        public int? Result
+        {
+            get => result;
+            set => result = HasResult ? value : null;
+        }
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.Append($"{ID}|{TypeID}");
+            //Tipo de argumento
+            builder.Append(ArgumentTypeID);
 
-            if (ExpectedArguments != null)
+            //Argumentos o resultado
+            builder.Append('(');
+            if (!HasResult)
             {
-                builder.Append('(');
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
                 {
@@ -64,16 +68,12 @@ namespace GamesToGo.Desktop.Project.Events
                     if (++argIndex < Arguments.Length)
                         builder.Append(',');
                 }
-                builder.Append(')');
             }
-
-            builder.Append($"|{Name.Value}|{Priority}|{Condition?.ToString() ?? "null"}|{Actions.Count}");
-
-            foreach(var action in Actions)
+            else
             {
-                builder.AppendLine();
-                builder.Append(action);
+                builder.Append(Result);
             }
+            builder.Append(')');
 
             return builder.ToString();
         }

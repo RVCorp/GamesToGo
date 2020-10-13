@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -14,13 +16,16 @@ using GamesToGo.Desktop.Project;
 using System.Reflection;
 using GamesToGo.Desktop.Database;
 using GamesToGo.Desktop.Online;
+using GamesToGo.Desktop.Project.Actions;
+using GamesToGo.Desktop.Project.Arguments;
+using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
 namespace GamesToGo.Desktop
 {
     /// <summary>
-    /// Contenedor base de la aplicación, dede de cargar e incluir todo lo necesario para que el programa pueda cargar
+    /// Contenedor base de la aplicación, dede de cargar e incluir lo necesario para que el programa pueda cargar
     /// </summary>
     public class GamesToGoEditor : Game
     {
@@ -59,6 +64,10 @@ namespace GamesToGo.Desktop
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");
             dependencies.CacheAs(dbContext = new Context(Host.Storage.GetDatabaseConnectionString(Name)));
+
+            previewEvents();
+            previewActions();
+            previewArguments();
 
             try
             {
@@ -111,6 +120,62 @@ namespace GamesToGo.Desktop
 
             dependencies.Cache(optionsOverlay);
         }
+
+        private static void previewEvents()
+        {
+            foreach (Type type in Assembly.GetAssembly(typeof(ProjectEvent))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(ProjectEvent))))
+            {
+                if (!(Activator.CreateInstance(type) is ProjectEvent thing))
+                    continue;
+
+                try
+                {
+                    WorkingProject.AvailableEvents.Add(thing.TypeID, type);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException($"{nameof(thing)} has the same id as {WorkingProject.AvailableEvents[thing.TypeID].Name}, can't resolve IDs", e);
+                }
+            }
+        }
+
+        private static void previewActions()
+        {
+            foreach (Type type in Assembly.GetAssembly(typeof(EventAction))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(EventAction))))
+            {
+                if (!(Activator.CreateInstance(type) is EventAction thing))
+                    continue;
+
+                try
+                {
+                    WorkingProject.AvailableActions.Add(thing.TypeID, type);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException($"{nameof(thing)} has the same id as {WorkingProject.AvailableActions[thing.TypeID].Name}, can't resolve IDs", e);
+                }
+            }
+        }
+
+        private static void previewArguments()
+        {
+            foreach (Type type in Assembly.GetAssembly(typeof(Argument))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Argument))))
+            {
+                if (!(Activator.CreateInstance(type) is Argument thing))
+                    continue;
+
+                try
+                {
+                    WorkingProject.AvailableArguments.Add(thing.ArgumentTypeID, type);
+                }
+                catch (ArgumentException e)
+                {
+                    throw new ArgumentException($"{nameof(thing)} has the same id as {WorkingProject.AvailableArguments[thing.ArgumentTypeID].Name}, can't resolve IDs", e);
+                }
+
+            }
+        }
+
 
         public override void SetHost(GameHost host)
         {

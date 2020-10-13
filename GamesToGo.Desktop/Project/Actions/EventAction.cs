@@ -1,23 +1,12 @@
 ﻿using System.Text;
-using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Arguments;
 using osu.Framework.Bindables;
 
-namespace GamesToGo.Desktop.Project.Events
+namespace GamesToGo.Desktop.Project.Actions
 {
-    public abstract class ProjectEvent
+    public abstract class EventAction
     {
-        public int ID { get; set; }
-
         public abstract int TypeID { get; }
-
-        public abstract EventSourceActivator Source { get; }
-
-        public abstract EventSourceActivator Activator { get; }
-
-        public abstract string[] Text { get; }
-
-        public Bindable<string> Name { get; } = new Bindable<string>();
 
         public abstract ArgumentType[] ExpectedArguments { get; }
 
@@ -41,21 +30,22 @@ namespace GamesToGo.Desktop.Project.Events
             }
         }
 
-        public int Priority { get; set; }
+        public abstract string[] Text { get; }
 
         public Argument Condition { get; set; } = null;
-
-        public BindableList<EventAction> Actions { get; } = new BindableList<EventAction>();
 
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.Append($"{ID}|{TypeID}");
+            builder.Append('|');
+            //Tipo de accion
+            builder.Append(TypeID);
 
+            //Argumentos o resultado
+            builder.Append('(');
             if (ExpectedArguments != null)
             {
-                builder.Append('(');
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
                 {
@@ -64,15 +54,13 @@ namespace GamesToGo.Desktop.Project.Events
                     if (++argIndex < Arguments.Length)
                         builder.Append(',');
                 }
-                builder.Append(')');
             }
+            builder.Append(')');
 
-            builder.Append($"|{Name.Value}|{Priority}|{Condition?.ToString() ?? "null"}|{Actions.Count}");
-
-            foreach(var action in Actions)
+            if (Condition != null)
             {
-                builder.AppendLine();
-                builder.Append(action);
+                builder.Append('|');
+                builder.Append(Condition);
             }
 
             return builder.ToString();

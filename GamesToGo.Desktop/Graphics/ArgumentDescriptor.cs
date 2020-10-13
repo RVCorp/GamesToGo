@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Project.Arguments;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
