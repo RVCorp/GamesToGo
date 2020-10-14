@@ -16,12 +16,15 @@ namespace GamesToGo.Desktop.Overlays
     public class EventEditionOverlay : OverlayContainer, IHasCurrentValue<ProjectEvent>
     {
         private FillFlowContainer<ActionDescriptor> actionFillFlow;
-        private Box shadowBox;
-        private Container contentContainer;
         private BasicTextBox eventNameBox;
         private Container eventDescriptorContainer;
 
+        [Cached]
+        private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
+
         public Bindable<ProjectEvent> Current { get; set; } = new Bindable<ProjectEvent>();
+
+        protected override bool StartHidden => true;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -30,13 +33,13 @@ namespace GamesToGo.Desktop.Overlays
 
             Children = new Drawable[]
             {
-                shadowBox = new Box
+                new Box
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
-                    Alpha = 0,
+                    Alpha = 0.5f,
                 },
-                contentContainer = new Container
+                new Container
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding(20),
@@ -117,6 +120,7 @@ namespace GamesToGo.Desktop.Overlays
                         },
                     },
                 },
+                argumentListing,
             };
         }
 
@@ -153,14 +157,12 @@ namespace GamesToGo.Desktop.Overlays
 
         protected override void PopIn()
         {
-            shadowBox.FadeTo(0.5f, 250);
-            contentContainer.FadeIn();
+            this.FadeIn(250);
         }
 
         protected override void PopOut()
         {
-            shadowBox.FadeOut(250, Easing.OutExpo);
-            contentContainer.FadeOut();
+            this.FadeOut(250);
         }
     }
 }

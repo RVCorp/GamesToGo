@@ -43,7 +43,7 @@ namespace GamesToGo.Desktop.Project.Events
 
         public int Priority { get; set; }
 
-        public Argument Condition { get; set; } = null;
+        public Bindable<Argument> Condition { get; } = new Bindable<Argument>();
 
         public BindableList<EventAction> Actions { get; } = new BindableList<EventAction>();
 
@@ -67,7 +67,7 @@ namespace GamesToGo.Desktop.Project.Events
                 builder.Append(')');
             }
 
-            builder.Append($"|{Name.Value}|{Priority}|{Condition?.ToString() ?? "null"}|{Actions.Count}");
+            builder.Append($"|{Name.Value}|{Priority}|{Condition.Value?.ToString() ?? "null"}|{Actions.Count}");
 
             foreach(var action in Actions)
             {

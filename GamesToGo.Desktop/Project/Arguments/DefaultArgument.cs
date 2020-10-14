@@ -7,7 +7,7 @@ namespace GamesToGo.Desktop.Project.Arguments
         public override int ArgumentTypeID => 0;
 
         public override ArgumentType Type => ArgumentType.Default;
-        public override bool HasResult => true;
+        public override bool HasResult => false;
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
         public override string[] Text { get; } = { @"Añade un argumento aquí" };
     }

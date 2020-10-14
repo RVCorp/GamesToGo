@@ -13,6 +13,7 @@ namespace GamesToGo.Desktop.Graphics
     {
         private readonly Argument model;
         private FillFlowContainer descriptionContainer;
+        private Container selectionContainer;
 
         public ArgumentDescriptor(Argument model)
         {
@@ -25,6 +26,7 @@ namespace GamesToGo.Desktop.Graphics
             AutoSizeAxes = Axes.Both;
             Masking = true;
             CornerRadius = 4;
+
             Children = new Drawable[]
             {
                 new Box
@@ -33,41 +35,70 @@ namespace GamesToGo.Desktop.Graphics
                     Colour = Color4.Black,
                     Alpha = 0.2f,
                 },
-                descriptionContainer = new FillFlowContainer
+                new Container
                 {
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
                     AutoSizeAxes = Axes.Both,
-                    Direction = FillDirection.Horizontal,
+                    Children = new Drawable[]
+                    {
+                        descriptionContainer = new FillFlowContainer
+                        {
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            AutoSizeAxes = Axes.Both,
+                            Direction = FillDirection.Horizontal,
+                        },
+                        selectionContainer = new Container
+                        {
+                            AutoSizeAxes = Axes.Both,
+                            Child = new SpriteText
+                            {
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft,
+                                Padding = new MarginPadding(4),
+                                Text = @"Selección de argumento final",
+                                Font = new FontUsage(size: 25),
+                            },
+                        },
+                    },
                 },
             };
 
-            for (int i = 0; i < model.ExpectedArguments.Length; i++)
+            if (!model.HasResult)
             {
-                descriptionContainer.AddRange(new Drawable[]
+                descriptionContainer.FadeIn();
+                selectionContainer.FadeOut();
+                for (int i = 0; i < model.ExpectedArguments.Length; i++)
                 {
-                    new SpriteText
+                    descriptionContainer.AddRange(new Drawable[]
+                    {
+                        new SpriteText
+                        {
+                            Anchor = Anchor.CentreLeft,
+                            Origin = Anchor.CentreLeft,
+                            Padding = new MarginPadding(4),
+                            Text = model.Text[i],
+                            Font = new FontUsage(size: 25),
+                        },
+                        new ArgumentChanger(model.ExpectedArguments[i], model.Arguments[i]),
+                    });
+                }
+
+                if (model.ExpectedArguments.Length < model.Text.Length)
+                {
+                    descriptionContainer.Add(new SpriteText
                     {
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Padding = new MarginPadding(4),
-                        Text = model.Text[i],
+                        Text = model.Text.Last(),
                         Font = new FontUsage(size: 25),
-                    },
-                    new ArgumentChanger(model.ExpectedArguments[i], model.Arguments[i]),
-                });
+                    });
+                }
             }
-
-            if (model.ExpectedArguments.Length < model.Text.Length)
+            else
             {
-                descriptionContainer.Add(new SpriteText
-                {
-                    Anchor = Anchor.CentreLeft,
-                    Origin = Anchor.CentreLeft,
-                    Padding = new MarginPadding(4),
-                    Text = model.Text.Last(),
-                    Font = new FontUsage(size: 25),
-                });
+                descriptionContainer.FadeOut();
+                selectionContainer.FadeIn();
             }
         }
     }

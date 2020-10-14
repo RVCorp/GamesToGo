@@ -32,7 +32,7 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public abstract string[] Text { get; }
 
-        public Argument Condition { get; set; } = null;
+        public Bindable<Argument> Condition { get; } = new Bindable<Argument>();
 
         public override string ToString()
         {
@@ -57,7 +57,7 @@ namespace GamesToGo.Desktop.Project.Actions
             }
             builder.Append(')');
 
-            if (Condition != null)
+            if (Condition.Value != null)
             {
                 builder.Append('|');
                 builder.Append(Condition);
