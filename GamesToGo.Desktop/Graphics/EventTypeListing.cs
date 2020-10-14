@@ -99,7 +99,6 @@ namespace GamesToGo.Desktop.Graphics
             [BackgroundDependencyLoader]
             private void load()
             {
-                Alpha = 1;
                 Anchor = Anchor.TopRight;
                 Origin = Anchor.BottomRight;
                 AutoSizeAxes = Axes.Both;
