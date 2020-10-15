@@ -14,7 +14,7 @@ namespace GamesToGo.Desktop.Graphics
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
         {
-            Action = () => editor.SelectElement(Element);
+            Action += () => editor.SelectElement(Element);
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(_ =>
             {

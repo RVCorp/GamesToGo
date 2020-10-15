@@ -2,7 +2,9 @@
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
+using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -19,10 +21,14 @@ namespace GamesToGo.Desktop.Overlays
         private NumericTextBox sizeTextBoxX;
         private NumericTextBox sizeTextBoxY;
         private BasicTextBox descriptionTextBox;
+        private ProjectEditor editor;
+        private ProjectElement oldCurrentEditing;
+        public ProjectElement ProjectElement;
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(ProjectEditor editor)
         {
+            this.editor = editor;
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
@@ -142,13 +148,15 @@ namespace GamesToGo.Desktop.Overlays
                     Width = 175,
                     Text = @"Regresar",
                     Position = new Vector2(10,10),
-                    Action = Hide,
+                    Action = () => editor.SelectElement(oldCurrentEditing),
                 },
             };
         }
 
         public void ShowElement(ProjectElement element)
         {
+            oldCurrentEditing = editor.CurrentEditingElement.Value;
+            ProjectElement = element;
             Show();
             nameTextBox.Current.UnbindEvents();
             sizeTextBoxX.Current.UnbindEvents();

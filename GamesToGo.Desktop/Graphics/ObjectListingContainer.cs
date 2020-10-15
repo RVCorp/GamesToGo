@@ -141,6 +141,11 @@ namespace GamesToGo.Desktop.Graphics
             });
         }
 
+        protected virtual void EditTButton(TButton button)
+        {
+
+        }
+
         private void checkAdded(IEnumerable<ProjectElement> added)
         {
             foreach (var item in added)
@@ -148,7 +153,11 @@ namespace GamesToGo.Desktop.Graphics
                 if (!(item is TElement itemT))
                     continue;
                 if (Filter(itemT))
-                    allElements.Add(new TButton {Element = itemT});
+                {
+                    TButton button = new TButton { Element = itemT };
+                    EditTButton(button);
+                    allElements.Add(button);
+                }
             }
         }
 

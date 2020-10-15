@@ -282,7 +282,10 @@ namespace GamesToGo.Desktop.Screens
             {
                 elementSubElements.Hide();
             }
-            tileOverlay.Hide();
+            if (obj.NewValue != tileOverlay.ProjectElement)
+            {
+                tileOverlay.Hide();
+            }
             descriptionTextBox.Current.ValueChanged += text => currentEditing.Value.Description.Value = text.NewValue;
             nameTextBox.Current.ValueChanged += text => currentEditing.Value.Name.Value = text.NewValue;
         }
