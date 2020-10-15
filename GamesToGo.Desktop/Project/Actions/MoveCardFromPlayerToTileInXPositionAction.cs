@@ -10,14 +10,14 @@ namespace GamesToGo.Desktop.Project.Actions
             ArgumentType.CardType,
             ArgumentType.SinglePlayer,
             ArgumentType.SingleTile,
-            ArgumentType.Number
+            ArgumentType.Number,
         };
 
         public override string[] Text { get; } = {
             @"Poner carta",
             @"desde jugador",
             @"hacia casilla",
-            @"en posición"
+            @"en posición",
         };
     }
 }

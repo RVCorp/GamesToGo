@@ -12,6 +12,9 @@ namespace GamesToGo.Desktop.Project.Arguments
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
-        public override string[] Text => Array.Empty<string>();
+        public override string[] Text { get; } =
+        {
+            @"Numero predeterminado",
+        };
     }
 }

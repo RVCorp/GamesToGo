@@ -8,12 +8,12 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.TokenType,
-            ArgumentType.SinglePlayer
+            ArgumentType.SinglePlayer,
         };
 
         public override string[] Text { get; } = {
             @"Quitar ficha",
-            @"a jugador"
+            @"a jugador",
         };
     }
 }

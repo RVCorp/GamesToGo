@@ -9,11 +9,11 @@
         public override bool HasResult => false;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.TokenType
+            ArgumentType.TokenType,
         };
 
         public override string[] Text { get; } = {
-            @"Jugador con ficha"
+            @"Jugador con ficha",
         };
     }
 }

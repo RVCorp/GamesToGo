@@ -9,11 +9,11 @@
         public override bool HasResult => false;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SinglePlayer
+            ArgumentType.SinglePlayer,
         };
 
         public override string[] Text { get; } = {
-            @"jugador seleccionado por"
+            @"jugador seleccionado por",
         };
     }
 }

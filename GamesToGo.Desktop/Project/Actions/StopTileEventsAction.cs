@@ -10,7 +10,7 @@ namespace GamesToGo.Desktop.Project.Actions
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
         public override string[] Text { get; } = {
-            @"Detener eventos de esta casilla"
+            @"Detener eventos de esta casilla",
         };
     }
 }

@@ -10,12 +10,12 @@
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.MultiplePlayer,
-            ArgumentType.TokenType
+            ArgumentType.TokenType,
         };
 
         public override string[] Text { get; } = {
             @"si algún",
-            @"tiene fichas de tipo"
+            @"tiene fichas de tipo",
         };
     }
 }

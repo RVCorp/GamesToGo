@@ -8,12 +8,12 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.TokenType,
-            ArgumentType.MultipleCard
+            ArgumentType.MultipleCard,
         };
 
         public override string[] Text { get; } = {
             @"Quitar fichas",
-            @"de cartas"
+            @"de cartas",
         };
     }
 }
