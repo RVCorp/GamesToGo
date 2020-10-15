@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GamesToGo.Desktop.Project;
@@ -141,6 +142,11 @@ namespace GamesToGo.Desktop.Graphics
             });
         }
 
+        protected virtual void EditTButton(TButton button)
+        {
+
+        }
+
         private void checkAdded(IEnumerable<ProjectElement> added)
         {
             foreach (var item in added)
@@ -148,7 +154,11 @@ namespace GamesToGo.Desktop.Graphics
                 if (!(item is TElement itemT))
                     continue;
                 if (Filter(itemT))
-                    allElements.Add(new TButton {Element = itemT});
+                {
+                    TButton button = new TButton { Element = itemT };
+                    EditTButton(button);
+                    allElements.Add(button);
+                }
             }
         }
 
@@ -175,8 +185,20 @@ namespace GamesToGo.Desktop.Graphics
 
             localElements.BindTo(elements);
 
-            localElements.ItemsAdded += checkAdded;
-            localElements.ItemsRemoved += checkRemoved;
+            localElements.CollectionChanged += (_, args) =>
+            {
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        checkAdded(args.NewItems.Cast<ProjectElement>());
+
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        checkRemoved(args.NewItems.Cast<ProjectElement>());
+
+                        break;
+                }
+            };
         }
 
         private class ObjectManagerScrollContainer : BasicScrollContainer

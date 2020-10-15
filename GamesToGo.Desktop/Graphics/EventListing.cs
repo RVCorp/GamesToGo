@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
@@ -98,8 +99,20 @@ namespace GamesToGo.Desktop.Graphics
 
             localEvents.BindTo(events);
 
-            localEvents.ItemsAdded += addItems;
-            localEvents.ItemsRemoved += removeItems;
+            localEvents.CollectionChanged += (_, args) =>
+            {
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        addItems(args.NewItems.Cast<ProjectEvent>());
+
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        removeItems(args.OldItems.Cast<ProjectEvent>());
+
+                        break;
+                }
+            };
         }
 
         private void addItems(IEnumerable<ProjectEvent> events)
