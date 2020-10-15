@@ -5,6 +5,7 @@ using System.Text;
 using GamesToGo.Desktop.Database.Models;
 using GamesToGo.Desktop.Online;
 using GamesToGo.Desktop.Project.Actions;
+using GamesToGo.Desktop.Project.Arguments;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
 using Newtonsoft.Json;
@@ -335,20 +336,41 @@ namespace GamesToGo.Desktop.Project
                                 for (int j = i + amm; i < j; i++)
                                 {
                                     var splits = lines[i + 1].Split('|');
-                                    int type = int.Parse(splits[1].Split('(')[0]);
+                                    int type = divideLine(splits[1], out string args);
 
                                     ProjectEvent toBeEvent = Activator.CreateInstance(AvailableEvents[type]) as ProjectEvent;
                                     toBeEvent.ID = int.Parse(splits[0]);
+                                    toBeEvent.Condition.Value = populateArgument(splits[4]);
                                     toBeEvent.Name.Value = splits[2];
+
+                                    var eventArgs = args.Split(',');
+
+                                    for (int argIndex = 0; argIndex < eventArgs.Length; argIndex++)
+                                    {
+                                        toBeEvent.Arguments[argIndex].Value = populateArgument(eventArgs[argIndex]);
+                                    }
+
                                     int actAmm = int.Parse(splits[5]);
                                     j += actAmm;
 
                                     for (int k = i + actAmm; i < k; i++)
                                     {
                                         var action = lines[i + 2].Split('|');
-                                        int actType = int.Parse(action[1].Split('(')[0]);
+                                        int actType = divideLine(action[1], out string arguments);
+
+                                        var actionArgs = arguments.Split(',');
 
                                         EventAction toBeAction = Activator.CreateInstance(AvailableActions[actType]) as EventAction;
+
+                                        if (toBeAction.Condition.Value != null)
+                                            return false;
+
+                                        for (int argIndex = 0; argIndex < actionArgs.Length; argIndex++)
+                                        {
+                                            toBeAction.Arguments[argIndex].Value = populateArgument(actionArgs[argIndex]);
+                                        }
+
+                                        toBeAction.Condition.Value = populateArgument(action[2]);
 
                                         toBeEvent.Actions.Add(toBeAction);
                                     }
@@ -373,6 +395,7 @@ namespace GamesToGo.Desktop.Project
                     switch (tokens[0])
                     {
                         case "ChatRecommendation":
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                             if (tokens[1] == @"Presential")
                                 ChatRecommendation = ChatRecommendation.FaceToFace;
                             else
@@ -399,6 +422,55 @@ namespace GamesToGo.Desktop.Project
                 AddElement(parsingElement);
 
             return true;
+        }
+
+        /// <summary>
+        /// Obtiene el argumento y argumentos anidados para el texto introducido
+        /// </summary>
+        /// <param name="text">el texto del argumento a analizar</param>
+        /// <returns>El argumento con sus argumentos anidados formados</returns>
+        private static Argument populateArgument(string text)
+        {
+            if (string.IsNullOrEmpty(text) || text == "null")
+                return null;
+
+            var type = divideLine(text, out string argText);
+
+            if (!(Activator.CreateInstance(AvailableArguments[type]) is Argument toBeArgument))
+                return null;
+
+            if (toBeArgument.HasResult)
+            {
+                if (!string.IsNullOrEmpty(argText))
+                    toBeArgument.Result = int.Parse(argText);
+
+                return toBeArgument;
+            }
+
+            if (string.IsNullOrEmpty(argText))
+                return toBeArgument;
+
+            var subArgs = argText.Split(',');
+
+            for (int i = 0; i < subArgs.Length; i++)
+            {
+                toBeArgument.Arguments[i].Value = populateArgument(subArgs[i]);
+            }
+
+            return toBeArgument;
+        }
+
+        /// <summary>
+        /// Divide una linea de evento, accion o argumento en sus partes
+        /// </summary>
+        /// <param name="line">La linea a dividir</param>
+        /// <param name="arguments">Salida de la linea de argumentos</param>
+        /// <returns>ID del evento, argumento o accion, -1 si no se encontró</returns>
+        private static int divideLine(string line, out string arguments)
+        {
+            string args = line.Split('(', 2)[1];
+            arguments = args.Substring(0, args.Length - 1);
+            return int.Parse(line.Split('(')[0]);
         }
     }
 }
