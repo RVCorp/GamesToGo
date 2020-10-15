@@ -1,15 +1,9 @@
-﻿using System.Globalization;
-using GamesToGo.Desktop.Graphics;
+﻿using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace GamesToGo.Desktop.Overlays
