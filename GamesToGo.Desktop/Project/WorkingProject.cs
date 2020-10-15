@@ -99,8 +99,7 @@ namespace GamesToGo.Desktop.Project
                 }
             }
 
-            ret.ProjectElements.ItemsAdded += _ => ret.updateDatabaseObjectInfo();
-            ret.ProjectElements.ItemsRemoved += _ => ret.updateDatabaseObjectInfo();
+            ret.ProjectElements.CollectionChanged += (_, __) => ret.updateDatabaseObjectInfo();
 
             ret.updateDatabaseObjectInfo();
 

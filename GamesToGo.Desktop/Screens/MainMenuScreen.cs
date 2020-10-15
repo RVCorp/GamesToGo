@@ -17,6 +17,8 @@ using System.IO;
 using GamesToGo.Desktop.Database;
 using Ionic.Zip;
 using osu.Framework.Graphics.Textures;
+using GamesToGo.Desktop.Project.Elements;
+using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Screens
 {
