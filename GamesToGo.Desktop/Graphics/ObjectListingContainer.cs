@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GamesToGo.Desktop.Project;
@@ -184,8 +185,20 @@ namespace GamesToGo.Desktop.Graphics
 
             localElements.BindTo(elements);
 
-            localElements.ItemsAdded += checkAdded;
-            localElements.ItemsRemoved += checkRemoved;
+            localElements.CollectionChanged += (_, args) =>
+            {
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        checkAdded(args.NewItems.Cast<ProjectElement>());
+
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        checkRemoved(args.NewItems.Cast<ProjectElement>());
+
+                        break;
+                }
+            };
         }
 
         private class ObjectManagerScrollContainer : BasicScrollContainer
