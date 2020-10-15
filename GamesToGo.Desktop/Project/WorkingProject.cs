@@ -369,7 +369,14 @@ namespace GamesToGo.Desktop.Project
                                             toBeAction.Arguments[argIndex].Value = populateArgument(actionArgs[argIndex]);
                                         }
 
-                                        toBeAction.Condition.Value = populateArgument(action[2]);
+                                        try
+                                        {
+                                            toBeAction.Condition.Value = populateArgument(action[2]);
+                                        }
+                                        catch (IndexOutOfRangeException)
+                                        {
+                                            toBeAction.Condition.Value = null;
+                                        }
 
                                         toBeEvent.Actions.Add(toBeAction);
                                     }
