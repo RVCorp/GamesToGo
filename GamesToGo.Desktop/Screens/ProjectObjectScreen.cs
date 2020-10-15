@@ -282,7 +282,7 @@ namespace GamesToGo.Desktop.Screens
             {
                 elementSubElements.Hide();
             }
-            if (obj.NewValue != tileOverlay.ProjectElement)
+            if (obj.NewValue != tileOverlay.SelectedTile)
             {
                 tileOverlay.Hide();
             }

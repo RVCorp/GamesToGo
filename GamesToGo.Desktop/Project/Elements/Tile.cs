@@ -15,7 +15,7 @@ namespace GamesToGo.Desktop.Project.Elements
 
         protected override string DefaultImageName => @"Tile";
 
-        public override Dictionary<string, Bindable<Image>> Images => new Dictionary<string, Bindable<Image>>(new[]
+        public override Dictionary<string, Bindable<Image>> Images { get; } = new Dictionary<string, Bindable<Image>>(new[]
         {
             new KeyValuePair<string, Bindable<Image>>(@"Frente", new Bindable<Image>()),
         });
