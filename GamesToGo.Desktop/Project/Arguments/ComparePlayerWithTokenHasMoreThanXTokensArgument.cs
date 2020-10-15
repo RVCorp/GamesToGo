@@ -11,13 +11,13 @@
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SinglePlayer,
             ArgumentType.SingleNumber,
-            ArgumentType.TokenType
+            ArgumentType.TokenType,
         };
 
         public override string[] Text { get; } = {
             @"si",
             @"tiene más de",
-            @"ficha de tipo"
+            @"ficha de tipo",
         };
     }
 }

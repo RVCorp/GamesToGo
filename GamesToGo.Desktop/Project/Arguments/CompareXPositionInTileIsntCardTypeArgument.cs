@@ -1,6 +1,6 @@
 ﻿namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class CompareXPositionInTileIsntCardTypeArgument : Argument
+    public class CompareXPositionInTileIsNotCardTypeArgument : Argument
     {
         public override int ArgumentTypeID => 15;
 
@@ -10,12 +10,12 @@
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SingleNumber,
-            ArgumentType.CardType
+            ArgumentType.CardType,
         };
 
         public override string[] Text { get; }= {
             @"si la posición",
-            @"en esta casilla no es"
+            @"en esta casilla no es",
         };
     }
 }

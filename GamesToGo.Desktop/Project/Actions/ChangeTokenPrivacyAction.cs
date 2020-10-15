@@ -8,12 +8,12 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SingleToken,
-            ArgumentType.Privacy
+            ArgumentType.Privacy,
         };
 
         public override string[] Text { get; } = {
             @"Cambiar privacidad de ficha",
-            @"a"
+            @"a",
         };
     }
 }

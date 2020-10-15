@@ -8,13 +8,13 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SingleTile,
-            ArgumentType.Number
+            ArgumentType.Number,
         };
 
         public override string[] Text { get; } = {
             @"Retrasar casilla",
             @"durante",
-            @"segundos"
+            @"segundos",
         };
     }
 }

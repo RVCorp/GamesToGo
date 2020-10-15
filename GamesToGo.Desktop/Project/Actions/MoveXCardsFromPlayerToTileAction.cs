@@ -9,13 +9,13 @@ namespace GamesToGo.Desktop.Project.Actions
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SingleNumber,
             ArgumentType.SinglePlayer,
-            ArgumentType.SingleTile
+            ArgumentType.SingleTile,
         };
 
         public override string[] Text { get; } = {
             @"Poner",
             @"cartas desde jugador",
-            @"en casilla"
+            @"en casilla",
         };
     }
 }

@@ -10,12 +10,12 @@
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SinglePlayer,
-            ArgumentType.CardType
+            ArgumentType.CardType,
         };
 
         public override string[] Text { get; } = {
             @"si",
-            @"tiene cartas de tipo"
+            @"tiene cartas de tipo",
         };
     }
 }

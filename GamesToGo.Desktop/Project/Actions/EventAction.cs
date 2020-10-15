@@ -21,7 +21,7 @@ namespace GamesToGo.Desktop.Project.Actions
 
                 arguments = new Bindable<Argument>[ExpectedArguments.Length];
 
-                for(int i = 0; i < arguments.Length; i++)
+                for (int i = 0; i < arguments.Length; i++)
                 {
                     arguments[i] = new Bindable<Argument>(new DefaultArgument());
                 }
@@ -32,7 +32,7 @@ namespace GamesToGo.Desktop.Project.Actions
 
         public abstract string[] Text { get; }
 
-        public Argument Condition { get; set; } = null;
+        public Bindable<Argument> Condition { get; } = new Bindable<Argument>();
 
         public override string ToString()
         {
@@ -44,9 +44,11 @@ namespace GamesToGo.Desktop.Project.Actions
 
             //Argumentos o resultado
             builder.Append('(');
+
             if (ExpectedArguments != null)
             {
                 int argIndex = 0;
+
                 while (argIndex < Arguments.Length)
                 {
                     builder.Append(Arguments[argIndex].Value);
@@ -55,13 +57,11 @@ namespace GamesToGo.Desktop.Project.Actions
                         builder.Append(',');
                 }
             }
+
             builder.Append(')');
 
-            if (Condition != null)
-            {
-                builder.Append('|');
-                builder.Append(Condition);
-            }
+            builder.Append('|');
+            builder.Append(Condition.Value?.ToString() ?? "null");
 
             return builder.ToString();
         }

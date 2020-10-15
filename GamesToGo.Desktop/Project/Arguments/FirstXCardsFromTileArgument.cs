@@ -10,12 +10,12 @@
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SingleNumber,
-            ArgumentType.TileType
+            ArgumentType.TileType,
         };
 
         public override string[] Text { get; } = {
             @"primeras",
-            @"cartas de"
+            @"cartas de",
         };
     }
 }

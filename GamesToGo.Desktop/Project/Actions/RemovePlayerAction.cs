@@ -7,11 +7,11 @@ namespace GamesToGo.Desktop.Project.Actions
         public override int TypeID => 7;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SinglePlayer
+            ArgumentType.SinglePlayer,
         };
 
         public override string[] Text { get; } = {
-            @"Eliminar jugador"
+            @"Eliminar jugador",
         };
     }
 }

@@ -60,6 +60,7 @@ namespace GamesToGo.Desktop.Graphics
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(_ => possibleEventsList.Hide(), true);
 
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var type in WorkingProject.AvailableActions.Values)
             {
                 var defaultAction = Activator.CreateInstance(type) as EventAction;

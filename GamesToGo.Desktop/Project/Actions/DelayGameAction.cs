@@ -7,12 +7,12 @@ namespace GamesToGo.Desktop.Project.Actions
         public override int TypeID => 4;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SingleNumber
+            ArgumentType.SingleNumber,
         };
 
         public override string[] Text { get; } = {
             @"Retrasar juego por",
-            @"segundos"
+            @"segundos",
         };
     }
 }

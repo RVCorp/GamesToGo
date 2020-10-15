@@ -7,11 +7,11 @@ namespace GamesToGo.Desktop.Project.Actions
         public override int TypeID => 21;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SinglePlayer
+            ArgumentType.SinglePlayer,
         };
 
         public override string[] Text { get; } = {
-            @"Esperar confirmación de jugador"
+            @"Esperar confirmación de jugador",
         };
     }
 }

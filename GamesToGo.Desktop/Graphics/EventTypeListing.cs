@@ -80,6 +80,7 @@ namespace GamesToGo.Desktop.Graphics
                 _ => EventSourceActivator.Player,
             };
 
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var type in WorkingProject.AvailableEvents.Values)
             {
                 var defaultEvent = Activator.CreateInstance(type) as ProjectEvent;
@@ -99,7 +100,6 @@ namespace GamesToGo.Desktop.Graphics
             [BackgroundDependencyLoader]
             private void load()
             {
-                Alpha = 1;
                 Anchor = Anchor.TopRight;
                 Origin = Anchor.BottomRight;
                 AutoSizeAxes = Axes.Both;

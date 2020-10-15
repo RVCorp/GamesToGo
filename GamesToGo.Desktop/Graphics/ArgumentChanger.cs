@@ -54,7 +54,7 @@ namespace GamesToGo.Desktop.Graphics
                                 AutoSizeAxes = Axes.Both,
                                 Padding = new MarginPadding(4) { Right = 2 },
                             },
-                            new ChangeArgumentButton(),
+                            new ChangeArgumentButton(expectedType, model),
                         },
                     },
                 },
@@ -71,6 +71,17 @@ namespace GamesToGo.Desktop.Graphics
         private class ChangeArgumentButton : Button
         {
             private Box hoverBox;
+            private readonly Bindable<Argument> model;
+            private readonly ArgumentType type;
+
+            [Resolved]
+            private ArgumentTypeListing argumentListing { get; set; }
+
+            public ChangeArgumentButton(ArgumentType argumentType, Bindable<Argument> bindable)
+            {
+                type = argumentType;
+                model = bindable;
+            }
 
             [BackgroundDependencyLoader]
             private void load()
@@ -79,6 +90,8 @@ namespace GamesToGo.Desktop.Graphics
 
                 RelativeSizeAxes = Axes.Y;
                 AutoSizeAxes = Axes.X;
+
+                Action = changeTo;
 
                 Child = new Container
                 {
@@ -109,6 +122,12 @@ namespace GamesToGo.Desktop.Graphics
                         },
                     },
                 };
+            }
+
+            private void changeTo()
+            {
+                argumentListing.ShowFor(type, model,
+                    ToSpaceOfOtherDrawable(new Vector2((Width - 4) / 2, DrawHeight), argumentListing));
             }
 
             protected override bool OnHover(HoverEvent e)
