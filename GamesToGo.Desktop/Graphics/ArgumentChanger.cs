@@ -1,5 +1,4 @@
-﻿using System;
-using GamesToGo.Desktop.Project.Arguments;
+﻿using GamesToGo.Desktop.Project.Arguments;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
