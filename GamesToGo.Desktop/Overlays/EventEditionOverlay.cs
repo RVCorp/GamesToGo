@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
@@ -70,24 +71,10 @@ namespace GamesToGo.Desktop.Overlays
                                     {
                                         new SpriteText
                                         {
-                                            new SpriteText
-                                            {
-                                                Anchor = Anchor.BottomLeft,
-                                                Origin = Anchor.BottomLeft,
-                                                Text = @"Nombre del evento:",
-                                                Font = new FontUsage(size: 20),
-                                            },
-                                            eventNameBox = new BasicTextBox
-                                            {
-                                                Anchor = Anchor.BottomLeft,
-                                                Origin = Anchor.BottomLeft,
-                                                Size = new Vector2(400, 30),
-                                            },
-                                            PriorityBox = new NumericTextBox(1)
-                                            {
-                                                RelativeSizeAxes = Axes.Y,
-                                                Width = 100
-                                            }
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Text = @"Nombre del evento:",
+                                            Font = new FontUsage(size: 20),
                                         },
                                         eventNameBox = new BasicTextBox
                                         {
@@ -95,6 +82,17 @@ namespace GamesToGo.Desktop.Overlays
                                             Origin = Anchor.BottomLeft,
                                             Size = new Vector2(400, 30),
                                         },
+                                        new SpriteText
+                                        {
+                                            Anchor = Anchor.BottomLeft,
+                                            Origin = Anchor.BottomLeft,
+                                            Text = @"Prioridad:",
+                                            Font = new FontUsage(size: 20),
+                                        },
+                                        PriorityBox = new NumericTextBox(1)
+                                        {
+                                            Size = new Vector2(100, 30)
+                                        }
                                     },
                                 },
                             },
@@ -146,6 +144,9 @@ namespace GamesToGo.Desktop.Overlays
             Current.Value = model;
             eventNameBox.Text = model.Name.Value;
             Current.Value.Name.BindTo(eventNameBox.Current);
+            PriorityBox.Current.UnbindAll();
+            PriorityBox.Text = model.Priority.ToString();
+            PriorityBox.Current.BindValueChanged(giveValueToPriority, true);
 
             Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
 
@@ -154,6 +155,12 @@ namespace GamesToGo.Desktop.Overlays
             recreateActions();
 
             Show();
+        }
+
+        private void giveValueToPriority(ValueChangedEvent<string> obj)
+        {
+            if(obj.NewValue != "")
+                Current.Value.Priority.Value = int.Parse(obj.NewValue);
         }
 
         private void recreateActions()

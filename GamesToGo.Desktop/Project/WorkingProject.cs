@@ -341,6 +341,7 @@ namespace GamesToGo.Desktop.Project
                                     toBeEvent.ID = int.Parse(splits[0]);
                                     toBeEvent.Condition.Value = populateArgument(splits[4]);
                                     toBeEvent.Name.Value = splits[2];
+                                    toBeEvent.Priority.Value = int.Parse(splits[3]);
 
                                     var eventArgs = args.Split(',');
 
