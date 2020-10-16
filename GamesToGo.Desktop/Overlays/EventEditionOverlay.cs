@@ -18,6 +18,7 @@ namespace GamesToGo.Desktop.Overlays
         private FillFlowContainer<ActionDescriptor> actionFillFlow;
         private BasicTextBox eventNameBox;
         private Container eventDescriptorContainer;
+        private NumericTextBox PriorityBox;
 
         [Cached]
         private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
@@ -69,10 +70,24 @@ namespace GamesToGo.Desktop.Overlays
                                     {
                                         new SpriteText
                                         {
-                                            Anchor = Anchor.BottomLeft,
-                                            Origin = Anchor.BottomLeft,
-                                            Text = @"Nombre del evento:",
-                                            Font = new FontUsage(size: 20),
+                                            new SpriteText
+                                            {
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Text = @"Nombre del evento:",
+                                                Font = new FontUsage(size: 20),
+                                            },
+                                            eventNameBox = new BasicTextBox
+                                            {
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Size = new Vector2(400, 30),
+                                            },
+                                            PriorityBox = new NumericTextBox(1)
+                                            {
+                                                RelativeSizeAxes = Axes.Y,
+                                                Width = 100
+                                            }
                                         },
                                         eventNameBox = new BasicTextBox
                                         {
