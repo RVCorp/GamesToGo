@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Bindables;
@@ -8,6 +10,30 @@ namespace GamesToGo.Desktop.Project
 {
     public abstract class ProjectElement
     {
+        private ProjectElement parent;
+
+        public ProjectElement Parent
+        {
+            get => parent;
+            set
+            {
+                if (!(parent is IHasElements elementedParent))
+                {
+                    var parentName = value.Name.Value;
+                    throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when {parentName} is not {nameof(IHasElements)}");
+                }
+
+                if (!(elementedParent.Elements.Any(e => e.ID == ID) ||
+                      elementedParent.PendingElements.Any(i => i == ID)))
+                {
+                    var parentName = value.Name.Value;
+                    throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when no children of {parentName} has our id ({ID})");
+                }
+
+                parent = value;
+            }
+        }
+
         public int ID { get; set; }
 
         public abstract ElementType Type { get; }

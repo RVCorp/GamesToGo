@@ -75,7 +75,7 @@ namespace GamesToGo.Desktop.Screens
                                             {
                                                 Padding = new MarginPadding(15),
                                                 Size = new Vector2(180),
-                                                Child = new ImageChangerButton
+                                                Child = new ProjectImageChangerButton
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
                                                 },
