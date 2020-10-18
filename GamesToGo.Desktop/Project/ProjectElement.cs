@@ -52,6 +52,11 @@ namespace GamesToGo.Desktop.Project
                 builder.AppendLine(orientedElement.ToSaveable());
             }
 
+            if(this is IHasPosition positionedElement)
+            {
+                builder.AppendLine(positionedElement.ToSaveable());
+            }
+
             if (this is IHasElements elementedElement)
             {
                 builder.AppendLine(elementedElement.ToSaveable());

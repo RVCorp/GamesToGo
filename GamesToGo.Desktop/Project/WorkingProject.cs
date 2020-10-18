@@ -329,6 +329,12 @@ namespace GamesToGo.Desktop.Project
                                 privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
                                 break;
                             }
+                            case "Position" when parsingElement is IHasPosition position:
+                            {
+                                var xy = tokens[1].Split("|");
+                                position.Position.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+                                break;
+                            }
                             case "Events" when parsingElement is IHasEvents eventedElement:
                             {
                                 int amm = int.Parse(tokens[1]);
