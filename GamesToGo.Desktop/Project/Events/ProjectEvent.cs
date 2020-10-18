@@ -41,7 +41,7 @@ namespace GamesToGo.Desktop.Project.Events
             }
         }
 
-        public int Priority { get; set; }
+        public Bindable<int> Priority { get; } = new BindableInt();
 
         public Bindable<Argument> Condition { get; } = new Bindable<Argument>();
 
