@@ -5,7 +5,7 @@ using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    public class Tile : ProjectElement, IHasSize, IHasEvents
+    public class Tile : ProjectElement, IHasSize, IHasEvents, IHasOrientation, IHasPosition
     {
         public override ElementType Type => ElementType.Tile;
 
@@ -23,5 +23,9 @@ namespace GamesToGo.Desktop.Project.Elements
         public BindableList<ProjectEvent> Events { get; } = new BindableList<ProjectEvent>();
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
+        public ElementOrientation DefaultOrientation { get; set; } = ElementOrientation.Vertical;
+
+        public Bindable<Vector2> Position { get; } = new Bindable<Vector2>(Vector2.Zero);
+
     }
 }
