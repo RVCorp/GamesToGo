@@ -186,29 +186,26 @@ namespace GamesToGo.Desktop.Project
                 while (elementQueue.Count > 0)
                 {
                     int nextElement = elementQueue.Dequeue();
-                    switch (elementedElement.NestedElementType)
+                    ProjectElement createdElement = projectElements.FirstOrDefault(e => e.ID == nextElement);
+
+                    if (createdElement == null || createdElement.Type != elementedElement.NestedElementType)
+                        return false;
+
+                    createdElement = elementedElement.NestedElementType switch
                     {
-                        case ElementType.Token:
-                            if (ProjectTokens.All(b => b.ID != nextElement))
-                                return false;
-                            elementedElement.Elements.Add(ProjectTokens.First(b => b.ID == nextElement));
-                            break;
-                        case ElementType.Card:
-                            if (ProjectCards.All(b => b.ID != nextElement))
-                                return false;
-                            elementedElement.Elements.Add(ProjectCards.First(b => b.ID == nextElement));
-                            break;
-                        case ElementType.Tile:
-                            if (ProjectTiles.All(b => b.ID != nextElement))
-                                return false;
-                            elementedElement.Elements.Add(ProjectTiles.First(b => b.ID == nextElement));
-                            break;
-                        case ElementType.Board:
-                            if (ProjectBoards.All(b => b.ID != nextElement))
-                                return false;
-                            elementedElement.Elements.Add(ProjectBoards.First(b => b.ID == nextElement));
-                            break;
-                    }
+                        ElementType.Token => (Token)createdElement,
+                        ElementType.Card => (Card)createdElement,
+                        ElementType.Tile => (Tile)createdElement,
+                        ElementType.Board => (Board)createdElement,
+                        _ => null,
+                    };
+
+                    if (createdElement == null || createdElement.Parent != null)
+                        return false;
+
+                    createdElement.Parent = element;
+
+                    elementedElement.Elements.Add(createdElement);
                 }
             }
 
@@ -253,23 +250,19 @@ namespace GamesToGo.Desktop.Project
                         var idents = line.Split('|', 3);
                         if (idents.Length != 3)
                             return false;
-                        switch (Enum.Parse<ElementType>(idents[0]))
+
+                        parsingElement = Enum.Parse<ElementType>(idents[0]) switch
                         {
-                            case ElementType.Token:
-                                parsingElement = new Token();
-                                break;
-                            case ElementType.Card:
-                                parsingElement = new Card();
-                                break;
-                            case ElementType.Tile:
-                                parsingElement = new Tile();
-                                break;
-                            case ElementType.Board:
-                                parsingElement = new Board();
-                                break;
-                            default:
-                                return false;
-                        }
+                            ElementType.Token => new Token(),
+                            ElementType.Card => new Card(),
+                            ElementType.Tile => new Tile(),
+                            ElementType.Board => new Board(),
+                            _ => null,
+                        };
+
+                        if (parsingElement == null)
+                            return false;
+
                         parsingElement.ID = int.Parse(idents[1]);
                         parsingElement.Name.Value = idents[2];
                     }
