@@ -84,11 +84,6 @@ namespace GamesToGo.Desktop.Screens
                                         RelativeSizeAxes = Axes.Both,
                                         Children = new Drawable[]
                                         {
-                                            new Box
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Colour = Color4.Cyan,
-                                            },
                                             new Container
                                             {
                                                 RelativeSizeAxes = Axes.Both,
