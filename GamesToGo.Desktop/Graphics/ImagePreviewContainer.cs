@@ -84,14 +84,14 @@ namespace GamesToGo.Desktop.Graphics
             {
                 foreach (var image in e.NewValue.Images)
                 {
-                    images.Add(new ImageChangerButton(image.Key, sizedElement.Size) { Size = new Vector2(ImageChangerButton.DRAW_SIZE) });
+                    images.Add(new ElementImageChangerButton(image.Key, sizedElement.Size) {Size = new Vector2(400)});
                 }
             }
             else
             {
                 foreach (var image in e.NewValue.Images)
                 {
-                    images.Add(new ImageChangerButton(image.Key) { Size = new Vector2(ImageChangerButton.DRAW_SIZE) });
+                    images.Add(new ElementImageChangerButton(image.Key) { Size = new Vector2(400) });
                 }
             }
             imagesIndex.Value = 0;
