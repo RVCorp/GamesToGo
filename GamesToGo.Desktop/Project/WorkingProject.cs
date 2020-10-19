@@ -189,7 +189,7 @@ namespace GamesToGo.Desktop.Project
                 var elementQueue = elementedElement.PendingElements;
                 while (elementQueue.Count > 0)
                 {
-                    int nextElement = elementQueue.Dequeue();
+                    int nextElement = elementQueue.Peek();
                     ProjectElement createdElement = projectElements.FirstOrDefault(e => e.ID == nextElement);
 
                     if (createdElement == null || createdElement.Type != elementedElement.NestedElementType)
@@ -210,6 +210,7 @@ namespace GamesToGo.Desktop.Project
                     createdElement.Parent = element;
 
                     elementedElement.Elements.Add(createdElement);
+                    elementQueue.Dequeue();
                 }
             }
 
