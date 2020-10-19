@@ -17,7 +17,7 @@ namespace GamesToGo.Desktop.Project
             get => parent;
             set
             {
-                if (!(parent is IHasElements elementedParent))
+                if (!(value is IHasElements elementedParent))
                 {
                     var parentName = value.Name.Value;
                     throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when {parentName} is not {nameof(IHasElements)}");
