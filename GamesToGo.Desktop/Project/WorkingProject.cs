@@ -393,7 +393,7 @@ namespace GamesToGo.Desktop.Project
 
                                         toBeEvent.Actions.Add(toBeAction);
                                     }
-                                    
+
                                     eventedElement.Events.Add(toBeEvent);
                                 }
                                 break;
@@ -494,7 +494,17 @@ namespace GamesToGo.Desktop.Project
 
         public void RemoveElement(ProjectElement toDeleteElement)
         {
-                projectElements.Remove(toDeleteElement);
+            if (toDeleteElement is IHasElements elemented)
+            {
+                while (elemented.Elements.Any())
+                {
+                    var sub = elemented.Elements[0];
+                    RemoveElement(sub);
+                    elemented.Elements.Remove(sub);
+                }
+            }
+
+            projectElements.Remove(toDeleteElement);
         }
     }
 }
