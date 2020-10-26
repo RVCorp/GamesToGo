@@ -75,10 +75,7 @@ namespace GamesToGo.Desktop.Screens
                                             {
                                                 Padding = new MarginPadding(15),
                                                 Size = new Vector2(180),
-                                                Child = new ProjectImageChangerButton
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                },
+                                                Child = new ProjectImageChangerButton(),
                                             },
                                             new SpriteText
                                             {
@@ -98,8 +95,9 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = @"Minimo Jugadores:",
                                                 Position = new Vector2(560, 17),
                                             },
-                                            minPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
+                                            minPlayersTextBox = new NumericTextBox(false)
                                             {
+                                                LengthLimit = 2,
                                                 Text = Math.Max(2, project.DatabaseObject.MinNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(694, 10),
@@ -113,8 +111,9 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = @"Maximo Jugadores:",
                                                 Position = new Vector2(760, 17),
                                             },
-                                            maxPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
+                                            maxPlayersTextBox = new NumericTextBox(false)
                                             {
+                                                LengthLimit = 2,
                                                 Text = Math.Min(32, project.DatabaseObject.MaxNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(898, 10),
@@ -198,8 +197,8 @@ namespace GamesToGo.Desktop.Screens
 
         private void checkPlayerNumber(bool isMin)
         {
-            int minPlayers = Math.Clamp(int.Parse(minPlayersTextBox.Current.Value), 2, 32);
-            int maxPlayers = Math.Clamp(int.Parse(maxPlayersTextBox.Current.Value), 2, 32);
+            int minPlayers = Math.Clamp((int)minPlayersTextBox.Current.Value, 2, 32);
+            int maxPlayers = Math.Clamp((int)maxPlayersTextBox.Current.Value, 2, 32);
 
             if (minPlayers > maxPlayers)
             {

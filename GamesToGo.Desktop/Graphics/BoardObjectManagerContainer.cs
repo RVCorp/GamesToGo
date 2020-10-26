@@ -8,6 +8,7 @@ namespace GamesToGo.Desktop.Graphics
     public class BoardObjectManagerContainer : ObjectManagerContainer<Tile, ProjectElementEditButton>
     {
         private TileEditorOverlay tileEditorOverlay;
+
         [BackgroundDependencyLoader]
         private void load(WorkingProject project, TileEditorOverlay teo)
         {
@@ -19,6 +20,5 @@ namespace GamesToGo.Desktop.Graphics
         {
             button.Action = () => tileEditorOverlay.ShowElement(button.Element);
         }
-        
     }
 }

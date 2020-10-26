@@ -1,5 +1,4 @@
 ﻿using GamesToGo.Desktop.Graphics;
-using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
@@ -19,7 +18,7 @@ namespace GamesToGo.Desktop.Overlays
         private FillFlowContainer<ActionDescriptor> actionFillFlow;
         private BasicTextBox eventNameBox;
         private Container eventDescriptorContainer;
-        private NumericTextBox PriorityBox;
+        private NumericTextBox priorityBox;
 
         [Cached]
         private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
@@ -89,10 +88,11 @@ namespace GamesToGo.Desktop.Overlays
                                             Text = @"Prioridad:",
                                             Font = new FontUsage(size: 20),
                                         },
-                                        PriorityBox = new NumericTextBox(1)
+                                        priorityBox = new NumericTextBox(false)
                                         {
-                                            Size = new Vector2(100, 30)
-                                        }
+                                            LengthLimit = 1,
+                                            Size = new Vector2(100, 30),
+                                        },
                                     },
                                 },
                             },
@@ -144,9 +144,9 @@ namespace GamesToGo.Desktop.Overlays
             Current.Value = model;
             eventNameBox.Text = model.Name.Value;
             Current.Value.Name.BindTo(eventNameBox.Current);
-            PriorityBox.Current.UnbindAll();
-            PriorityBox.Text = model.Priority.ToString();
-            PriorityBox.Current.BindValueChanged(giveValueToPriority, true);
+            priorityBox.Current.UnbindAll();
+            priorityBox.Text = model.Priority.ToString();
+            priorityBox.Current.BindValueChanged(giveValueToPriority, true);
 
             Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
 
@@ -157,10 +157,9 @@ namespace GamesToGo.Desktop.Overlays
             Show();
         }
 
-        private void giveValueToPriority(ValueChangedEvent<string> obj)
+        private void giveValueToPriority(ValueChangedEvent<float> obj)
         {
-            if(obj.NewValue != "")
-                Current.Value.Priority.Value = int.Parse(obj.NewValue);
+            Current.Value.Priority.Value = (int)obj.NewValue;
         }
 
         private void recreateActions()

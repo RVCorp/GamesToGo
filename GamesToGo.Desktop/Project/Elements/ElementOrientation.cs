@@ -12,6 +12,6 @@ namespace GamesToGo.Desktop.Project.Elements
         [Description("Vertical Volteado")]
         VerticalFlipped = 2,
         [Description("Horizontal Volteado")]
-        HorizontalFlipped = 3
+        HorizontalFlipped = 3,
     }
 }

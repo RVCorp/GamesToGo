@@ -7,7 +7,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
@@ -18,10 +17,9 @@ namespace GamesToGo.Desktop.Graphics
 {
     public abstract class ImageChangerButton : Button
     {
-        private Container mainContent;
+        private ContainedImage mainContent;
         private Container hoverContainer;
         protected readonly Bindable<Image> Editing = new Bindable<Image>();
-        private Sprite image;
 
         protected virtual bool ShowOutline => true;
         protected virtual float ImageCornerRadius => 0;
@@ -39,63 +37,40 @@ namespace GamesToGo.Desktop.Graphics
 
         protected abstract Box CreateContentShadow();
 
-        protected ImageChangerButton(Bindable<Vector2> size)
+        protected ImageChangerButton(Bindable<Vector2> size = null)
         {
-            this.size.BindTo(size);
-        }
-
-        protected ImageChangerButton()
-        {
+            if(size != null)
+                this.size = size;
         }
 
         [BackgroundDependencyLoader]
         private void load(ImagePickerOverlay imagePicker, ProjectEditor editor, WorkingProject project)
         {
-            Container contentContainer = new Container
+            RelativeSizeAxes = Axes.Both;
+            CornerRadius = ImageCornerRadius;
+            Masking = true;
+
+            Container content = new Container
             {
+                CornerRadius = ImageCornerRadius,
+                Masking = true,
                 RelativeSizeAxes = Axes.Both,
+                Child = mainContent = new ContainedImage(ShowOutline, ImageCornerRadius)
+                {
+                    ImageSize = size,
+                    Image = Editing,
+                    RelativeSizeAxes = Axes.Both,
+                },
             };
 
-            contentContainer.Add(mainContent = new Container
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fit,
-                Child = new Container
-                {
-                    Masking = true,
-                    BorderColour = Colour4.White,
-                    BorderThickness = ShowOutline ? 3.5f : 0,
-                    CornerRadius = ImageCornerRadius,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        CreateContentShadow(),
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(ShowOutline ? 2 : 0),
-                            Child = image = new Sprite
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                FillMode = FillMode.Fit,
-                            },
-                        },
-                    },
-                },
-            });
+            mainContent.UnderImageContent.Add(CreateContentShadow());
 
             if((noContentDrawable = CreateNoSelectionContent()) != null)
-                contentContainer.Add(noContentDrawable);
+                content.Add(noContentDrawable);
 
             Children = new[]
             {
-                CreateMainContent(contentContainer),
+                CreateMainContent(content),
                 hoverContainer = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -111,11 +86,6 @@ namespace GamesToGo.Desktop.Graphics
                     },
                 },
             };
-
-            size.BindValueChanged(s =>
-            {
-                mainContent.FillAspectRatio = s.NewValue.X / s.NewValue.Y;
-            }, true);
         }
 
         protected override void LoadComplete()
@@ -127,9 +97,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private void changeImage(Image newImage)
         {
-            image.Texture = newImage?.Texture;
-
-            if (image.Texture == null)
+            if (newImage?.Texture == null)
             {
                 if(noContentDrawable != null)
                     noContentDrawable.Alpha = 1;

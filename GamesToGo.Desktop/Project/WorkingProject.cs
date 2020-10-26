@@ -122,7 +122,10 @@ namespace GamesToGo.Desktop.Project
 
         public void AddElement(ProjectElement element)
         {
-            element.ID = latestElementID++;
+            if (element.ID == 0)
+                element.ID = latestElementID++;
+            else if(latestElementID <= element.ID)
+                latestElementID = element.ID + 1;
             projectElements.Add(element);
         }
 
@@ -319,12 +322,12 @@ namespace GamesToGo.Desktop.Project
                             }
                             case "Orient" when parsingElement is IHasOrientation orientedElement:
                             {
-                                orientedElement.DefaultOrientation = Enum.Parse<ElementOrientation>(tokens[1]);
+                                orientedElement.DefaultOrientation.Value = Enum.Parse<ElementOrientation>(tokens[1]);
                                 break;
                             }
                             case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
                             {
-                                privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
+                                privacySetElement.DefaultPrivacy.Value = Enum.Parse<ElementPrivacy>(tokens[1]);
                                 break;
                             }
                             case "Position" when parsingElement is IHasPosition position:
