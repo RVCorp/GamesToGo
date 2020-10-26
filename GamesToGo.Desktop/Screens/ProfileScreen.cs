@@ -17,7 +17,7 @@ namespace GamesToGo.Desktop.Screens
     public class ProfileScreen : Screen
     {
         [Resolved]
-        public APIController api { get; set; }
+        private APIController api { get; set; }
 
         [Resolved]
         private Context database { get; set; }

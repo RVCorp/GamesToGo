@@ -9,6 +9,7 @@ using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Arguments;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Screens;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
@@ -32,13 +33,17 @@ namespace GamesToGo.Desktop.Project
 
         private readonly BindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
-        private IEnumerable<Card> ProjectCards => projectElements.OfType<Card>();
+        private readonly BindableList<EventAction> victoryConditions = new BindableList<EventAction>();
 
-        private IEnumerable<Token> ProjectTokens => projectElements.OfType<Token>();
+        private readonly BindableList<EventAction> turns = new BindableList<EventAction>();
 
-        private IEnumerable<Board> ProjectBoards => projectElements.OfType<Board>();
+        private IEnumerable<Card> projectCards => projectElements.OfType<Card>();
 
-        private IEnumerable<Tile> ProjectTiles => projectElements.OfType<Tile>();
+        private IEnumerable<Token> projectTokens => projectElements.OfType<Token>();
+
+        private IEnumerable<Board> projectBoards => projectElements.OfType<Board>();
+
+        private IEnumerable<Tile> projectTiles => projectElements.OfType<Tile>();
 
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
@@ -114,15 +119,18 @@ namespace GamesToGo.Desktop.Project
 
         private void updateDatabaseObjectInfo()
         {
-            DatabaseObject.NumberBoxes = ProjectTiles.Count();
-            DatabaseObject.NumberCards = ProjectCards.Count();
-            DatabaseObject.NumberTokens = ProjectTokens.Count();
-            DatabaseObject.NumberBoards = ProjectBoards.Count();
+            DatabaseObject.NumberBoxes = projectTiles.Count();
+            DatabaseObject.NumberCards = projectCards.Count();
+            DatabaseObject.NumberTokens = projectTokens.Count();
+            DatabaseObject.NumberBoards = projectBoards.Count();
         }
 
         public void AddElement(ProjectElement element)
         {
-            element.ID = latestElementID++;
+            if (element.ID == 0)
+                element.ID = latestElementID++;
+            else if (element.ID >= latestElementID)
+                latestElementID = element.ID + 1;
             projectElements.Add(element);
         }
 
@@ -347,7 +355,7 @@ namespace GamesToGo.Desktop.Project
                                     toBeEvent.Name.Value = splits[2];
                                     toBeEvent.Priority.Value = int.Parse(splits[3]);
 
-                                    var eventArgs = args.Split(',');
+                                    var eventArgs = args.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                                     for (int argIndex = 0; argIndex < eventArgs.Length; argIndex++)
                                     {
@@ -385,7 +393,7 @@ namespace GamesToGo.Desktop.Project
 
                                         toBeEvent.Actions.Add(toBeAction);
                                     }
-
+                                    
                                     eventedElement.Events.Add(toBeEvent);
                                 }
                                 break;
@@ -482,6 +490,11 @@ namespace GamesToGo.Desktop.Project
             string args = line.Split('(', 2)[1];
             arguments = args.Substring(0, args.Length - 1);
             return int.Parse(line.Split('(')[0]);
+        }
+
+        public void RemoveElement(ProjectElement toDeleteElement)
+        {
+                projectElements.Remove(toDeleteElement);
         }
     }
 }
