@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
@@ -33,7 +34,7 @@ namespace GamesToGo.Desktop.Overlays
                     RelativeSizeAxes = Axes.Both,
                     Colour = new Colour4 (106,100,104, 255)
                 },                
-                new VictoryDefeatTurnsContainer(),
+                new TurnsContainer{ },
                 argumentListing
             };
         }

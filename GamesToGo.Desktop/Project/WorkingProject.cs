@@ -33,9 +33,9 @@ namespace GamesToGo.Desktop.Project
 
         private readonly BindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
-        private readonly BindableList<EventAction> victoryConditions = new BindableList<EventAction>();
+        public readonly BindableList<EventAction> VictoryConditions = new BindableList<EventAction>();
 
-        private readonly BindableList<EventAction> turns = new BindableList<EventAction>();
+        public readonly BindableList<EventAction> Turns = new BindableList<EventAction>();
 
         private IEnumerable<Card> projectCards => projectElements.OfType<Card>();
 
@@ -177,6 +177,18 @@ namespace GamesToGo.Desktop.Project
 
             if (includeDate)
                 builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
+
+            builder.AppendLine($"VictoryConditions={VictoryConditions.Count}");
+            foreach(var action in VictoryConditions)
+            {
+                builder.AppendLine($"{action.ToString()}");
+            }
+
+            builder.AppendLine($"Turns={Turns.Count}");
+            foreach(var action in Turns)
+            {
+                builder.AppendLine($"{action.ToString()}");
+            }
 
             builder.AppendLine();
 
@@ -433,6 +445,20 @@ namespace GamesToGo.Desktop.Project
                             if (Images.First(im => im.ImageName == tokens[1]) is var image && image != null)
                                 Image.Value = image;
                             break;
+                        case "VictoryConditions":
+                            int vicAmm = int.Parse(tokens[1]);
+                            for(int j = i + vicAmm; i < j; i++)
+                            {
+                                VictoryConditions.Add(populateAction(lines[i+1]));
+                            }
+                            break;
+                        case "Turns":
+                            int turnAmm = int.Parse(tokens[1]);
+                            for(int j = i + turnAmm; i < j; i++)
+                            {
+                                Turns.Add(populateAction(lines[i + 1]));
+                            }
+                            break;
                     }
                 }
             }
@@ -477,6 +503,33 @@ namespace GamesToGo.Desktop.Project
             }
 
             return toBeArgument;
+        }
+
+        private static EventAction populateAction(string text)
+        {
+            var action = text.Split('|');
+            int actType = divideLine(action[1], out string arguments);
+
+            var actionArgs = arguments.Split(',');
+
+            EventAction toBeAction = Activator.CreateInstance(AvailableActions[actType]) as EventAction;
+
+
+            for (int argIndex = 0; argIndex < actionArgs.Length; argIndex++)
+            {
+                toBeAction.Arguments[argIndex].Value = populateArgument(actionArgs[argIndex]);
+            }
+
+            try
+            {
+                toBeAction.Condition.Value = populateArgument(action[2]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                toBeAction.Condition.Value = null;
+            }
+
+            return toBeAction;
         }
 
         /// <summary>

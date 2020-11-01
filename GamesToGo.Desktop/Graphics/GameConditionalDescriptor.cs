@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GamesToGo.Desktop.Project.Actions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
@@ -14,10 +16,12 @@ namespace GamesToGo.Desktop.Graphics
         private BasicScrollContainer scrollContainer;
         private FillFlowContainer descriptionContainer;
         public EventAction Model;
+        private Func<EventAction, bool> Function;
 
-        public GameConditionalDescriptor(EventAction model)
+        public GameConditionalDescriptor(EventAction model, Func<EventAction,bool> func)
         {
             Model = model;
+            Function = func;
         }
 
         [BackgroundDependencyLoader]
@@ -32,19 +36,55 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Red,
                 },
-                scrollContainer = new BasicScrollContainer(Direction.Horizontal)
+                new GridContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    ScrollbarOverlapsContent = false,
-                    Child = descriptionContainer = new FillFlowContainer
+                    RowDimensions = new []
                     {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Horizontal,
+                        new Dimension(GridSizeMode.AutoSize)
                     },
-                },
+                    ColumnDimensions = new []
+                    {
+                        new Dimension(),
+                        new Dimension(GridSizeMode.AutoSize)
+                    },
+                    Content = new []
+                    {
+                        new Drawable[]
+                        {
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Child = scrollContainer = new BasicScrollContainer(Direction.Horizontal)
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    ScrollbarOverlapsContent = false,
+                                    Child = descriptionContainer = new FillFlowContainer
+                                     {
+                                         Anchor = Anchor.CentreLeft,
+                                         Origin = Anchor.CentreLeft,
+                                         AutoSizeAxes = Axes.Both,
+                                         Direction = FillDirection.Horizontal,
+                                     },
+                                },
+                            },
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Child = new IconButton(FontAwesome.Solid.TrashAlt, Colour4.DarkRed)
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Action = () => Function(Model)
+                                }
+                            }
+                        }
+                    }
+                },                
             };
 
             scrollContainer.ScrollContent.RelativeSizeAxes = Axes.None;

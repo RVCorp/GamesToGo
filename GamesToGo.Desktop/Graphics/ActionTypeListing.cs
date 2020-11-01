@@ -20,9 +20,15 @@ namespace GamesToGo.Desktop.Graphics
     {
         private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ActionListContainer possibleEventsList;
+        public static Func<EventAction, bool> Funcion;
 
         [Resolved]
         private ProjectEditor editor { get; set; }
+
+        public ActionTypeListing(Func<EventAction, bool> func)
+        {
+            Funcion = func;
+        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -188,7 +194,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        private class ActionTypeButton : GamesToGoButton
+        public class ActionTypeButton : GamesToGoButton
         {
             private readonly Container content = new Container
             {
@@ -196,9 +202,6 @@ namespace GamesToGo.Desktop.Graphics
             };
 
             private readonly EventAction type;
-
-            [Resolved]
-            private EventEditionOverlay events { get; set; }
 
             [Resolved]
             private ActionListContainer actionList { get; set; }
@@ -219,11 +222,13 @@ namespace GamesToGo.Desktop.Graphics
                 HoverColour = new Colour4(55, 55, 55, 255);
                 Action = () =>
                 {
-                    events.AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
+                    Funcion(type);
                     actionList.Hide();
                 };
                 SpriteText.Text = string.Join(' ', type.Text);
             }
+
+            
 
             protected override SpriteText CreateText()
             {

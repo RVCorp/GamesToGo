@@ -1,4 +1,5 @@
-﻿using GamesToGo.Desktop.Graphics;
+﻿using System;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
@@ -125,7 +126,7 @@ namespace GamesToGo.Desktop.Overlays
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = new ActionTypeListing
+                                        Child = new ActionTypeListing(createAction)
                                         {
                                             Anchor = Anchor.BottomCentre,
                                             Origin = Anchor.BottomCentre,
@@ -180,8 +181,20 @@ namespace GamesToGo.Desktop.Overlays
             actionFillFlow.Clear();
             foreach (var action in Current.Value.Actions)
             {
-                actionFillFlow.Add(new ActionDescriptor(action));
+                actionFillFlow.Add(new ActionDescriptor(action, removeAction));
             }
+        }
+
+        private bool removeAction(EventAction toRemove)
+        {
+            Current.Value.Actions.Remove(toRemove);
+            return true;
+        }
+
+        private bool createAction(EventAction type)
+        {
+            AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
+            return true;
         }
 
         public void AddActionToCurrent(EventAction action)

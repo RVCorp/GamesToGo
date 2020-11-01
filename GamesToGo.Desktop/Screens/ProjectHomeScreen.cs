@@ -3,6 +3,7 @@ using System.Linq;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -163,6 +164,7 @@ namespace GamesToGo.Desktop.Screens
                         {
                             new GridContainer
                             {
+                                Depth = 1,
                                 RelativeSizeAxes = Axes.Both,
                                 ColumnDimensions = new[]
                                 {
@@ -280,7 +282,7 @@ namespace GamesToGo.Desktop.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Children = new Drawable[]
                                                         {
-                                                            new VictoryDefeatTurnsContainer(),
+                                                            new VictoryConditionsContainer(),
                                                             turnsOverlay
                                                         }
                                                     }

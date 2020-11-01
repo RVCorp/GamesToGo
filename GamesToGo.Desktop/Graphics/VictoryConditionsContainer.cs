@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using GamesToGo.Desktop.Overlays;
+using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using ManagedBass.Fx;
 using osu.Framework.Allocation;
@@ -16,13 +17,12 @@ using osuTK;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class VictoryDefeatTurnsContainer : Container
+    public class VictoryConditionsContainer : Container
     {
-        [Resolved]
-        private TurnsOverlay turnsOverlay { get; set; }
+        private BindableList<EventAction> victoryActions = new BindableList<EventAction>();
         private FillFlowContainer<GameConditionalDescriptor> conditionalFillFlow;
-        private BindableList<EventAction> list = new BindableList<EventAction>();
-
+        [Resolved]
+        private WorkingProject project { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -55,7 +55,8 @@ namespace GamesToGo.Desktop.Graphics
                                     ClampExtension = 30,
                                     Child = conditionalFillFlow = new FillFlowContainer<GameConditionalDescriptor>
                                     {
-                                        RelativeSizeAxes = Axes.Both,
+                                        AutoSizeAxes = Axes.Y,
+                                        RelativeSizeAxes = Axes.X,
                                         Direction = FillDirection.Vertical,
                                     },
                                 },
@@ -87,7 +88,8 @@ namespace GamesToGo.Desktop.Graphics
                     }
                 }
             };
-            list.CollectionChanged += (_, args) =>
+            victoryActions.BindTo(project.VictoryConditions);
+            victoryActions.BindCollectionChanged ((_, args) =>
             {
                 switch (args.Action)
                 {
@@ -100,22 +102,28 @@ namespace GamesToGo.Desktop.Graphics
 
                         break;
                 }
-            };
+            }, true);
         }
 
 
 
         private void addAction()
         {
-            list.Add(Activator.CreateInstance(typeof(PlayerWinsAction)) as EventAction);
+            victoryActions.Add(Activator.CreateInstance(typeof(PlayerWinsAction)) as EventAction);
         }
 
         private void checkAdded(IEnumerable<EventAction> added)
         {
             foreach(var action in added)
             {
-                conditionalFillFlow.Add(new GameConditionalDescriptor(action));
+                conditionalFillFlow.Add(new GameConditionalDescriptor(action, removeAction));
             }
+        }
+
+        private bool removeAction(EventAction toRemove)
+        {
+            victoryActions.Remove(toRemove);
+            return true;
         }
 
         private void checkRemoved(IEnumerable<EventAction> removed)
