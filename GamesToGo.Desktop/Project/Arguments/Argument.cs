@@ -15,8 +15,6 @@ namespace GamesToGo.Desktop.Project.Arguments
 
         public abstract ArgumentType Type { get; }
 
-        public abstract bool HasResult { get; }
-
         public abstract ArgumentType[] ExpectedArguments { get; }
 
         private Bindable<Argument>[] arguments;
@@ -41,14 +39,6 @@ namespace GamesToGo.Desktop.Project.Arguments
 
         public abstract string[] Text { get; }
 
-        private int? result;
-
-        public int? Result
-        {
-            get => result;
-            set => result = HasResult ? value : null;
-        }
-
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -58,7 +48,7 @@ namespace GamesToGo.Desktop.Project.Arguments
 
             //Argumentos o resultado
             builder.Append('(');
-            if (!HasResult)
+            if (!(this is IHasResult resolvedArgument))
             {
                 int argIndex = 0;
                 while (argIndex < Arguments.Length)
@@ -71,7 +61,7 @@ namespace GamesToGo.Desktop.Project.Arguments
             }
             else
             {
-                builder.Append(Result);
+                builder.Append(resolvedArgument.Result);
             }
             builder.Append(')');
 

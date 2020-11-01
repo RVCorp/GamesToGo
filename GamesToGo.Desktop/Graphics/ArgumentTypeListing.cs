@@ -24,33 +24,40 @@ namespace GamesToGo.Desktop.Graphics
 
         protected override bool StartHidden => true;
 
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => State.Value == Visibility.Visible;
+
+        protected override bool ReceivePositionalInputAtSubTree(Vector2 screenSpacePos) => State.Value == Visibility.Visible;
+
         [BackgroundDependencyLoader]
         private void load()
         {
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
-                new Box
-                {
-                    Colour = Colour4.Transparent,
-                    RelativeSizeAxes = Axes.Both,
-                },
                 content = new Container
                 {
-                    Masking = true,
-                    AutoSizeAxes = Axes.Both,
-                    Origin = Anchor.TopCentre,
+                    Size = Vector2.Zero,
                     Children = new Drawable[]
                     {
-                        new Box
+                        new Container
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.Black,
-                        },
-                        list = new FillFlowContainer<ArgumentTypeButton>
-                        {
+                            Masking = true,
                             AutoSizeAxes = Axes.Both,
-                            Direction = FillDirection.Vertical,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Colour4.Black,
+                                },
+                                list = new FillFlowContainer<ArgumentTypeButton>
+                                {
+                                    AutoSizeAxes = Axes.Both,
+                                    Direction = FillDirection.Vertical,
+                                },
+                            },
                         },
                     },
                 },
@@ -101,11 +108,16 @@ namespace GamesToGo.Desktop.Graphics
             this.FadeOut();
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool Handle(UIEvent e)
         {
-            Hide();
+            switch (e)
+            {
+                case ClickEvent _:
+                    Hide();
+                    return false;
+            }
 
-            return base.OnClick(e);
+            return true;
         }
 
         private class ArgumentTypeButton : GamesToGoButton

@@ -61,7 +61,7 @@ namespace GamesToGo.Desktop.Project
             if (project == null)
             {
                 project = new ProjectInfo { CreatorID = userID };
-                returnableSaves = 2;
+                returnableSaves = 1;
             }
 
             DatabaseObject = project;
@@ -453,10 +453,10 @@ namespace GamesToGo.Desktop.Project
             if (!(Activator.CreateInstance(AvailableArguments[type]) is Argument toBeArgument))
                 return null;
 
-            if (toBeArgument.HasResult)
+            if (toBeArgument is IHasResult resolvedArgument)
             {
                 if (!string.IsNullOrEmpty(argText))
-                    toBeArgument.Result = int.Parse(argText);
+                    resolvedArgument.Result = int.Parse(argText);
 
                 return toBeArgument;
             }

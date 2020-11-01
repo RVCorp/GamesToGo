@@ -53,10 +53,12 @@ namespace GamesToGo.Desktop.Screens
 
         [Cached]
         private WorkingProject workingProject;
+
         private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
+
         [Cached]
-        private ImagePickerOverlay imagePicker = new ImagePickerOverlay { Depth = 2 };
+        private ImagePickerOverlay imagePicker = new ImagePickerOverlay {Depth = 2};
 
         public ProjectEditor(WorkingProject project)
         {
@@ -66,12 +68,6 @@ namespace GamesToGo.Desktop.Screens
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            if (workingProject == null)
-            {
-                workingProject = WorkingProject.Parse(null, store, textures, api);
-                SaveProject(false);
-            }
-
             initialRelations = workingProject.DatabaseObject.Relations == null ? null : new List<FileRelation>(workingProject.DatabaseObject.Relations);
 
             InternalChildren = new[]
@@ -268,6 +264,9 @@ namespace GamesToGo.Desktop.Screens
 
         private void discardChanges()
         {
+            if (workingProject.FirstSave)
+                return;
+
             foreach (var entry in database.ChangeTracker.Entries())
             {
                 switch (entry.State)

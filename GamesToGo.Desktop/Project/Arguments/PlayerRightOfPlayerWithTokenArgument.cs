@@ -6,8 +6,6 @@
 
         public override ArgumentType Type => ArgumentType.SinglePlayer;
 
-        public override bool HasResult => false;
-
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.SinglePlayer,
         };

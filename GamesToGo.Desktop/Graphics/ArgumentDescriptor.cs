@@ -63,7 +63,7 @@ namespace GamesToGo.Desktop.Graphics
                 },
             };
 
-            if (!model.HasResult)
+            if (!(model is IHasResult))
             {
                 descriptionContainer.FadeIn();
                 selectionContainer.FadeOut();

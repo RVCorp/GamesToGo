@@ -2,13 +2,11 @@
 
 namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class PrivacyTypeArgument : Argument
+    public class PrivacyTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 2;
 
         public override ArgumentType Type => ArgumentType.Privacy;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +14,7 @@ namespace GamesToGo.Desktop.Project.Arguments
         {
             @"Privacidad predeterminada",
         };
+
+        public int? Result { get; set; }
     }
 }

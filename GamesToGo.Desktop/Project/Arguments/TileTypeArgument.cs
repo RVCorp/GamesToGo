@@ -2,13 +2,11 @@
 
 namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class TileTypeArgument : Argument
+    public class TileTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 12;
 
         public override ArgumentType Type => ArgumentType.TileType;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +14,7 @@ namespace GamesToGo.Desktop.Project.Arguments
         {
             @"Casilla predeterminada",
         };
+
+        public int? Result { get; set; }
     }
 }

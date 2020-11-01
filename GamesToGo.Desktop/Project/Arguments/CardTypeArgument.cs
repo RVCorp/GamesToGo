@@ -2,13 +2,13 @@
 
 namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class CardTypeArgument : Argument
+    public class CardTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 10;
 
         public override ArgumentType Type => ArgumentType.CardType;
 
-        public override bool HasResult => true;
+        public int? Result { get; set; }
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 

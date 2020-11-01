@@ -2,13 +2,11 @@
 
 namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class TokenTypeArgument : Argument
+    public class TokenTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 4;
 
         public override ArgumentType Type => ArgumentType.TokenType;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +14,7 @@ namespace GamesToGo.Desktop.Project.Arguments
         {
             @"Ficha predeterminada",
         };
+
+        public int? Result { get; set; }
     }
 }

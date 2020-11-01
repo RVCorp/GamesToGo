@@ -2,13 +2,11 @@
 
 namespace GamesToGo.Desktop.Project.Arguments
 {
-    public class NumberArgument : Argument
+    public class NumberArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 3;
 
         public override ArgumentType Type => ArgumentType.SingleNumber;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +14,7 @@ namespace GamesToGo.Desktop.Project.Arguments
         {
             @"Numero predeterminado",
         };
+
+        public int? Result { get; set; }
     }
 }
