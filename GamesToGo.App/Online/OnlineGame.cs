@@ -9,7 +9,7 @@ namespace GamesToGo.App.Online
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class OnlineProject
+    public class OnlineGame
     {
         public int Id { get; set; }
         public string Image { get; set; }
