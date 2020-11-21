@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
+using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -18,12 +20,19 @@ namespace GamesToGo.Desktop.Screens
     {
         private BasicTextBox titleTextBox;
 
+        [Cached]
+        private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
+
+        [Cached]
+        private TurnsOverlay turnsOverlay = new TurnsOverlay();
         [Resolved]
         private WorkingProject project { get; set; }
         private NumericTextBox maxPlayersTextBox;
         private NumericTextBox minPlayersTextBox;
         private BasicTextBox descriptionTextBox;
         private BasicDropdown<ChatRecommendation> chatDropdown;
+        private GamesToGoButton toggleButton;
+        private SpriteText editingText;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -153,36 +162,140 @@ namespace GamesToGo.Desktop.Screens
                         },
                         new Drawable[]
                         {
-                            new Container
+                            new GridContainer
                             {
                                 Depth = 1,
                                 RelativeSizeAxes = Axes.Both,
-                                Width = 0.5f,
-                                Children = new Drawable[]
+                                ColumnDimensions = new[]
                                 {
-                                    new ProjectObjectManagerContainer<Card>
-                                    {
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft,
-                                        Width = 1/3f,
-                                    },
-                                    new ProjectObjectManagerContainer<Token>
-                                    {
-                                        Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.BottomCentre,
-                                        Width = 1/3f,
-                                    },
-                                    new ProjectObjectManagerContainer<Board>
-                                    {
-                                        Anchor = Anchor.BottomRight,
-                                        Origin = Anchor.BottomRight,
-                                        Width = 1/3f,
-                                    },
+                                    new Dimension(GridSizeMode.Relative,.5f),
+                                    new Dimension(),
                                 },
+                                RowDimensions = new []
+                                {
+                                    new Dimension()
+                                },
+                                Content = new []
+                                {
+                                    new Drawable[]
+                                    {
+                                        new Container
+                                        {
+                                            Depth = 1,
+                                            RelativeSizeAxes = Axes.Both,
+                                            Children = new Drawable[]
+                                            {
+                                                new ProjectObjectManagerContainer<Card>
+                                                {
+                                                    Anchor = Anchor.BottomLeft,
+                                                    Origin = Anchor.BottomLeft,
+                                                    Width = 1/3f,
+                                                },
+                                                new ProjectObjectManagerContainer<Token>
+                                                {
+                                                    Anchor = Anchor.BottomCentre,
+                                                    Origin = Anchor.BottomCentre,
+                                                    Width = 1/3f,
+                                                },
+                                                new ProjectObjectManagerContainer<Board>
+                                                {
+                                                    Anchor = Anchor.BottomRight,
+                                                    Origin = Anchor.BottomRight,
+                                                    Width = 1/3f,
+                                                },
+                                            },
+                                        },
+                                        new GridContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            RowDimensions = new[]
+                                            {
+                                                new Dimension(GridSizeMode.Relative, .1f),
+                                                new Dimension()
+                                            },
+                                            ColumnDimensions = new[]
+                                            {
+                                                new Dimension()
+                                            },
+                                            Content = new[]
+                                            {
+                                                new Drawable[]
+                                                {
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new Box
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Colour = Colour4.MediumPurple
+                                                            },
+                                                            new GridContainer
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                RowDimensions = new []
+                                                                {
+                                                                    new Dimension(),
+                                                                },
+                                                                ColumnDimensions = new []
+                                                                {
+                                                                    new Dimension(GridSizeMode.Relative,.75f),
+                                                                },
+                                                                Content = new[]
+                                                                {
+                                                                    new Drawable[]
+                                                                    {
+                                                                        new Container
+                                                                        {
+                                                                            RelativeSizeAxes = Axes.Both,
+                                                                            Child = editingText = new SpriteText
+                                                                            {
+                                                                                Anchor = Anchor.CentreLeft,
+                                                                                Origin = Anchor.CentreLeft,
+                                                                                Text = "Condiciones de Victoria",
+                                                                                Font = new FontUsage(size: 40)
+                                                                            }
+                                                                        },
+                                                                        new Container
+                                                                        {
+                                                                            RelativeSizeAxes = Axes.Both,
+                                                                            Child = toggleButton = new GamesToGoButton
+                                                                            {
+                                                                                Anchor = Anchor.CentreRight,
+                                                                                Origin = Anchor.CentreRight,
+                                                                                Size = new Vector2(200,35),
+                                                                                Text = "Sistema de Turnos",
+                                                                                Action = () => toggleEdition()
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                },
+                                                new Drawable[]
+                                                {
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new VictoryConditionsContainer(),
+                                                            turnsOverlay
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                    },
+                                }
                             },
                         },
                     },
                 },
+                argumentListing,
             };
 
 
@@ -194,6 +307,20 @@ namespace GamesToGo.Desktop.Screens
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
 
             checkPlayerNumber(false);
+        }
+
+        private void toggleEdition()
+        {
+            if (toggleButton.Text == "Sistema de Turnos")
+                toggleButton.Text = "Condiciones de Victoria";
+            else
+                toggleButton.Text = "Sistema de Turnos";
+            if (editingText.Text == "Condiciones de Victoria")
+                editingText.Text = "Turnos";
+            else
+                editingText.Text = "Condiciones de Victoria";
+
+            turnsOverlay.ToggleVisibility();
         }
 
         private void checkPlayerNumber(bool isMin)

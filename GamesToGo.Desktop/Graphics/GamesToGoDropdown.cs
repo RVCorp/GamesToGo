@@ -23,6 +23,7 @@ namespace GamesToGo.Desktop.Graphics
 
             public GamesToGoDropdownHeader()
             {
+                Depth = -10;
                 Foreground.Padding = new MarginPadding(5);
                 BackgroundColour = FrameworkColour.Green;
                 BackgroundColourHover = FrameworkColour.YellowGreen;

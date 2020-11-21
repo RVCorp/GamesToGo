@@ -6,18 +6,19 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osuTK;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class ActionDescriptor : Container
+    public class GameConditionalDescriptor : Container
     {
-        private readonly EventAction Model;
-        private FillFlowContainer descriptionContainer;
         private BasicScrollContainer scrollContainer;
+        private FillFlowContainer descriptionContainer;
+        public EventAction Model;
         private Func<EventAction, bool> Function;
 
-        public ActionDescriptor(EventAction model, Func<EventAction,bool> func)
+        public GameConditionalDescriptor(EventAction model, Func<EventAction,bool> func)
         {
             Model = model;
             Function = func;
@@ -83,7 +84,7 @@ namespace GamesToGo.Desktop.Graphics
                             }
                         }
                     }
-                },
+                },                
             };
 
             scrollContainer.ScrollContent.RelativeSizeAxes = Axes.None;

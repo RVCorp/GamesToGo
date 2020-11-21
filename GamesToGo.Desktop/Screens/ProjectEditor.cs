@@ -205,6 +205,15 @@ namespace GamesToGo.Desktop.Screens
             api.Queue(req);
         }
 
+        public void DeleteElement(ProjectElement toDelete)
+        {
+            if (toDelete == currentEditingElement.Value)
+            {
+                currentEditingElement.Value = null;
+            }
+            workingProject.RemoveElement(toDelete);
+        }
+
         public void AddElement(ProjectElement element, bool startEditing)
         {
             workingProject.AddElement(element);

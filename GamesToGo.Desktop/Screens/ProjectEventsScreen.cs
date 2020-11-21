@@ -12,6 +12,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
 using osuTK.Graphics;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace GamesToGo.Desktop.Screens
 {
@@ -31,6 +33,7 @@ namespace GamesToGo.Desktop.Screens
 
         [Cached]
         private EventEditionOverlay eventEditOverlay = new EventEditionOverlay();
+        private EventListing eventsList;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -88,7 +91,7 @@ namespace GamesToGo.Desktop.Screens
                                             {
                                                 RelativeSizeAxes = Axes.Both,
                                                 Padding = new MarginPadding { Horizontal = 60, Vertical = 50 },
-                                                Child = new EventListing
+                                                Child = eventsList = new EventListing
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
                                                 },
@@ -130,6 +133,13 @@ namespace GamesToGo.Desktop.Screens
             projectEvent.ID = evented.Events.LastOrDefault()?.ID + 1 ?? 1;
             evented.Events.Add(projectEvent);
             eventEditOverlay.ShowEvent(projectEvent);
+        }
+
+        public void RemoveEvent(ProjectEvent projectEvent)
+        {
+            if (!(currentEditing.Value is IHasEvents evented)) return;
+
+            evented.Events.Remove(projectEvent);
         }
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)

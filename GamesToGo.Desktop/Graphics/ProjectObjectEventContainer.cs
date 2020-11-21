@@ -1,5 +1,6 @@
 ﻿using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -19,6 +20,9 @@ namespace GamesToGo.Desktop.Graphics
 
         [Resolved]
         private EventEditionOverlay eventOverlay { get; set; }
+
+        [Resolved]
+        private ProjectEventsScreen eventsScreen { get; set; }
 
         public ProjectObjectEventContainer(ProjectEvent projectEvent)
         {
@@ -85,6 +89,7 @@ namespace GamesToGo.Desktop.Graphics
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
+                                    Action = () => eventsScreen.RemoveEvent(Event)
                                 },
                             },
                         },

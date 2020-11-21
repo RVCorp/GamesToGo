@@ -42,6 +42,7 @@ namespace GamesToGo.Desktop.Screens
         private Container elementPosition;
         private NumericTextBox positionTextBoxX;
         private NumericTextBox positionTextBoxY;
+        private GamesToGoButton deleteElement;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
@@ -155,6 +156,15 @@ namespace GamesToGo.Desktop.Screens
                                                                 },
                                                             },
                                                         },
+                                                        deleteElement = new GamesToGoButton
+                                                        {
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Height = 35,
+                                                            Width = 200,
+                                                            Text = "Borrar Elemento",
+                                                            Action = () => editor.DeleteElement(currentEditing.Value)
+                                                        }
                                                     },
                                                 },
                                                 new Container
