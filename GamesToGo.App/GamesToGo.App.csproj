@@ -67,22 +67,46 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GamesToGoGame.cs" />
+    <Compile Include="Graphics\AutoSizeButton.cs" />
+    <Compile Include="Graphics\EmptyBox.cs" />
+    <Compile Include="Graphics\GamePreviewContainer.cs" />
+    <Compile Include="Graphics\GamesToGoButton.cs" />
+    <Compile Include="Graphics\RoomPreviewContainer.cs" />
+    <Compile Include="Graphics\SimpleIconButton.cs" />
+    <Compile Include="Graphics\SurfaceButton.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Online\AddUserRequest.cs" />
     <Compile Include="Online\APIController.cs" />
     <Compile Include="Online\APIRequest.cs" />
     <Compile Include="Online\BaseJsonWebRequest.cs" />
     <Compile Include="Online\BaseWebRequest.cs" />
+    <Compile Include="Online\Board.cs" />
+    <Compile Include="Online\Card.cs" />
+    <Compile Include="Online\CreateRoomRequest.cs" />
     <Compile Include="Online\DownloadProjectRequest.cs" />
     <Compile Include="Online\GetAllProjectsRequest.cs" />
+    <Compile Include="Online\GetAllPublishedGamesRequest.cs" />
     <Compile Include="Online\GetAllPublishedProjectsRequest.cs" />
+    <Compile Include="Online\GetAllRoomsFromGameRequest.cs" />
     <Compile Include="Online\GetProjectRequest.cs" />
     <Compile Include="Online\GetUserRequest.cs" />
-    <Compile Include="Online\OnlineProject.cs" />
+    <Compile Include="Online\OnlineGame.cs" />
+    <Compile Include="Online\OnlineRoom.cs" />
+    <Compile Include="Online\Player.cs" />
+    <Compile Include="Online\RoomPreview.cs" />
+    <Compile Include="Online\Tile.cs" />
+    <Compile Include="Online\Token.cs" />
     <Compile Include="Online\UploadUserImageRequest.cs" />
     <Compile Include="Online\User.cs" />
+    <Compile Include="Overlays\DropdownMenuOverlay.cs" />
+    <Compile Include="Overlays\LoginOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Screens\TestScreen.cs" />
+    <Compile Include="Screens\RoomScreen.cs" />
+    <Compile Include="Screens\GameInfoScreen.cs" />
+    <Compile Include="Screens\MainMenuScreen.cs" />
+    <Compile Include="Screens\SessionStartScreen.cs" />
+    <EmbeddedResource Include="Textures\**\*.png" />
+    <EmbeddedResource Include="Textures\**\*.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
@@ -98,9 +122,7 @@
       <Version>4.3.4</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="gtg.png" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,7 +1,7 @@
 ﻿namespace GamesToGo.App.Online
 {
     // ReSharper disable once UnusedType.Global
-    public class GetProjectRequest : APIRequest<OnlineProject>
+    public class GetProjectRequest : APIRequest<OnlineGame>
     {
         private readonly int gameID;
         public GetProjectRequest(int id)

@@ -2,7 +2,7 @@
 
 namespace GamesToGo.App.Online
 {
-    public class GetAllPublishedProjectsRequest : APIRequest<List<OnlineProject>>
+    public class GetAllPublishedProjectsRequest : APIRequest<List<OnlineGame>>
     {
         protected override string Target => "games/AllPublishedGames";
     }
