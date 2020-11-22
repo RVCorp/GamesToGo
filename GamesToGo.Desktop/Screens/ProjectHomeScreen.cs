@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using GamesToGo.Desktop.Graphics;
+using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
@@ -18,12 +19,18 @@ namespace GamesToGo.Desktop.Screens
     {
         private BasicTextBox titleTextBox;
 
+        [Cached]
+        private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
         [Resolved]
         private WorkingProject project { get; set; }
         private NumericTextBox maxPlayersTextBox;
         private NumericTextBox minPlayersTextBox;
         private BasicTextBox descriptionTextBox;
         private BasicDropdown<ChatRecommendation> chatDropdown;
+        private GamesToGoButton toggleButton;
+        private SpriteText editingText;
+        private TurnsOverlay turnsOverlay;
+        private VictoryConditionsContainer victoryContainer;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -33,7 +40,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255),      //Color fondo general
+                    Colour = new Colour4(106, 100, 104, 255), //Color fondo general
                 },
                 new GridContainer
                 {
@@ -124,12 +131,12 @@ namespace GamesToGo.Desktop.Screens
                                             new SpriteText
                                             {
                                                 Text = @"Descripción:",
-                                                Position = new Vector2(245,70),
+                                                Position = new Vector2(245, 70),
                                             },
                                             descriptionTextBox = new BasicTextBox
                                             {
                                                 Text = project.DatabaseObject.Description,
-                                                Position = new Vector2(340,70),
+                                                Position = new Vector2(340, 70),
                                                 Height = 35,
                                                 Width = 1732,
                                             },
@@ -152,38 +159,99 @@ namespace GamesToGo.Desktop.Screens
                         },
                         new Drawable[]
                         {
-                            new Container
+                            new GridContainer
                             {
                                 Depth = 1,
                                 RelativeSizeAxes = Axes.Both,
-                                Width = 0.5f,
-                                Children = new Drawable[]
+                                ColumnDimensions = new[]
                                 {
-                                    new ProjectObjectManagerContainer<Card>
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
+                                    new Dimension(),
+                                },
+                                RowDimensions = new[]
+                                {
+                                    new Dimension()
+                                },
+                                Content = new[]
+                                {
+                                    new Drawable[]
                                     {
-                                        Anchor = Anchor.BottomLeft,
-                                        Origin = Anchor.BottomLeft,
-                                        Width = 1/3f,
-                                    },
-                                    new ProjectObjectManagerContainer<Token>
-                                    {
-                                        Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.BottomCentre,
-                                        Width = 1/3f,
-                                    },
-                                    new ProjectObjectManagerContainer<Board>
-                                    {
-                                        Anchor = Anchor.BottomRight,
-                                        Origin = Anchor.BottomRight,
-                                        Width = 1/3f,
+                                        new ProjectObjectManagerContainer<Card>(),
+                                        new ProjectObjectManagerContainer<Token>(),
+                                        new ProjectObjectManagerContainer<Board>(),
+                                        new GridContainer
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            RowDimensions = new[]
+                                            {
+                                                new Dimension(GridSizeMode.Absolute, 50),
+                                                new Dimension(),
+                                            },
+                                            ColumnDimensions = new[]
+                                            {
+                                                new Dimension(),
+                                            },
+                                            Content = new[]
+                                            {
+                                                new Drawable[]
+                                                {
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new Box
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Colour = Colour4.MediumPurple,
+                                                            },
+                                                            editingText = new SpriteText
+                                                            {
+                                                                Font = new FontUsage(size: 45),
+                                                                Position = new Vector2(5, 2.5f),
+                                                            },
+                                                            toggleButton = new GamesToGoButton
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Size = new Vector2(200, 35),
+                                                                X = -5,
+                                                                Action = () =>
+                                                                {
+                                                                    victoryContainer.State.Value = turnsOverlay.State.Value;
+                                                                    turnsOverlay.ToggleVisibility();
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                new Drawable[]
+                                                {
+                                                    new Container
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            victoryContainer = new VictoryConditionsContainer
+                                                            {
+                                                                State = { Value = Visibility.Visible },
+                                                            },
+                                                            turnsOverlay = new TurnsOverlay(),
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
                                     },
                                 },
                             },
                         },
                     },
                 },
+                argumentListing,
             };
-
 
             chatDropdown.Current.Value = project.ChatRecommendation;
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
@@ -191,8 +259,25 @@ namespace GamesToGo.Desktop.Screens
             titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
+            turnsOverlay.State.BindValueChanged(_ => toggleEdition(), true);
+
 
             checkPlayerNumber(false);
+        }
+
+        private void toggleEdition()
+        {
+            switch (turnsOverlay.State.Value)
+            {
+                case Visibility.Hidden:
+                    toggleButton.Text = @"Sistema de Turnos";
+                    editingText.Text = @"Condiciones de Victoria";
+                    break;
+                case Visibility.Visible:
+                    editingText.Text = @"Turnos";
+                    toggleButton.Text = @"Condiciones de Victoria";
+                    break;
+            }
         }
 
         private void checkPlayerNumber(bool isMin)

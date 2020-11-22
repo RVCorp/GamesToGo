@@ -132,6 +132,13 @@ namespace GamesToGo.Desktop.Screens
             eventEditOverlay.ShowEvent(projectEvent);
         }
 
+        public void RemoveEvent(ProjectEvent projectEvent)
+        {
+            if (!(currentEditing.Value is IHasEvents evented)) return;
+
+            evented.Events.Remove(projectEvent);
+        }
+
         private void checkData(ValueChangedEvent<ProjectElement> obj)
         {
             eventEditOverlay.Hide();

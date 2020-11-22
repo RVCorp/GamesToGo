@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GamesToGo.Desktop.Project.Actions;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -11,13 +12,14 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ActionDescriptor : Container
     {
-        private readonly EventAction model;
+        public readonly EventAction Model;
         private FillFlowContainer descriptionContainer;
         private BasicScrollContainer scrollContainer;
+        public Action<EventAction> RemoveAction { get; set; }
 
         public ActionDescriptor(EventAction model)
         {
-            this.model = model;
+            Model = model;
         }
 
         [BackgroundDependencyLoader]
@@ -32,17 +34,55 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Red,
                 },
-                scrollContainer = new BasicScrollContainer(Direction.Horizontal)
+                new GridContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    ScrollbarOverlapsContent = false,
-                    Child = descriptionContainer = new FillFlowContainer
+                    RowDimensions = new []
                     {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Horizontal,
+                        new Dimension(GridSizeMode.AutoSize)
+                    },
+                    ColumnDimensions = new []
+                    {
+                        new Dimension(),
+                        new Dimension(GridSizeMode.AutoSize)
+                    },
+                    Content = new []
+                    {
+                        new Drawable[]
+                        {
+                            new Container
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Child = scrollContainer = new BasicScrollContainer(Direction.Horizontal)
+                                {
+                                    RelativeSizeAxes = Axes.X,
+                                    AutoSizeAxes = Axes.Y,
+                                    ScrollbarOverlapsContent = false,
+                                    Child = descriptionContainer = new FillFlowContainer
+                                     {
+                                         Anchor = Anchor.CentreLeft,
+                                         Origin = Anchor.CentreLeft,
+                                         AutoSizeAxes = Axes.Both,
+                                         Direction = FillDirection.Horizontal,
+                                     },
+                                },
+                            },
+                            new Container
+                            {
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Padding = new MarginPadding(5),
+                                Child = new IconButton(FontAwesome.Solid.TrashAlt, Colour4.DarkRed)
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Action = () => RemoveAction?.Invoke(Model),
+                                },
+                            },
+                        },
                     },
                 },
             };
@@ -50,7 +90,7 @@ namespace GamesToGo.Desktop.Graphics
             scrollContainer.ScrollContent.RelativeSizeAxes = Axes.None;
             scrollContainer.ScrollContent.AutoSizeAxes = Axes.Both;
 
-            for (int i = 0; i < model.ExpectedArguments.Length; i++)
+            for (int i = 0; i < Model.ExpectedArguments.Length; i++)
             {
                 descriptionContainer.AddRange(new Drawable[]
                 {
@@ -59,21 +99,21 @@ namespace GamesToGo.Desktop.Graphics
                         Anchor = Anchor.CentreLeft,
                         Origin = Anchor.CentreLeft,
                         Padding = new MarginPadding(4),
-                        Text = model.Text[i],
+                        Text = Model.Text[i],
                         Font = new FontUsage(size: 25),
                     },
-                    new ArgumentChanger(model.ExpectedArguments[i], model.Arguments[i]),
+                    new ArgumentChanger(Model.ExpectedArguments[i], Model.Arguments[i]),
                 });
             }
 
-            if (model.ExpectedArguments.Length < model.Text.Length)
+            if (Model.ExpectedArguments.Length < Model.Text.Length)
             {
                 descriptionContainer.Add(new SpriteText
                 {
                     Anchor = Anchor.CentreLeft,
                     Origin = Anchor.CentreLeft,
                     Padding = new MarginPadding(4),
-                    Text = model.Text.Last(),
+                    Text = Model.Text.Last(),
                     Font = new FontUsage(size: 25),
                 });
             }

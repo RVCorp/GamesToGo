@@ -1,4 +1,5 @@
-﻿using GamesToGo.Desktop.Graphics;
+using System;
+using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
@@ -44,92 +45,105 @@ namespace GamesToGo.Desktop.Overlays
                 {
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding(20),
-                    Child = new GridContainer
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        RowDimensions = new[]
+                        new GridContainer
                         {
-                            new Dimension(GridSizeMode.AutoSize),
-                            new Dimension(GridSizeMode.AutoSize),
-                            new Dimension(),
-                            new Dimension(GridSizeMode.Absolute, 30),
-                        },
-                        Content = new[]
-                        {
-                            new Drawable[]
+                            RelativeSizeAxes = Axes.Both,
+                            RowDimensions = new[]
                             {
-                                new FillFlowContainer
-                                {
-                                    Name = @"Nombre evento",
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Direction = FillDirection.Horizontal,
-                                    Padding = new MarginPadding {Bottom = 5},
-                                    Spacing = new Vector2(7),
-                                    Children = new Drawable[]
-                                    {
-                                        new SpriteText
-                                        {
-                                            Anchor = Anchor.BottomLeft,
-                                            Origin = Anchor.BottomLeft,
-                                            Text = @"Nombre del evento:",
-                                            Font = new FontUsage(size: 20),
-                                        },
-                                        eventNameBox = new BasicTextBox
-                                        {
-                                            Anchor = Anchor.BottomLeft,
-                                            Origin = Anchor.BottomLeft,
-                                            Size = new Vector2(400, 30),
-                                        },
-                                        new SpriteText
-                                        {
-                                            Anchor = Anchor.BottomLeft,
-                                            Origin = Anchor.BottomLeft,
-                                            Text = @"Prioridad:",
-                                            Font = new FontUsage(size: 20),
-                                        },
-                                        priorityBox = new NumericTextBox(false)
-                                        {
-                                            LengthLimit = 1,
-                                            Size = new Vector2(100, 30),
-                                        },
-                                    },
-                                },
+                                new Dimension(GridSizeMode.AutoSize),
+                                new Dimension(GridSizeMode.AutoSize),
+                                new Dimension(),
+                                new Dimension(GridSizeMode.Absolute, 30),
                             },
-                            new Drawable[]
+                            Content = new[]
                             {
-                                eventDescriptorContainer = new Container
+                                new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                },
-                            },
-                            new Drawable[]
-                            {
-                                new BasicScrollContainer
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    ClampExtension = 30,
-                                    Child = actionFillFlow = new FillFlowContainer<ActionDescriptor>
+                                    new FillFlowContainer
                                     {
-                                        AutoSizeAxes = Axes.Y,
+                                        Name = @"Nombre evento",
                                         RelativeSizeAxes = Axes.X,
-                                        Direction = FillDirection.Vertical,
+                                        AutoSizeAxes = Axes.Y,
+                                        Direction = FillDirection.Horizontal,
+                                        Padding = new MarginPadding {Bottom = 5},
+                                        Spacing = new Vector2(7),
+                                        Children = new Drawable[]
+                                        {
+                                            new SpriteText
+                                            {
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Text = @"Nombre del evento:",
+                                                Font = new FontUsage(size: 20),
+                                            },
+                                            eventNameBox = new BasicTextBox
+                                            {
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Size = new Vector2(400, 30),
+                                            },
+                                            new SpriteText
+                                            {
+                                                Anchor = Anchor.BottomLeft,
+                                                Origin = Anchor.BottomLeft,
+                                                Text = @"Prioridad:",
+                                                Font = new FontUsage(size: 20),
+                                            },
+                                            priorityBox = new NumericTextBox(false)
+                                            {
+                                                LengthLimit = 1,
+                                                Size = new Vector2(100, 30),
+                                            },
+                                        },
                                     },
                                 },
-                            },
-                            new Drawable[]
-                            {
-                                new Container
+                                new Drawable[]
                                 {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Child = new ActionTypeListing
+                                    eventDescriptorContainer = new Container
                                     {
-                                        Anchor = Anchor.BottomCentre,
-                                        Origin = Anchor.BottomCentre,
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                    },
+                                },
+                                new Drawable[]
+                                {
+                                    new BasicScrollContainer
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        ClampExtension = 30,
+                                        Child = actionFillFlow = new FillFlowContainer<ActionDescriptor>
+                                        {
+                                            AutoSizeAxes = Axes.Y,
+                                            RelativeSizeAxes = Axes.X,
+                                            Direction = FillDirection.Vertical,
+                                        },
+                                    },
+                                },
+                                new Drawable[]
+                                {
+                                    new Container
+                                    {
+                                        RelativeSizeAxes = Axes.Both,
+                                        Child = new ActionTypeListing
+                                        {
+                                            OnSelection = created => Current.Value.Actions.Add(Activator.CreateInstance(created.GetType()) as EventAction),
+                                            Anchor = Anchor.BottomCentre,
+                                            Origin = Anchor.BottomCentre,
+                                        },
                                     },
                                 },
                             },
+                        },
+                        new GamesToGoButton
+                        {
+                            Anchor = Anchor.TopRight,
+                            Origin = Anchor.TopRight,
+                            Height = 35,
+                            Width = 200,
+                            Text = @"Cerrar",
+                            Action = Hide,
                         },
                     },
                 },
@@ -146,7 +160,7 @@ namespace GamesToGo.Desktop.Overlays
             Current.Value.Name.BindTo(eventNameBox.Current);
             priorityBox.Current.UnbindAll();
             priorityBox.Text = model.Priority.ToString();
-            priorityBox.Current.BindValueChanged(giveValueToPriority, true);
+            priorityBox.Current.BindValueChanged(obj => Current.Value.Priority.Value = (int)obj.NewValue, true);
 
             Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
 
@@ -157,23 +171,16 @@ namespace GamesToGo.Desktop.Overlays
             Show();
         }
 
-        private void giveValueToPriority(ValueChangedEvent<float> obj)
-        {
-            Current.Value.Priority.Value = (int)obj.NewValue;
-        }
-
         private void recreateActions()
         {
             actionFillFlow.Clear();
             foreach (var action in Current.Value.Actions)
             {
-                actionFillFlow.Add(new ActionDescriptor(action));
+                actionFillFlow.Add(new ActionDescriptor(action)
+                {
+                    RemoveAction = a => Current.Value.Actions.Remove(a),
+                });
             }
-        }
-
-        public void AddActionToCurrent(EventAction action)
-        {
-            Current.Value.Actions.Add(action);
         }
 
         protected override void PopIn()

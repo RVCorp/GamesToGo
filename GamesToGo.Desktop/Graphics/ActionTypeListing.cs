@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Arguments;
@@ -16,10 +15,12 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
+    [Cached]
     public class ActionTypeListing : Container
     {
         private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ActionListContainer possibleEventsList;
+        public Action<EventAction> OnSelection { get; set; }
 
         [Resolved]
         private ProjectEditor editor { get; set; }
@@ -38,7 +39,7 @@ namespace GamesToGo.Desktop.Graphics
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.Honeydew,
+                        Colour = Color4.Beige,
                     },
                     new Container
                     {
@@ -188,7 +189,7 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
-        private class ActionTypeButton : GamesToGoButton
+        public class ActionTypeButton : GamesToGoButton
         {
             private readonly Container content = new Container
             {
@@ -198,10 +199,10 @@ namespace GamesToGo.Desktop.Graphics
             private readonly EventAction type;
 
             [Resolved]
-            private EventEditionOverlay events { get; set; }
+            private ActionListContainer actionList { get; set; }
 
             [Resolved]
-            private ActionListContainer actionList { get; set; }
+            private ActionTypeListing typeListing { get; set; }
 
             public ActionTypeButton(EventAction type)
             {
@@ -219,11 +220,13 @@ namespace GamesToGo.Desktop.Graphics
                 HoverColour = new Colour4(55, 55, 55, 255);
                 Action = () =>
                 {
-                    events.AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
+                    typeListing.OnSelection?.Invoke(type);
                     actionList.Hide();
                 };
                 SpriteText.Text = string.Join(' ', type.Text);
             }
+
+
 
             protected override SpriteText CreateText()
             {

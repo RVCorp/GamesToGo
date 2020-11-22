@@ -1,5 +1,6 @@
 ﻿using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project.Events;
+using GamesToGo.Desktop.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,11 +14,12 @@ namespace GamesToGo.Desktop.Graphics
     {
         public readonly ProjectEvent Event;
         private SpriteText nameText;
-        private IconButton editButton;
-        private IconButton deleteButton;
 
         [Resolved]
         private EventEditionOverlay eventOverlay { get; set; }
+
+        [Resolved]
+        private ProjectEventsScreen eventsScreen { get; set; }
 
         public ProjectObjectEventContainer(ProjectEvent projectEvent)
         {
@@ -70,7 +72,7 @@ namespace GamesToGo.Desktop.Graphics
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = editButton = new IconButton(FontAwesome.Solid.Edit)
+                                Child = new IconButton(FontAwesome.Solid.Edit)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
@@ -80,10 +82,11 @@ namespace GamesToGo.Desktop.Graphics
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = deleteButton = new IconButton(FontAwesome.Solid.TrashAlt)
+                                Child = new IconButton(FontAwesome.Solid.TrashAlt)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
+                                    Action = () => eventsScreen.RemoveEvent(Event)
                                 },
                             },
                         },

@@ -32,13 +32,17 @@ namespace GamesToGo.Desktop.Project
 
         private readonly BindableList<ProjectElement> projectElements = new BindableList<ProjectElement>();
 
-        private IEnumerable<Card> ProjectCards => projectElements.OfType<Card>();
+        public readonly BindableList<EventAction> VictoryConditions = new BindableList<EventAction>();
 
-        private IEnumerable<Token> ProjectTokens => projectElements.OfType<Token>();
+        public readonly BindableList<EventAction> Turns = new BindableList<EventAction>();
 
-        private IEnumerable<Board> ProjectBoards => projectElements.OfType<Board>();
+        private IEnumerable<Card> projectCards => projectElements.OfType<Card>();
 
-        private IEnumerable<Tile> ProjectTiles => projectElements.OfType<Tile>();
+        private IEnumerable<Token> projectTokens => projectElements.OfType<Token>();
+
+        private IEnumerable<Board> projectBoards => projectElements.OfType<Board>();
+
+        private IEnumerable<Tile> projectTiles => projectElements.OfType<Tile>();
 
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
@@ -114,17 +118,17 @@ namespace GamesToGo.Desktop.Project
 
         private void updateDatabaseObjectInfo()
         {
-            DatabaseObject.NumberBoxes = ProjectTiles.Count();
-            DatabaseObject.NumberCards = ProjectCards.Count();
-            DatabaseObject.NumberTokens = ProjectTokens.Count();
-            DatabaseObject.NumberBoards = ProjectBoards.Count();
+            DatabaseObject.NumberBoxes = projectTiles.Count();
+            DatabaseObject.NumberCards = projectCards.Count();
+            DatabaseObject.NumberTokens = projectTokens.Count();
+            DatabaseObject.NumberBoards = projectBoards.Count();
         }
 
         public void AddElement(ProjectElement element)
         {
             if (element.ID == 0)
                 element.ID = latestElementID++;
-            else if(latestElementID <= element.ID)
+            else if (element.ID >= latestElementID)
                 latestElementID = element.ID + 1;
             projectElements.Add(element);
         }
@@ -172,6 +176,18 @@ namespace GamesToGo.Desktop.Project
 
             if (includeDate)
                 builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
+
+            builder.AppendLine($"VictoryConditions={VictoryConditions.Count}");
+            foreach(var action in VictoryConditions)
+            {
+                builder.AppendLine($"{action}");
+            }
+
+            builder.AppendLine($"Turns={Turns.Count}");
+            foreach(var action in Turns)
+            {
+                builder.AppendLine($"{action}");
+            }
 
             builder.AppendLine();
 
@@ -350,7 +366,7 @@ namespace GamesToGo.Desktop.Project
                                     toBeEvent.Name.Value = splits[2];
                                     toBeEvent.Priority.Value = int.Parse(splits[3]);
 
-                                    var eventArgs = args.Split(',');
+                                    var eventArgs = args.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                                     for (int argIndex = 0; argIndex < eventArgs.Length; argIndex++)
                                     {
@@ -428,6 +444,20 @@ namespace GamesToGo.Desktop.Project
                             if (Images.First(im => im.ImageName == tokens[1]) is var image && image != null)
                                 Image.Value = image;
                             break;
+                        case "VictoryConditions":
+                            int vicAmm = int.Parse(tokens[1]);
+                            for(int j = i + vicAmm; i < j; i++)
+                            {
+                                VictoryConditions.Add(populateAction(lines[i+1]));
+                            }
+                            break;
+                        case "Turns":
+                            int turnAmm = int.Parse(tokens[1]);
+                            for(int j = i + turnAmm; i < j; i++)
+                            {
+                                Turns.Add(populateAction(lines[i + 1]));
+                            }
+                            break;
                     }
                 }
             }
@@ -474,6 +504,33 @@ namespace GamesToGo.Desktop.Project
             return toBeArgument;
         }
 
+        private static EventAction populateAction(string text)
+        {
+            var action = text.Split('|');
+            int actType = divideLine(action[1], out string arguments);
+
+            var actionArgs = arguments.Split(',');
+
+            if(!(Activator.CreateInstance(AvailableActions[actType]) is EventAction toBeAction))
+                return null;
+
+            for (int argIndex = 0; argIndex < actionArgs.Length; argIndex++)
+            {
+                toBeAction.Arguments[argIndex].Value = populateArgument(actionArgs[argIndex]);
+            }
+
+            try
+            {
+                toBeAction.Condition.Value = populateArgument(action[2]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                toBeAction.Condition.Value = null;
+            }
+
+            return toBeAction;
+        }
+
         /// <summary>
         /// Divide una linea de evento, accion o argumento en sus partes
         /// </summary>
@@ -485,6 +542,21 @@ namespace GamesToGo.Desktop.Project
             string args = line.Split('(', 2)[1];
             arguments = args.Substring(0, args.Length - 1);
             return int.Parse(line.Split('(')[0]);
+        }
+
+        public void RemoveElement(ProjectElement toDeleteElement)
+        {
+            if (toDeleteElement is IHasElements elemented)
+            {
+                while (elemented.Elements.Any())
+                {
+                    var sub = elemented.Elements[0];
+                    RemoveElement(sub);
+                    elemented.Elements.Remove(sub);
+                }
+            }
+
+            projectElements.Remove(toDeleteElement);
         }
     }
 }

@@ -209,7 +209,7 @@ namespace GamesToGo.Desktop.Graphics
 
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        checkRemoved(args.NewItems.Cast<ProjectElement>());
+                        checkRemoved(args.OldItems.Cast<ProjectElement>());
 
                         break;
                 }

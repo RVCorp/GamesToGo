@@ -21,7 +21,7 @@ namespace GamesToGo.Desktop.Graphics
         private MultipleOptionOverlay optionsOverlay { get; set; }
 
         [Resolved]
-        public APIController api { get; private set; }
+        private APIController api { get; set; }
 
         private WorkingProject workingProject;
 

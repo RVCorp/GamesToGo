@@ -30,7 +30,6 @@ namespace GamesToGo.Desktop.Screens
 
         [Cached]
         private TileEditorOverlay tileOverlay = new TileEditorOverlay();
-
         private VectorTextBoxContainer elementSize;
         private LabeledDropdown<ElementOrientation> elementOrientation;
         private LabeledDropdown<ElementPrivacy> elementPrivacy;
@@ -138,6 +137,15 @@ namespace GamesToGo.Desktop.Screens
                                                             Position = new Vector2(-250, 70),
                                                             Height = 35,
                                                             Width = 400,
+                                                        },
+                                                        new GamesToGoButton
+                                                        {
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Height = 35,
+                                                            Width = 200,
+                                                            Text = @"Borrar Elemento",
+                                                            Action = () => editor.DeleteElement(currentEditing.Value)
                                                         },
                                                     },
                                                 },

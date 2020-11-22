@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamesToGo.Desktop", "GamesToGo.Desktop\GamesToGo.Desktop.csproj", "{B60EB00A-8455-43C3-951E-008449743275}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamesToGo.App", "GamesToGo.App\GamesToGo.App.csproj", "{FA987518-939C-443B-A4B8-2885249B29BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,12 @@ Global
 		{B60EB00A-8455-43C3-951E-008449743275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B60EB00A-8455-43C3-951E-008449743275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B60EB00A-8455-43C3-951E-008449743275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA987518-939C-443B-A4B8-2885249B29BF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
