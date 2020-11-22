@@ -16,15 +16,15 @@ namespace GamesToGo.App.Screens
     public class GameInfoScreen : Screen
     {
         [Resolved]
-        private DropdownMenuOverlay dropdownMenu { get; set; }
+        private SideMenuOverlay sideMenu { get; set; }
         [Resolved]
-        private MainMenuScreen ms { get; set; }
+        private MainMenuScreen mainMenu { get; set; }
         [Resolved]
         private APIController api { get; set; }
-        private TextFlowContainer ErrorText;
+        private TextFlowContainer errorText;
 
-        private OnlineGame game;
-        private FillFlowContainer GameRooms;
+        private readonly OnlineGame game;
+        private FillFlowContainer gameRooms;
 
         public GameInfoScreen(OnlineGame game)
         {
@@ -78,7 +78,7 @@ namespace GamesToGo.App.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => dropdownMenu.Show()
+                                            Action = () => sideMenu.Show()
                                         }
                                     },
                                     new Container
@@ -91,7 +91,7 @@ namespace GamesToGo.App.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = goHome
+                                            Action = mainMenu.MakeCurrent,
                                         }
                                     },
                                 }
@@ -140,7 +140,7 @@ namespace GamesToGo.App.Screens
                                                     {
                                                         new SpriteText
                                                         {
-                                                            Text = "Descripción:",
+                                                            Text = @"Descripción:",
                                                             Font = new FontUsage(size: 70)
                                                         },
                                                         new TextFlowContainer((e) => e.Font = new FontUsage(size: 70) )
@@ -149,8 +149,8 @@ namespace GamesToGo.App.Screens
                                                             Height = 300,
                                                             Text = game.Description,
                                                         },
-                                                    }
-                                                }
+                                                    },
+                                                },
                                             },
                                             new Container
                                             {
@@ -167,7 +167,7 @@ namespace GamesToGo.App.Screens
                                                         Masking = true,
                                                         BorderColour = Colour4.Black,
                                                         BorderThickness = 3.5f,
-                                                        Child = GameRooms = new FillFlowContainer
+                                                        Child = gameRooms = new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
@@ -185,26 +185,23 @@ namespace GamesToGo.App.Screens
                                                                 RelativeSizeAxes = Axes.Both,
                                                                 Colour = Colour4.LightGray
                                                             },
-                                                            ErrorText = new TextFlowContainer((e) => { e.Font = new FontUsage(size: 80); e.Colour = Colour4.Black; })
+                                                            errorText = new TextFlowContainer((e) => { e.Font = new FontUsage(size: 80); e.Colour = Colour4.Black; })
                                                             {
                                                                 RelativeSizeAxes = Axes.X,
                                                                 Height = 1000,
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
-                dropdownMenu = new DropdownMenuOverlay()
-                {
-
-                },
+                sideMenu = new SideMenuOverlay(),
                 new Container
                 {
                     Anchor = Anchor.BottomRight,
@@ -215,26 +212,29 @@ namespace GamesToGo.App.Screens
                     {
                         RelativeSizeAxes = Axes.Both,
                         Masking = true,
-                        Children = new Drawable[]
+                        Child = new SurfaceButton
                         {
-                            new Box
+                            Action = () => createRoom(game),
+                            Children = new Drawable[]
                             {
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Colour4.Pink
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Colour4.Pink
+                                },
+                                new SpriteIcon
+                                {
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    RelativeSizeAxes = Axes.Both,
+                                    Height = .4f,
+                                    Width = .4f,
+                                    Icon = FontAwesome.Solid.Plus,
+                                },
                             },
-                            new SpriteIcon
-                            {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                RelativeSizeAxes = Axes.Both,
-                                Height = .4f,
-                                Width = .4f,
-                                Icon = FontAwesome.Solid.Plus,
-                            },
-                            new SurfaceButton { Action = () => createRoom(game)}
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
             populateRooms();
         }
@@ -246,7 +246,7 @@ namespace GamesToGo.App.Screens
             {
                 foreach(var room in u)
                 {
-                    GameRooms.Add(new Container
+                    gameRooms.Add(new Container
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 200,
@@ -255,27 +255,22 @@ namespace GamesToGo.App.Screens
                         BorderThickness = 3.5f,
                         Children = new Drawable[]
                         {
-                            new RoomPreviewContainer(game, room),
-                            new SurfaceButton { }
+                            new RoomPreviewContainer(room),
+                            new SurfaceButton()
                         }
                     });
                 }
             };
             getRooms.Failure += e =>
             {
-                ErrorText.Text = "No hay salas disponibles para este juego";
+                errorText.Text = @"No hay salas disponibles para este juego";
             };
             api.Queue(getRooms);
         }
 
-        private void goHome()
+        private void createRoom(OnlineGame requestedGame)
         {
-            LoadComponentAsync(ms, this.Push);
-        }
-
-        private void createRoom(OnlineGame game)
-        {
-            var room = new CreateRoomRequest(game.Id);
+            var room = new CreateRoomRequest(requestedGame.Id);
             room.Success += u =>
             {
                 LoadComponentAsync(new RoomScreen(u), this.Push);

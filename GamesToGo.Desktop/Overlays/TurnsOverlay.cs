@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Desktop.Graphics;
+﻿using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Project.Actions;
-using GamesToGo.Desktop.Project.Elements;
-using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osuTK;
 
 namespace GamesToGo.Desktop.Overlays
 {
@@ -18,10 +11,6 @@ namespace GamesToGo.Desktop.Overlays
     {
         [Resolved]
         private WorkingProject project { get; set; }
-        private FillFlowContainer<ProjectEventContainer> eventsList;
-
-        [Cached]
-        private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
 
         [BackgroundDependencyLoader]
         private void load()
@@ -32,10 +21,9 @@ namespace GamesToGo.Desktop.Overlays
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255)
-                },                
-                new TurnsContainer{ },
-                argumentListing
+                    Colour = Colour4.MediumPurple.Opacity(0.3f),
+                },
+                new TurnsContainer(),
             };
         }
 

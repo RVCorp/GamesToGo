@@ -6,12 +6,11 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace GamesToGo.App.Overlays
 {
-    public class DropdownMenuOverlay : OverlayContainer
+    public class SideMenuOverlay : OverlayContainer
     {
         private Container menu;
         private Box shadowBox;
@@ -29,7 +28,6 @@ namespace GamesToGo.App.Overlays
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
                     RelativeSizeAxes = Axes.Both,
-                    Width = .2f,
                     Children = new Drawable[]
                     {
                         shadowBox = new Box
@@ -40,10 +38,9 @@ namespace GamesToGo.App.Overlays
                         },
                         new SurfaceButton
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Action = () => Hide()
+                            Action = Hide,
                         },
-                    }
+                    },
                 },
                 menu = new Container
                 {
@@ -131,7 +128,7 @@ namespace GamesToGo.App.Overlays
                                                                 },
                                                             }
                                                         },
-                                                        new SurfaceButton{ }
+                                                        new SurfaceButton()
                                                     }
                                                 },
                                                 new Container
@@ -155,12 +152,12 @@ namespace GamesToGo.App.Overlays
                                                             Text = "Invitaciones",
                                                             Font = new FontUsage(size: 80)
                                                         },
-                                                        new SurfaceButton{ }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                                        new SurfaceButton()
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                                 new Drawable[]
                                 {
@@ -184,13 +181,13 @@ namespace GamesToGo.App.Overlays
                                                 Text = "GamesToGo",
                                                 Font = new FontUsage(size: 80)
                                             },
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
             base.Size = Size;
         }

@@ -1,26 +1,23 @@
-﻿using System;
-using GamesToGo.App.Online;
-using GamesToGo.App.Screens;
+﻿using GamesToGo.App.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace GamesToGo.App.Graphics
 {
-    public class GamePreviewContainer : Container
+    public class GamePreviewContainer : Button
     {
         private OnlineGame game;
-        private Func<OnlineGame, bool> gameScreen;
-        private Sprite GameImage;
+        private Sprite gameImage;
 
         public GamePreviewContainer(OnlineGame game)
         {
             this.game = game;
-            this.gameScreen = gameScreen;
         }
 
         [BackgroundDependencyLoader]
@@ -49,7 +46,7 @@ namespace GamesToGo.App.Graphics
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = .3f,
-                            Child = GameImage =  new Sprite
+                            Child = gameImage =  new Sprite
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Texture = textures.Get("Images/gtg")
@@ -86,9 +83,9 @@ namespace GamesToGo.App.Graphics
                                             {
                                                 Text = "Hecho por: "+ game.CreatorId,
                                                 Font = new FontUsage(size: 65)
-                                            }
-                                        }
-                                    }
+                                            },
+                                        },
+                                    },
                                 },
                                 new Container
                                 {
@@ -108,27 +105,27 @@ namespace GamesToGo.App.Graphics
                                             {
                                                 RelativeSizeAxes = Axes.Both,
                                                 Width = .325f,
-                                                Icon = FontAwesome.Solid.Users
+                                                Icon = FontAwesome.Solid.Users,
                                             },
                                             new SpriteText
                                             {
-                                                Text = game.Minplayers.ToString() + "-" + game.Maxplayers.ToString(),
-                                                Font = new FontUsage(size:100)
-                                            }
-                                        }
-                                    }
+                                                Text = game.Minplayers + "-" + game.Maxplayers,
+                                                Font = new FontUsage(size:100),
+                                            },
+                                        },
+                                    },
                                 },
-                            }
-                        }
-                    }
+                            },
+                        },
+                    },
                 },
             };
             Schedule(async () =>
             {
-                GameImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{game.Image}");
+                gameImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{game.Image}");
             });
         }
 
-        
+
     }
 }

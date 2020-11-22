@@ -22,10 +22,14 @@ namespace GamesToGo.Desktop.Screens
         [Resolved]
         private Context database { get; set; }
 
+        [Resolved]
+        private TextureStore textures { get; set; }
+
         private FillFlowContainer<PublishedProjectSummaryContainer> publishedProjectsList;
+        private Sprite banner;
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load()
         {
             InternalChildren = new Drawable[]
             {
@@ -77,10 +81,9 @@ namespace GamesToGo.Desktop.Screens
                                         Height = 600,
                                         Children = new Drawable[]
                                         {
-                                            new Sprite
+                                            banner = new Sprite
                                             {
                                                 RelativeSizeAxes = Axes.Both,
-                                                Texture = textures.Get("https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg"),
                                             },
                                             new FillFlowContainer
                                             {
@@ -204,15 +207,16 @@ namespace GamesToGo.Desktop.Screens
                     },
                 },
             };
-            populateOnlineList();
         }
 
-        public override void OnResuming(IScreen last)
+        public override void OnEntering(IScreen last)
         {
             base.OnResuming(last);
 
             publishedProjectsList.Clear();
             populateOnlineList();
+
+            banner.Texture = textures.Get("https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg");
         }
 
         private void populateOnlineList()
@@ -220,7 +224,7 @@ namespace GamesToGo.Desktop.Screens
             var getProjects = new GetAllPublishedProjectsRequest();
             getProjects.Success += u =>
             {
-                foreach (var proj in u.Where(project => !database.Projects.Any(dbp => dbp.OnlineProjectID == project.Id) && publishedProjectsList.Children.All(published => published.ID != project.Id)))
+                foreach (var proj in u)
                 {
                     publishedProjectsList.Add(new PublishedProjectSummaryContainer(proj));
                 }

@@ -9,7 +9,6 @@ using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Arguments;
 using GamesToGo.Desktop.Project.Elements;
 using GamesToGo.Desktop.Project.Events;
-using GamesToGo.Desktop.Screens;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Textures;
@@ -181,13 +180,13 @@ namespace GamesToGo.Desktop.Project
             builder.AppendLine($"VictoryConditions={VictoryConditions.Count}");
             foreach(var action in VictoryConditions)
             {
-                builder.AppendLine($"{action.ToString()}");
+                builder.AppendLine($"{action}");
             }
 
             builder.AppendLine($"Turns={Turns.Count}");
             foreach(var action in Turns)
             {
-                builder.AppendLine($"{action.ToString()}");
+                builder.AppendLine($"{action}");
             }
 
             builder.AppendLine();
@@ -339,12 +338,12 @@ namespace GamesToGo.Desktop.Project
                             }
                             case "Orient" when parsingElement is IHasOrientation orientedElement:
                             {
-                                orientedElement.DefaultOrientation = Enum.Parse<ElementOrientation>(tokens[1]);
+                                orientedElement.DefaultOrientation.Value = Enum.Parse<ElementOrientation>(tokens[1]);
                                 break;
                             }
                             case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
                             {
-                                privacySetElement.DefaultPrivacy = Enum.Parse<ElementPrivacy>(tokens[1]);
+                                privacySetElement.DefaultPrivacy.Value = Enum.Parse<ElementPrivacy>(tokens[1]);
                                 break;
                             }
                             case "Position" when parsingElement is IHasPosition position:
@@ -512,8 +511,8 @@ namespace GamesToGo.Desktop.Project
 
             var actionArgs = arguments.Split(',');
 
-            EventAction toBeAction = Activator.CreateInstance(AvailableActions[actType]) as EventAction;
-
+            if(!(Activator.CreateInstance(AvailableActions[actType]) is EventAction toBeAction))
+                return null;
 
             for (int argIndex = 0; argIndex < actionArgs.Length; argIndex++)
             {

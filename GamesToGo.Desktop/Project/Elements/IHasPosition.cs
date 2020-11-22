@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.Bindables;
+﻿using osu.Framework.Bindables;
 using osuTK;
 
 namespace GamesToGo.Desktop.Project.Elements
 {
-    interface IHasPosition
+    public interface IHasPosition
     {
         Bindable<Vector2> Position { get; }
 

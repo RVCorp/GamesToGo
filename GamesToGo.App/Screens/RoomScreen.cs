@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using GamesToGo.App.Graphics;
+﻿using GamesToGo.App.Graphics;
 using GamesToGo.App.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -23,7 +12,6 @@ namespace GamesToGo.App.Screens
 {
     public class RoomScreen : Screen
     {
-
         private OnlineRoom room;
         private TextFlowContainer usersInRoom;
 
@@ -79,10 +67,10 @@ namespace GamesToGo.App.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                        }
+                                        },
                                     },
-                                }
-                            }
+                                },
+                            },
                         },
                         new Drawable[]
                         {

@@ -28,7 +28,7 @@ namespace GamesToGo.Desktop.Graphics
             Add(new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.LightGreen
+                Colour = Colour4.LightGreen,
             });
             Add(addElement = new FillFlowContainer<ArgumentItem>
             {
@@ -63,9 +63,9 @@ namespace GamesToGo.Desktop.Graphics
                             RelativeSizeAxes = Axes.Y,
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.CentreLeft,
-                            Text = text
-                        }
-                    }
+                            Text = text,
+                        },
+                    },
                 };
             }
         }

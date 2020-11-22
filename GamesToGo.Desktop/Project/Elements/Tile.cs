@@ -23,9 +23,10 @@ namespace GamesToGo.Desktop.Project.Elements
         public BindableList<ProjectEvent> Events { get; } = new BindableList<ProjectEvent>();
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
-        public ElementOrientation DefaultOrientation { get; set; } = ElementOrientation.Vertical;
+        public Bindable<ElementOrientation> DefaultOrientation { get; } = new Bindable<ElementOrientation>();
 
         public Bindable<Vector2> Position { get; } = new Bindable<Vector2>(Vector2.Zero);
 
+        public override ElementPreviewMode PreviewMode => ElementPreviewMode.ParentWithChildren;
     }
 }

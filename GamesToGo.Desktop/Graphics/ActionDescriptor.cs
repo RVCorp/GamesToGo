@@ -12,15 +12,14 @@ namespace GamesToGo.Desktop.Graphics
 {
     public class ActionDescriptor : Container
     {
-        private readonly EventAction Model;
+        public readonly EventAction Model;
         private FillFlowContainer descriptionContainer;
         private BasicScrollContainer scrollContainer;
-        private Func<EventAction, bool> Function;
+        public Action<EventAction> RemoveAction { get; set; }
 
-        public ActionDescriptor(EventAction model, Func<EventAction,bool> func)
+        public ActionDescriptor(EventAction model)
         {
             Model = model;
-            Function = func;
         }
 
         [BackgroundDependencyLoader]
@@ -72,17 +71,19 @@ namespace GamesToGo.Desktop.Graphics
                             },
                             new Container
                             {
-                                RelativeSizeAxes = Axes.X,
-                                AutoSizeAxes = Axes.Y,
+                                AutoSizeAxes = Axes.Both,
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                Padding = new MarginPadding(5),
                                 Child = new IconButton(FontAwesome.Solid.TrashAlt, Colour4.DarkRed)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Action = () => Function(Model)
-                                }
-                            }
-                        }
-                    }
+                                    Action = () => RemoveAction?.Invoke(Model),
+                                },
+                            },
+                        },
+                    },
                 },
             };
 

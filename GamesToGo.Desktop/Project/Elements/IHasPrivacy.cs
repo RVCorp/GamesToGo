@@ -1,12 +1,14 @@
-﻿namespace GamesToGo.Desktop.Project.Elements
+﻿using osu.Framework.Bindables;
+
+namespace GamesToGo.Desktop.Project.Elements
 {
     public interface IHasPrivacy
     {
-        ElementPrivacy DefaultPrivacy { get; set; }
+        Bindable<ElementPrivacy> DefaultPrivacy { get; }
 
         public string ToSaveable()
         {
-            return $"Privacy={DefaultPrivacy}";
+            return $"Privacy={DefaultPrivacy.Value}";
         }
     }
 }

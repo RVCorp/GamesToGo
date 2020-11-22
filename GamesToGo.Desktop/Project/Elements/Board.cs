@@ -24,5 +24,7 @@ namespace GamesToGo.Desktop.Project.Elements
         public Queue<int> PendingElements { get; } = new Queue<int>();
 
         public ElementType NestedElementType => ElementType.Tile;
+
+        public override ElementPreviewMode PreviewMode => ElementPreviewMode.ChildrenOfSelf;
     }
 }

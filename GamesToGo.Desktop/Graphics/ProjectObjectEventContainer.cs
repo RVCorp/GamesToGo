@@ -6,7 +6,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Input.Events;
 using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
@@ -15,8 +14,6 @@ namespace GamesToGo.Desktop.Graphics
     {
         public readonly ProjectEvent Event;
         private SpriteText nameText;
-        private IconButton editButton;
-        private IconButton deleteButton;
 
         [Resolved]
         private EventEditionOverlay eventOverlay { get; set; }
@@ -75,7 +72,7 @@ namespace GamesToGo.Desktop.Graphics
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = editButton = new IconButton(FontAwesome.Solid.Edit)
+                                Child = new IconButton(FontAwesome.Solid.Edit)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
@@ -85,7 +82,7 @@ namespace GamesToGo.Desktop.Graphics
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = deleteButton = new IconButton(FontAwesome.Solid.TrashAlt)
+                                Child = new IconButton(FontAwesome.Solid.TrashAlt)
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,

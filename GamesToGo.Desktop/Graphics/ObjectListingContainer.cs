@@ -36,6 +36,9 @@ namespace GamesToGo.Desktop.Graphics
             }
         }
 
+        public Action<IEnumerable<TElement>> ElementsAdded;
+        public Action<IEnumerable<TElement>> ElementsRemoved;
+
         private static Colour4 BackgroundColour
         {
             get
@@ -149,6 +152,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private void checkAdded(IEnumerable<ProjectElement> added)
         {
+            var result = new List<TElement>();
             foreach (var item in added)
             {
                 if (!(item is TElement itemT))
@@ -158,12 +162,17 @@ namespace GamesToGo.Desktop.Graphics
                     TButton button = new TButton { Element = itemT };
                     EditTButton(button);
                     allElements.Add(button);
+                    result.Add(itemT);
                 }
             }
+
+            if(result.Any())
+                ElementsAdded?.Invoke(result);
         }
 
         private void checkRemoved(IEnumerable<ProjectElement> removed)
         {
+            var result = new List<TElement>();
             foreach (var item in removed)
             {
                 if (!(item is TElement itemT) || !Filter(itemT))
@@ -172,8 +181,14 @@ namespace GamesToGo.Desktop.Graphics
                 var deletable = allElements.FirstOrDefault(b => b.Element.ID == item.ID);
 
                 if (deletable != null)
+                {
                     allElements.Remove(deletable);
+                    result.Add(itemT);
+                }
             }
+
+            if(result.Any())
+                ElementsRemoved?.Invoke(result);
         }
 
         protected void BindToList(IBindableList<ProjectElement> elements)

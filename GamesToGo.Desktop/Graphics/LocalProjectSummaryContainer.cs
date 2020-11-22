@@ -21,7 +21,7 @@ namespace GamesToGo.Desktop.Graphics
         private MultipleOptionOverlay optionsOverlay { get; set; }
 
         [Resolved]
-        public APIController Api { get; private set; }
+        private APIController api { get; set; }
 
         private WorkingProject workingProject;
 
@@ -36,7 +36,7 @@ namespace GamesToGo.Desktop.Graphics
         [BackgroundDependencyLoader]
         private void load(Storage store, TextureStore textures)
         {
-            workingProject = WorkingProject.Parse(ProjectInfo, store, textures, Api);
+            workingProject = WorkingProject.Parse(ProjectInfo, store, textures, api);
 
             editIcon = workingProject == null ? FontAwesome.Solid.ExclamationTriangle : FontAwesome.Solid.Edit;
 
@@ -73,7 +73,7 @@ namespace GamesToGo.Desktop.Graphics
 
             var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
             getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
-            Api.Queue(getCreator);
+            api.Queue(getCreator);
         }
         private void checkValidWorkingProject()
         {
@@ -99,7 +99,7 @@ namespace GamesToGo.Desktop.Graphics
                     },
                 });
             }
-            else if (Api.LocalUser.Value.ID != ProjectInfo.CreatorID)
+            else if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
                 optionsOverlay.Show(@"Este proyecto no te pertenece, no puedes editarlo", new[]
                 {
@@ -118,7 +118,7 @@ namespace GamesToGo.Desktop.Graphics
 
         private void showConfirmation()
         {
-            if (Api.LocalUser.Value.ID != ProjectInfo.CreatorID)
+            if (api.LocalUser.Value.ID != ProjectInfo.CreatorID)
             {
                 optionsOverlay.Show(@"Este proyecto no te pertenece, no puedes eliminarlo", new[]
                 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Arguments;
@@ -16,19 +15,15 @@ using osuTK.Graphics;
 
 namespace GamesToGo.Desktop.Graphics
 {
+    [Cached]
     public class ActionTypeListing : Container
     {
         private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ActionListContainer possibleEventsList;
-        public static Func<EventAction, bool> Funcion;
+        public Action<EventAction> OnSelection { get; set; }
 
         [Resolved]
         private ProjectEditor editor { get; set; }
-
-        public ActionTypeListing(Func<EventAction, bool> func)
-        {
-            Funcion = func;
-        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -44,7 +39,7 @@ namespace GamesToGo.Desktop.Graphics
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.Honeydew,
+                        Colour = Color4.Beige,
                     },
                     new Container
                     {
@@ -206,6 +201,9 @@ namespace GamesToGo.Desktop.Graphics
             [Resolved]
             private ActionListContainer actionList { get; set; }
 
+            [Resolved]
+            private ActionTypeListing typeListing { get; set; }
+
             public ActionTypeButton(EventAction type)
             {
                 this.type = type;
@@ -222,13 +220,13 @@ namespace GamesToGo.Desktop.Graphics
                 HoverColour = new Colour4(55, 55, 55, 255);
                 Action = () =>
                 {
-                    Funcion(type);
+                    typeListing.OnSelection?.Invoke(type);
                     actionList.Hide();
                 };
                 SpriteText.Text = string.Join(' ', type.Text);
             }
 
-            
+
 
             protected override SpriteText CreateText()
             {

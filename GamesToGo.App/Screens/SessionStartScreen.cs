@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using GamesToGo.App.Graphics;
+﻿using GamesToGo.App.Graphics;
 using GamesToGo.App.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -19,7 +6,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -27,9 +13,9 @@ namespace GamesToGo.App.Screens
 {
     public class SessionStartScreen : Screen
     {
-        GamesToGoButton Login;
-        private LoginOverlay login;
-        GamesToGoButton Register;
+        private GamesToGoButton loginButton;
+        private LoginOverlay loginOverlay;
+        private GamesToGoButton registerButton;
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
@@ -79,14 +65,14 @@ namespace GamesToGo.App.Screens
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = Login = new GamesToGoButton
+                                Child = loginButton = new GamesToGoButton
                                 {
                                     Anchor = Anchor.BottomCentre,
                                     Origin = Anchor.BottomCentre,
                                     Height = 150,
                                     Width = 800,
                                     Text = "Iniciar Sesión",
-                                    Action = () => login.Show()
+                                    Action = () => loginOverlay.Show()
                                 }
                             }
                         },
@@ -95,23 +81,22 @@ namespace GamesToGo.App.Screens
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Child = Register = new GamesToGoButton
+                                Child = registerButton = new GamesToGoButton
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Height = 150,
                                     Width = 800,
                                     Text = "Registrarse",
-                                    
-                                }
-                            }
-                        }
-                    }
+                                },
+                            },
+                        },
+                    },
                 },
-                login = new LoginOverlay(loginIntoServer)
+                loginOverlay = new LoginOverlay(loginIntoServer),
             };
-            Login.SpriteText.Font = new FontUsage(size:60);
-            Register.SpriteText.Font = new FontUsage(size: 60);
+            loginButton.SpriteText.Font = new FontUsage(size:60);
+            registerButton.SpriteText.Font = new FontUsage(size: 60);
         }
 
         private void loginIntoServer()

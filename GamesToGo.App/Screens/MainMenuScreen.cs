@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using GamesToGo.App.Graphics;
+﻿using GamesToGo.App.Graphics;
 using GamesToGo.App.Online;
 using GamesToGo.App.Overlays;
 using osu.Framework.Allocation;
@@ -18,22 +7,17 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace GamesToGo.App.Screens
 {
     [Cached]
     public class MainMenuScreen : Screen
     {
-        private FillFlowContainer<Container> comunityGames;
+        private FillFlowContainer<Container> communityGames;
         [Cached]
-        private DropdownMenuOverlay dropdownMenu;
+        private SideMenuOverlay sideMenu = new SideMenuOverlay();
         [Resolved]
         private APIController api { get; set; }
-        public MainMenuScreen()
-        {
-            dropdownMenu = new DropdownMenuOverlay();
-        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -82,7 +66,7 @@ namespace GamesToGo.App.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => dropdownMenu.Show()
+                                            Action = () => sideMenu.Show()
                                         }
                                     },
                                     new Container
@@ -109,7 +93,7 @@ namespace GamesToGo.App.Screens
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ClampExtension = 30,
-                                    Child = comunityGames = new FillFlowContainer<Container>
+                                    Child = communityGames = new FillFlowContainer<Container>
                                     {
                                         AutoSizeAxes = Axes.Y,
                                         RelativeSizeAxes = Axes.X,
@@ -120,9 +104,9 @@ namespace GamesToGo.App.Screens
                         }
                     }
                 },
-                dropdownMenu
+                sideMenu
             };
-            populateGamesList();            
+            populateGamesList();
         }
 
         private void populateGamesList()
@@ -132,27 +116,21 @@ namespace GamesToGo.App.Screens
             {
                 foreach(var game in u)
                 {
-                    comunityGames.Add(new Container
+                    communityGames.Add(new Container
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 400,
                         Children = new Drawable[]
                         {
-                            new GamePreviewContainer(game),
-                            new SurfaceButton {Action = () => gameScreen(game) }
-                        }
+                            new GamePreviewContainer(game)
+                            {
+                                Action = () => LoadComponentAsync(new GameInfoScreen(game), this.Push)
+                            },
+                        },
                     });
                 }
             };
             api.Queue(getGames);
         }
-        
-        private bool gameScreen(OnlineGame game)
-        {
-            LoadComponentAsync(new GameInfoScreen(game), this.Push);
-            return true;
-        }
-
-        
     }
 }

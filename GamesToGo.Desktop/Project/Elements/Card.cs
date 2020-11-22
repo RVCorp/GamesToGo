@@ -23,9 +23,9 @@ namespace GamesToGo.Desktop.Project.Elements
 
         public Bindable<Vector2> Size { get; } = new Bindable<Vector2>(new Vector2(400));
 
-        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
+        public Bindable<ElementPrivacy> DefaultPrivacy { get; } = new Bindable<ElementPrivacy>();
 
-        public ElementOrientation DefaultOrientation { get; set; } = ElementOrientation.Vertical;
+        public Bindable<ElementOrientation> DefaultOrientation { get; } = new Bindable<ElementOrientation>();
 
         public BindableList<ProjectEvent> Events { get; } = new BindableList<ProjectEvent>();
     }
