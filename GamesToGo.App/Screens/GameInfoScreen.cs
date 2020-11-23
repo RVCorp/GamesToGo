@@ -152,6 +152,11 @@ namespace GamesToGo.App.Screens
                                                     },
                                                 },
                                             },
+                                            new SpriteText
+                                            {
+                                                Text = "Salas:",
+                                                Font = new FontUsage(size: 80)
+                                            },
                                             new Container
                                             {
                                                 RelativeSizeAxes = Axes.X,
@@ -159,21 +164,6 @@ namespace GamesToGo.App.Screens
                                                 Padding = new MarginPadding(80),
                                                 Children = new Drawable[]
                                                 {
-                                                    new BasicScrollContainer
-                                                    {
-                                                        RelativeSizeAxes = Axes.X,
-                                                        Height = 1000,
-                                                        ClampExtension = 30,
-                                                        Masking = true,
-                                                        BorderColour = Colour4.Black,
-                                                        BorderThickness = 3.5f,
-                                                        Child = gameRooms = new FillFlowContainer
-                                                        {
-                                                            RelativeSizeAxes = Axes.X,
-                                                            AutoSizeAxes = Axes.Y,
-                                                            Direction = FillDirection.Vertical
-                                                        },
-                                                    },
                                                     new Container
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
@@ -190,6 +180,21 @@ namespace GamesToGo.App.Screens
                                                                 RelativeSizeAxes = Axes.X,
                                                                 Height = 1000,
                                                             },
+                                                        },
+                                                    },
+                                                    new BasicScrollContainer
+                                                    {
+                                                        RelativeSizeAxes = Axes.X,
+                                                        Height = 1000,
+                                                        ClampExtension = 30,
+                                                        Masking = true,
+                                                        BorderColour = Colour4.Black,
+                                                        BorderThickness = 3.5f,
+                                                        Child = gameRooms = new FillFlowContainer
+                                                        {
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
+                                                            Direction = FillDirection.Vertical
                                                         },
                                                     },
                                                 },
@@ -250,13 +255,10 @@ namespace GamesToGo.App.Screens
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 200,
-                        Masking = true,
-                        BorderColour = Colour4.Black,
-                        BorderThickness = 3.5f,
-                        Children = new Drawable[]
+                        Child = new SurfaceButton
                         {
-                            new RoomPreviewContainer(room),
-                            new SurfaceButton()
+                            Child = new RoomPreviewContainer(room),
+                            Action = () => joinRoom(room.Id)
                         }
                     });
                 }
@@ -271,6 +273,16 @@ namespace GamesToGo.App.Screens
         private void createRoom(OnlineGame requestedGame)
         {
             var room = new CreateRoomRequest(requestedGame.Id);
+            room.Success += u =>
+            {
+                LoadComponentAsync(new RoomScreen(u), this.Push);
+            };
+            api.Queue(room);
+        }
+
+        private void joinRoom(int id)
+        {
+            var room = new JoinRoomRequest(id);
             room.Success += u =>
             {
                 LoadComponentAsync(new RoomScreen(u), this.Push);
