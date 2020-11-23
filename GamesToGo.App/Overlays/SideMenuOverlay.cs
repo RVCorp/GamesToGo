@@ -1,6 +1,5 @@
 ﻿using GamesToGo.App.Graphics;
 using GamesToGo.App.Online;
-using GamesToGo.App.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GamesToGo.App.Graphics;
 using GamesToGo.App.Online;
 using osu.Framework.Allocation;
@@ -7,9 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Screens;
-using osuTK;
 
 namespace GamesToGo.App.Screens
 {
