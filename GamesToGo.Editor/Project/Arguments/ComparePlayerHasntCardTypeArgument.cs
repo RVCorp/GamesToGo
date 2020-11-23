@@ -1,4 +1,4 @@
-﻿namespace GamesToGo.Desktop.Project.Arguments
+﻿namespace GamesToGo.Editor.Project.Arguments
 {
     public class ComparePlayerHasNoCardTypeArgument : Argument
     {

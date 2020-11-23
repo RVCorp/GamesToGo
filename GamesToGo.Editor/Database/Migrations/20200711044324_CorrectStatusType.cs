@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 // ReSharper disable All
 
-namespace GamesToGo.Desktop.Database.Migrations
+namespace GamesToGo.Editor.Database.Migrations
 {
     public partial class CorrectStatusType : Migration
     {

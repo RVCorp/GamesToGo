@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;
 
-namespace GamesToGo.Desktop.Online
+namespace GamesToGo.Editor.Online
 {
     public class AddUserRequest : APIRequest<User>
     {
