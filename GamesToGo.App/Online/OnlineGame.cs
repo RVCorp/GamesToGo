@@ -29,5 +29,6 @@ namespace GamesToGo.App.Online
         public int Minplayers { get; set; }
         public int Maxplayers { get; set; }
         public int CreatorId { get; set; }
+        public User Creator { get; set; }
     }
 }

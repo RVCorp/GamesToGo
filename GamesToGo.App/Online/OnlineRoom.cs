@@ -4,7 +4,7 @@ namespace GamesToGo.App.Online
 {
     public class OnlineRoom
     {
-        public User Owner { get; set; }
+        public Player Owner { get; set; }
         public int ID { get; set; }
         public OnlineGame Game { get; set; }
 

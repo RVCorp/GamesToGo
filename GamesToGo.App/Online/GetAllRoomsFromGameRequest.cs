@@ -10,6 +10,6 @@ namespace GamesToGo.App.Online
             this.id = id;
         }
 
-        protected override string Target => $"Rooms/AllRoomsFrom/{id}";
+        protected override string Target => $"Room/AllRoomsFor/{id}";
     }
 }

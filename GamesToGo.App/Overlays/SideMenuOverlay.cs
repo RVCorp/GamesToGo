@@ -90,45 +90,48 @@ namespace GamesToGo.App.Overlays
                                                     BorderThickness = 3.5f,
                                                     Masking = true,
                                                     Padding = new MarginPadding(){ Top = 80, Left = 20, Right = 20},
-                                                    Children = new Drawable[]
+                                                    Child = new SurfaceButton
                                                     {
-                                                        new EmptyBox
+                                                        //Action = profileScreen
+                                                        Children = new Drawable[]
                                                         {
-                                                            RelativeSizeAxes = Axes.Both
-                                                        },
-                                                        new FillFlowContainer
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            Direction = FillDirection.Vertical,
-                                                            Padding = new MarginPadding(){ Bottom = 40},
-                                                            Children = new Drawable[]
+                                                            new EmptyBox
                                                             {
-                                                                new CircularContainer
+                                                                RelativeSizeAxes = Axes.Both
+                                                            },
+                                                            new FillFlowContainer
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Direction = FillDirection.Vertical,
+                                                                Padding = new MarginPadding(){ Bottom = 40},
+                                                                Children = new Drawable[]
                                                                 {
-                                                                    Anchor = Anchor.Centre,
-                                                                    Origin = Anchor.Centre,
-                                                                    BorderColour = Colour4.Black,
-                                                                    BorderThickness = 3.5f,
-                                                                    Masking = true,
-                                                                    Size = new Vector2(300, 300),
-                                                                    Child = new Sprite
+                                                                    new CircularContainer
                                                                     {
                                                                         Anchor = Anchor.Centre,
                                                                         Origin = Anchor.Centre,
-                                                                        RelativeSizeAxes = Axes.Both,
-                                                                        Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
-                                                                    }
-                                                                },
-                                                                new SpriteText
-                                                                {
-                                                                    Anchor = Anchor.Centre,
-                                                                    Origin = Anchor.Centre,
-                                                                    Text = api.LocalUser.Value.Username + " #" +api.LocalUser.Value.ID,
-                                                                    Font = new FontUsage(size: 80)
-                                                                },
-                                                            }
-                                                        },
-                                                        new SurfaceButton()
+                                                                        BorderColour = Colour4.Black,
+                                                                        BorderThickness = 3.5f,
+                                                                        Masking = true,
+                                                                        Size = new Vector2(300, 300),
+                                                                        Child = new Sprite
+                                                                        {
+                                                                            Anchor = Anchor.Centre,
+                                                                            Origin = Anchor.Centre,
+                                                                            RelativeSizeAxes = Axes.Both,
+                                                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
+                                                                        }
+                                                                    },
+                                                                    new SpriteText
+                                                                    {
+                                                                        Anchor = Anchor.Centre,
+                                                                        Origin = Anchor.Centre,
+                                                                        Text = api.LocalUser.Value.Username + " #" +api.LocalUser.Value.ID,
+                                                                        Font = new FontUsage(size: 80)
+                                                                    },
+                                                                }
+                                                            },
+                                                        }
                                                     }
                                                 },
                                                 new Container
@@ -139,21 +142,53 @@ namespace GamesToGo.App.Overlays
                                                     BorderThickness = 3.5f,
                                                     Masking = true,
                                                     Padding = new MarginPadding(20),
-                                                    Children = new Drawable[]
+                                                    Child = new SurfaceButton()
                                                     {
-                                                        new EmptyBox
+                                                        //Action
+                                                        Children = new Drawable[]
                                                         {
-                                                            RelativeSizeAxes = Axes.Both
+                                                            new EmptyBox
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both
+                                                            },
+                                                            new SpriteText
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Text = "Invitaciones",
+                                                                Font = new FontUsage(size: 80)
+                                                            },
+
                                                         },
-                                                        new SpriteText
+                                                    }
+                                                },
+                                                new Container
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Height = .15f,
+                                                    BorderColour = Colour4.Black,
+                                                    BorderThickness = 3.5f,
+                                                    Masking = true,
+                                                    Padding = new MarginPadding(20),
+                                                    Child = new SurfaceButton()
+                                                    {
+                                                        Action = logout,
+                                                        Children = new Drawable[]
                                                         {
-                                                            Anchor = Anchor.CentreRight,
-                                                            Origin = Anchor.CentreRight,
-                                                            Text = "Invitaciones",
-                                                            Font = new FontUsage(size: 80)
+                                                            new EmptyBox
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both
+                                                            },
+                                                            new SpriteText
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Text = "Cerrar Sesión",
+                                                                Font = new FontUsage(size: 80)
+                                                            },
+
                                                         },
-                                                        new SurfaceButton()
-                                                    },
+                                                    }
                                                 },
                                             },
                                         },
@@ -190,6 +225,11 @@ namespace GamesToGo.App.Overlays
                 },
             };
             base.Size = Size;
+        }
+
+        private void logout()
+        {
+            api.Logout();
         }
 
         protected override void PopIn()

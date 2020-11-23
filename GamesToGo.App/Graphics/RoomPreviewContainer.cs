@@ -54,7 +54,7 @@ namespace GamesToGo.App.Graphics
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Width = .6f,
+                            Width = .5f,
                             Child = new FillFlowContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -65,7 +65,7 @@ namespace GamesToGo.App.Graphics
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Height = .5f,
-                                        Child = new TextFlowContainer((w) => w.Font = new FontUsage(size:80))
+                                        Child = new TextFlowContainer((w) => w.Font = new FontUsage(size:60))
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Text = @"Sala de " + room.Owner.Username,
@@ -78,7 +78,7 @@ namespace GamesToGo.App.Graphics
                                         Child = new SpriteText
                                         {
                                             Text = "Id: " + room.Id,
-                                            Font = new FontUsage(size:60),
+                                            Font = new FontUsage(size:50),
                                         },
                                     },
                                 },
@@ -87,7 +87,8 @@ namespace GamesToGo.App.Graphics
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Width = .2f,
+                            Width = .3f,
+                            Padding = new MarginPadding(){ Right = 50},
                             Child = new FillFlowContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -96,19 +97,25 @@ namespace GamesToGo.App.Graphics
                                 {
                                     new Container
                                     {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .4f,
                                         Child = new SpriteText
                                         {
-                                            Text = room.PlayersInRoom + "/" + room.Game.Maxplayers,
+                                            Anchor = Anchor.Centre,
+                                            Origin = Anchor.Centre,
+                                            Text = room.CurrentPlayers + "/" + room.Game.Maxplayers,
                                             Font = new FontUsage(size: 60)
                                         }
                                     },
                                     new Container
                                     {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .6f,
-                                        Padding = new MarginPadding(5),
+                                        Padding = new MarginPadding(10),
                                         Child = new SpriteIcon
                                         {
                                             RelativeSizeAxes = Axes.Both,
