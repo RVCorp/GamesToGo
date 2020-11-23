@@ -34,14 +34,21 @@ namespace GamesToGo.Game
         [BackgroundDependencyLoader]
         private void load(Storage store)
         {
-            Padding = new MarginPadding() { Top = 100 };
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Game.dll"));
             Textures.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
             Textures.AddExtension("");
             dependencies.CacheAs(this);
-            base.Content.Add(content = new DrawSizePreservingFillContainer { TargetDrawSize = new Vector2(1080, 1920) , Strategy =  DrawSizePreservationStrategy.Minimum});
-            content.Add(stack = new ScreenStack { RelativeSizeAxes = Axes.Both, Depth = 0 });
+            base.Content.Add(content = new PaddedDrawSizePreservingFillContainer
+            {
+                TargetDrawSize = new Vector2(1080, 1920),
+                Strategy =  DrawSizePreservationStrategy.Minimum,
+            });
+            content.Add(stack = new ScreenStack
+            {
+                RelativeSizeAxes = Axes.Both,
+                Depth = 0,
+            });
             content.Add(api = new APIController());
             dependencies.Cache(api);
         }
@@ -52,6 +59,16 @@ namespace GamesToGo.Game
 
             //Cargamos asincronamente la pantalla de inicio de sesión y la agregamos al inicio de nuestra pila.
             LoadComponentAsync(new SessionStartScreen(), stack.Push);
+        }
+
+        private class PaddedDrawSizePreservingFillContainer : DrawSizePreservingFillContainer
+        {
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+
+                Content.Padding = new MarginPadding { Top = 100 };
+            }
         }
     }
 }

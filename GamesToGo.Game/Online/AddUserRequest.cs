@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;
 
-namespace GamesToGo.Android.Online
+namespace GamesToGo.Game.Online
 {
     public class AddUserRequest : APIRequest<User>
     {
