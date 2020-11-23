@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using GamesToGo.Desktop.Graphics;
-using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Events;
 using osu.Framework.Allocation;
@@ -92,10 +91,11 @@ namespace GamesToGo.Desktop.Overlays
                                                 Text = @"Prioridad:",
                                                 Font = new FontUsage(size: 20),
                                             },
-                                            priorityBox = new NumericTextBox(1)
+                                            priorityBox = new NumericTextBox(false)
                                             {
-                                                Size = new Vector2(100, 30)
-                                            }
+                                                LengthLimit = 1,
+                                                Size = new Vector2(100, 30),
+                                            },
                                         },
                                     },
                                 },
@@ -126,8 +126,9 @@ namespace GamesToGo.Desktop.Overlays
                                     new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Child = new ActionTypeListing(createAction)
+                                        Child = new ActionTypeListing
                                         {
+                                            OnSelection = created => Current.Value.Actions.Add(Activator.CreateInstance(created.GetType()) as EventAction),
                                             Anchor = Anchor.BottomCentre,
                                             Origin = Anchor.BottomCentre,
                                         },
@@ -135,16 +136,16 @@ namespace GamesToGo.Desktop.Overlays
                                 },
                             },
                         },
-                        new GamesToGoButton()
+                        new GamesToGoButton
                         {
                             Anchor = Anchor.TopRight,
                             Origin = Anchor.TopRight,
                             Height = 35,
                             Width = 200,
-                            Text = "Cerrar", 
-                            Action = () => Hide()
-                        }
-                    }
+                            Text = @"Cerrar",
+                            Action = Hide,
+                        },
+                    },
                 },
                 argumentListing,
             };
@@ -159,7 +160,7 @@ namespace GamesToGo.Desktop.Overlays
             Current.Value.Name.BindTo(eventNameBox.Current);
             priorityBox.Current.UnbindAll();
             priorityBox.Text = model.Priority.ToString();
-            priorityBox.Current.BindValueChanged(giveValueToPriority, true);
+            priorityBox.Current.BindValueChanged(obj => Current.Value.Priority.Value = (int)obj.NewValue, true);
 
             Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
 
@@ -170,36 +171,16 @@ namespace GamesToGo.Desktop.Overlays
             Show();
         }
 
-        private void giveValueToPriority(ValueChangedEvent<string> obj)
-        {
-            if(obj.NewValue != "")
-                Current.Value.Priority.Value = int.Parse(obj.NewValue);
-        }
-
         private void recreateActions()
         {
             actionFillFlow.Clear();
             foreach (var action in Current.Value.Actions)
             {
-                actionFillFlow.Add(new ActionDescriptor(action, removeAction));
+                actionFillFlow.Add(new ActionDescriptor(action)
+                {
+                    RemoveAction = a => Current.Value.Actions.Remove(a),
+                });
             }
-        }
-
-        private bool removeAction(EventAction toRemove)
-        {
-            Current.Value.Actions.Remove(toRemove);
-            return true;
-        }
-
-        private bool createAction(EventAction type)
-        {
-            AddActionToCurrent(Activator.CreateInstance(type.GetType()) as EventAction);
-            return true;
-        }
-
-        public void AddActionToCurrent(EventAction action)
-        {
-            Current.Value.Actions.Add(action);
         }
 
         protected override void PopIn()

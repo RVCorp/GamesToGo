@@ -1,14 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using GamesToGo.App.Graphics;
 using GamesToGo.App.Online;
 using osu.Framework.Allocation;
@@ -27,7 +17,7 @@ namespace GamesToGo.App.Overlays
         private BasicPasswordTextBox passwordBox;
         private Container content;
         private Box shadowBox;
-        private GamesToGoButton Login;
+        private GamesToGoButton login;
         [Resolved]
         private APIController api { get; set; }
         private readonly Bindable<User> localUser = new Bindable<User>();
@@ -80,9 +70,9 @@ namespace GamesToGo.App.Overlays
                                         {
                                             Anchor = Anchor.TopRight,
                                             Origin = Anchor.TopRight,
-                                            Action = () => Hide()
-                                        }
-                                    }
+                                            Action = Hide,
+                                        },
+                                    },
                                 },
                                 new Drawable[]
                                 {
@@ -133,21 +123,21 @@ namespace GamesToGo.App.Overlays
                                                                 Origin = Anchor.TopLeft,
                                                                 Anchor = Anchor.TopLeft,
                                                                 Text = @"Contraseña:",
-                                                                Font = new FontUsage(size:60)
+                                                                Font = new FontUsage(size:60),
                                                             },
                                                             passwordBox = new BasicPasswordTextBox
                                                             {
                                                                 Origin = Anchor.TopLeft,
                                                                 Anchor = Anchor.TopLeft,
                                                                 Height = 150,
-                                                                RelativeSizeAxes = Axes.X
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                                                RelativeSizeAxes = Axes.X,
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                                 new Drawable[]
                                 {
@@ -155,24 +145,24 @@ namespace GamesToGo.App.Overlays
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding(30),
-                                        Child = Login = new GamesToGoButton
+                                        Child = login = new GamesToGoButton
                                         {
                                             Anchor = Anchor.TopCentre,
                                             Origin = Anchor.TopCentre,
                                             Height = 225,
                                             RelativeSizeAxes = Axes.X,
-                                            Text = "Iniciar Sesión",
+                                            Text = @"Iniciar Sesión",
                                             Action = () => api.Login(usernameBox.Text, passwordBox.Text),
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
-            Login.SpriteText.Font = new FontUsage(size: 60);
-            Login.Enabled.Value = false;
+            login.SpriteText.Font = new FontUsage(size: 60);
+            login.Enabled.Value = false;
 
             passwordBox.Current.BindValueChanged(checkUserPass);
             usernameBox.Current.BindValueChanged(checkUserPass);
@@ -185,9 +175,9 @@ namespace GamesToGo.App.Overlays
         private void checkUserPass(ValueChangedEvent<string> obj)
         {
             if (string.IsNullOrEmpty(passwordBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text))
-                Login.Enabled.Value = false;
+                login.Enabled.Value = false;
             else
-                Login.Enabled.Value = true;
+                login.Enabled.Value = true;
         }
 
         protected override void PopIn()

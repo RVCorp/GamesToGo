@@ -108,7 +108,7 @@ namespace GamesToGo.Desktop.Graphics
 
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        RemoveItems(args.OldItems.Cast<ProjectEvent>());
+                        removeItems(args.OldItems.Cast<ProjectEvent>());
 
                         break;
                 }
@@ -121,7 +121,7 @@ namespace GamesToGo.Desktop.Graphics
                 eventList.Add(new ProjectObjectEventContainer(e));
         }
 
-        public void RemoveItems(IEnumerable<ProjectEvent> events)
+        private void removeItems(IEnumerable<ProjectEvent> events)
         {
             foreach (var e in events)
             {

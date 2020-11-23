@@ -15,12 +15,7 @@ namespace GamesToGo.Desktop.Graphics
         private readonly string imageName;
         private SpriteText changeImageText;
 
-        public ElementImageChangerButton(string imageName, Bindable<Vector2> size) : base(size)
-        {
-            this.imageName = imageName;
-        }
-
-        public ElementImageChangerButton(string imageName)
+        public ElementImageChangerButton(string imageName, Bindable<Vector2> size = null) : base(size)
         {
             this.imageName = imageName;
         }

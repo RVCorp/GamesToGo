@@ -3,7 +3,6 @@ using System.Linq;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
-using GamesToGo.Desktop.Project.Actions;
 using GamesToGo.Desktop.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -22,9 +21,6 @@ namespace GamesToGo.Desktop.Screens
 
         [Cached]
         private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
-
-        [Cached]
-        private TurnsOverlay turnsOverlay = new TurnsOverlay();
         [Resolved]
         private WorkingProject project { get; set; }
         private NumericTextBox maxPlayersTextBox;
@@ -33,6 +29,8 @@ namespace GamesToGo.Desktop.Screens
         private BasicDropdown<ChatRecommendation> chatDropdown;
         private GamesToGoButton toggleButton;
         private SpriteText editingText;
+        private TurnsOverlay turnsOverlay;
+        private VictoryConditionsContainer victoryContainer;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -42,7 +40,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106,100,104, 255),      //Color fondo general
+                    Colour = new Colour4(106, 100, 104, 255), //Color fondo general
                 },
                 new GridContainer
                 {
@@ -84,10 +82,7 @@ namespace GamesToGo.Desktop.Screens
                                             {
                                                 Padding = new MarginPadding(15),
                                                 Size = new Vector2(180),
-                                                Child = new ProjectImageChangerButton
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                },
+                                                Child = new ProjectImageChangerButton(),
                                             },
                                             new SpriteText
                                             {
@@ -107,8 +102,9 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = @"Minimo Jugadores:",
                                                 Position = new Vector2(560, 17),
                                             },
-                                            minPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
+                                            minPlayersTextBox = new NumericTextBox(false)
                                             {
+                                                LengthLimit = 2,
                                                 Text = Math.Max(2, project.DatabaseObject.MinNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(694, 10),
@@ -122,8 +118,9 @@ namespace GamesToGo.Desktop.Screens
                                                 Text = @"Maximo Jugadores:",
                                                 Position = new Vector2(760, 17),
                                             },
-                                            maxPlayersTextBox = new NumericTextBox(2)        //Restringir la cantidad de digitos a 2
+                                            maxPlayersTextBox = new NumericTextBox(false)
                                             {
+                                                LengthLimit = 2,
                                                 Text = Math.Min(32, project.DatabaseObject.MaxNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(898, 10),
@@ -134,12 +131,12 @@ namespace GamesToGo.Desktop.Screens
                                             new SpriteText
                                             {
                                                 Text = @"Descripción:",
-                                                Position = new Vector2(245,70),
+                                                Position = new Vector2(245, 70),
                                             },
                                             descriptionTextBox = new BasicTextBox
                                             {
                                                 Text = project.DatabaseObject.Description,
-                                                Position = new Vector2(340,70),
+                                                Position = new Vector2(340, 70),
                                                 Height = 35,
                                                 Width = 1732,
                                             },
@@ -168,54 +165,33 @@ namespace GamesToGo.Desktop.Screens
                                 RelativeSizeAxes = Axes.Both,
                                 ColumnDimensions = new[]
                                 {
-                                    new Dimension(GridSizeMode.Relative,.5f),
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
+                                    new Dimension(GridSizeMode.Relative, 1/6f),
                                     new Dimension(),
                                 },
-                                RowDimensions = new []
+                                RowDimensions = new[]
                                 {
                                     new Dimension()
                                 },
-                                Content = new []
+                                Content = new[]
                                 {
                                     new Drawable[]
                                     {
-                                        new Container
-                                        {
-                                            Depth = 1,
-                                            RelativeSizeAxes = Axes.Both,
-                                            Children = new Drawable[]
-                                            {
-                                                new ProjectObjectManagerContainer<Card>
-                                                {
-                                                    Anchor = Anchor.BottomLeft,
-                                                    Origin = Anchor.BottomLeft,
-                                                    Width = 1/3f,
-                                                },
-                                                new ProjectObjectManagerContainer<Token>
-                                                {
-                                                    Anchor = Anchor.BottomCentre,
-                                                    Origin = Anchor.BottomCentre,
-                                                    Width = 1/3f,
-                                                },
-                                                new ProjectObjectManagerContainer<Board>
-                                                {
-                                                    Anchor = Anchor.BottomRight,
-                                                    Origin = Anchor.BottomRight,
-                                                    Width = 1/3f,
-                                                },
-                                            },
-                                        },
+                                        new ProjectObjectManagerContainer<Card>(),
+                                        new ProjectObjectManagerContainer<Token>(),
+                                        new ProjectObjectManagerContainer<Board>(),
                                         new GridContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             RowDimensions = new[]
                                             {
-                                                new Dimension(GridSizeMode.Relative, .1f),
-                                                new Dimension()
+                                                new Dimension(GridSizeMode.Absolute, 50),
+                                                new Dimension(),
                                             },
                                             ColumnDimensions = new[]
                                             {
-                                                new Dimension()
+                                                new Dimension(),
                                             },
                                             Content = new[]
                                             {
@@ -229,50 +205,26 @@ namespace GamesToGo.Desktop.Screens
                                                             new Box
                                                             {
                                                                 RelativeSizeAxes = Axes.Both,
-                                                                Colour = Colour4.MediumPurple
+                                                                Colour = Colour4.MediumPurple,
                                                             },
-                                                            new GridContainer
+                                                            editingText = new SpriteText
                                                             {
-                                                                RelativeSizeAxes = Axes.Both,
-                                                                RowDimensions = new []
+                                                                Font = new FontUsage(size: 45),
+                                                                Position = new Vector2(5, 2.5f),
+                                                            },
+                                                            toggleButton = new GamesToGoButton
+                                                            {
+                                                                Anchor = Anchor.CentreRight,
+                                                                Origin = Anchor.CentreRight,
+                                                                Size = new Vector2(200, 35),
+                                                                X = -5,
+                                                                Action = () =>
                                                                 {
-                                                                    new Dimension(),
+                                                                    victoryContainer.State.Value = turnsOverlay.State.Value;
+                                                                    turnsOverlay.ToggleVisibility();
                                                                 },
-                                                                ColumnDimensions = new []
-                                                                {
-                                                                    new Dimension(GridSizeMode.Relative,.75f),
-                                                                },
-                                                                Content = new[]
-                                                                {
-                                                                    new Drawable[]
-                                                                    {
-                                                                        new Container
-                                                                        {
-                                                                            RelativeSizeAxes = Axes.Both,
-                                                                            Child = editingText = new SpriteText
-                                                                            {
-                                                                                Anchor = Anchor.CentreLeft,
-                                                                                Origin = Anchor.CentreLeft,
-                                                                                Text = "Condiciones de Victoria",
-                                                                                Font = new FontUsage(size: 40)
-                                                                            }
-                                                                        },
-                                                                        new Container
-                                                                        {
-                                                                            RelativeSizeAxes = Axes.Both,
-                                                                            Child = toggleButton = new GamesToGoButton
-                                                                            {
-                                                                                Anchor = Anchor.CentreRight,
-                                                                                Origin = Anchor.CentreRight,
-                                                                                Size = new Vector2(200,35),
-                                                                                Text = "Sistema de Turnos",
-                                                                                Action = () => toggleEdition()
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
+                                                            },
+                                                        },
                                                     },
                                                 },
                                                 new Drawable[]
@@ -282,15 +234,18 @@ namespace GamesToGo.Desktop.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Children = new Drawable[]
                                                         {
-                                                            new VictoryConditionsContainer(),
-                                                            turnsOverlay
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                                            victoryContainer = new VictoryConditionsContainer
+                                                            {
+                                                                State = { Value = Visibility.Visible },
+                                                            },
+                                                            turnsOverlay = new TurnsOverlay(),
+                                                        },
+                                                    },
+                                                },
+                                            },
                                         },
                                     },
-                                }
+                                },
                             },
                         },
                     },
@@ -298,35 +253,37 @@ namespace GamesToGo.Desktop.Screens
                 argumentListing,
             };
 
-
             chatDropdown.Current.Value = project.ChatRecommendation;
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
             descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
             titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
+            turnsOverlay.State.BindValueChanged(_ => toggleEdition(), true);
+
 
             checkPlayerNumber(false);
         }
 
         private void toggleEdition()
         {
-            if (toggleButton.Text == "Sistema de Turnos")
-                toggleButton.Text = "Condiciones de Victoria";
-            else
-                toggleButton.Text = "Sistema de Turnos";
-            if (editingText.Text == "Condiciones de Victoria")
-                editingText.Text = "Turnos";
-            else
-                editingText.Text = "Condiciones de Victoria";
-
-            turnsOverlay.ToggleVisibility();
+            switch (turnsOverlay.State.Value)
+            {
+                case Visibility.Hidden:
+                    toggleButton.Text = @"Sistema de Turnos";
+                    editingText.Text = @"Condiciones de Victoria";
+                    break;
+                case Visibility.Visible:
+                    editingText.Text = @"Turnos";
+                    toggleButton.Text = @"Condiciones de Victoria";
+                    break;
+            }
         }
 
         private void checkPlayerNumber(bool isMin)
         {
-            int minPlayers = Math.Clamp(int.Parse(minPlayersTextBox.Current.Value), 2, 32);
-            int maxPlayers = Math.Clamp(int.Parse(maxPlayersTextBox.Current.Value), 2, 32);
+            int minPlayers = Math.Clamp((int)minPlayersTextBox.Current.Value, 2, 32);
+            int maxPlayers = Math.Clamp((int)maxPlayersTextBox.Current.Value, 2, 32);
 
             if (minPlayers > maxPlayers)
             {

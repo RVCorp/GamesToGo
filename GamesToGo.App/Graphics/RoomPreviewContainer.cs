@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using GamesToGo.App.Online;
+﻿using GamesToGo.App.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -22,13 +11,11 @@ namespace GamesToGo.App.Graphics
 {
     public class RoomPreviewContainer : Container
     {
-        private OnlineGame game;
-        private RoomPreview room;
-        private Sprite GameImage;
+        private readonly RoomPreview room;
+        private Sprite gameImage;
 
-        public RoomPreviewContainer(OnlineGame game, RoomPreview room)
+        public RoomPreviewContainer(RoomPreview room)
         {
-            this.game = game;
             this.room = room;
         }
 
@@ -44,7 +31,7 @@ namespace GamesToGo.App.Graphics
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = Colour4.LightGray
+                    Colour = Colour4.LightGray,
                 },
                 new FillFlowContainer
                 {
@@ -58,11 +45,11 @@ namespace GamesToGo.App.Graphics
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = .2f,
-                            Child = GameImage =  new Sprite
+                            Child = gameImage =  new Sprite
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Texture = textures.Get("Images/gtg")
-                            }
+                                Texture = textures.Get("Images/gtg"),
+                            },
                         },
                         new Container
                         {
@@ -81,8 +68,8 @@ namespace GamesToGo.App.Graphics
                                         Child = new TextFlowContainer((w) => w.Font = new FontUsage(size:80))
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Text = "Sala de " + room.Owner.Username
-                                        }
+                                            Text = @"Sala de " + room.Owner.Username,
+                                        },
                                     },
                                     new Container
                                     {
@@ -91,11 +78,11 @@ namespace GamesToGo.App.Graphics
                                         Child = new SpriteText
                                         {
                                             Text = "Id: " + room.Id,
-                                            Font = new FontUsage(size:60)
-                                        }
-                                    }
-                                }
-                            }
+                                            Font = new FontUsage(size:60),
+                                        },
+                                    },
+                                },
+                            },
                         },
                         new Container
                         {
@@ -113,7 +100,7 @@ namespace GamesToGo.App.Graphics
                                         Width = .4f,
                                         Child = new SpriteText
                                         {
-                                            Text = room.PlayersInRoom.ToString() + "/" + game.Maxplayers.ToString(),
+                                            Text = room.PlayersInRoom + "/" + room.Game.Maxplayers,
                                             Font = new FontUsage(size: 60)
                                         }
                                     },
@@ -126,17 +113,17 @@ namespace GamesToGo.App.Graphics
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Icon = FontAwesome.Solid.Users
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
             Schedule(async () =>
             {
-                GameImage.Texture = await textures.GetAsync($"https://gamestogo.company/api/Users/DownloadImage/{room.Owner.ID}");
+                gameImage.Texture = await textures.GetAsync($"https://gamestogo.company/api/Users/DownloadImage/{room.Owner.ID}");
             });
         }
     }

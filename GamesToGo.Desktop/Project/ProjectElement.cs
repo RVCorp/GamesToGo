@@ -34,6 +34,8 @@ namespace GamesToGo.Desktop.Project
             }
         }
 
+        public virtual ElementPreviewMode PreviewMode => ElementPreviewMode.None;
+
         public int ID { get; set; }
 
         public abstract ElementType Type { get; }

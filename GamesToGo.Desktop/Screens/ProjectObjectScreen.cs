@@ -1,5 +1,3 @@
-using System;
-using System.Globalization;
 using System.Linq;
 using GamesToGo.Desktop.Graphics;
 using GamesToGo.Desktop.Overlays;
@@ -26,23 +24,17 @@ namespace GamesToGo.Desktop.Screens
         private BasicTextBox nameTextBox;
         private Container noSelectionContainer;
         private BasicScrollContainer activeEditContainer;
-        private Container elementSize;
-        private NumericTextBox sizeTextBoxX;
-        private NumericTextBox sizeTextBoxY;
         private Container elementSubElements;
         private BoardObjectManagerContainer tilesManagerContainer;
         private BasicTextBox descriptionTextBox;
 
         [Cached]
         private TileEditorOverlay tileOverlay = new TileEditorOverlay();
-        private Container elementOrientation;
-        private GamesToGoDropdown<ElementOrientation> orientationDropdown;
-        private Container elementPrivacy;
-        private GamesToGoDropdown<ElementPrivacy> privacyDropdown;
-        private Container elementPosition;
-        private NumericTextBox positionTextBoxX;
-        private NumericTextBox positionTextBoxY;
-        private GamesToGoButton deleteElement;
+        private VectorTextBoxContainer elementSize;
+        private LabeledDropdown<ElementOrientation> elementOrientation;
+        private LabeledDropdown<ElementPrivacy> elementPrivacy;
+        private VectorTextBoxContainer elementPosition;
+        private ElementVisualEditorContainer visualEditor;
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
@@ -52,7 +44,7 @@ namespace GamesToGo.Desktop.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Colour4 (106, 100, 104, 255),
+                    Colour = new Colour4(106, 100, 104, 255),
                 },
                 new GridContainer
                 {
@@ -65,7 +57,7 @@ namespace GamesToGo.Desktop.Screens
                             new Container
                             {
                                 RelativeSizeAxes = Axes.Both,
-                                Children = new Drawable []
+                                Children = new Drawable[]
                                 {
                                     new Box
                                     {
@@ -76,19 +68,19 @@ namespace GamesToGo.Desktop.Screens
                                     {
                                         Anchor = Anchor.TopLeft,
                                         Origin = Anchor.TopLeft,
-                                        Height = 1/3f,
+                                        Height = 1 / 3f,
                                     },
                                     new ProjectObjectManagerContainer<Token>(true)
                                     {
                                         Anchor = Anchor.CentreLeft,
                                         Origin = Anchor.CentreLeft,
-                                        Height = 1/3f,
+                                        Height = 1 / 3f,
                                     },
                                     new ProjectObjectManagerContainer<Board>(true)
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
-                                        Height = 1/3f,
+                                        Height = 1 / 3f,
                                     },
                                 },
                             },
@@ -112,59 +104,49 @@ namespace GamesToGo.Desktop.Screens
                                                 {
                                                     RelativeSizeAxes = Axes.X,
                                                     AutoSizeAxes = Axes.Y,
+                                                    Padding = new MarginPadding {Horizontal = 60, Vertical = 50},
                                                     Children = new Drawable[]
                                                     {
-                                                        new Container
+                                                        visualEditor = new ElementVisualEditorContainer(),
+                                                        new SpriteText
                                                         {
-                                                            RelativeSizeAxes = Axes.X,
-                                                            AutoSizeAxes = Axes.Y,
-                                                            Padding = new MarginPadding { Horizontal = 60, Vertical = 50 },
-                                                            Children = new Drawable[]
-                                                            {
-                                                                new ImagePreviewContainer(),
-                                                                new SpriteText
-                                                                {
-                                                                    Anchor = Anchor.TopRight,
-                                                                    Origin = Anchor.TopRight,
-                                                                    Position = new Vector2(-675,10),
-                                                                    Text = @"Nombre:",
-                                                                    Colour = Colour4.Black,
-                                                                },
-                                                                nameTextBox = new BasicTextBox
-                                                                {
-                                                                    Anchor = Anchor.TopRight,
-                                                                    Origin = Anchor.TopRight,
-                                                                    Position = new Vector2(-250,0),
-                                                                    Height = 35,
-                                                                    Width = 400,
-                                                                },
-                                                                new SpriteText
-                                                                {
-                                                                    Anchor = Anchor.TopRight,
-                                                                    Origin = Anchor.TopRight,
-                                                                    Position = new Vector2(-675,80),
-                                                                    Text = @"Descripción:",
-                                                                    Colour = Colour4.Black,
-                                                                },
-                                                                descriptionTextBox = new BasicTextBox
-                                                                {
-                                                                    Anchor = Anchor.TopRight,
-                                                                    Origin = Anchor.TopRight,
-                                                                    Position = new Vector2(-250, 70),
-                                                                    Height = 35,
-                                                                    Width = 400,
-                                                                },
-                                                            },
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Position = new Vector2(-675, 10),
+                                                            Text = @"Nombre:",
                                                         },
-                                                        deleteElement = new GamesToGoButton
+                                                        nameTextBox = new BasicTextBox
+                                                        {
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Position = new Vector2(-250, 0),
+                                                            Height = 35,
+                                                            Width = 400,
+                                                        },
+                                                        new SpriteText
+                                                        {
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Position = new Vector2(-675, 80),
+                                                            Text = @"Descripción:",
+                                                        },
+                                                        descriptionTextBox = new BasicTextBox
+                                                        {
+                                                            Anchor = Anchor.TopRight,
+                                                            Origin = Anchor.TopRight,
+                                                            Position = new Vector2(-250, 70),
+                                                            Height = 35,
+                                                            Width = 400,
+                                                        },
+                                                        new GamesToGoButton
                                                         {
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Height = 35,
                                                             Width = 200,
-                                                            Text = "Borrar Elemento",
+                                                            Text = @"Borrar Elemento",
                                                             Action = () => editor.DeleteElement(currentEditing.Value)
-                                                        }
+                                                        },
                                                     },
                                                 },
                                                 new Container
@@ -178,108 +160,41 @@ namespace GamesToGo.Desktop.Screens
                                                             RelativeSizeAxes = Axes.Both,
                                                             Direction = FillDirection.Full,
                                                             Spacing = new Vector2(10),
-                                                            Children = new Drawable []
+                                                            Padding = new MarginPadding {Horizontal = 50},
+                                                            Children = new Drawable[]
                                                             {
-                                                                elementSize = new Container
+                                                                elementSize = new VectorTextBoxContainer(4, false)
                                                                 {
-                                                                    AutoSizeAxes = Axes.Both,
-                                                                    Children = new Drawable[]
+                                                                    TextX = @"Tamaño X:",
+                                                                    TextY = @"Tamaño Y:",
+                                                                },
+                                                                elementOrientation = new LabeledDropdown<ElementOrientation>
+                                                                {
+                                                                    Text = @"Orientación:",
+                                                                    Element = new GamesToGoDropdown<ElementOrientation>
                                                                     {
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Tamaño X:",
-                                                                            Position = new Vector2(50, 50),
-                                                                        },
-                                                                        sizeTextBoxX = new NumericTextBox(4)
-                                                                        {
-                                                                            Height = 35,
-                                                                            Width = 75,
-                                                                            Position = new Vector2(125, 45),
-                                                                        },
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Tamaño Y:",
-                                                                            Position = new Vector2(50, 100),
-                                                                        },
-                                                                        sizeTextBoxY = new NumericTextBox(4)
-                                                                        {
-                                                                            Height = 35,
-                                                                            Width = 75,
-                                                                            Position = new Vector2(125, 95),
-                                                                        },
+                                                                        Width = 200,
                                                                     },
                                                                 },
-                                                                elementOrientation = new Container
+                                                                elementPrivacy = new LabeledDropdown<ElementPrivacy>
                                                                 {
-                                                                    AutoSizeAxes = Axes.Both,
-                                                                    Children = new Drawable []
+                                                                    Text = @"Privacidad:",
+                                                                    Element = new GamesToGoDropdown<ElementPrivacy>
                                                                     {
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Orientación:",
-                                                                            Position = new Vector2(0, 80)
-                                                                        },
-                                                                        orientationDropdown = new GamesToGoDropdown<ElementOrientation>
-                                                                        {
-                                                                            Width = 200,
-                                                                            Position = new Vector2(90, 75),
-                                                                            Items = Enum.GetValues(typeof(ElementOrientation)).Cast<ElementOrientation>(),
-                                                                        }
-                                                                    }
-                                                                },
-                                                                elementPrivacy = new Container
-                                                                {
-                                                                    AutoSizeAxes = Axes.Both,
-                                                                    Children = new Drawable []
-                                                                    {
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Privacidad:",
-                                                                            Position = new Vector2(0, 80)
-                                                                        },
-                                                                        privacyDropdown = new GamesToGoDropdown<ElementPrivacy>
-                                                                        {
-                                                                            Width = 200,
-                                                                            Position = new Vector2(85, 75),
-                                                                            Items = Enum.GetValues(typeof(ElementPrivacy)).Cast<ElementPrivacy>(),
-                                                                        }
-                                                                    }
-                                                                },
-                                                                elementPosition = new Container
-                                                                {
-                                                                    AutoSizeAxes = Axes.Both,
-                                                                    Children = new Drawable[]
-                                                                    {
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Posición en X:",
-                                                                            Position = new Vector2(0, 50),
-                                                                        },
-                                                                        positionTextBoxX = new NumericTextBox(4)
-                                                                        {
-                                                                            Height = 35,
-                                                                            Width = 75,
-                                                                            Position = new Vector2(125, 45),
-                                                                        },
-                                                                        new SpriteText
-                                                                        {
-                                                                            Text = @"Posición en Y:",
-                                                                            Position = new Vector2(0, 100),
-                                                                        },
-                                                                        positionTextBoxY = new NumericTextBox(4)
-                                                                        {
-                                                                            Height = 35,
-                                                                            Width = 75,
-                                                                            Position = new Vector2(125, 95),
-                                                                        },
+                                                                        Width = 200,
                                                                     },
-                                                                }
-                                                            }
+                                                                },
+                                                                elementPosition = new VectorTextBoxContainer(4, true)
+                                                                {
+                                                                    TextX = @"Posición en X:",
+                                                                    TextY = @"Posición en Y:",
+                                                                },
+                                                            },
                                                         },
                                                         elementSubElements = new Container
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
-                                                            Width = 1/3f,
+                                                            Width = 1 / 3f,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Child = tilesManagerContainer = new BoardObjectManagerContainer(),
@@ -316,6 +231,38 @@ namespace GamesToGo.Desktop.Screens
             currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(checkData, true);
 
+            nameTextBox.OnCommit += delegate
+            {
+                if (currentEditing.Value != null)
+                    currentEditing.Value.Name.Value = nameTextBox.Text;
+            };
+
+            descriptionTextBox.OnCommit += delegate
+            {
+                if (currentEditing.Value != null)
+                    currentEditing.Value.Description.Value = descriptionTextBox.Text;
+            };
+
+            elementPosition.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
+            elementOrientation.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
+            elementSize.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
+            tilesManagerContainer.ElementsAdded = _ => visualEditor.UpdatePreview();
+            tilesManagerContainer.ElementsRemoved = _ => visualEditor.UpdatePreview();
+        }
+
+        private static void unbindBindings(ProjectElement oldElement)
+        {
+            if (oldElement is IHasSize sizedElement)
+                sizedElement.Size.UnbindAll();
+
+            if (oldElement is IHasPosition positionedElement)
+                positionedElement.Position.UnbindAll();
+
+            if (oldElement is IHasOrientation orientedElement)
+                orientedElement.DefaultOrientation.UnbindAll();
+
+            if (oldElement is IHasPrivacy privacySetElement)
+                privacySetElement.DefaultPrivacy.UnbindAll();
         }
 
         private void checkData(ValueChangedEvent<ProjectElement> obj)
@@ -323,12 +270,7 @@ namespace GamesToGo.Desktop.Screens
             activeEditContainer.FadeTo(obj.NewValue == null ? 0 : 1);
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);
 
-            nameTextBox.Current.UnbindEvents();
-            sizeTextBoxX.Current.UnbindEvents();
-            sizeTextBoxY.Current.UnbindEvents();
-            positionTextBoxX.Current.UnbindEvents();
-            positionTextBoxY.Current.UnbindEvents();
-            descriptionTextBox.Current.UnbindEvents();
+            unbindBindings(obj.OldValue);
 
             if (obj.NewValue != null)
             {
@@ -339,10 +281,8 @@ namespace GamesToGo.Desktop.Screens
             if(obj.NewValue is IHasSize size)
             {
                 elementSize.Show();
-                sizeTextBoxX.Text = size.Size.Value.X.ToString(CultureInfo.InvariantCulture);
-                sizeTextBoxY.Text = size.Size.Value.Y.ToString(CultureInfo.InvariantCulture);
-                sizeTextBoxX.Current.ValueChanged += sizeObj => size.Size.Value = new Vector2(float.Parse(string.IsNullOrEmpty(sizeObj.NewValue) ? sizeObj.OldValue : sizeObj.NewValue), size.Size.Value.Y);
-                sizeTextBoxY.Current.ValueChanged += sizeObj => size.Size.Value = new Vector2(size.Size.Value.X, float.Parse(string.IsNullOrEmpty(sizeObj.NewValue) ? sizeObj.OldValue : sizeObj.NewValue));
+                elementSize.Current.Value = size.Size.Value;
+                size.Size.BindTo(elementSize.Current);
             }
             else
                 elementSize.Hide();
@@ -350,8 +290,8 @@ namespace GamesToGo.Desktop.Screens
             if (obj.NewValue is IHasOrientation orientation)
             {
                 elementOrientation.Show();
-                orientationDropdown.Current.Value = orientation.DefaultOrientation;
-                orientationDropdown.Current.BindValueChanged(ortn => orientation.DefaultOrientation = ortn.NewValue);
+                elementOrientation.Current.Value = orientation.DefaultOrientation.Value;
+                orientation.DefaultOrientation.BindTo(elementOrientation.Current);
             }
             else
                 elementOrientation.Hide();
@@ -359,8 +299,8 @@ namespace GamesToGo.Desktop.Screens
             if (obj.NewValue is IHasPrivacy privacy)
             {
                 elementPrivacy.Show();
-                privacyDropdown.Current.Value = privacy.DefaultPrivacy;
-                privacyDropdown.Current.BindValueChanged(priv => privacy.DefaultPrivacy = priv.NewValue);
+                elementPrivacy.Current.Value = privacy.DefaultPrivacy.Value;
+                privacy.DefaultPrivacy.BindTo(elementPrivacy.Current);
             }
             else
                 elementPrivacy.Hide();
@@ -368,10 +308,8 @@ namespace GamesToGo.Desktop.Screens
             if (obj.NewValue is IHasPosition position)
             {
                 elementPosition.Show();
-                positionTextBoxX.Text = position.Position.Value.X.ToString(CultureInfo.InvariantCulture);
-                positionTextBoxY.Text = position.Position.Value.Y.ToString(CultureInfo.InvariantCulture);
-                positionTextBoxX.Current.ValueChanged += positionObj => position.Position.Value = new Vector2(float.Parse(string.IsNullOrEmpty(positionObj.NewValue) ? positionObj.OldValue : positionObj.NewValue), position.Position.Value.Y);
-                positionTextBoxY.Current.ValueChanged += positionObj => position.Position.Value = new Vector2(position.Position.Value.X, float.Parse(string.IsNullOrEmpty(positionObj.NewValue) ? positionObj.OldValue : positionObj.NewValue));
+                elementPosition.Current.Value = position.Position.Value;
+                position.Position.BindTo(elementPosition.Current);
             }
             else
                 elementPosition.Hide();
@@ -385,7 +323,9 @@ namespace GamesToGo.Desktop.Screens
                 };
                 tilesManagerContainer.ButtonAction = () =>
                 {
-                    board.Elements.Add(new Tile());
+                    var toBeAdded = new Tile();
+                    board.Elements.Add(toBeAdded);
+                    toBeAdded.Parent = board;
                     project.AddElement(board.Elements.Last());
                 };
             }
@@ -393,12 +333,11 @@ namespace GamesToGo.Desktop.Screens
             {
                 elementSubElements.Hide();
             }
+
             if (obj.NewValue != tileOverlay.SelectedTile)
             {
                 tileOverlay.Hide();
             }
-            descriptionTextBox.Current.ValueChanged += text => currentEditing.Value.Description.Value = text.NewValue;
-            nameTextBox.Current.ValueChanged += text => currentEditing.Value.Name.Value = text.NewValue;
         }
     }
 }

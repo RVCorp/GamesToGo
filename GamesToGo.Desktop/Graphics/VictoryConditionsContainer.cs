@@ -2,25 +2,21 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using GamesToGo.Desktop.Overlays;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
-using ManagedBass.Fx;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osuTK;
 
 namespace GamesToGo.Desktop.Graphics
 {
-    public class VictoryConditionsContainer : Container
+    public class VictoryConditionsContainer : VisibilityContainer
     {
-        private BindableList<EventAction> victoryActions = new BindableList<EventAction>();
-        private FillFlowContainer<GameConditionalDescriptor> conditionalFillFlow;
+        private readonly BindableList<EventAction> victoryActions = new BindableList<EventAction>();
+        private FillFlowContainer<ActionDescriptor> conditionalFillFlow;
         [Resolved]
         private WorkingProject project { get; set; }
 
@@ -30,13 +26,18 @@ namespace GamesToGo.Desktop.Graphics
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
+                new Box
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.MediumPurple.Opacity(0.3f),
+                },
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     RowDimensions = new []
                     {
-                        new Dimension(GridSizeMode.Relative,.9375f),
-                        new Dimension()
+                        new Dimension(),
+                        new Dimension(GridSizeMode.Absolute, 50),
                     },
                     ColumnDimensions = new []
                     {
@@ -53,14 +54,14 @@ namespace GamesToGo.Desktop.Graphics
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ClampExtension = 30,
-                                    Child = conditionalFillFlow = new FillFlowContainer<GameConditionalDescriptor>
+                                    Child = conditionalFillFlow = new FillFlowContainer<ActionDescriptor>
                                     {
                                         AutoSizeAxes = Axes.Y,
                                         RelativeSizeAxes = Axes.X,
                                         Direction = FillDirection.Vertical,
                                     },
                                 },
-                            }
+                            },
                         },
                         new Drawable[]
                         {
@@ -72,21 +73,21 @@ namespace GamesToGo.Desktop.Graphics
                                     new Box
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Colour = Colour4.White
+                                        Colour = Colour4.Beige,
                                     },
                                     new GamesToGoButton
                                     {
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.CentreRight,
                                         Size = new Vector2(200, 35),
-                                        Text = "Añadir nuevo",
-                                        Action = () => addAction()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                        Text = @"Añadir nuevo",
+                                        Action = () => victoryActions.Add(Activator.CreateInstance(typeof(PlayerWinsAction)) as EventAction),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
             victoryActions.BindTo(project.VictoryConditions);
             victoryActions.BindCollectionChanged ((_, args) =>
@@ -105,25 +106,15 @@ namespace GamesToGo.Desktop.Graphics
             }, true);
         }
 
-
-
-        private void addAction()
-        {
-            victoryActions.Add(Activator.CreateInstance(typeof(PlayerWinsAction)) as EventAction);
-        }
-
         private void checkAdded(IEnumerable<EventAction> added)
         {
             foreach(var action in added)
             {
-                conditionalFillFlow.Add(new GameConditionalDescriptor(action, removeAction));
+                conditionalFillFlow.Add(new ActionDescriptor(action)
+                {
+                    RemoveAction = removed => victoryActions.Remove(removed),
+                });
             }
-        }
-
-        private bool removeAction(EventAction toRemove)
-        {
-            victoryActions.Remove(toRemove);
-            return true;
         }
 
         private void checkRemoved(IEnumerable<EventAction> removed)
@@ -136,5 +127,9 @@ namespace GamesToGo.Desktop.Graphics
                     conditionalFillFlow.Remove(deletable);
             }
         }
+
+        protected override void PopIn() => this.FadeIn(250);
+
+        protected override void PopOut() => this.FadeOut(250);
     }
 }

@@ -17,6 +17,6 @@ namespace GamesToGo.Desktop.Project.Elements
             new KeyValuePair<string, Bindable<Image>>(@"Frente", new Bindable<Image>()),
             new KeyValuePair<string, Bindable<Image>>(@"Miniatura", new Bindable<Image>()),
         });
-        public ElementPrivacy DefaultPrivacy { get; set; } = ElementPrivacy.Public;
+        public Bindable<ElementPrivacy> DefaultPrivacy { get; } = new Bindable<ElementPrivacy>();
     }
 }

@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using GamesToGo.Desktop.Project;
 using GamesToGo.Desktop.Project.Actions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osuTK;
 
 namespace GamesToGo.Desktop.Graphics
 {
     public class TurnsContainer : Container
     {
-        private FillFlowContainer<GameConditionalDescriptor> turnsFillFlow;
+        private FillFlowContainer<ActionDescriptor> turnsFillFlow;
         private BindableList<EventAction> turnActions = new BindableList<EventAction>();
 
         [Resolved]
@@ -33,12 +30,12 @@ namespace GamesToGo.Desktop.Graphics
                     RelativeSizeAxes = Axes.Both,
                     RowDimensions = new []
                     {
-                        new Dimension(GridSizeMode.Relative,.9375f),
-                        new Dimension()
+                        new Dimension(),
+                        new Dimension(GridSizeMode.Absolute, 50),
                     },
                     ColumnDimensions = new []
                     {
-                        new Dimension()
+                        new Dimension(),
                     },
                     Content = new []
                     {
@@ -51,14 +48,14 @@ namespace GamesToGo.Desktop.Graphics
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ClampExtension = 30,
-                                    Child = turnsFillFlow = new FillFlowContainer<GameConditionalDescriptor>
+                                    Child = turnsFillFlow = new FillFlowContainer<ActionDescriptor>
                                     {
                                         AutoSizeAxes = Axes.Y,
                                         RelativeSizeAxes = Axes.X,
                                         Direction = FillDirection.Vertical,
                                     },
                                 },
-                            }
+                            },
                         },
                         new Drawable[]
                         {
@@ -67,16 +64,17 @@ namespace GamesToGo.Desktop.Graphics
                                 RelativeSizeAxes = Axes.Both,
                                 Children = new Drawable[]
                                 {
-                                    new ActionTypeListing(addAction)
+                                    new ActionTypeListing
                                     {
+                                        OnSelection = selected => turnActions.Add(Activator.CreateInstance(selected.GetType()) as EventAction),
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.CentreRight,
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             };
             turnActions.BindTo(project.Turns);
             turnActions.BindCollectionChanged ((_, args) =>
@@ -92,27 +90,18 @@ namespace GamesToGo.Desktop.Graphics
 
                         break;
                 }
-            }, true);            
-        }
-
-        private bool addAction(EventAction type)
-        {
-            turnActions.Add(Activator.CreateInstance(type.GetType()) as EventAction);
-            return true;
+            }, true);
         }
 
         private void checkAdded(IEnumerable<EventAction> added)
         {
             foreach (var action in added)
             {
-                turnsFillFlow.Add(new GameConditionalDescriptor(action, removeAction));
+                turnsFillFlow.Add(new ActionDescriptor(action)
+                {
+                    RemoveAction = (removed) => turnActions.Remove(removed),
+                });
             }
-        }
-
-        private bool removeAction(EventAction toRemove)
-        {
-            turnActions.Remove(toRemove);
-            return true;
         }
 
         private void checkRemoved(IEnumerable<EventAction> removed)
