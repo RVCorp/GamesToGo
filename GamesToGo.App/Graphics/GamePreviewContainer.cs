@@ -81,7 +81,7 @@ namespace GamesToGo.App.Graphics
                                             Height = .2f,
                                             Child = new SpriteText
                                             {
-                                                Text = "Hecho por: "+ game.CreatorId,
+                                                Text = "Hecho por: "+ game.Creator.Username,
                                                 Font = new FontUsage(size: 65)
                                             },
                                         },

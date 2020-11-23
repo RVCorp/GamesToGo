@@ -89,7 +89,9 @@
     <Compile Include="Online\GetAllPublishedProjectsRequest.cs" />
     <Compile Include="Online\GetAllRoomsFromGameRequest.cs" />
     <Compile Include="Online\GetProjectRequest.cs" />
+    <Compile Include="Online\GetRoomStateRequest.cs" />
     <Compile Include="Online\GetUserRequest.cs" />
+    <Compile Include="Online\JoinRoomRequest.cs" />
     <Compile Include="Online\OnlineGame.cs" />
     <Compile Include="Online\OnlineRoom.cs" />
     <Compile Include="Online\Player.cs" />
