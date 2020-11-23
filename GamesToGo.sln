@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29403.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamesToGo.Desktop", "GamesToGo.Desktop\GamesToGo.Desktop.csproj", "{B60EB00A-8455-43C3-951E-008449743275}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamesToGo.App", "GamesToGo.App\GamesToGo.App.csproj", "{FA987518-939C-443B-A4B8-2885249B29BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamesToGo.Android", "GamesToGo.Android\GamesToGo.Android.csproj", "{FA987518-939C-443B-A4B8-2885249B29BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamesToGo.Tests", "GamesToGo.Tests\GamesToGo.Tests.csproj", "{1ED8E969-F80B-4BA0-BFD4-3481C4EE3F2A}"
 EndProject

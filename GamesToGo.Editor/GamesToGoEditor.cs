@@ -16,6 +16,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Configuration;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
@@ -94,6 +95,7 @@ namespace GamesToGo.Editor
             //Ventana sin bordes, sin requerir modo exclusivo.
             config.GetBindable<WindowMode>(FrameworkSetting.WindowMode).Value = WindowMode.Borderless;
             config.GetBindable<FrameSync>(FrameworkSetting.FrameSync).Value = FrameSync.VSync;
+            config.GetBindable<ConfineMouseMode>(FrameworkSetting.ConfineMouseMode).Value = ConfineMouseMode.Never;
 
             //Para agregar un elemento a las dependencias se agrega a su caché. En este caso se agrega el "juego" como un GamesToGoEditor
             dependencies.CacheAs(this);
@@ -122,7 +124,8 @@ namespace GamesToGo.Editor
 
         private static void previewEvents()
         {
-            foreach (Type type in Assembly.GetAssembly(typeof(ProjectEvent))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(ProjectEvent))))
+            WorkingProject.AvailableEvents.Clear();
+            foreach (Type type in Assembly.GetAssembly(typeof(ProjectEvent))?.GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(ProjectEvent))))
             {
                 if (!(Activator.CreateInstance(type) is ProjectEvent thing))
                     continue;
@@ -140,6 +143,7 @@ namespace GamesToGo.Editor
 
         private static void previewActions()
         {
+            WorkingProject.AvailableActions.Clear();
             foreach (Type type in Assembly.GetAssembly(typeof(EventAction))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(EventAction))))
             {
                 if (!(Activator.CreateInstance(type) is EventAction thing))
@@ -158,6 +162,7 @@ namespace GamesToGo.Editor
 
         private static void previewArguments()
         {
+            WorkingProject.AvailableArguments.Clear();
             foreach (Type type in Assembly.GetAssembly(typeof(Argument))?.GetTypes()?.Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Argument))))
             {
                 if (!(Activator.CreateInstance(type) is Argument thing))
@@ -182,7 +187,8 @@ namespace GamesToGo.Editor
 
             switch (host.Window)
             {
-                case DesktopGameWindow gameWindow:
+
+                case OsuTKDesktopWindow gameWindow:
                     gameWindow.SetIconFromStream(typeof(GamesToGoEditor).Assembly.GetManifestResourceStream(GetType(), "gtg.ico"));
                     break;
             }

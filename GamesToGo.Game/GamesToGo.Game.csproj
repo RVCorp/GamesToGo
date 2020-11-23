@@ -5,4 +5,12 @@
     <RootNamespace>GamesToGo.Game</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Textures\Images\gtg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ppy.osu.Framework" Version="2020.1120.0" />
+  </ItemGroup>
+
 </Project>

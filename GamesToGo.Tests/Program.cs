@@ -1,12 +1,16 @@
-﻿using System;
+﻿using osu.Framework;
+using osu.Framework.Platform;
 
 namespace GamesToGo.Tests
 {
-    class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main()
         {
+            using GameHost host = Host.GetSuitableHost("GamesToGo");
+            using var game = new GamesToGoTestBrowser();
 
+            host.Run(game);
         }
     }
 }

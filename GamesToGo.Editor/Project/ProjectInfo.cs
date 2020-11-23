@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GamesToGo.Editor.Database.Models;
-using GamesToGo.Editor.Project;
 using Newtonsoft.Json;
 // ReSharper disable All
 
