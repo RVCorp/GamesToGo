@@ -1,6 +1,8 @@
-﻿using GamesToGo.Game.Graphics;
+﻿using System;
+using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,10 +18,18 @@ namespace GamesToGo.Game.Overlays
         private Box shadowBox;
         [Resolved]
         private APIController api { get; set; }
+        private Bindable<User> localUser = new Bindable<User>();
+        private SpriteText username;
+        private Sprite userImage;
+        private TextureStore textures;
+
+        public Action NextScreen { get; set; }
+
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            this.textures = textures;
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -114,19 +124,19 @@ namespace GamesToGo.Game.Overlays
                                                                         BorderThickness = 3.5f,
                                                                         Masking = true,
                                                                         Size = new Vector2(300, 300),
-                                                                        Child = new Sprite
+                                                                        Child = userImage= new Sprite
                                                                         {
                                                                             Anchor = Anchor.Centre,
                                                                             Origin = Anchor.Centre,
                                                                             RelativeSizeAxes = Axes.Both,
-                                                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
+                                                                            Texture = textures.Get("Images/gtg")
                                                                         }
                                                                     },
-                                                                    new SpriteText
+                                                                    username = new SpriteText
                                                                     {
                                                                         Anchor = Anchor.Centre,
                                                                         Origin = Anchor.Centre,
-                                                                        Text = api.LocalUser.Value.Username + " #" +api.LocalUser.Value.ID,
+                                                                        Text = "Guest",
                                                                         Font = new FontUsage(size: 80)
                                                                     },
                                                                 }
@@ -224,12 +234,24 @@ namespace GamesToGo.Game.Overlays
                     },
                 },
             };
-            base.Size = Size;
+            localUser.BindTo(api.LocalUser);
+            localUser.BindValueChanged(_ => changeUserData());
+        }
+
+        private void changeUserData()
+        {
+            if(localUser.Value != null)
+            {
+                userImage.Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}");
+                username.Text = api.LocalUser.Value.Username + " #" + api.LocalUser.Value.ID;
+            }
         }
 
         private void logout()
         {
             api.Logout();
+            NextScreen?.Invoke();
+            Hide();
         }
 
         protected override void PopIn()
@@ -245,3 +267,4 @@ namespace GamesToGo.Game.Overlays
         }
     }
 }
+

@@ -14,14 +14,18 @@ namespace GamesToGo.Game.Screens
     public class MainMenuScreen : Screen
     {
         private FillFlowContainer<Container> communityGames;
-        [Cached]
-        private SideMenuOverlay sideMenu = new SideMenuOverlay();
+        [Resolved]
+        private SessionStartScreen startScreen { get; set; }
+        [Resolved]
+        private SideMenuOverlay sideMenu { get; set; }
         [Resolved]
         private APIController api { get; set; }
+
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            sideMenu.NextScreen = startScreen.MakeCurrent;
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -104,7 +108,6 @@ namespace GamesToGo.Game.Screens
                         }
                     }
                 },
-                sideMenu
             };
             populateGamesList();
         }

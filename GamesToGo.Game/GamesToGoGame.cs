@@ -1,4 +1,5 @@
 ﻿using GamesToGo.Game.Online;
+using GamesToGo.Game.Overlays;
 using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -31,6 +32,8 @@ namespace GamesToGo.Game
 
         private DrawSizePreservingFillContainer content;
 
+        private SideMenuOverlay sideMenu;
+
         [BackgroundDependencyLoader]
         private void load(Storage store)
         {
@@ -42,7 +45,7 @@ namespace GamesToGo.Game
             base.Content.Add(content = new PaddedDrawSizePreservingFillContainer
             {
                 TargetDrawSize = new Vector2(1080, 1920),
-                Strategy =  DrawSizePreservationStrategy.Minimum,
+                Strategy =  DrawSizePreservationStrategy.Minimum
             });
             content.Add(stack = new ScreenStack
             {
@@ -51,6 +54,8 @@ namespace GamesToGo.Game
             });
             content.Add(api = new APIController());
             dependencies.Cache(api);
+            content.Add(sideMenu = new SideMenuOverlay());
+            dependencies.Cache(sideMenu);
         }
 
         protected override void LoadComplete()

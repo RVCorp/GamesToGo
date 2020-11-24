@@ -11,6 +11,7 @@ using osuTK;
 
 namespace GamesToGo.Game.Screens
 {
+    [Cached]
     public class SessionStartScreen : Screen
     {
         private GamesToGoButton loginButton;

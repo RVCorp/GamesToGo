@@ -21,6 +21,8 @@ namespace GamesToGo.Game.Screens
         private MainMenuScreen mainMenu { get; set; }
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private SessionStartScreen startScreen { get; set; }
         private TextFlowContainer errorText;
 
         private readonly OnlineGame game;
@@ -34,6 +36,7 @@ namespace GamesToGo.Game.Screens
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            sideMenu.NextScreen = startScreen.MakeCurrent;
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -206,7 +209,6 @@ namespace GamesToGo.Game.Screens
                         },
                     },
                 },
-                sideMenu = new SideMenuOverlay(),
                 new Container
                 {
                     Anchor = Anchor.BottomRight,

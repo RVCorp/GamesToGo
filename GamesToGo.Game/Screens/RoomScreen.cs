@@ -126,6 +126,7 @@ namespace GamesToGo.Game.Screens
                                             Height = .15f,
                                             Child = new SurfaceButton
                                             {
+                                                Action = playGame,
                                                 Children = new Drawable[]
                                                 {
                                                     new Box
@@ -168,6 +169,11 @@ namespace GamesToGo.Game.Screens
                     api.Queue(roomStateRequest);
                 }
             });
+        }
+
+        private void playGame()
+        {
+            LoadComponentAsync(new GameScreen(room), this.Push);
         }
 
         private void populateUsersList()
