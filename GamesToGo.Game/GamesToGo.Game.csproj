@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Textures\Images\gtg.png" />
+    <EmbeddedResource Include="Textures\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Framework" Version="2020.1120.0" />
+    <PackageReference Include="ppy.osu.Framework" Version="2020.1129.0" />
   </ItemGroup>
 
 </Project>

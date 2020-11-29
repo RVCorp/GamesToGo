@@ -6,10 +6,12 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osu.Framework.Testing;
 using osuTK;
 
 namespace GamesToGo.Game
 {
+    [ExcludeFromDynamicCompile]
     public class GamesToGoGame : osu.Framework.Game
     {
         private DependencyContainer dependencies;

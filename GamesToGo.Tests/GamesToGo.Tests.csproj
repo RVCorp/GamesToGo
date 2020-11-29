@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Framework" Version="2020.1120.0" />
+    <ProjectReference Include="..\GamesToGo.Editor\GamesToGo.Editor.csproj" />
+    <ProjectReference Include="..\GamesToGo.Game\GamesToGo.Game.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GamesToGo.Editor\GamesToGo.Editor.csproj" />
-    <ProjectReference Include="..\GamesToGo.Game\GamesToGo.Game.csproj" />
+    <PackageReference Include="ppy.osu.Framework" Version="2020.1129.0" />
   </ItemGroup>
 
 </Project>

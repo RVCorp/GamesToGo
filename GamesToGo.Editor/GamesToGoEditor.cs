@@ -20,6 +20,7 @@ using osu.Framework.Input;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osu.Framework.Testing;
 using osuTK;
 
 namespace GamesToGo.Editor
@@ -27,6 +28,7 @@ namespace GamesToGo.Editor
     /// <summary>
     /// Contenedor base de la aplicación, dede de cargar e incluir lo necesario para que el programa pueda cargar
     /// </summary>
+    [ExcludeFromDynamicCompile]
     public class GamesToGoEditor : Game
     {
         // El contenedor de dependencias es, en lenguaje del framework, el contenedor de objetos que pueden ser obtenidos por otros
