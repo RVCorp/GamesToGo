@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using GamesToGo.Desktop.Online;
+using GamesToGo.Editor;
+using GamesToGo.Editor.Online;
 using osu.Framework;
 using osu.Framework.Platform;
 
