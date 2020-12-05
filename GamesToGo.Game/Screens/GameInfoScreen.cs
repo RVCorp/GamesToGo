@@ -16,6 +16,8 @@ namespace GamesToGo.Game.Screens
     public class GameInfoScreen : Screen
     {
         [Resolved]
+        private GamesToGoGame game { get; set; }
+        [Resolved]
         private SideMenuOverlay sideMenu { get; set; }
         [Resolved]
         private MainMenuScreen mainMenu { get; set; }
@@ -23,12 +25,14 @@ namespace GamesToGo.Game.Screens
         private APIController api { get; set; }
         private TextFlowContainer errorText;
 
-        private readonly OnlineGame game;
+        private readonly OnlineGame onlinegame;
         private FillFlowContainer gameRooms;
+        private GamesToGoButton reportButton;
+        private ReportOverlay reportOverlay;
 
         public GameInfoScreen(OnlineGame game)
         {
-            this.game = game;
+            onlinegame = game;
         }
 
         [BackgroundDependencyLoader]
@@ -124,7 +128,11 @@ namespace GamesToGo.Game.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Colour = Colour4.Red
                                                     },
-                                                    new GamePreviewContainer(game)
+                                                    new GamePreviewContainer(onlinegame)
+                                                    {
+                                                        GameNameSize = 90,
+                                                        MadeBySize = 60,
+                                                    }
                                                 }
                                             },
                                             new Container
@@ -147,7 +155,7 @@ namespace GamesToGo.Game.Screens
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             Height = 300,
-                                                            Text = game.Description,
+                                                            Text = onlinegame.Description,
                                                         },
                                                     },
                                                 },
@@ -199,6 +207,21 @@ namespace GamesToGo.Game.Screens
                                                     },
                                                 },
                                             },
+                                            new Container
+                                            {
+                                                RelativeSizeAxes = Axes.X,
+                                                Height = 200,                                                
+                                                Child = reportButton = new GamesToGoButton
+                                                {
+                                                    Anchor = Anchor.Centre,
+                                                    Origin = Anchor.Centre,
+                                                    RelativeSizeAxes = Axes.X,
+                                                    Height = 150,
+                                                    Width = .85f,
+                                                    Text = "Reportar",
+                                                    Action = () => reportOverlay.Show()
+                                                }
+                                            }
                                         },
                                     },
                                 },
@@ -206,7 +229,6 @@ namespace GamesToGo.Game.Screens
                         },
                     },
                 },
-                sideMenu = new SideMenuOverlay(),
                 new Container
                 {
                     Anchor = Anchor.BottomRight,
@@ -219,7 +241,7 @@ namespace GamesToGo.Game.Screens
                         Masking = true,
                         Child = new SurfaceButton
                         {
-                            Action = () => createRoom(game),
+                            Action = () => createRoom(onlinegame),
                             Children = new Drawable[]
                             {
                                 new Box
@@ -240,13 +262,18 @@ namespace GamesToGo.Game.Screens
                         },
                     },
                 },
+                reportOverlay = new ReportOverlay()
+                {
+                    Game = onlinegame
+                }
             };
+            reportButton.SpriteText.Font = new FontUsage(size: 80);
             populateRooms();
         }
 
         private void populateRooms()
         {
-            var getRooms = new GetAllRoomsFromGameRequest(game.Id);
+            var getRooms = new GetAllRoomsFromGameRequest(onlinegame.Id);
             getRooms.Success += u =>
             {
                 foreach(var room in u)
@@ -272,24 +299,22 @@ namespace GamesToGo.Game.Screens
 
         private void createRoom(OnlineGame requestedGame)
         {
+            game.DownloadGame(requestedGame);
             var room = new CreateRoomRequest(requestedGame.Id);
             room.Success += u =>
-            {
+            {                
                 LoadComponentAsync(new RoomScreen(u), this.Push);
-            };
+            };            
             api.Queue(room);
         }
 
         private void joinRoom(int id)
         {
+            game.DownloadGame(onlinegame);
             var room = new JoinRoomRequest(id);
             room.Success += u =>
-            {
+            {                
                 LoadComponentAsync(new RoomScreen(u), this.Push);
-            };
-            room.Failure += e =>
-            {
-                Logger.Log(e.Message);
             };
             api.Queue(room);
         }

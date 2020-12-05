@@ -284,8 +284,8 @@ namespace GamesToGo.Editor.Screens
             ProjectInfo futureInfo = new ProjectInfo
             {
                 File = new File { NewName = Path.GetFileNameWithoutExtension(filename), Type = "project" },
-                CreatorID = onlineProject.CreatorId,
-                ComunityStatus = CommunityStatus.Clouded,
+                CreatorID = onlineProject.Creator.ID,
+                ComunityStatus = onlineProject.Status,
                 LastEdited = onlineProject.DateTimeLastEdited,
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,

@@ -11,10 +11,12 @@ using osuTK;
 
 namespace GamesToGo.Game.Screens
 {
+    [Cached]
     public class SessionStartScreen : Screen
     {
         private GamesToGoButton loginButton;
         private LoginOverlay loginOverlay;
+        private RegisterOverlay registerOverlay;
         private GamesToGoButton registerButton;
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
@@ -88,12 +90,14 @@ namespace GamesToGo.Game.Screens
                                     Height = 150,
                                     Width = 800,
                                     Text = "Registrarse",
+                                    Action = () => registerOverlay.Show()
                                 },
                             },
                         },
                     },
                 },
                 loginOverlay = new LoginOverlay(loginIntoServer),
+                registerOverlay = new RegisterOverlay(),
             };
             loginButton.SpriteText.Font = new FontUsage(size:60);
             registerButton.SpriteText.Font = new FontUsage(size: 60);

@@ -37,6 +37,8 @@ namespace GamesToGo.Editor.Project
 
         public readonly BindableList<EventAction> Turns = new BindableList<EventAction>();
 
+        public readonly BindableList<EventAction> PreparationTurn = new BindableList<EventAction>();
+
         public IEnumerable<Card> ProjectCards => projectElements.OfType<Card>();
 
         public IEnumerable<Token> ProjectTokens => projectElements.OfType<Token>();
@@ -184,11 +186,17 @@ namespace GamesToGo.Editor.Project
                 builder.AppendLine($"{action}");
             }
 
+            builder.AppendLine($"PreparationTurn={PreparationTurn.Count}");
+            foreach (var action in PreparationTurn)
+            {
+                builder.AppendLine($"{action}");
+            }
+
             builder.AppendLine($"Turns={Turns.Count}");
             foreach(var action in Turns)
             {
                 builder.AppendLine($"{action}");
-            }
+            }            
 
             builder.AppendLine();
 
@@ -450,6 +458,13 @@ namespace GamesToGo.Editor.Project
                             for(int j = i + vicAmm; i < j; i++)
                             {
                                 VictoryConditions.Add(populateAction(lines[i+1]));
+                            }
+                            break;
+                        case "PreparationTurn":
+                            int prepTurnAmm = int.Parse(tokens[1]);
+                            for (int j = i + prepTurnAmm; i < j; i++)
+                            {
+                                PreparationTurn.Add(populateAction(lines[i + 1]));
                             }
                             break;
                         case "Turns":

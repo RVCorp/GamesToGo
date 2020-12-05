@@ -68,5 +68,7 @@ namespace GamesToGo.Editor.Online
     {
         [JsonProperty(@"id")]
         public int OnlineID { get; set; }
+
+        public CommunityStatus Status { get; set; }
     }
 }

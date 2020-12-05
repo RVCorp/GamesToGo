@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace GamesToGo.Game.Online
 {
@@ -12,5 +13,7 @@ namespace GamesToGo.Game.Online
         public bool Ready { get; set; }
 
         public Tile Tile { get; set; }
+
+        public List<Card> PlayerHand { get; set; }
     }
 }

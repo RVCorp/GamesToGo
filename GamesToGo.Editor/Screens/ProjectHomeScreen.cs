@@ -29,10 +29,11 @@ namespace GamesToGo.Editor.Screens
         private NumericTextBox minPlayersTextBox;
         private BasicTextBox descriptionTextBox;
         private BasicDropdown<ChatRecommendation> chatDropdown;
-        private GamesToGoButton toggleButton;
+        private IteratingButton toggleButton;
         private SpriteText editingText;
         private TurnsOverlay turnsOverlay;
         private VictoryConditionsContainer victoryContainer;
+        private PreparationTurnOverlay preparationTurnOverlay;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -209,23 +210,49 @@ namespace GamesToGo.Editor.Screens
                                                                 RelativeSizeAxes = Axes.Both,
                                                                 Colour = Colour4.MediumPurple,
                                                             },
-                                                            editingText = new SpriteText
+                                                            new FillFlowContainer
                                                             {
-                                                                Font = new FontUsage(size: 45),
-                                                                Position = new Vector2(5, 2.5f),
-                                                            },
-                                                            toggleButton = new GamesToGoButton
-                                                            {
-                                                                Anchor = Anchor.CentreRight,
-                                                                Origin = Anchor.CentreRight,
-                                                                Size = new Vector2(200, 35),
-                                                                X = -5,
-                                                                Action = () =>
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Direction = FillDirection.Horizontal,
+                                                                Children = new Drawable[]
                                                                 {
-                                                                    victoryContainer.State.Value = turnsOverlay.State.Value;
-                                                                    turnsOverlay.ToggleVisibility();
-                                                                },
-                                                            },
+                                                                    new Container
+                                                                    {
+                                                                        RelativeSizeAxes = Axes.Both,
+                                                                        Width = .4f,
+                                                                        Child = editingText = new SpriteText
+                                                                        {
+                                                                            Font = new FontUsage(size: 45),
+                                                                            Text = "Condiciones de Victoria",
+                                                                            Position = new Vector2(5, 2.5f),
+                                                                        },
+                                                                    },
+                                                                    new FillFlowContainer
+                                                                    {
+                                                                        RelativeSizeAxes = Axes.Both,
+                                                                        Width = .6f,
+                                                                        Direction = FillDirection.Horizontal,
+                                                                        Children = new Drawable[]
+                                                                        {
+                                                                            new Container
+                                                                            {
+                                                                                RelativeSizeAxes = Axes.Both,
+                                                                                Children = new Drawable[]
+                                                                                {
+                                                                                    toggleButton = new IteratingButton
+                                                                                    {
+                                                                                        Anchor = Anchor.CentreRight,
+                                                                                        Origin = Anchor.CentreRight,
+                                                                                        Size = new Vector2(200, 35),
+                                                                                        X = -5,
+                                                                                        Text = "Turnos"
+                                                                                    },
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
                                                         },
                                                     },
                                                 },
@@ -241,6 +268,7 @@ namespace GamesToGo.Editor.Screens
                                                                 State = { Value = Visibility.Visible },
                                                             },
                                                             turnsOverlay = new TurnsOverlay(),
+                                                            preparationTurnOverlay = new PreparationTurnOverlay()
                                                         },
                                                     },
                                                 },
@@ -255,32 +283,45 @@ namespace GamesToGo.Editor.Screens
                 argumentListing,
                 selectorOverlay,
             };
-
+            toggleButton.Actions.Add(() => showVictoryConditions());
+            toggleButton.Actions.Add(() => showTurns());
+            toggleButton.Actions.Add(() => showPreparationTurn());
             chatDropdown.Current.Value = project.ChatRecommendation;
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
             descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
             titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
-            turnsOverlay.State.BindValueChanged(_ => toggleEdition(), true);
 
 
             checkPlayerNumber(false);
         }
 
-        private void toggleEdition()
+        private void showVictoryConditions()
         {
-            switch (turnsOverlay.State.Value)
-            {
-                case Visibility.Hidden:
-                    toggleButton.Text = @"Sistema de Turnos";
-                    editingText.Text = @"Condiciones de Victoria";
-                    break;
-                case Visibility.Visible:
-                    editingText.Text = @"Turnos";
-                    toggleButton.Text = @"Condiciones de Victoria";
-                    break;
-            }
+            victoryContainer.Show();
+            turnsOverlay.Hide();
+            preparationTurnOverlay.Hide();            
+            editingText.Text = @"Condiciones de Victoria";
+            toggleButton.Text = @"Turnos";
+        }
+
+        private void showTurns()
+        {
+            victoryContainer.Hide();
+            turnsOverlay.Show();
+            preparationTurnOverlay.Hide();
+            editingText.Text = @"Turnos";
+            toggleButton.Text = @"Turno de Preparación";
+        }
+
+        private void showPreparationTurn()
+        {
+            victoryContainer.Hide();
+            turnsOverlay.Hide();
+            preparationTurnOverlay.Show();
+            editingText.Text = @"Turno de Preparación";
+            toggleButton.Text = @"Condiciones de Victoria";
         }
 
         private void checkPlayerNumber(bool isMin)

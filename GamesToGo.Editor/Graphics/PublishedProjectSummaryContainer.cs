@@ -46,7 +46,7 @@ namespace GamesToGo.Editor.Graphics
                 Text = @"Este juego ya fue publicado!",
             });
 
-            var userRequest = new GetUserRequest(onlineProject.CreatorId);
+            var userRequest = new GetUserRequest(onlineProject.Creator.ID);
             userRequest.Success += user => UsernameBox.Text = @$"De {user.Username} (Ultima vez editado {onlineProject.DateTimeLastEdited:dd/MM/yyyy HH:mm})";
             api.Queue(userRequest);
         }

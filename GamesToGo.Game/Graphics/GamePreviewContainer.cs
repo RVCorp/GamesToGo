@@ -14,6 +14,10 @@ namespace GamesToGo.Game.Graphics
     {
         private OnlineGame game;
         private Sprite gameImage;
+        private TextFlowContainer Text;
+
+        public int GameNameSize { get; set; }
+        public int MadeBySize { get; set; }
 
         public GamePreviewContainer(OnlineGame game)
         {
@@ -39,7 +43,7 @@ namespace GamesToGo.Game.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Horizontal,
                     Padding = new MarginPadding(40),
-                    Spacing = new Vector2(40),
+                    Spacing = new Vector2(20),
                     Children = new Drawable[]
                     {
                         new Container
@@ -55,8 +59,7 @@ namespace GamesToGo.Game.Graphics
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Width = .7f,
-                            Padding = new MarginPadding(){ Right = 50},
+                            Width = .5f,
                             Children = new Drawable[]
                             {
                                 new FillFlowContainer
@@ -69,50 +72,41 @@ namespace GamesToGo.Game.Graphics
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Height = .3f,
-                                            Child = new SpriteText
+                                            Child = Text = new TextFlowContainer
                                             {
-                                                Text = game.Name,
-                                                Font = new FontUsage(size: 100)
+                                                RelativeSizeAxes = Axes.Both
                                             }
                                         },
-                                        new Container
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Height = .2f,
-                                            Child = new SpriteText
-                                            {
-                                                Text = "Hecho por: "+ game.Creator.Username,
-                                                Font = new FontUsage(size: 65)
-                                            },
-                                        },
                                     },
-                                },
-                                new Container
+                                },                                
+                            },
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .2f,
+                            Padding = new MarginPadding(){ Right = 80 },
+                            Child = new FillFlowContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(30),
+                                Children = new Drawable[]
                                 {
-                                    Anchor = Anchor.BottomRight,
-                                    Origin = Anchor.BottomRight,
-                                    RelativeSizeAxes = Axes.Both,
-                                    Height = .3f,
-                                    Width = .5f,
-                                    Child = new FillFlowContainer
+                                    new SpriteIcon
                                     {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
-                                        Direction = FillDirection.Horizontal,
-                                        Spacing = new Vector2(30),
-                                        Children = new Drawable[]
-                                        {
-                                            new SpriteIcon
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                                Width = .325f,
-                                                Icon = FontAwesome.Solid.Users,
-                                            },
-                                            new SpriteText
-                                            {
-                                                Text = game.Minplayers + "-" + game.Maxplayers,
-                                                Font = new FontUsage(size:100),
-                                            },
-                                        },
+                                        Width = .5f,
+                                        Icon = FontAwesome.Solid.Users,
+                                    },
+                                    new SpriteText
+                                    {
+                                        Anchor = Anchor.Centre,
+                                        Origin = Anchor.Centre,
+                                        Text = game.Minplayers + "-" + game.Maxplayers,
+                                        Font = new FontUsage(size:GameNameSize),
                                     },
                                 },
                             },
@@ -124,6 +118,8 @@ namespace GamesToGo.Game.Graphics
             {
                 gameImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{game.Image}");
             });
+            Text.AddText(game.Name, f => f.Font = new FontUsage(size: GameNameSize));
+            Text.AddParagraph("Hecho por: " + game.Creator.Username, t => t.Font = new FontUsage(size:MadeBySize));
         }
 
 
