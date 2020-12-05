@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using osu.Framework.Allocation;
@@ -11,22 +14,20 @@ using osu.Framework.Graphics.UserInterface;
 
 namespace GamesToGo.Game.Overlays
 {
-    public class LoginOverlay : OverlayContainer
+    public class RegisterOverlay : OverlayContainer
     {
         private BasicTextBox usernameBox;
         private BasicPasswordTextBox passwordBox;
         private Container content;
         private Box shadowBox;
-        private GamesToGoButton login;
+        private GamesToGoButton register;
+        private BasicPasswordTextBox confirmPasswordBox;
+        private BasicTextBox emailBox;
+
         [Resolved]
         private APIController api { get; set; }
-        private readonly Bindable<User> localUser = new Bindable<User>();
-        private readonly Action nextScreenAction;
-
-        public LoginOverlay(Action nextScreen)
-        {
-            nextScreenAction = nextScreen;
-        }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -99,7 +100,30 @@ namespace GamesToGo.Game.Overlays
                                                             {
                                                                 Origin = Anchor.TopLeft,
                                                                 Anchor = Anchor.TopLeft,
-                                                                Text = @"Usuario:",
+                                                                Text = @"Email:",
+                                                                Font = new FontUsage(size:60)
+                                                            },
+                                                            emailBox = new BasicTextBox
+                                                            {
+                                                                Origin = Anchor.TopLeft,
+                                                                Anchor = Anchor.TopLeft,
+                                                                Height = 150,
+                                                                RelativeSizeAxes = Axes.X,
+                                                            },
+                                                        }
+                                                    },
+                                                    new FillFlowContainer
+                                                    {
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Direction = FillDirection.Vertical,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new SpriteText
+                                                            {
+                                                                Origin = Anchor.TopLeft,
+                                                                Anchor = Anchor.TopLeft,
+                                                                Text = @"Nombre de Usuario:",
                                                                 Font = new FontUsage(size:60)
                                                             },
                                                             usernameBox = new BasicTextBox
@@ -134,6 +158,29 @@ namespace GamesToGo.Game.Overlays
                                                             },
                                                         },
                                                     },
+                                                    new FillFlowContainer
+                                                    {
+                                                        RelativeSizeAxes = Axes.X,
+                                                        AutoSizeAxes = Axes.Y,
+                                                        Direction = FillDirection.Vertical,
+                                                        Children = new Drawable[]
+                                                        {
+                                                            new SpriteText
+                                                            {
+                                                                Origin = Anchor.TopLeft,
+                                                                Anchor = Anchor.TopLeft,
+                                                                Text = @"Confirmar Contraseña:",
+                                                                Font = new FontUsage(size:60),
+                                                            },
+                                                            confirmPasswordBox = new BasicPasswordTextBox
+                                                            {
+                                                                Origin = Anchor.TopLeft,
+                                                                Anchor = Anchor.TopLeft,
+                                                                Height = 150,
+                                                                RelativeSizeAxes = Axes.X,
+                                                            },
+                                                        },
+                                                    },
                                                 },
                                             },
                                         },
@@ -145,14 +192,14 @@ namespace GamesToGo.Game.Overlays
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding(30),
-                                        Child = login = new GamesToGoButton
+                                        Child = register = new GamesToGoButton
                                         {
                                             Anchor = Anchor.TopCentre,
                                             Origin = Anchor.TopCentre,
                                             Height = 225,
                                             RelativeSizeAxes = Axes.X,
-                                            Text = @"Iniciar Sesión",
-                                            Action = () => api.Login(usernameBox.Text, passwordBox.Text),
+                                            Text = @"Registrarse",
+                                            Action = () => registerUser(),
                                         },
                                     },
                                 },
@@ -161,29 +208,44 @@ namespace GamesToGo.Game.Overlays
                     },
                 },
             };
-            login.SpriteText.Font = new FontUsage(size: 60);
-            login.Enabled.Value = false;
+            register.SpriteText.Font = new FontUsage(size: 60);
+            register.Enabled.Value = false;
 
             passwordBox.Current.BindValueChanged(checkUserPass);
+            confirmPasswordBox.Current.BindValueChanged(checkUserPass);
+            emailBox.Current.BindValueChanged(checkUserPass);
             usernameBox.Current.BindValueChanged(checkUserPass);
-
-            localUser.BindTo(api.LocalUser);
-            localUser.BindValueChanged(_ =>
-            {
-                usernameBox.Text = "";
-                passwordBox.Text = "";
-                Hide();
-                nextScreenAction?.Invoke();
-            });
-            api.Login(@"daro31", @"1234");
         }
 
         private void checkUserPass(ValueChangedEvent<string> obj)
         {
-            if (string.IsNullOrEmpty(passwordBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || string.IsNullOrEmpty(usernameBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text))
-                login.Enabled.Value = false;
+            if (string.IsNullOrEmpty(passwordBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text) ||
+                string.IsNullOrEmpty(emailBox.Text) || string.IsNullOrWhiteSpace(emailBox.Text) || string.IsNullOrEmpty(confirmPasswordBox.Text) || string.IsNullOrWhiteSpace(confirmPasswordBox.Text)
+                || !new Regex("[^ ]{1,}\\@[^ ]{1,}\\.[^ ]{2,}").IsMatch(emailBox.Text) || passwordBox.Text != confirmPasswordBox.Text)
+                register.Enabled.Value = false;
             else
-                login.Enabled.Value = true;
+                register.Enabled.Value = true;
+        }
+
+        private void registerUser()
+        {
+            var req = new AddUserRequest(new PasswordedUser { Email = emailBox.Text, Password = passwordBox.Text, Username = usernameBox.Text });
+            req.Success += _ => registerSuccess();
+            req.Failure += registerFailure;
+            api.Register(req);
+        }
+
+        private void registerSuccess()
+        {
+            infoOverlay.Show(@"El usuario fue añadido exitosamente, intenta iniciar sesión", Colour4.Green);
+        }
+
+        private void registerFailure(Exception e)
+        {
+            infoOverlay.Show(
+                e.Message == "BadRequest"
+                    ? @"El usuario o correo ya están en uso"
+                    : @"Hubo un problema al registrar al usuario", Colour4.Red);
         }
 
         protected override void PopIn()

@@ -14,10 +14,8 @@ namespace GamesToGo.Editor.Graphics
     public class TurnsContainer : Container
     {
         private FillFlowContainer<ActionDescriptor> turnsFillFlow;
-        private BindableList<EventAction> turnActions = new BindableList<EventAction>();
+        protected BindableList<EventAction> TurnActions = new BindableList<EventAction>();
 
-        [Resolved]
-        private WorkingProject project { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -66,7 +64,7 @@ namespace GamesToGo.Editor.Graphics
                                 {
                                     new ActionTypeListing
                                     {
-                                        OnSelection = selected => turnActions.Add(Activator.CreateInstance(selected.GetType()) as EventAction),
+                                        OnSelection = selected => TurnActions.Add(Activator.CreateInstance(selected.GetType()) as EventAction),
                                         Anchor = Anchor.CentreRight,
                                         Origin = Anchor.CentreRight,
                                     },
@@ -76,8 +74,7 @@ namespace GamesToGo.Editor.Graphics
                     },
                 },
             };
-            turnActions.BindTo(project.Turns);
-            turnActions.BindCollectionChanged ((_, args) =>
+            TurnActions.BindCollectionChanged ((_, args) =>
             {
                 switch (args.Action)
                 {
@@ -99,7 +96,7 @@ namespace GamesToGo.Editor.Graphics
             {
                 turnsFillFlow.Add(new ActionDescriptor(action)
                 {
-                    RemoveAction = (removed) => turnActions.Remove(removed),
+                    RemoveAction = (removed) => TurnActions.Remove(removed),
                 });
             }
         }

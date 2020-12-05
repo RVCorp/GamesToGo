@@ -1,4 +1,7 @@
-﻿using GamesToGo.Editor.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using GamesToGo.Editor.Graphics;
 using GamesToGo.Editor.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -7,10 +10,8 @@ using osu.Framework.Graphics.Shapes;
 
 namespace GamesToGo.Editor.Overlays
 {
-    public class TurnsOverlay : OverlayContainer
+    public class PreparationTurnOverlay : OverlayContainer
     {
-        [Resolved]
-        private WorkingProject project { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -23,11 +24,11 @@ namespace GamesToGo.Editor.Overlays
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.MediumPurple.Opacity(0.3f),
                 },
-                new TurnContainer(),
+                new PreparationTurnContainer(),
             };
         }
 
-        private class TurnContainer : TurnsContainer
+        private class PreparationTurnContainer : TurnsContainer
         {
             [Resolved]
             private WorkingProject project { get; set; }
@@ -35,7 +36,7 @@ namespace GamesToGo.Editor.Overlays
             [BackgroundDependencyLoader]
             private void load()
             {
-                TurnActions.BindTo(project.Turns);
+                TurnActions.BindTo(project.PreparationTurn);
             }
         }
 

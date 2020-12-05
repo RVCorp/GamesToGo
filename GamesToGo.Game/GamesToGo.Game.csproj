@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.15.0" />
     <PackageReference Include="ppy.osu.Framework" Version="2020.1120.0" />
   </ItemGroup>
 

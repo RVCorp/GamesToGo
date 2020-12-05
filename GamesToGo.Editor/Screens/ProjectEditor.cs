@@ -199,6 +199,7 @@ namespace GamesToGo.Editor.Screens
             req.Success += res =>
             {
                 workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
+                workingProject.DatabaseObject.ComunityStatus = res.Status;
                 splashOverlay.Show(@"Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
                 database.SaveChanges();
             };

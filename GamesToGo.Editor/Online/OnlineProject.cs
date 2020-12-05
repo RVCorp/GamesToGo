@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using GamesToGo.Editor.Project;
 using Newtonsoft.Json;
 
 // ReSharper disable IdentifierTypo
@@ -26,9 +27,9 @@ namespace GamesToGo.Editor.Online
         public string Hash { get; set; }
         public string Description { get; set; }
         // TODO: Make this actually work
-        public int Status { get; set; }
+        public CommunityStatus Status { get; set; }
         public int Minplayers { get; set; }
         public int Maxplayers { get; set; }
-        public int CreatorId { get; set; }
+        public User Creator { get; set; }
     }
 }

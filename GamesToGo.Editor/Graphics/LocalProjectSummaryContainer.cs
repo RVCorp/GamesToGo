@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osuTK;
+using osu.Framework.Extensions;
 
 namespace GamesToGo.Editor.Graphics
 {
@@ -72,7 +73,7 @@ namespace GamesToGo.Editor.Graphics
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
             var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
-            getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm})";
+            getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm}) Estado: {ProjectInfo.ComunityStatus.GetDescription()}";
             api.Queue(getCreator);
         }
         private void checkValidWorkingProject()

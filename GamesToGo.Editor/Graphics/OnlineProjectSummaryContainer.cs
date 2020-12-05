@@ -1,6 +1,7 @@
 ﻿using System;
 using GamesToGo.Editor.Online;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -64,8 +65,8 @@ namespace GamesToGo.Editor.Graphics
 
             editButton.Action += downloadProject;
 
-            var userRequest = new GetUserRequest(onlineProject.CreatorId);
-            userRequest.Success += user => UsernameBox.Text = @$"De {user.Username} (Ultima vez editado {onlineProject.DateTimeLastEdited:dd/MM/yyyy HH:mm})";
+            var userRequest = new GetUserRequest(onlineProject.Creator.ID);
+            userRequest.Success += user => UsernameBox.Text = @$"De {user.Username} (Ultima vez editado {onlineProject.DateTimeLastEdited:dd/MM/yyyy HH:mm}) Estado: {onlineProject.Status.GetDescription()}";
             api.Queue(userRequest);
         }
 
