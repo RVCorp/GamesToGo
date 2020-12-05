@@ -105,7 +105,7 @@ namespace GamesToGo.Game.Overlays
                         }
                     }
                 }
-            };            
+            };
         }
 
         private void populateInvites()
@@ -117,9 +117,7 @@ namespace GamesToGo.Game.Overlays
                 {
                 NextScreen = () =>
                 {
-                    sideMenu.Hide();
                     joinRoom(invite.ID,invite.Room.Game);
-                    Hide();
                 },
                 DeleteInvitation = () => declineInvite(invite.ID)
                 });
@@ -131,8 +129,13 @@ namespace GamesToGo.Game.Overlays
             game.DownloadGame(downloadGame);
             var room = new AcceptInviteRequest(id);
             room.Success += u =>
-            {              
-                LoadComponentAsync(new RoomScreen(u), stack.Push);
+            {
+                LoadComponentAsync(new RoomScreen(u), roomScreen =>
+                {
+                    stack.Push(roomScreen);
+                    Hide();
+                    sideMenu.Hide();
+                });
                 game.Invitations.Remove(game.Invitations.First(i => i.ID == id));
                 invitationsContainer.Remove(invitationsContainer.Where(c => c.Invitation.ID == id).FirstOrDefault());
             };

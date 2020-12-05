@@ -146,7 +146,6 @@ namespace GamesToGo.Game
 
         public void DownloadGame(OnlineGame game)
         {
-            sideMenu.Hide();
             var getGame = new DownloadProjectRequest(game.Id, game.Hash, store);
             getGame.Success += g => importGame(game);
             getGame.Progressed += g =>
