@@ -203,6 +203,44 @@ namespace GamesToGo.Editor.Screens
 
         public void DeleteElement(ProjectElement toDelete)
         {
+            if (workingProject.CrawlEventsForReferences(toDelete))
+            {
+                optionOverlay.Show(@$"¿Seguro que quieres eliminar {toDelete.Name}? Este elemento tiene referencias en uno o más acciones o eventos", new[]
+                {
+                    new OptionItem
+                    {
+                        Action = () => deleteElement(toDelete),
+                        Text = @"Si, eliminar junto con sus referencias",
+                        Type = OptionType.Destructive,
+                    },
+                    new OptionItem
+                    {
+                        Text = @"Cancelar",
+                        Type = OptionType.Neutral,
+                    },
+                });
+            }
+            else
+            {
+                optionOverlay.Show(@$"¿Seguro que quieres eliminar {toDelete.Name}? Esta acción es irreversible", new[]
+                {
+                    new OptionItem
+                    {
+                        Action = () => deleteElement(toDelete),
+                        Text = @"Si, eliminar",
+                        Type = OptionType.Destructive,
+                    },
+                    new OptionItem
+                    {
+                        Text = @"Cancelar",
+                        Type = OptionType.Neutral,
+                    },
+                });
+            }
+        }
+
+        private void deleteElement(ProjectElement toDelete)
+        {
             if (toDelete == currentEditingElement.Value)
             {
                 currentEditingElement.Value = null;

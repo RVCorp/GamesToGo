@@ -17,7 +17,7 @@ namespace GamesToGo.Editor.Graphics
         private readonly Bindable<Argument> model;
         private readonly ArgumentType type;
 
-        [Resolved]
+        [Resolved(canBeNull: true)]
         private ArgumentTypeListing argumentListing { get; set; }
 
         public ChangeArgumentButton(ArgumentType argumentType, Bindable<Argument> bindable)
@@ -69,7 +69,7 @@ namespace GamesToGo.Editor.Graphics
 
         private void changeTo()
         {
-            argumentListing.ShowFor(type, model,
+            argumentListing?.ShowFor(type, model,
                 ToSpaceOfOtherDrawable(new Vector2((Width - 4) / 2, DrawHeight), argumentListing));
         }
 

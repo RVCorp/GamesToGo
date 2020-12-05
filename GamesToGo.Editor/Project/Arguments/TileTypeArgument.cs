@@ -1,4 +1,6 @@
 ﻿using System;
+using GamesToGo.Editor.Project.Elements;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
@@ -15,6 +17,8 @@ namespace GamesToGo.Editor.Project.Arguments
             @"Casilla predeterminada",
         };
 
-        public int? Result { get; set; }
+        public Bindable<int?> Result { get; } = new Bindable<int?>();
+
+        public bool ResultMapsTo(object result) => result is Tile tileValue && tileValue.ID == Result.Value;
     }
 }

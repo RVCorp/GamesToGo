@@ -11,6 +11,7 @@ using GamesToGo.Editor.Project.Elements;
 using GamesToGo.Editor.Project.Events;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osuTK;
@@ -36,13 +37,13 @@ namespace GamesToGo.Editor.Project
 
         public readonly BindableList<EventAction> Turns = new BindableList<EventAction>();
 
-        private IEnumerable<Card> projectCards => projectElements.OfType<Card>();
+        public IEnumerable<Card> ProjectCards => projectElements.OfType<Card>();
 
-        private IEnumerable<Token> projectTokens => projectElements.OfType<Token>();
+        public IEnumerable<Token> ProjectTokens => projectElements.OfType<Token>();
 
-        private IEnumerable<Board> projectBoards => projectElements.OfType<Board>();
+        public IEnumerable<Board> ProjectBoards => projectElements.OfType<Board>();
 
-        private IEnumerable<Tile> projectTiles => projectElements.OfType<Tile>();
+        public IEnumerable<Tile> ProjectTiles => projectElements.OfType<Tile>();
 
         public IBindableList<ProjectElement> ProjectElements => projectElements;
 
@@ -74,7 +75,7 @@ namespace GamesToGo.Editor.Project
 
         public static WorkingProject Parse(ProjectInfo project, Storage store, TextureStore textures, APIController api)
         {
-            WorkingProject ret = new WorkingProject(ref project, textures, api.LocalUser.Value.ID);
+            WorkingProject ret = new WorkingProject(ref project, textures, api?.LocalUser.Value.ID ?? 0);
 
             if (project.File != null)
             {
@@ -118,10 +119,10 @@ namespace GamesToGo.Editor.Project
 
         private void updateDatabaseObjectInfo()
         {
-            DatabaseObject.NumberBoxes = projectTiles.Count();
-            DatabaseObject.NumberCards = projectCards.Count();
-            DatabaseObject.NumberTokens = projectTokens.Count();
-            DatabaseObject.NumberBoards = projectBoards.Count();
+            DatabaseObject.NumberBoxes = ProjectTiles.Count();
+            DatabaseObject.NumberCards = ProjectCards.Count();
+            DatabaseObject.NumberTokens = ProjectTokens.Count();
+            DatabaseObject.NumberBoards = ProjectBoards.Count();
         }
 
         public void AddElement(ProjectElement element)
@@ -486,7 +487,7 @@ namespace GamesToGo.Editor.Project
             if (toBeArgument is IHasResult resolvedArgument)
             {
                 if (!string.IsNullOrEmpty(argText))
-                    resolvedArgument.Result = int.Parse(argText);
+                    resolvedArgument.Result.Value = int.Parse(argText);
 
                 return toBeArgument;
             }
@@ -544,6 +545,11 @@ namespace GamesToGo.Editor.Project
             return int.Parse(line.Split('(')[0]);
         }
 
+
+        /// <summary>
+        /// This assumes CrawlEventsForReferences has been called and user is ok with possible references being deleted.
+        /// </summary>
+        /// <param name="toDeleteElement"></param>
         public void RemoveElement(ProjectElement toDeleteElement)
         {
             if (toDeleteElement is IHasElements elemented)
@@ -556,7 +562,22 @@ namespace GamesToGo.Editor.Project
                 }
             }
 
+            crawlAndDeleteReferences(toDeleteElement);
             projectElements.Remove(toDeleteElement);
+        }
+
+        private void crawlAndDeleteReferences(ProjectElement toDeleteElement)
+        {
+            Turns.ForEach(t => t.DeleteReferenceTo(toDeleteElement));
+            VictoryConditions.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
+            projectElements.ForEach(e => { if(e is IHasEvents ee) ee.DeleteReferenceTo(toDeleteElement); });
+        }
+
+        public bool CrawlEventsForReferences(ProjectElement element)
+        {
+            return Turns.Any(t => t.HasReferenceTo(element)) ||
+                   VictoryConditions.Any(vc => vc.HasReferenceTo(element)) ||
+                   projectElements.Any(e => e is IHasEvents ee && ee.HasReferenceTo(element));
         }
     }
 }

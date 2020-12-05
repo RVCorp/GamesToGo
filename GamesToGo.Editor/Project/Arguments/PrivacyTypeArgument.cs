@@ -1,4 +1,6 @@
 ﻿using System;
+using GamesToGo.Editor.Project.Elements;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
@@ -15,6 +17,8 @@ namespace GamesToGo.Editor.Project.Arguments
             @"Privacidad predeterminada",
         };
 
-        public int? Result { get; set; }
+        public Bindable<int?> Result { get; } = new Bindable<int?>(null);
+
+        public bool ResultMapsTo(object result) => result is ElementPrivacy privacyValue && (int)privacyValue == Result.Value;
     }
 }

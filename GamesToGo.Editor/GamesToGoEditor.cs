@@ -189,9 +189,11 @@ namespace GamesToGo.Editor
 
             switch (host.Window)
             {
-
                 case OsuTKDesktopWindow gameWindow:
                     gameWindow.SetIconFromStream(typeof(GamesToGoEditor).Assembly.GetManifestResourceStream(GetType(), "gtg.ico"));
+                    break;
+                case SDL2DesktopWindow sdlWindow:
+                    sdlWindow.SetIconFromStream(typeof(GamesToGoEditor).Assembly.GetManifestResourceStream(GetType(), "gtg.ico"));
                     break;
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using GamesToGo.Editor.Project.Arguments;
 using osu.Framework.Bindables;
 
@@ -64,6 +65,22 @@ namespace GamesToGo.Editor.Project.Actions
             builder.Append(Condition.Value?.ToString() ?? "null");
 
             return builder.ToString();
+        }
+
+        public bool HasReferenceTo(object reference)
+        {
+            if (Condition.Value?.HasReferenceTo(reference) ?? false)
+                return true;
+
+            return Arguments.Any(argument => argument.Value.HasReferenceTo(reference));
+        }
+
+        public void DeleteReferenceTo(object reference)
+        {
+            Condition.Value?.DeleteReferenceTo(reference);
+
+            foreach (var argument in Arguments)
+                argument.Value.DeleteReferenceTo(reference);
         }
     }
 }

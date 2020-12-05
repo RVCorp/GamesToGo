@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
@@ -48,9 +49,15 @@ namespace GamesToGo.Editor.Project.Arguments
 
             //Argumentos o resultado
             builder.Append('(');
-            if (!(this is IHasResult resolvedArgument))
+
+            if (this is IHasResult resolvedArgument)
+            {
+                builder.Append(resolvedArgument.Result.Value?.ToString() ?? string.Empty);
+            }
+            else
             {
                 int argIndex = 0;
+
                 while (argIndex < Arguments.Length)
                 {
                     builder.Append(Arguments[argIndex].Value);
@@ -59,13 +66,29 @@ namespace GamesToGo.Editor.Project.Arguments
                         builder.Append(',');
                 }
             }
-            else
-            {
-                builder.Append(resolvedArgument.Result);
-            }
+
             builder.Append(')');
 
             return builder.ToString();
+        }
+
+        public void DeleteReferenceTo(object reference)
+        {
+            if (this is IHasResult resolvedArgument && resolvedArgument.ResultMapsTo(reference))
+                resolvedArgument.Result.Value = null;
+
+            foreach (var arg in Arguments)
+            {
+                arg.Value?.DeleteReferenceTo(reference);
+            }
+        }
+
+        public bool HasReferenceTo(object reference)
+        {
+            if (this is IHasResult resolvedArgument && resolvedArgument.ResultMapsTo(reference))
+                return true;
+
+            return Arguments.Any(subArg => subArg.Value.HasReferenceTo(reference));
         }
     }
 }

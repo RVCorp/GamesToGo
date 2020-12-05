@@ -1,4 +1,5 @@
 ﻿using System;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
@@ -15,6 +16,8 @@ namespace GamesToGo.Editor.Project.Arguments
             @"Numero predeterminado",
         };
 
-        public int? Result { get; set; }
+        public Bindable<int?> Result { get; } = new Bindable<int?>(1);
+
+        public bool ResultMapsTo(object result) => result is int number && number == Result.Value;
     }
 }

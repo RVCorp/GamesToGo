@@ -1,7 +1,11 @@
-﻿namespace GamesToGo.Editor.Project.Arguments
+﻿using osu.Framework.Bindables;
+
+namespace GamesToGo.Editor.Project.Arguments
 {
     public interface IHasResult
     {
-        int? Result { get; set; }
+        Bindable<int?> Result { get; }
+
+        bool ResultMapsTo(object result);
     }
 }

@@ -21,6 +21,8 @@ namespace GamesToGo.Editor.Screens
 
         [Cached]
         private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
+        [Cached]
+        private ArgumentSelectorOverlay selectorOverlay = new ArgumentSelectorOverlay();
         [Resolved]
         private WorkingProject project { get; set; }
         private NumericTextBox maxPlayersTextBox;
@@ -251,6 +253,7 @@ namespace GamesToGo.Editor.Screens
                     },
                 },
                 argumentListing,
+                selectorOverlay,
             };
 
             chatDropdown.Current.Value = project.ChatRecommendation;
