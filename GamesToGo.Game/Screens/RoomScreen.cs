@@ -1,24 +1,34 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Overlays;
+using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 
 namespace GamesToGo.Game.Screens
 {
     public class RoomScreen : Screen
     {
-        [Resolved]
-        private MainMenuScreen mainMenu { get; set; }
+
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private Storage store { get; set; }
         private OnlineRoom room;
         private FillFlowContainer<TextContainer> usersInRoom;
         private SpriteText textButton;
+        private InviteOverlay inviteOverlay = new InviteOverlay();
+        private CancellationTokenSource _tokenSource = null;
+        private CancellationToken Token;
+        private Box colorBox;
 
         public RoomScreen(OnlineRoom room)
         {
@@ -72,7 +82,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = mainMenu.MakeCurrent
+                                            Action = () => exitRoom()
                                         },
                                     },
                                 },
@@ -126,9 +136,33 @@ namespace GamesToGo.Game.Screens
                                             Height = .15f,
                                             Child = new SurfaceButton
                                             {
+                                                Action = inviteOverlay.Show,
                                                 Children = new Drawable[]
                                                 {
                                                     new Box
+                                                    {
+                                                        RelativeSizeAxes = Axes.Both,
+                                                        Colour = Colour4.LightGray
+                                                    },
+                                                    textButton =new SpriteText
+                                                    {
+                                                        Anchor = Anchor.Centre,
+                                                        Origin = Anchor.Centre,
+                                                        Font = new FontUsage(size: 80),
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        new Container
+                                        {
+                                            RelativeSizeAxes = Axes.Both,
+                                            Height = .15f,
+                                            Child = new SurfaceButton
+                                            {
+                                                Action = playGame,
+                                                Children = new Drawable[]
+                                                {
+                                                    colorBox = new Box
                                                     {
                                                         RelativeSizeAxes = Axes.Both,
                                                         Colour = Colour4.LightPink
@@ -148,26 +182,59 @@ namespace GamesToGo.Game.Screens
                             }
                         }
                     }
-                }
+                },
+                inviteOverlay
             };
             if (api.LocalUser.Value.ID == room.Owner.BackingUser.ID)
                 textButton.Text = "Jugar!";
             else
                 textButton.Text = "Listo!";
             populateUsersList();
+            _tokenSource = new CancellationTokenSource();
+            var token = _tokenSource.Token;
+            Token = token;
             Task.Run(() =>
             {
                 while (!room.HasStarted)
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
                     System.Threading.Thread.Sleep(10000);
                     var roomStateRequest = new GetRoomStateRequest();
                     roomStateRequest.Success += u =>
                     {
-                        Refresh(u);
+                        if (u.HasStarted == true)
+                        {                            
+                            LoadComponentAsync(new GameScreen(room), this.Push);
+                            _tokenSource.Cancel();
+                        }
+                        else
+                            Refresh(u);
                     };
-                    api.Queue(roomStateRequest);
+                    api.Queue(roomStateRequest);                    
                 }
             });
+        }
+
+        private void exitRoom()
+        {
+            var req = new ExitRoomRequest();
+            req.Success += () =>
+            {
+                this.Exit();
+                _tokenSource.Cancel();
+            };
+            api.Queue(req);
+        }
+
+        private void playGame()
+        {
+            colorBox.Colour = Colour4.DeepPink;
+            var req = new ReadyRequest();
+            api.Queue(req);
+            
         }
 
         private void populateUsersList()
@@ -188,8 +255,12 @@ namespace GamesToGo.Game.Screens
                 {
                     usersInRoom[i].Text.Text = updatedRoom.Players[i].BackingUser.Username;
                 }
+                else if (updatedRoom.Players[i] == null)
+                {
+                    usersInRoom[i].Text.Text = "";
+                }
             }
-        }
+        }        
 
         private class TextContainer : Container
         {

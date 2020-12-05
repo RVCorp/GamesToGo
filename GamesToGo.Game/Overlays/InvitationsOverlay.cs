@@ -1,29 +1,32 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Overlays;
-using Ionic.Zip;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 
-namespace GamesToGo.Game.Screens
+namespace GamesToGo.Game.Overlays
 {
-    [Cached]
-    public class MainMenuScreen : Screen
+    public class InvitationsOverlay : OverlayContainer
     {
-        private SearchOverlay searchOverlay = new SearchOverlay();
-        private FillFlowContainer<Container> communityGames;
+        private FillFlowContainer<InvitePreviewContainer> invitationsContainer;
+
         [Resolved]
-        private SideMenuOverlay sideMenu { get; set; }
+        private GamesToGoGame game { get; set; }
         [Resolved]
         private APIController api { get; set; }
-        
-
+        [Resolved]
+        private ScreenStack stack { get; set; }
+        [Resolved]
+        private SideMenuOverlay sideMenu { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -64,28 +67,19 @@ namespace GamesToGo.Game.Screens
                                     },
                                     new Container
                                     {
-                                        Anchor = Anchor.TopLeft,
-                                        Origin = Anchor.TopLeft,
-                                        RelativeSizeAxes = Axes.Both,
-                                        Width = .2f,
-                                        Child = new SimpleIconButton(FontAwesome.Solid.Bars)
-                                        {
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            Action = () => sideMenu.Show()
-                                        }
-                                    },
-                                    new Container
-                                    {
                                         Anchor = Anchor.TopRight,
                                         Origin = Anchor.TopRight,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .2f,
-                                        Child = new SimpleIconButton(FontAwesome.Solid.Search)
+                                        Child = new SimpleIconButton(FontAwesome.Solid.Home)
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => searchOverlay.Show()
+                                            Action = () =>
+                                            {
+                                                Hide();
+                                                sideMenu.Hide();
+                                            }
                                         }
                                     },
                                 }
@@ -100,7 +94,7 @@ namespace GamesToGo.Game.Screens
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ClampExtension = 30,
-                                    Child = communityGames = new FillFlowContainer<Container>
+                                    Child = invitationsContainer = new FillFlowContainer<InvitePreviewContainer>
                                     {
                                         AutoSizeAxes = Axes.Y,
                                         RelativeSizeAxes = Axes.X,
@@ -110,36 +104,63 @@ namespace GamesToGo.Game.Screens
                             }
                         }
                     }
-                },
-                searchOverlay
-            };
-            populateGamesList();
-        }
-
-        private void populateGamesList()
-        {
-            var getGames = new GetAllPublishedGamesRequest();
-            getGames.Success += u =>
-            {
-                foreach(var game in u)
-                {
-                    communityGames.Add(new Container
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 400,
-                        Children = new Drawable[]
-                        {
-                            new GamePreviewContainer(game)
-                            {
-                                Action = () => LoadComponentAsync(new GameInfoScreen(game), this.Push),
-                                GameNameSize = 90,
-                                MadeBySize = 60
-                            },
-                        },
-                    });
                 }
             };
-            api.Queue(getGames);
+        }
+
+        private void populateInvites()
+        {
+            invitationsContainer.Clear();
+            foreach(var invite in game.Invitations)
+            {
+                invitationsContainer.Add(new InvitePreviewContainer(invite)
+                {
+                NextScreen = () =>
+                {
+                    joinRoom(invite.ID,invite.Room.Game);
+                },
+                DeleteInvitation = () => declineInvite(invite.ID)
+                });
+            }
+        }
+
+        private void joinRoom(int id, OnlineGame downloadGame)
+        {
+            game.DownloadGame(downloadGame);
+            var room = new AcceptInviteRequest(id);
+            room.Success += u =>
+            {
+                LoadComponentAsync(new RoomScreen(u), roomScreen =>
+                {
+                    stack.Push(roomScreen);
+                    Hide();
+                    sideMenu.Hide();
+                });
+                game.Invitations.Remove(game.Invitations.First(i => i.ID == id));
+                invitationsContainer.Remove(invitationsContainer.Where(c => c.Invitation.ID == id).FirstOrDefault());
+            };
+            api.Queue(room);
+        }
+
+        private void declineInvite(int id) // (id invitacion) POST
+        {
+            var invitation = new IgnoreInvitationRequest(id);
+            invitation.Success += () =>
+            {
+                invitationsContainer.Remove(invitationsContainer.Where(c => c.Invitation.ID == id).FirstOrDefault());
+            };
+            api.Queue(invitation);
+        }
+
+        protected override void PopIn()
+        {
+            populateInvites();
+            this.FadeIn(300);
+        }
+
+        protected override void PopOut()
+        {
+            this.FadeOut(300);
         }
     }
 }

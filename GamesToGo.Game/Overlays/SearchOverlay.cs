@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -11,22 +14,18 @@ using osu.Framework.Graphics.UserInterface;
 
 namespace GamesToGo.Game.Overlays
 {
-    public class LoginOverlay : OverlayContainer
+    [Cached]
+    public class SearchOverlay : OverlayContainer
     {
-        private BasicTextBox usernameBox;
-        private BasicPasswordTextBox passwordBox;
-        private Container content;
         private Box shadowBox;
-        private GamesToGoButton login;
-        [Resolved]
-        private APIController api { get; set; }
-        private readonly Bindable<User> localUser = new Bindable<User>();
-        private readonly Action nextScreenAction;
+        private Container content;
+        private GamesToGoButton search;
+        private BasicTextBox searchTextBox;
+        private TagFlowContainer tagsContainer;
+        private List<Bindable<bool>> tagsAreSelected;
 
-        public LoginOverlay(Action nextScreen)
-        {
-            nextScreenAction = nextScreen;
-        }
+        [Resolved]
+        private MainMenuScreen mainMenu { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -50,8 +49,8 @@ namespace GamesToGo.Game.Overlays
                             RelativeSizeAxes = Axes.Both,
                             RowDimensions = new[]
                             {
-                                new Dimension(GridSizeMode.Relative, .2f),
-                                new Dimension(GridSizeMode.Relative, .5f),
+                                new Dimension(GridSizeMode.Relative, .1f),
+                                new Dimension(GridSizeMode.Relative, .6f),
                                 new Dimension()
                             },
                             ColumnDimensions = new[]
@@ -88,52 +87,47 @@ namespace GamesToGo.Game.Overlays
                                                 Padding = new MarginPadding(30),
                                                 Children = new Drawable[]
                                                 {
-                                                    new FillFlowContainer
+                                                    new Container
                                                     {
+                                                        Anchor = Anchor.TopLeft,
+                                                        Origin = Anchor.TopLeft,
                                                         RelativeSizeAxes = Axes.X,
-                                                        AutoSizeAxes = Axes.Y,
-                                                        Direction = FillDirection.Vertical,
-                                                        Children = new Drawable[]
+                                                        Height = 200,
+                                                        Child = searchTextBox = new BasicTextBox
                                                         {
-                                                            new SpriteText
-                                                            {
-                                                                Origin = Anchor.TopLeft,
-                                                                Anchor = Anchor.TopLeft,
-                                                                Text = @"Usuario:",
-                                                                Font = new FontUsage(size:60)
-                                                            },
-                                                            usernameBox = new BasicTextBox
-                                                            {
-                                                                Origin = Anchor.TopLeft,
-                                                                Anchor = Anchor.TopLeft,
-                                                                Height = 150,
-                                                                RelativeSizeAxes = Axes.X,
-                                                            },
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            RelativeSizeAxes = Axes.X,
+                                                            Width = .9f,
+                                                            Height = 150,
                                                         }
-                                                    },
-                                                    new FillFlowContainer
+                                                    },                                                    
+                                                    new Container
                                                     {
+                                                        Anchor = Anchor.TopLeft,
+                                                        Origin = Anchor.TopLeft,
                                                         RelativeSizeAxes = Axes.X,
-                                                        AutoSizeAxes = Axes.Y,
-                                                        Direction = FillDirection.Vertical,
-                                                        Children = new Drawable[]
+                                                        Height = 150,
+                                                        Child = new Container
                                                         {
-                                                            new SpriteText
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Width = .9f,
+                                                            Child = new BasicScrollContainer(Direction.Horizontal)
                                                             {
-                                                                Origin = Anchor.TopLeft,
-                                                                Anchor = Anchor.TopLeft,
-                                                                Text = @"Contraseña:",
-                                                                Font = new FontUsage(size:60),
-                                                            },
-                                                            passwordBox = new BasicPasswordTextBox
-                                                            {
-                                                                Origin = Anchor.TopLeft,
-                                                                Anchor = Anchor.TopLeft,
-                                                                Height = 150,
                                                                 RelativeSizeAxes = Axes.X,
-                                                            },
-                                                        },
-                                                    },
+                                                                Height = 150,
+                                                                ClampExtension = 30,
+                                                                Child = tagsContainer = new TagFlowContainer
+                                                                {
+                                                                    AutoSizeAxes = Axes.X,
+                                                                    RelativeSizeAxes = Axes.Y,
+                                                                    Direction = FillDirection.Horizontal,
+                                                                },
+                                                            }
+                                                        }
+                                                    }
                                                 },
                                             },
                                         },
@@ -145,14 +139,14 @@ namespace GamesToGo.Game.Overlays
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding(30),
-                                        Child = login = new GamesToGoButton
+                                        Child = search = new GamesToGoButton
                                         {
                                             Anchor = Anchor.TopCentre,
                                             Origin = Anchor.TopCentre,
                                             Height = 225,
                                             RelativeSizeAxes = Axes.X,
-                                            Text = @"Iniciar Sesión",
-                                            Action = () => api.Login(usernameBox.Text, passwordBox.Text),
+                                            Text = @"Buscar",
+                                            Action = () => searchRequest()
                                         },
                                     },
                                 },
@@ -161,33 +155,36 @@ namespace GamesToGo.Game.Overlays
                     },
                 },
             };
-            login.SpriteText.Font = new FontUsage(size: 60);
-            login.Enabled.Value = false;
-
-            passwordBox.Current.BindValueChanged(checkUserPass);
-            usernameBox.Current.BindValueChanged(checkUserPass);
-
-            localUser.BindTo(api.LocalUser);
-            localUser.BindValueChanged(_ =>
-            {
-                usernameBox.Text = "";
-                passwordBox.Text = "";
-                Hide();
-                nextScreenAction?.Invoke();
-            });
-            api.Login(@"daro31", @"1234");
+            populateTags();
+            tagsContainer.Current.BindValueChanged(v => enableButton());
+            searchTextBox.Current.BindValueChanged(t => enableButton());
+            search.SpriteText.Font = new FontUsage(size: 60);
+            search.Enabled.Value = false;
         }
 
-        private void checkUserPass(ValueChangedEvent<string> obj)
+        private void populateTags()
         {
-            if (string.IsNullOrEmpty(passwordBox.Text) || string.IsNullOrWhiteSpace(passwordBox.Text) || string.IsNullOrEmpty(usernameBox.Text) || string.IsNullOrWhiteSpace(usernameBox.Text))
-                login.Enabled.Value = false;
+            for (int i = 0; i < 13; i++)
+            {
+                tagsContainer.Add(new TagContainer($"Etiqueta #{i}", 1) { CornerRadius = 10, Masking = true });
+            }
+        }
+
+        private void enableButton()
+        {
+            if (tagsContainer.Current.Value > 0 || string.IsNullOrEmpty(searchTextBox.Current.Value) == false)
+                search.Enabled.Value = true;
             else
-                login.Enabled.Value = true;
+                search.Enabled.Value = false;
+        }
+
+        private void searchRequest()
+        {
+
         }
 
         protected override void PopIn()
-        {
+        {            
             shadowBox.FadeTo(0.9f, 250);
             content.FadeIn(250);
         }

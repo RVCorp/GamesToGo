@@ -1,25 +1,47 @@
-﻿using GamesToGo.Game.Graphics;
+﻿using System;
+using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Ovarlays;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Screens;
 using osuTK;
 
 namespace GamesToGo.Game.Overlays
 {
+    [Cached]
     public class SideMenuOverlay : OverlayContainer
     {
         private Container menu;
         private Box shadowBox;
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private GamesToGoGame game { get; set; }
+        [Resolved]
+        private ScreenStack stack { get; set; }
+        private Bindable<User> localUser = new Bindable<User>();
+        private BindableList<Invitation> invitations = new BindableList<Invitation>();
+        private SpriteText username;
+        private Sprite userImage;
+        private TextureStore textures;
+        private SpriteText invitationsNumber;
+        [Cached]
+        private ProfileOverlay profileOverlay = new ProfileOverlay();
+        [Cached]
+        private InvitationsOverlay invitationsOverlay = new InvitationsOverlay();
+        private Container numberContainer;
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            this.textures = textures;
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -92,7 +114,7 @@ namespace GamesToGo.Game.Overlays
                                                     Padding = new MarginPadding(){ Top = 80, Left = 20, Right = 20},
                                                     Child = new SurfaceButton
                                                     {
-                                                        //Action = profileScreen
+                                                        Action = () => profileScreen(),
                                                         Children = new Drawable[]
                                                         {
                                                             new EmptyBox
@@ -114,19 +136,19 @@ namespace GamesToGo.Game.Overlays
                                                                         BorderThickness = 3.5f,
                                                                         Masking = true,
                                                                         Size = new Vector2(300, 300),
-                                                                        Child = new Sprite
+                                                                        Child = userImage= new Sprite
                                                                         {
                                                                             Anchor = Anchor.Centre,
                                                                             Origin = Anchor.Centre,
                                                                             RelativeSizeAxes = Axes.Both,
-                                                                            Texture = textures.Get($"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}")
+                                                                            Texture = textures.Get("Images/gtg")
                                                                         }
                                                                     },
-                                                                    new SpriteText
+                                                                    username = new SpriteText
                                                                     {
                                                                         Anchor = Anchor.Centre,
                                                                         Origin = Anchor.Centre,
-                                                                        Text = api.LocalUser.Value.Username + " #" +api.LocalUser.Value.ID,
+                                                                        Text = "Guest",
                                                                         Font = new FontUsage(size: 80)
                                                                     },
                                                                 }
@@ -144,20 +166,49 @@ namespace GamesToGo.Game.Overlays
                                                     Padding = new MarginPadding(20),
                                                     Child = new SurfaceButton()
                                                     {
-                                                        //Action
+                                                        Action = () => invitesScreen() ,
                                                         Children = new Drawable[]
                                                         {
                                                             new EmptyBox
                                                             {
                                                                 RelativeSizeAxes = Axes.Both
                                                             },
-                                                            new SpriteText
+                                                            new FillFlowContainer
                                                             {
-                                                                Anchor = Anchor.CentreRight,
-                                                                Origin = Anchor.CentreRight,
-                                                                Text = "Invitaciones",
-                                                                Font = new FontUsage(size: 80)
-                                                            },
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                Spacing = new Vector2(30),
+                                                                Children = new Drawable[]
+                                                                {
+                                                                    numberContainer = new Container
+                                                                    {
+                                                                        Anchor = Anchor.CentreRight,
+                                                                        Origin = Anchor.CentreRight,
+                                                                        
+                                                                        Children = new Drawable[]
+                                                                        {
+                                                                            new Box
+                                                                            {
+                                                                                RelativeSizeAxes = Axes.Both,
+                                                                                Colour =  Colour4.LightBlue,
+                                                                            },
+                                                                            invitationsNumber = new SpriteText
+                                                                            {
+                                                                                Anchor = Anchor.Centre,
+                                                                                Origin = Anchor.Centre,
+                                                                                Font = new FontUsage(size: 70)
+                                                                            },
+
+                                                                        }
+                                                                    },
+                                                                    new SpriteText
+                                                                    {
+                                                                        Anchor = Anchor.CentreRight,
+                                                                        Origin = Anchor.CentreRight,
+                                                                        Text = "Invitaciones",
+                                                                        Font = new FontUsage(size: 80)
+                                                                    },                                                                    
+                                                                }
+                                                            }
 
                                                         },
                                                     }
@@ -172,7 +223,7 @@ namespace GamesToGo.Game.Overlays
                                                     Padding = new MarginPadding(20),
                                                     Child = new SurfaceButton()
                                                     {
-                                                        Action = logout,
+                                                        Action = game.Logout,
                                                         Children = new Drawable[]
                                                         {
                                                             new EmptyBox
@@ -223,14 +274,43 @@ namespace GamesToGo.Game.Overlays
                         },
                     },
                 },
+                profileOverlay,
+                invitationsOverlay
             };
-            base.Size = Size;
+            invitations.BindTo(game.Invitations);
+            invitations.BindCollectionChanged((_,__)=> changeInvitationsNumber());
+            localUser.BindTo(api.LocalUser);
+            localUser.BindValueChanged(_ => changeUserData());
         }
 
-        private void logout()
+        private void changeInvitationsNumber()
         {
-            api.Logout();
+            if(invitations.Count != 0)
+            {
+                invitationsNumber.Text = invitations.Count.ToString();
+                numberContainer.Height = 100;
+                numberContainer.Width = 150;
+            }
+            else
+            {
+                invitationsNumber.Text = "";
+                numberContainer.Height = 0;
+                numberContainer.Width = 0;
+            }
         }
+
+        private void changeUserData()
+        {
+            if(localUser.Value != null)
+            {
+                Schedule(async () =>
+                {
+                    userImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}");
+                });
+                username.Text = api.LocalUser.Value.Username + " #" + api.LocalUser.Value.ID;
+            }
+        }
+
 
         protected override void PopIn()
         {
@@ -243,5 +323,16 @@ namespace GamesToGo.Game.Overlays
             shadowBox.FadeOut(250, Easing.OutExpo);
             menu.MoveToX(-1,700, Easing.InElastic);
         }
+
+        private void invitesScreen()
+        {
+            invitationsOverlay.Show();
+        }
+
+        private void profileScreen()
+        {
+            profileOverlay.Show();
+        }
     }
 }
+

@@ -251,11 +251,18 @@ namespace GamesToGo.Game.Online
         {
             flushQueue();
 
-            Token = null;
-            password = null;
-            username = null;
 
-            State = APIState.Offline;
+            var req = new LogoutRequest();
+            req.Success += () =>
+            {
+                flushQueue();
+                Token = null;
+                password = null;
+                username = null;
+
+                State = APIState.Offline;
+            };
+            Queue(req);
         }
 
         private class AccessRequest : BaseJsonWebRequest<AuthToken>
@@ -275,6 +282,11 @@ namespace GamesToGo.Game.Online
 
                 base.PrePerform();
             }
+        }
+
+        private class LogoutRequest : APIRequest
+        {
+            protected override string Target => "Login/Logout";
         }
     }
 

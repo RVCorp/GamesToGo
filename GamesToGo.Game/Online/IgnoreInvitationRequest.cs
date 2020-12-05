@@ -1,12 +1,16 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using osu.Framework.IO.Network;
 
 namespace GamesToGo.Game.Online
 {
-    public class JoinRoomRequest : APIRequest<OnlineRoom>
+    public class IgnoreInvitationRequest : APIRequest
     {
         private int id;
-        public JoinRoomRequest(int id)
+
+        public IgnoreInvitationRequest(int id)
         {
             this.id = id;
         }
@@ -15,9 +19,9 @@ namespace GamesToGo.Game.Online
         {
             var req = base.CreateWebRequest();
             req.Method = HttpMethod.Post;
-            req.AddParameter("id", @$"{id}");
+            req.AddParameter("invitationID", @$"{id}");
             return req;
         }
-        protected override string Target => "Room/JoinRoom";
+        protected override string Target => "Users/IgnoreInvitation";
     }
 }
