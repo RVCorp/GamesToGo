@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
-using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

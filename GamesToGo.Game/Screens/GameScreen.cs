@@ -4,12 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.OnlineProjectElements;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -25,6 +29,8 @@ namespace GamesToGo.Game.Screens
         private Player player;
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private Storage store { get; set; }
 
         public GameScreen(OnlineRoom room)
         {
@@ -122,7 +128,7 @@ namespace GamesToGo.Game.Screens
                     }
                 }
             };
-            populatePlayers();
+            populateGame();
             player = room.Players.First(p => p.BackingUser.ID == api.LocalUser.Value.ID);
             _tokenSource = new CancellationTokenSource();
             var token = _tokenSource.Token;
@@ -150,10 +156,10 @@ namespace GamesToGo.Game.Screens
         {
             if (room != null)
             {
-                if (room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).PlayerHand != null)
+                if (room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards != null)
                 {
-                    checkCards(room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).PlayerHand);
-                    foreach(var card in player.PlayerHand)
+                    checkPlayerHand(room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards);
+                    foreach(var card in player.Hand.Cards)
                     {
                         playerCards.Add(new CardContainer(card)); // Terminar CardContainer
                     }
@@ -161,9 +167,19 @@ namespace GamesToGo.Game.Screens
             }
         }
 
-        private void checkCards(List<Card> cards)
+        private void checkPlayer()
         {
-            List<Card> cards1 = player.PlayerHand;
+            //Hand, Status...
+        }
+
+        private void checkObjects()
+        {
+            //Board, Tile, Cards, Tokens..
+        }
+
+        private void checkPlayerHand(List<Card> cards)
+        {
+            List<Card> cards1 = player.Hand.Cards;
             for (int i = 0; i < cards1.Count; i++)
             {
                 if (cards.All(c => c.ID != cards1[i].ID))
@@ -175,7 +191,7 @@ namespace GamesToGo.Game.Screens
             }
             if (cards1.Any() || cards.Any())
             {
-                player.PlayerHand.AddRange(cards.Select(c => new Card
+                player.Hand.Cards.AddRange(cards.Select(c => new Card
                 {
                     ID = c.ID,
                     TypeID = c.TypeID,
@@ -187,13 +203,14 @@ namespace GamesToGo.Game.Screens
 
                 foreach (var oldCard in cards1)
                 {
-                    player.PlayerHand.Remove(player.PlayerHand.First(s => s.ID == oldCard.ID));
+                    player.Hand.Cards.Remove(player.Hand.Cards.First(s => s.ID == oldCard.ID));
                 }
 
             }
         }
 
-            private void populatePlayers()
+        //Start the GameScreen 
+        private void populatePlayers()
         {
             foreach(var player in room.Players)
             {
@@ -238,5 +255,42 @@ namespace GamesToGo.Game.Screens
                 }
             }
         }
+
+        private void populateBoard()
+        {
+
+        }
+
+        private void populatePlayerHand()
+        {
+
+        }        
+
+        private void populateGame()
+        {
+            populatePlayers();
+            IReadOnlyList<string> lines = System.IO.File.ReadAllLines(store.GetFullPath($"files/{room.Game.Hash}"));
+            bool isParsingObjects = false;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                var line = lines[i];
+                if (line.StartsWith('['))
+                {
+                    isParsingObjects = line.Trim('[', ']') switch
+                    {
+                        "Info" => false,
+                        "Objects" => true,
+                        _ => isParsingObjects,
+                    };
+
+                    continue;
+                }
+                if (isParsingObjects)
+                {
+
+                }
+            }
+        }
     }
 }
+//En caso de varios tableros, cual mostrar? Debo tener ProjectElement locales? Como muestro el tablero con

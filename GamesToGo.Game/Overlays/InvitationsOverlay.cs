@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
-using GamesToGo.Game.Overlays;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
