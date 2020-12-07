@@ -90,6 +90,11 @@ namespace GamesToGo.Editor.Project
                 builder.AppendLine(orientedElement.ToSaveable());
             }
 
+            if (this is IHasSideVisible sidedElement)
+            {
+                builder.AppendLine(sidedElement.ToSaveable());
+            }
+
             if(this is IHasPosition positionedElement)
             {
                 builder.AppendLine(positionedElement.ToSaveable());

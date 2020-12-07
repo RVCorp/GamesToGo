@@ -110,7 +110,7 @@ namespace GamesToGo.Editor.Graphics
                 ArgumentType.TokenType => new ElementSelectionDescriptor<Token>(),
                 ArgumentType.BoardType => new ElementSelectionDescriptor<Board>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(model.Type), model.Type,
-                    "Can't create selector for given model, as no selection is available")
+                    "Can't create selector for given model, as no selection is available"),
             };
 
             selectionDescriptor.Current = resolved.Result;

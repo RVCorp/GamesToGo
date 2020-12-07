@@ -67,7 +67,7 @@ namespace GamesToGo.Editor.Project
         {
             if (project == null)
             {
-                project = new ProjectInfo { CreatorID = userID };
+                project = new ProjectInfo {CreatorID = userID};
                 returnableSaves = 1;
             }
 
@@ -85,8 +85,10 @@ namespace GamesToGo.Editor.Project
                 {
                     if (GamesToGoEditor.HashBytes(System.IO.File.ReadAllBytes(store.GetFullPath($"files/{project.File.NewName}"))) != project.File.NewName)
                         return null;
+
                     if (!ret.parse(System.IO.File.ReadAllLines(store.GetFullPath($"files/{project.File.NewName}"))))
                         return null;
+
                     if (!ret.postParse())
                         return null;
                 }
@@ -133,6 +135,7 @@ namespace GamesToGo.Editor.Project
                 element.ID = latestElementID++;
             else if (element.ID >= latestElementID)
                 latestElementID = element.ID + 1;
+
             projectElements.Add(element);
         }
 
@@ -171,36 +174,42 @@ namespace GamesToGo.Editor.Project
             builder.AppendLine("[Info]");
             builder.AppendLine($"ChatRecommendation={ChatRecommendation}");
             builder.AppendLine($"Files={Images.Count}");
+
             foreach (var img in Images)
             {
                 builder.AppendLine($"{img.ImageName}");
             }
+
             builder.AppendLine($"Image={Image.Value?.ImageName ?? "null"}");
 
             if (includeDate)
                 builder.AppendLine($"LastEdited={(DatabaseObject.LastEdited = DateTime.Now).ToUniversalTime():yyyyMMddHHmmssfff}");
 
             builder.AppendLine($"VictoryConditions={VictoryConditions.Count}");
-            foreach(var action in VictoryConditions)
+
+            foreach (var action in VictoryConditions)
             {
                 builder.AppendLine($"{action}");
             }
 
             builder.AppendLine($"PreparationTurn={PreparationTurn.Count}");
+
             foreach (var action in PreparationTurn)
             {
                 builder.AppendLine($"{action}");
             }
 
             builder.AppendLine($"Turns={Turns.Count}");
-            foreach(var action in Turns)
+
+            foreach (var action in Turns)
             {
                 builder.AppendLine($"{action}");
-            }            
+            }
 
             builder.AppendLine();
 
             builder.AppendLine("[Objects]");
+
             foreach (ProjectElement elem in ProjectElements)
             {
                 builder.AppendLine(elem.ToSaveableString());
@@ -215,6 +224,7 @@ namespace GamesToGo.Editor.Project
             {
                 if (!(element is IHasElements elementedElement)) continue;
                 var elementQueue = elementedElement.PendingElements;
+
                 while (elementQueue.Count > 0)
                 {
                     int nextElement = elementQueue.Peek();
@@ -254,6 +264,7 @@ namespace GamesToGo.Editor.Project
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
+
                 if (line.StartsWith('['))
                 {
                     isParsingObjects = line.Trim('[', ']') switch
@@ -275,12 +286,14 @@ namespace GamesToGo.Editor.Project
                             AddElement(parsingElement);
                             parsingElement = null;
                         }
+
                         continue;
                     }
 
                     if (parsingElement == null)
                     {
                         var idents = line.Split('|', 3);
+
                         if (idents.Length != 3)
                             return false;
 
@@ -311,59 +324,78 @@ namespace GamesToGo.Editor.Project
                             case "Images":
                             {
                                 int amm = int.Parse(tokens[1]);
+
                                 for (int j = i + amm; i < j; i++)
                                 {
                                     var parts = lines[i + 1].Split('=');
+
                                     if (parts.Length != 2)
                                         return false;
+
                                     if (parts[1] == "null")
                                         continue;
+
                                     if (Images.First(im => im.ImageName == parts[1]) is var image && image != null)
                                         parsingElement.Images[parts[0]].Value = image;
                                     else
                                         return false;
                                 }
+
                                 break;
                             }
                             case "Desc":
                             {
                                 parsingElement.Description.Value = tokens[1];
+
                                 break;
                             }
                             case "Size" when parsingElement is IHasSize size:
                             {
                                 var xy = tokens[1].Split("|");
                                 size.Size.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+
                                 break;
                             }
                             case "SubElems" when parsingElement is IHasElements elementedElement:
                             {
                                 int amm = int.Parse(tokens[1]);
+
                                 for (int j = i + amm; i < j; i++)
                                 {
                                     elementedElement.QueueElement(int.Parse(lines[i + 1]));
                                 }
+
                                 break;
                             }
                             case "Orient" when parsingElement is IHasOrientation orientedElement:
                             {
                                 orientedElement.DefaultOrientation.Value = Enum.Parse<ElementOrientation>(tokens[1]);
+
+                                break;
+                            }
+                            case "Side" when parsingElement is IHasSideVisible sidedElement:
+                            {
+                                sidedElement.DefaultSide.Value = Enum.Parse<ElementSideVisible>(tokens[1]);
+
                                 break;
                             }
                             case "Privacy" when parsingElement is IHasPrivacy privacySetElement:
                             {
                                 privacySetElement.DefaultPrivacy.Value = Enum.Parse<ElementPrivacy>(tokens[1]);
+
                                 break;
                             }
                             case "Position" when parsingElement is IHasPosition position:
                             {
                                 var xy = tokens[1].Split("|");
                                 position.Position.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+
                                 break;
                             }
                             case "Events" when parsingElement is IHasEvents eventedElement:
                             {
                                 int amm = int.Parse(tokens[1]);
+
                                 for (int j = i + amm; i < j; i++)
                                 {
                                     var splits = lines[i + 1].Split('|');
@@ -416,6 +448,7 @@ namespace GamesToGo.Editor.Project
 
                                     eventedElement.Events.Add(toBeEvent);
                                 }
+
                                 break;
                             }
                         }
@@ -439,40 +472,51 @@ namespace GamesToGo.Editor.Project
                                 ChatRecommendation = ChatRecommendation.FaceToFace;
                             else
                                 ChatRecommendation = Enum.Parse<ChatRecommendation>(tokens[1]);
+
                             break;
                         case "Files":
                             int amm = int.Parse(tokens[1]);
+
                             for (int j = i + amm; i < j; i++)
                             {
                                 Images.Add(new Image(textures, lines[i + 1]));
                             }
+
                             break;
                         case "Image":
                             if (tokens[1] == "null")
                                 continue;
+
                             if (Images.First(im => im.ImageName == tokens[1]) is var image && image != null)
                                 Image.Value = image;
+
                             break;
                         case "VictoryConditions":
                             int vicAmm = int.Parse(tokens[1]);
-                            for(int j = i + vicAmm; i < j; i++)
+
+                            for (int j = i + vicAmm; i < j; i++)
                             {
-                                VictoryConditions.Add(populateAction(lines[i+1]));
+                                VictoryConditions.Add(populateAction(lines[i + 1]));
                             }
+
                             break;
                         case "PreparationTurn":
                             int prepTurnAmm = int.Parse(tokens[1]);
+
                             for (int j = i + prepTurnAmm; i < j; i++)
                             {
                                 PreparationTurn.Add(populateAction(lines[i + 1]));
                             }
+
                             break;
                         case "Turns":
                             int turnAmm = int.Parse(tokens[1]);
-                            for(int j = i + turnAmm; i < j; i++)
+
+                            for (int j = i + turnAmm; i < j; i++)
                             {
                                 Turns.Add(populateAction(lines[i + 1]));
                             }
+
                             break;
                     }
                 }
@@ -527,7 +571,7 @@ namespace GamesToGo.Editor.Project
 
             var actionArgs = arguments.Split(',');
 
-            if(!(Activator.CreateInstance(AvailableActions[actType]) is EventAction toBeAction))
+            if (!(Activator.CreateInstance(AvailableActions[actType]) is EventAction toBeAction))
                 return null;
 
             for (int argIndex = 0; argIndex < actionArgs.Length; argIndex++)
@@ -557,6 +601,7 @@ namespace GamesToGo.Editor.Project
         {
             string args = line.Split('(', 2)[1];
             arguments = args.Substring(0, args.Length - 1);
+
             return int.Parse(line.Split('(')[0]);
         }
 
@@ -585,7 +630,11 @@ namespace GamesToGo.Editor.Project
         {
             Turns.ForEach(t => t.DeleteReferenceTo(toDeleteElement));
             VictoryConditions.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
-            projectElements.ForEach(e => { if(e is IHasEvents ee) ee.DeleteReferenceTo(toDeleteElement); });
+
+            projectElements.ForEach(e =>
+            {
+                if (e is IHasEvents ee) ee.DeleteReferenceTo(toDeleteElement);
+            });
         }
 
         public bool CrawlEventsForReferences(ProjectElement element)
