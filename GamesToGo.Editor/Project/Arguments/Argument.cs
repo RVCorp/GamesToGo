@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
@@ -14,8 +15,6 @@ namespace GamesToGo.Editor.Project.Arguments
         public abstract int ArgumentTypeID { get; }
 
         public abstract ArgumentType Type { get; }
-
-        public abstract bool HasResult { get; }
 
         public abstract ArgumentType[] ExpectedArguments { get; }
 
@@ -41,14 +40,6 @@ namespace GamesToGo.Editor.Project.Arguments
 
         public abstract string[] Text { get; }
 
-        private int? result;
-
-        public int? Result
-        {
-            get => result;
-            set => result = HasResult ? value : null;
-        }
-
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -58,9 +49,15 @@ namespace GamesToGo.Editor.Project.Arguments
 
             //Argumentos o resultado
             builder.Append('(');
-            if (!HasResult)
+
+            if (this is IHasResult resolvedArgument)
+            {
+                builder.Append(resolvedArgument.Result.Value?.ToString() ?? string.Empty);
+            }
+            else
             {
                 int argIndex = 0;
+
                 while (argIndex < Arguments.Length)
                 {
                     builder.Append(Arguments[argIndex].Value);
@@ -69,13 +66,29 @@ namespace GamesToGo.Editor.Project.Arguments
                         builder.Append(',');
                 }
             }
-            else
-            {
-                builder.Append(Result);
-            }
+
             builder.Append(')');
 
             return builder.ToString();
+        }
+
+        public void DeleteReferenceTo(object reference)
+        {
+            if (this is IHasResult resolvedArgument && resolvedArgument.ResultMapsTo(reference))
+                resolvedArgument.Result.Value = null;
+
+            foreach (var arg in Arguments)
+            {
+                arg.Value?.DeleteReferenceTo(reference);
+            }
+        }
+
+        public bool HasReferenceTo(object reference)
+        {
+            if (this is IHasResult resolvedArgument && resolvedArgument.ResultMapsTo(reference))
+                return true;
+
+            return Arguments.Any(subArg => subArg.Value.HasReferenceTo(reference));
         }
     }
 }

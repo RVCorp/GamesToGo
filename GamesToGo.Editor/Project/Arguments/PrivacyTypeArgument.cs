@@ -1,14 +1,14 @@
 ﻿using System;
+using GamesToGo.Editor.Project.Elements;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
-    public class PrivacyTypeArgument : Argument
+    public class PrivacyTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 2;
 
         public override ArgumentType Type => ArgumentType.Privacy;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +16,9 @@ namespace GamesToGo.Editor.Project.Arguments
         {
             @"Privacidad predeterminada",
         };
+
+        public Bindable<int?> Result { get; } = new Bindable<int?>(null);
+
+        public bool ResultMapsTo(object result) => result is ElementPrivacy privacyValue && (int)privacyValue == Result.Value;
     }
 }

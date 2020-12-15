@@ -46,7 +46,17 @@ namespace GamesToGo.Editor.Project
 
         protected abstract string DefaultImageName { get; }
 
-        public Image DefaultImage => new Image(Textures, "Elements/" + DefaultImageName, false);
+        private Image defaultImage => new Image(Textures, "Elements/" + DefaultImageName, false);
+
+        public Image GetImageWithFallback(string imageName = null)
+        {
+            imageName ??= Images.Keys.First();
+
+            if (Images.ContainsKey(imageName) && Images[imageName].Value != null)
+                return Images[imageName].Value;
+
+            return defaultImage;
+        }
 
         public abstract Dictionary<string, Bindable<Image>> Images { get; }
 
@@ -78,6 +88,11 @@ namespace GamesToGo.Editor.Project
             if (this is IHasOrientation orientedElement)
             {
                 builder.AppendLine(orientedElement.ToSaveable());
+            }
+
+            if (this is IHasSideVisible sidedElement)
+            {
+                builder.AppendLine(sidedElement.ToSaveable());
             }
 
             if(this is IHasPosition positionedElement)

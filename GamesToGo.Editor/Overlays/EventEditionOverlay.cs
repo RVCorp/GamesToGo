@@ -23,6 +23,8 @@ namespace GamesToGo.Editor.Overlays
 
         [Cached]
         private ArgumentTypeListing argumentListing = new ArgumentTypeListing();
+        [Cached]
+        private ArgumentSelectorOverlay selectorOverlay = new ArgumentSelectorOverlay();
 
         public Bindable<ProjectEvent> Current { get; set; } = new Bindable<ProjectEvent>();
 
@@ -148,6 +150,7 @@ namespace GamesToGo.Editor.Overlays
                     },
                 },
                 argumentListing,
+                selectorOverlay,
             };
         }
 

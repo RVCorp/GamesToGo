@@ -10,8 +10,4 @@
     <ProjectReference Include="..\GamesToGo.Game\GamesToGo.Game.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ppy.osu.Framework" Version="2020.1129.0" />
-  </ItemGroup>
-
 </Project>

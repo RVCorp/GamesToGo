@@ -10,6 +10,5 @@ namespace GamesToGo.Editor.Project.Elements
         {
             return $"Orient={DefaultOrientation.Value}";
         }
-
     }
 }

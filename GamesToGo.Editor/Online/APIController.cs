@@ -18,7 +18,8 @@ namespace GamesToGo.Editor.Online
 
         public static string UserAgent { get; } = "gtg";
 
-        public static string Endpoint => @"https://gamestogo.company";
+        public static string Endpoint => AlternativeServer ?? @"https://gamestogo.company";
+        public static string AlternativeServer { get; set; } = null;
 
         private readonly Queue<APIRequest> queue = new Queue<APIRequest>();
 
@@ -89,6 +90,8 @@ namespace GamesToGo.Editor.Online
                         if (!hasValidToken && (userID = authenticate()) < 0)
                         {
                             Token = null;
+                            username = string.Empty;
+                            password = string.Empty;
                             continue;
                         }
 
@@ -199,6 +202,7 @@ namespace GamesToGo.Editor.Online
 
             using var req = new AccessRequest(username, password)
             {
+                AllowInsecureRequests = AlternativeServer != null,
                 Url = $@"{Endpoint}/api/Login",
                 Method = HttpMethod.Get,
             };

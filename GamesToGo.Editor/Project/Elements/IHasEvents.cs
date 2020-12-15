@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using GamesToGo.Editor.Project.Events;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 
 namespace GamesToGo.Editor.Project.Elements
 {
@@ -19,6 +21,16 @@ namespace GamesToGo.Editor.Project.Elements
             }
 
             return builder.ToString().TrimEnd('\n', '\r');
+        }
+
+        public bool HasReferenceTo(object element)
+        {
+            return Events.Any(elementEvent => elementEvent.HasReferenceTo(element));
+        }
+
+        public void DeleteReferenceTo(object element)
+        {
+            Events.ForEach(e => e.DeleteReferenceTo(element));
         }
     }
 }
