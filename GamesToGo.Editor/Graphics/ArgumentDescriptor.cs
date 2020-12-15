@@ -100,6 +100,7 @@ namespace GamesToGo.Editor.Graphics
 
         private ArgumentSelectionDescriptor getSelectorForType(IHasResult resolved)
         {
+            // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
             ArgumentSelectionDescriptor selectionDescriptor = model.Type switch
             {
                 ArgumentType.Privacy => new EnumArgumentDescriptor<ElementPrivacy>(),

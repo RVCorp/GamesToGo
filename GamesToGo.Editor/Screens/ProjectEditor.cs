@@ -21,11 +21,13 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osu.Framework.Testing;
 using DatabaseFile = GamesToGo.Editor.Database.Models.File;
 
 namespace GamesToGo.Editor.Screens
 {
     [Cached]
+    [ExcludeFromDynamicCompile]
     public class ProjectEditor : Screen
     {
         private Screen currentScreen;
@@ -109,14 +111,14 @@ namespace GamesToGo.Editor.Screens
             tabsBar.Current.ValueChanged += changeEditorScreen;
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = tabsBar.Current.Value switch
             {
-                EditorScreenOption.Objetos => EditorScreenOption.Objetos,
-                EditorScreenOption.Eventos => EditorScreenOption.Eventos,
-                _ => EditorScreenOption.Objetos,
+                EditorScreenOption.Objets => EditorScreenOption.Objets,
+                EditorScreenOption.Events => EditorScreenOption.Events,
+                _ => EditorScreenOption.Objets,
             };
 
             AddInternal(imagePicker);
 
-            tabsBar.Current.Value = EditorScreenOption.Inicio;
+            tabsBar.Current.Value = EditorScreenOption.Home;
         }
 
         public void SelectElement(ProjectElement element)
@@ -195,7 +197,7 @@ namespace GamesToGo.Editor.Screens
             req.Success += res =>
             {
                 workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
-                workingProject.DatabaseObject.ComunityStatus = res.Status;
+                workingProject.DatabaseObject.CommunityStatus = res.Status;
                 splashOverlay.Show(@"Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
                 database.SaveChanges();
             };
@@ -262,10 +264,10 @@ namespace GamesToGo.Editor.Screens
 
             currentScreen = value.NewValue switch
             {
-                EditorScreenOption.Archivo => new ProjectFileScreen(),
-                EditorScreenOption.Inicio => new ProjectHomeScreen(),
-                EditorScreenOption.Objetos => new ProjectObjectScreen(),
-                EditorScreenOption.Eventos => new ProjectEventsScreen(),
+                EditorScreenOption.File => new ProjectFileScreen(),
+                EditorScreenOption.Home => new ProjectHomeScreen(),
+                EditorScreenOption.Objets => new ProjectObjectScreen(),
+                EditorScreenOption.Events => new ProjectEventsScreen(),
                 _ => currentScreen,
             };
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GamesToGo.Editor.Database.Models;
 using Newtonsoft.Json;
-// ReSharper disable All
 
 namespace GamesToGo.Editor.Project
 {
@@ -30,9 +29,9 @@ namespace GamesToGo.Editor.Project
 
         public int OnlineProjectID { get; set; }
 
-        public int ModerationStatus { get; set; }
+        public CommunityStatus CommunityStatus { get; set; }
 
-        public CommunityStatus ComunityStatus { get; set; }
+        public Tag Tags { get; set; }
 
         public DateTime LastEdited { get; set; }
 

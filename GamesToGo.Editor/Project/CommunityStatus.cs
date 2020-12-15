@@ -5,13 +5,13 @@ namespace GamesToGo.Editor.Project
 {
     public enum CommunityStatus
     {
-        [Description("Guardado")]
+        [Description(@"Guardado")]
         Saved,
-        [Description("Subido")]
+        [Description(@"Subido")]
         Clouded,
-        [Description("Probado")]
+        [Description(@"Probado")]
         Tested,
-        [Description("Publicado")]
+        [Description(@"Publicado")]
         Published,
     }
 }

@@ -34,7 +34,6 @@ namespace GamesToGo.Editor.Graphics
 
         public string Text
         {
-            get => text;
             set
             {
                 if (spriteText != null)

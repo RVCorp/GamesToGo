@@ -32,7 +32,6 @@ namespace GamesToGo.Editor.Graphics
                 {
                     label = new SpriteText
                     {
-                        AlwaysPresent = true,
                         Font = new FontUsage(size: 25),
                         Height = 25,
                     },
@@ -67,8 +66,5 @@ namespace GamesToGo.Editor.Graphics
         }
     }
 
-    public class IgnoreItemAttribute : Attribute
-    {
-
-    }
+    public class IgnoreItemAttribute : Attribute { }
 }

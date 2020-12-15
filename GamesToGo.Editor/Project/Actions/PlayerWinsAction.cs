@@ -8,7 +8,7 @@ namespace GamesToGo.Editor.Project.Actions
 
         public override ArgumentType[] ExpectedArguments { get; } ={
             ArgumentType.SinglePlayer,
-            ArgumentType.Comparison
+            ArgumentType.Comparison,
         };
 
         public override string[] Text { get; } = {

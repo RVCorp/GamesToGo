@@ -65,6 +65,7 @@ namespace GamesToGo.Editor.Graphics
                     new StatText(FontAwesome.Solid.ChessBoard, ProjectInfo.NumberBoards),
                     new StatText(FontAwesome.Regular.Square, ProjectInfo.NumberBoxes),
                     new StatText(FontAwesome.Solid.Users, $"{ProjectInfo.MinNumberPlayers}{(ProjectInfo.MinNumberPlayers < ProjectInfo.MaxNumberPlayers ? $"-{ProjectInfo.MaxNumberPlayers}" : "")}"),
+                    new StatText(FontAwesome.Solid.Tags, $"{ProjectInfo.Tags.GetSetFlags().Length}"),
                 },
             });
 
@@ -73,7 +74,7 @@ namespace GamesToGo.Editor.Graphics
             ProjectImage.Texture = workingProject?.Image.Value?.Texture;
 
             var getCreator = new GetUserRequest(ProjectInfo.CreatorID);
-            getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm}) Estado: {ProjectInfo.ComunityStatus.GetDescription()}";
+            getCreator.Success += u => UsernameBox.Text = @$"De {u.Username} (Ultima vez editado {ProjectInfo.LastEdited:dd/MM/yyyy HH:mm}) Estado: {ProjectInfo.CommunityStatus.GetDescription()}";
             api.Queue(getCreator);
         }
         private void checkValidWorkingProject()
@@ -147,6 +148,7 @@ namespace GamesToGo.Editor.Graphics
                 },
             });
         }
+
         private class StatText : FillFlowContainer
         {
             public StatText(IconUsage icon, string text)

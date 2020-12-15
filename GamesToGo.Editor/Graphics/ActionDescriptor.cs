@@ -40,12 +40,12 @@ namespace GamesToGo.Editor.Graphics
                     AutoSizeAxes = Axes.Y,
                     RowDimensions = new []
                     {
-                        new Dimension(GridSizeMode.AutoSize)
+                        new Dimension(GridSizeMode.AutoSize),
                     },
                     ColumnDimensions = new []
                     {
                         new Dimension(),
-                        new Dimension(GridSizeMode.AutoSize)
+                        new Dimension(GridSizeMode.AutoSize),
                     },
                     Content = new []
                     {

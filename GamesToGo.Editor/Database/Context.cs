@@ -2,11 +2,13 @@
 using GamesToGo.Editor.Database.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using osu.Framework.Testing;
 using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace GamesToGo.Editor.Database
 {
+    [ExcludeFromDynamicCompile]
     public class Context : DbContext
     {
         private readonly string connectionString;
@@ -58,9 +60,9 @@ namespace GamesToGo.Editor.Database
                 project.Property(e => e.NumberBoxes).IsRequired();
                 project.Property(e => e.NumberBoards).IsRequired();
                 project.Property(e => e.OnlineProjectID);
-                project.Property(e => e.ModerationStatus).IsRequired();
-                project.Property(e => e.ComunityStatus).IsRequired();
+                project.Property(e => e.CommunityStatus).IsRequired();
                 project.Property(e => e.ImageRelationID);
+                project.Property(e => e.Tags);
             });
 
             modelBuilder.Entity<FileRelation>().HasKey(fr => fr.RelationID);

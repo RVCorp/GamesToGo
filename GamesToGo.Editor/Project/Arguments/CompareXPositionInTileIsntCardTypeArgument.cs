@@ -1,5 +1,8 @@
-﻿namespace GamesToGo.Editor.Project.Arguments
+﻿using JetBrains.Annotations;
+
+namespace GamesToGo.Editor.Project.Arguments
 {
+    [UsedImplicitly]
     public class CompareXPositionInTileIsNotCardTypeArgument : Argument
     {
         public override int ArgumentTypeID => 15;

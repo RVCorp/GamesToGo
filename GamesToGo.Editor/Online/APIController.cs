@@ -19,7 +19,7 @@ namespace GamesToGo.Editor.Online
         public static string UserAgent { get; } = "gtg";
 
         public static string Endpoint => AlternativeServer ?? @"https://gamestogo.company";
-        public static string AlternativeServer { get; set; } = null;
+        public static string AlternativeServer { get; set; }
 
         private readonly Queue<APIRequest> queue = new Queue<APIRequest>();
 
