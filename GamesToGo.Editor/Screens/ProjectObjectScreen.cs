@@ -33,6 +33,7 @@ namespace GamesToGo.Editor.Screens
         private VectorTextBoxContainer elementSize;
         private LabeledDropdown<ElementOrientation> elementOrientation;
         private LabeledDropdown<ElementPrivacy> elementPrivacy;
+        private LabeledDropdown<ElementSideVisible> elementSideVisible;
         private VectorTextBoxContainer elementPosition;
         private ElementVisualEditorContainer visualEditor;
 
@@ -176,6 +177,14 @@ namespace GamesToGo.Editor.Screens
                                                                         Width = 200,
                                                                     },
                                                                 },
+                                                                elementSideVisible = new LabeledDropdown<ElementSideVisible>
+                                                                {
+                                                                    Text = @"Lado visible:",
+                                                                    Element = new GamesToGoDropdown<ElementSideVisible>
+                                                                    {
+                                                                        Width = 200,
+                                                                    },
+                                                                },
                                                                 elementPrivacy = new LabeledDropdown<ElementPrivacy>
                                                                 {
                                                                     Text = @"Privacidad:",
@@ -245,6 +254,7 @@ namespace GamesToGo.Editor.Screens
 
             elementPosition.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
             elementOrientation.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
+            elementSideVisible.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
             elementSize.Current.BindValueChanged(_ => visualEditor.UpdatePreview());
             tilesManagerContainer.ElementsAdded = _ => visualEditor.UpdatePreview();
             tilesManagerContainer.ElementsRemoved = _ => visualEditor.UpdatePreview();
@@ -260,6 +270,9 @@ namespace GamesToGo.Editor.Screens
 
             if (oldElement is IHasOrientation orientedElement)
                 orientedElement.DefaultOrientation.UnbindAll();
+
+            if(oldElement is IHasSideVisible sidedElement)
+                sidedElement.DefaultSide.UnbindAll();
 
             if (oldElement is IHasPrivacy privacySetElement)
                 privacySetElement.DefaultPrivacy.UnbindAll();
@@ -295,6 +308,13 @@ namespace GamesToGo.Editor.Screens
             }
             else
                 elementOrientation.Hide();
+
+            if (obj.NewValue is IHasSideVisible sideVisible)
+            {
+                elementSideVisible.Show();
+                elementSideVisible.Current.Value = sideVisible.DefaultSide.Value;
+                sideVisible.DefaultSide.BindTo(elementSideVisible.Current);
+            }
 
             if (obj.NewValue is IHasPrivacy privacy)
             {

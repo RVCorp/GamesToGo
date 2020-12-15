@@ -1,14 +1,13 @@
 ﻿using System;
+using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
-    public class NumberArgument : Argument
+    public class NumberArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 3;
 
         public override ArgumentType Type => ArgumentType.SingleNumber;
-
-        public override bool HasResult => true;
 
         public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
 
@@ -16,5 +15,9 @@ namespace GamesToGo.Editor.Project.Arguments
         {
             @"Numero predeterminado",
         };
+
+        public Bindable<int?> Result { get; } = new Bindable<int?>(1);
+
+        public bool ResultMapsTo(object result) => result is int number && number == Result.Value;
     }
 }

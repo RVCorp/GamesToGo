@@ -322,7 +322,7 @@ namespace GamesToGo.Editor.Screens
 
         private void createProject()
         {
-            openProject(null);
+            openProject(WorkingProject.Parse(null, store, textures, api));
         }
     }
 }

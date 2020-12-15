@@ -1,71 +1,107 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 
 namespace GamesToGo.Editor.Graphics
 {
-    public class ArgumentDropdown : Container
+    public abstract class ArgumentDropdown : Container
     {
-        public Enum[] DropedElement;
-        private FillFlowContainer<ArgumentItem> addElement;
+        private FillFlowContainer<ArgumentItem> elements;
+        private readonly Bindable<int?> target = new Bindable<int?>();
 
-        public ArgumentDropdown (Enum[] list)
+        protected ArgumentDropdown(Bindable<int?> target)
         {
-            DropedElement = list;
+            this.target.BindTo(target);
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            AutoSizeAxes = Axes.Y;
-            Width = 80;
-            Add(new Box
+            AutoSizeAxes = Axes.Both;
+            Origin = Anchor.TopCentre;
+
+            Child = elements = new FillFlowContainer<ArgumentItem>
             {
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.LightGreen,
-            });
-            Add(addElement = new FillFlowContainer<ArgumentItem>
-            {
-                RelativeSizeAxes = Axes.X,
-                AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
-            });
-            foreach(var element in DropedElement)
+                AutoSizeAxes = Axes.Both,
+            };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            foreach (var item in CreateItems())
             {
-                addElement.Add(new ArgumentItem(element.GetDescription()));
+                item.Action += () => target.Value = (int?)item.Value;
+                elements.Add(item);
             }
         }
-        private class ArgumentItem : Button
+
+        protected abstract IEnumerable<ArgumentItem> CreateItems();
+
+        protected class ArgumentItem : Button
         {
-            private string text;
-            public ArgumentItem(string t)
+            protected const int ARGUMENT_HEIGHT = 25;
+            private const int argument_padding = 4;
+            private static readonly Colour4 hover_black = new Colour4(0.3f, 0.3f, 0.3f, 1f);
+
+            [Resolved]
+            private ArgumentSelectorOverlay selectorOverlay { get; set; }
+
+            private readonly Container content = new Container
             {
-                text = t;
+                AutoSizeAxes = Axes.X,
+                Height = ARGUMENT_HEIGHT + argument_padding,
+                Padding = new MarginPadding { Vertical = argument_padding / 2f, Horizontal = argument_padding },
+            };
+
+            private Box backgroundBox;
+            public readonly int Value;
+
+            public ArgumentItem(int value)
+            {
+                Value = value;
             }
+
+            protected override Container<Drawable> Content => content;
 
             [BackgroundDependencyLoader]
             private void load()
             {
-                Height = 20;
-                AutoSizeAxes = Axes.X;
-                Child = new Container
+                AutoSizeAxes = Axes.Both;
+                Action += () => selectorOverlay.Hide();
+                InternalChildren = new Drawable[]
                 {
-                    Children = new Drawable[]
+                    backgroundBox = new Box
                     {
-                        new SpriteText
-                        {
-                            RelativeSizeAxes = Axes.Y,
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.CentreLeft,
-                            Text = text,
-                        },
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0.5f,
+                        Colour = Colour4.Black,
                     },
+                    content,
                 };
+            }
+
+            protected override bool OnHover(HoverEvent e)
+            {
+                base.OnHover(e);
+
+                backgroundBox.FadeColour(hover_black, 150);
+
+                return true;
+            }
+
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                base.OnHoverLost(e);
+
+                backgroundBox.FadeColour(Colour4.Black, 150);
             }
         }
     }

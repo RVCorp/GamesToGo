@@ -56,6 +56,7 @@ namespace GamesToGo.Editor.Online
                 return;
 
             WebRequest = CreateWebRequest();
+            WebRequest.AllowInsecureRequests = APIController.AlternativeServer != null;
             WebRequest.Failed += Fail;
             WebRequest.AllowRetryOnTimeout = false;
             WebRequest.AddHeader("Authorization", $"Bearer {API.Token}");

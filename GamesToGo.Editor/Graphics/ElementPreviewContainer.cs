@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Elements;
 using GamesToGo.Editor.Screens;
@@ -48,7 +49,17 @@ namespace GamesToGo.Editor.Graphics
                     break;
             }
 
-            mainContent.Image = newElem.Images.Values.First();
+            if (newElem is IHasSideVisible sided)
+            {
+                mainContent.Image = sided.DefaultSide.Value switch
+                {
+                    ElementSideVisible.Front => newElem.Images.Values.Skip(1).First(),
+                    ElementSideVisible.Back => newElem.Images.Values.First(),
+                    _ => throw new ArgumentException($"Unexpected Side Visible for {newElem.Name}"),
+                };
+            }
+            else
+                mainContent.Image = newElem.Images.Values.First();
             mainContent.ImageSize = sizeFor(newElem);
             mainContent.OverImageContent.Clear();
 

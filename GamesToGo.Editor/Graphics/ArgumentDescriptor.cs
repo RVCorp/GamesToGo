@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GamesToGo.Editor.Project.Arguments;
+using GamesToGo.Editor.Project.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -50,23 +52,22 @@ namespace GamesToGo.Editor.Graphics
                         selectionContainer = new Container
                         {
                             AutoSizeAxes = Axes.Both,
-                            Child = new SpriteText
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Padding = new MarginPadding(4),
-                                Text = @"Selección de argumento final",
-                                Font = new FontUsage(size: 25),
-                            },
                         },
                     },
                 },
             };
 
-            if (!model.HasResult)
+            if (model is IHasResult resolved)
+            {
+                descriptionContainer.FadeOut();
+                selectionContainer.FadeIn();
+                selectionContainer.Add(getSelectorForType(resolved));
+            }
+            else
             {
                 descriptionContainer.FadeIn();
                 selectionContainer.FadeOut();
+
                 for (int i = 0; i < model.ExpectedArguments.Length; i++)
                 {
                     descriptionContainer.AddRange(new Drawable[]
@@ -95,11 +96,26 @@ namespace GamesToGo.Editor.Graphics
                     });
                 }
             }
-            else
+        }
+
+        private ArgumentSelectionDescriptor getSelectorForType(IHasResult resolved)
+        {
+            ArgumentSelectionDescriptor selectionDescriptor = model.Type switch
             {
-                descriptionContainer.FadeOut();
-                selectionContainer.FadeIn();
-            }
+                ArgumentType.Privacy => new EnumArgumentDescriptor<ElementPrivacy>(),
+                ArgumentType.Orientation => new EnumArgumentDescriptor<ElementOrientation>(),
+                ArgumentType.SingleNumber => new NumberSelectionDescriptor(),
+                ArgumentType.CardType => new ElementSelectionDescriptor<Card>(),
+                ArgumentType.TileType => new ElementSelectionDescriptor<Tile>(),
+                ArgumentType.TokenType => new ElementSelectionDescriptor<Token>(),
+                ArgumentType.BoardType => new ElementSelectionDescriptor<Board>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(model.Type), model.Type,
+                    "Can't create selector for given model, as no selection is available"),
+            };
+
+            selectionDescriptor.Current = resolved.Result;
+
+            return selectionDescriptor;
         }
     }
 }

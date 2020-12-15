@@ -5,7 +5,7 @@ using osuTK;
 
 namespace GamesToGo.Editor.Project.Elements
 {
-    public class Card : ProjectElement, IHasSize, IHasEvents, IHasPrivacy, IHasOrientation
+    public class Card : ProjectElement, IHasSize, IHasEvents, IHasPrivacy, IHasOrientation, IHasSideVisible
     {
         public override ElementType Type => ElementType.Card;
 
@@ -28,5 +28,6 @@ namespace GamesToGo.Editor.Project.Elements
         public Bindable<ElementOrientation> DefaultOrientation { get; } = new Bindable<ElementOrientation>();
 
         public BindableList<ProjectEvent> Events { get; } = new BindableList<ProjectEvent>();
+        public Bindable<ElementSideVisible> DefaultSide { get; } = new Bindable<ElementSideVisible>();
     }
 }
