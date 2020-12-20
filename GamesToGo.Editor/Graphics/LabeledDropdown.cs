@@ -8,7 +8,6 @@ namespace GamesToGo.Editor.Graphics
     {
         public new GamesToGoDropdown<TEnum> Element
         {
-            get => base.Element;
             set
             {
                 var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();

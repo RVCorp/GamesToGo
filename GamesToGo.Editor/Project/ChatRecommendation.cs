@@ -6,15 +6,15 @@ namespace GamesToGo.Editor.Project
 {
     public enum ChatRecommendation
     {
-        [Description("Ninguno")]
+        [Description(@"Ninguno")]
         None = 0,
-        [Description("Chat de voz")]
+        [Description(@"Chat de voz")]
         Voice = 1,
-        [Description("Chat de texto")]
+        [Description(@"Chat de texto")]
         Text = 2,
-        [Description("Chat de voz y texto")]
+        [Description(@"Chat de voz y texto")]
         Both = Voice | Text,
-        [Description("Frente a frente")]
+        [Description(@"Frente a frente")]
         FaceToFace = 4,
     }
 }

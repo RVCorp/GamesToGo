@@ -6,9 +6,9 @@ namespace GamesToGo.Editor.Project.Elements
 {
     public enum ElementPrivacy
     {
-        [Description("Publico")]
+        [Description(@"Publico")]
         Public,
-        [Description("Privado")]
+        [Description(@"Privado")]
         Private,
         Invisible,
     }

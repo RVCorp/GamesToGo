@@ -41,7 +41,7 @@ namespace GamesToGo.Editor.Graphics
                     },
                     ColumnDimensions = new []
                     {
-                        new Dimension()
+                        new Dimension(),
                     },
                     Content = new []
                     {

@@ -17,6 +17,8 @@ namespace GamesToGo.Editor.Screens
 {
     public class ProjectHomeScreen : Screen
     {
+        public const float TEXT_ELEMENT_SIZE = 35f;
+
         private BasicTextBox titleTextBox;
 
         [Cached]
@@ -34,6 +36,7 @@ namespace GamesToGo.Editor.Screens
         private TurnsOverlay turnsOverlay;
         private VictoryConditionsContainer victoryContainer;
         private PreparationTurnOverlay preparationTurnOverlay;
+        private TagSelectionContainer tags;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -96,7 +99,7 @@ namespace GamesToGo.Editor.Screens
                                             {
                                                 Text = project.DatabaseObject.Name,
                                                 Position = new Vector2(340, 10),
-                                                Height = 35,
+                                                Height = TEXT_ELEMENT_SIZE,
                                                 Width = 775,
                                             },
                                             new SpriteText
@@ -111,7 +114,7 @@ namespace GamesToGo.Editor.Screens
                                                 Text = Math.Max(2, project.DatabaseObject.MinNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(694, 10),
-                                                Height = 35,
+                                                Height = TEXT_ELEMENT_SIZE,
                                                 Width = 50,
                                                 CommitOnFocusLost = true,
                                             },
@@ -127,7 +130,7 @@ namespace GamesToGo.Editor.Screens
                                                 Text = Math.Min(32, project.DatabaseObject.MaxNumberPlayers).ToString(),
                                                 Anchor = Anchor.TopCentre,
                                                 Position = new Vector2(898, 10),
-                                                Height = 35,
+                                                Height = TEXT_ELEMENT_SIZE,
                                                 Width = 50,
                                                 CommitOnFocusLost = true,
                                             },
@@ -140,7 +143,7 @@ namespace GamesToGo.Editor.Screens
                                             {
                                                 Text = project.DatabaseObject.Description,
                                                 Position = new Vector2(340, 70),
-                                                Height = 35,
+                                                Height = TEXT_ELEMENT_SIZE,
                                                 Width = 1732,
                                             },
                                             new SpriteText
@@ -154,6 +157,16 @@ namespace GamesToGo.Editor.Screens
                                                 Width = 200,
                                                 Position = new Vector2(340, 130),
                                                 Items = Enum.GetValues(typeof(ChatRecommendation)).Cast<ChatRecommendation>(),
+                                            },
+                                            new SpriteText
+                                            {
+                                                Text = @"Etiquetas:",
+                                                Position = new Vector2(556, 130),
+                                            },
+                                            tags = new TagSelectionContainer
+                                            {
+                                                Size = new Vector2(1272, TEXT_ELEMENT_SIZE),
+                                                Position = new Vector2(635, 130),
                                             },
                                         },
                                     },
@@ -175,7 +188,7 @@ namespace GamesToGo.Editor.Screens
                                 },
                                 RowDimensions = new[]
                                 {
-                                    new Dimension()
+                                    new Dimension(),
                                 },
                                 Content = new[]
                                 {
@@ -223,7 +236,7 @@ namespace GamesToGo.Editor.Screens
                                                                         Child = editingText = new SpriteText
                                                                         {
                                                                             Font = new FontUsage(size: 45),
-                                                                            Text = "Condiciones de Victoria",
+                                                                            Text = @"Condiciones de Victoria  Turnos  Turno de preparación",
                                                                             Position = new Vector2(5, 2.5f),
                                                                         },
                                                                     },
@@ -245,14 +258,14 @@ namespace GamesToGo.Editor.Screens
                                                                                         Origin = Anchor.CentreRight,
                                                                                         Size = new Vector2(200, 35),
                                                                                         X = -5,
-                                                                                        Text = "Turnos"
+                                                                                        Text = @"Turnos",
                                                                                     },
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
+                                                                                },
+                                                                            },
+                                                                        },
+                                                                    },
+                                                                },
+                                                            },
                                                         },
                                                     },
                                                 },
@@ -268,7 +281,7 @@ namespace GamesToGo.Editor.Screens
                                                                 State = { Value = Visibility.Visible },
                                                             },
                                                             turnsOverlay = new TurnsOverlay(),
-                                                            preparationTurnOverlay = new PreparationTurnOverlay()
+                                                            preparationTurnOverlay = new PreparationTurnOverlay(),
                                                         },
                                                     },
                                                 },
@@ -283,15 +296,18 @@ namespace GamesToGo.Editor.Screens
                 argumentListing,
                 selectorOverlay,
             };
-            toggleButton.Actions.Add(() => showVictoryConditions());
-            toggleButton.Actions.Add(() => showTurns());
-            toggleButton.Actions.Add(() => showPreparationTurn());
+            toggleButton.Actions.Add(showVictoryConditions);
+            toggleButton.Actions.Add(showTurns);
+            toggleButton.Actions.Add(showPreparationTurn);
             chatDropdown.Current.Value = project.ChatRecommendation;
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
             descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
             titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
             maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
             minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
+
+            tags.Current.Value = project.DatabaseObject.Tags;
+            tags.Current.BindValueChanged(tag => project.DatabaseObject.Tags = tag.NewValue);
 
 
             checkPlayerNumber(false);
@@ -301,7 +317,7 @@ namespace GamesToGo.Editor.Screens
         {
             victoryContainer.Show();
             turnsOverlay.Hide();
-            preparationTurnOverlay.Hide();            
+            preparationTurnOverlay.Hide();
             editingText.Text = @"Condiciones de Victoria";
             toggleButton.Text = @"Turnos";
         }

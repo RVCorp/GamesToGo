@@ -121,7 +121,7 @@ namespace GamesToGo.Editor.Graphics
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = BackgroundColour.Opacity(0.3f),
                                 },
-                                new ObjectManagerScrollContainer
+                                new WhiteBarScrollContainer
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
@@ -157,13 +157,14 @@ namespace GamesToGo.Editor.Graphics
             {
                 if (!(item is TElement itemT))
                     continue;
-                if (Filter(itemT))
-                {
-                    TButton button = new TButton { Element = itemT };
-                    EditTButton(button);
-                    allElements.Add(button);
-                    result.Add(itemT);
-                }
+
+                if (!Filter(itemT))
+                    continue;
+
+                TButton button = new TButton { Element = itemT };
+                EditTButton(button);
+                allElements.Add(button);
+                result.Add(itemT);
             }
 
             if(result.Any())
@@ -180,11 +181,11 @@ namespace GamesToGo.Editor.Graphics
 
                 var deletable = allElements.FirstOrDefault(b => b.Element.ID == item.ID);
 
-                if (deletable != null)
-                {
-                    allElements.Remove(deletable);
-                    result.Add(itemT);
-                }
+                if (deletable == null)
+                    continue;
+
+                allElements.Remove(deletable);
+                result.Add(itemT);
             }
 
             if(result.Any())
@@ -214,15 +215,6 @@ namespace GamesToGo.Editor.Graphics
                         break;
                 }
             };
-        }
-
-        private class ObjectManagerScrollContainer : BasicScrollContainer
-        {
-            public ObjectManagerScrollContainer()
-            {
-                Scrollbar.Blending = BlendingParameters.Additive;
-                Scrollbar.Child.Colour = new Colour4(50, 50, 50, 255);
-            }
         }
     }
 }

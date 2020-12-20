@@ -148,7 +148,7 @@ namespace GamesToGo.Editor.Screens
                                                             Height = 35,
                                                             Width = 200,
                                                             Text = @"Borrar Elemento",
-                                                            Action = () => editor.DeleteElement(currentEditing.Value)
+                                                            Action = () => editor.DeleteElement(currentEditing.Value),
                                                         },
                                                     },
                                                 },

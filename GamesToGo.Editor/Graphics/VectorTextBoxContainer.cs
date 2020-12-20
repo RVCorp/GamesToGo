@@ -15,7 +15,6 @@ namespace GamesToGo.Editor.Graphics
 
         public string TextX
         {
-            get => stringX;
             set
             {
                 stringX = value;
@@ -30,7 +29,6 @@ namespace GamesToGo.Editor.Graphics
 
         public string TextY
         {
-            get => textY?.Text;
             set
             {
                 stringY = value;

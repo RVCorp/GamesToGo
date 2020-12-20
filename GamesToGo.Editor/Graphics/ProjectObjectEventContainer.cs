@@ -86,7 +86,7 @@ namespace GamesToGo.Editor.Graphics
                                 {
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Action = () => eventsScreen.RemoveEvent(Event)
+                                    Action = () => eventsScreen.RemoveEvent(Event),
                                 },
                             },
                         },

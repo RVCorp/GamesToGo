@@ -22,7 +22,6 @@ namespace GamesToGo.Editor.Graphics
 
         public Bindable<Vector2> ImageSize
         {
-            get => size;
             set
             {
                 size.UnbindBindings();
@@ -34,7 +33,6 @@ namespace GamesToGo.Editor.Graphics
 
         public Bindable<Image> Image
         {
-            get => image;
             set
             {
                 image.UnbindBindings();

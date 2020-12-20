@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -60,7 +58,7 @@ namespace GamesToGo.Game.Graphics
                                 Origin = Anchor.Centre,
                                 Text = Text,
                                 Font = new FontUsage(size:60)
-                            }                            
+                            }
                         },
                         new Container
                         {

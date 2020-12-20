@@ -1,8 +1,10 @@
 ﻿using System;
 using GamesToGo.Editor.Project.Arguments;
+using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Events
 {
+    [UsedImplicitly]
     public class DrawCardOffTileEvent : ProjectEvent
     {
         public override int TypeID => 5;

@@ -49,11 +49,10 @@ namespace GamesToGo.Editor.Graphics
         {
             this.FadeOut();
 
-            if (Current != null)
-            {
-                Remove(Current);
-                Current = null;
-            }
+            if (Current == null)
+                return;
+            Remove(Current);
+            Current = null;
         }
     }
 }

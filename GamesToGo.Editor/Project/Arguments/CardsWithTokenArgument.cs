@@ -1,5 +1,8 @@
-﻿namespace GamesToGo.Editor.Project.Arguments
+﻿using JetBrains.Annotations;
+
+namespace GamesToGo.Editor.Project.Arguments
 {
+    [UsedImplicitly]
     public class CardsWithTokenArgument : Argument
     {
         public override int ArgumentTypeID => 18;
