@@ -3,13 +3,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.LocalGame;
+using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.OnlineProjectElements;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
 using osuTK;
 
@@ -23,8 +29,14 @@ namespace GamesToGo.Game.Screens
         private CancellationTokenSource _tokenSource;
         private FillFlowContainer<CardContainer> playerCards;
         private Player player;
+        [Cached]
+        private WorkingGame file = new WorkingGame();
+        private BoardsContainer board;
+
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private Storage store { get; set; }
 
         public GameScreen(OnlineRoom room)
         {
@@ -77,23 +89,9 @@ namespace GamesToGo.Game.Screens
                                 }
                             }
                         },
-                        new Container
+                        board = new BoardsContainer
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Height = .6f,
-                            Children = new Drawable[]
-                            {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.Purple,
-                                },
-                                new SpriteText
-                                {
-                                    Text = "Aquí va el Tablero xdxdxd",
-                                    Font = new FontUsage(size: 80)
-                                }
-                            }
+                            Height = .6f,                            
                         },
                         new Container
                         {
@@ -121,14 +119,14 @@ namespace GamesToGo.Game.Screens
                         }
                     }
                 }
-            };
-            populatePlayers();
+            };            
+            populateGame();
             player = room.Players.First(p => p.BackingUser.ID == api.LocalUser.Value.ID);
             _tokenSource = new CancellationTokenSource();
             var token = _tokenSource.Token;
             Token = token;
             Task.Run(() =>
-            {
+            { 
                 while (!room.HasStarted)
                 {
                     if (token.IsCancellationRequested)
@@ -150,20 +148,31 @@ namespace GamesToGo.Game.Screens
         {
             if (room != null)
             {
-                if (room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).PlayerHand != null)
+                populatePlayers(room);
+                if (room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards != null)
                 {
-                    checkCards(room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).PlayerHand);
-                    foreach(var card in player.PlayerHand)
+                    checkPlayerHand(room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards);
+                    foreach(var card in player.Hand.Cards)
                     {
-                        playerCards.Add(new CardContainer(card)); // Terminar CardContainer
+                        //playerCards.Add(); // Hacer CardContainer
                     }
                 }
             }
         }
 
-        private void checkCards(List<Card> cards)
+        private void checkPlayer()
         {
-            List<Card> cards1 = player.PlayerHand;
+            //Hand, Status...
+        }
+
+        private void checkObjects()
+        {
+            //Board, Tile, Cards, Tokens..
+        }
+
+        private void checkPlayerHand(List<OnlineCard> cards)
+        {
+            List<OnlineCard> cards1 = player.Hand.Cards;
             for (int i = 0; i < cards1.Count; i++)
             {
                 if (cards.All(c => c.ID != cards1[i].ID))
@@ -175,7 +184,7 @@ namespace GamesToGo.Game.Screens
             }
             if (cards1.Any() || cards.Any())
             {
-                player.PlayerHand.AddRange(cards.Select(c => new Card
+                player.Hand.Cards.AddRange(cards.Select(c => new OnlineCard
                 {
                     ID = c.ID,
                     TypeID = c.TypeID,
@@ -184,16 +193,22 @@ namespace GamesToGo.Game.Screens
                     Tokens = c.Tokens
                 }));
 
+                foreach(var card in player.Hand.Cards)
+                {
+                    playerCards.Add(new CardContainer(card));
+                }
 
                 foreach (var oldCard in cards1)
                 {
-                    player.PlayerHand.Remove(player.PlayerHand.First(s => s.ID == oldCard.ID));
+                    player.Hand.Cards.Remove(player.Hand.Cards.First(s => s.ID == oldCard.ID));
+                    playerCards.RemoveRange(playerCards.Where(c => c.Card.ID == oldCard.ID));
                 }
 
             }
         }
 
-            private void populatePlayers()
+        //Start the GameScreen 
+        private void populatePlayers(OnlineRoom room)
         {
             foreach(var player in room.Players)
             {
@@ -238,5 +253,18 @@ namespace GamesToGo.Game.Screens
                 }
             }
         }
+
+        private void populatePlayerHand()
+        {
+
+        }        
+
+        private void populateGame()
+        {            
+            file.Parse(store, textures, room.Game);
+            board.Boards = file.GameBoards.ToList();            
+            board.PopulateBoards();
+        }
     }
 }
+//En caso de varios tableros, cual mostrar? Debo tener ProjectElement locales? Como muestro el tablero con

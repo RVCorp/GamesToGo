@@ -125,9 +125,7 @@ namespace GamesToGo.Editor.Screens
         }
 
         public void SaveProject(bool showSplashConfirmation = true)
-        {
-            database.SaveChanges();
-
+        {            
             string fileString = workingProject.SaveableString();
             string newFileName;
             using (MemoryStream stream = new MemoryStream())
@@ -165,6 +163,9 @@ namespace GamesToGo.Editor.Screens
             }
 
             workingProject.DatabaseObject.File.NewName = newFileName;
+
+            database.SaveChanges();
+
             workingProject.DatabaseObject.ImageRelationID = workingProject.Image.Value == null ? null :
                 (int?)workingProject.DatabaseObject.Relations.First(r => r.File.NewName == workingProject.Image.Value.ImageName).RelationID;
 

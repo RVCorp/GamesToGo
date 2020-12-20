@@ -1,5 +1,7 @@
 ﻿using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -7,7 +9,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osuTK;
 

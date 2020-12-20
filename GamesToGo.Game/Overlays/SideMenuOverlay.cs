@@ -1,8 +1,7 @@
-﻿using System;
-using GamesToGo.Game.Graphics;
+﻿using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Ovarlays;
-using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using GamesToGo.Game.Online;
+using GamesToGo.Game.LocalGame;
+using GamesToGo.Game.LocalGame.Elements;
+using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -10,19 +13,27 @@ namespace GamesToGo.Game.Graphics
 {
     public class CardContainer : Container
     {
-        private Card card;
+        public Card Card;
+        private ContainedImage cardImage;
 
-        public CardContainer(Card card)
+        [Resolved]
+        private WorkingGame game { get; set; }
+        public CardContainer(OnlineCard card)
         {
-            this.card = card;
+            Card = game.GameCards.FirstOrDefault(c => c.ID == card.TypeID);
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
             RelativeSizeAxes = Axes.Both;
-            //FillAspectRatio = ;
-            FillMode = FillMode.Fit;
+            Width = .2f;
+            Child = cardImage = new ContainedImage(true, 0)
+            {
+                RelativeSizeAxes = Axes.Both,
+                Texture = Card.Images.First(),
+                ImageSize = Card.Size
+            };            
         }
     }
 }

@@ -118,6 +118,7 @@ namespace GamesToGo.Editor.Screens
                                                         },
                                                         nameTextBox = new BasicTextBox
                                                         {
+                                                            CommitOnFocusLost = true,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Position = new Vector2(-250, 0),
@@ -133,6 +134,7 @@ namespace GamesToGo.Editor.Screens
                                                         },
                                                         descriptionTextBox = new BasicTextBox
                                                         {
+                                                            CommitOnFocusLost = true,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Position = new Vector2(-250, 70),
@@ -315,6 +317,8 @@ namespace GamesToGo.Editor.Screens
                 elementSideVisible.Current.Value = sideVisible.DefaultSide.Value;
                 sideVisible.DefaultSide.BindTo(elementSideVisible.Current);
             }
+            else
+                elementSideVisible.Hide();
 
             if (obj.NewValue is IHasPrivacy privacy)
             {

@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
 using GamesToGo.Game.Screens;
 using Ionic.Zip;
