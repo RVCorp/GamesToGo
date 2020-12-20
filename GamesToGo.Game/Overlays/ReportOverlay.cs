@@ -50,108 +50,130 @@ namespace GamesToGo.Game.Overlays
                             RelativeSizeAxes = Axes.Both,
                             Colour = new Colour4(106, 100, 104, 255)
                         },
-                        reportContainer = new FillFlowContainer
+                        new FillFlowContainer
                         {
                             RelativeSizeAxes = Axes.Both,
                             Direction = FillDirection.Vertical,
-                            Padding = new MarginPadding(20),
+                            Padding = new MarginPadding() { Bottom = 20},
                             Children = new Drawable[]
                             {
                                 new Container
                                 {
-                                    RelativeSizeAxes = Axes.X,
-                                    AutoSizeAxes = Axes.Y,
-                                    Child = new SimpleIconButton(FontAwesome.Solid.Times)
+                                    RelativeSizeAxes = Axes.Both,
+                                    Height = .1f,
+                                    Child = new Container
                                     {
-                                        Anchor = Anchor.TopRight,
-                                        Origin = Anchor.TopRight,
-                                        Size = new Vector2(60,60),
-                                        Action = () => Hide()
-                                    }
+                                        RelativeSizeAxes = Axes.X,
+                                        AutoSizeAxes = Axes.Y,
+                                        Child = new SimpleIconButton(FontAwesome.Solid.Times)
+                                        {
+                                            Anchor = Anchor.TopRight,
+                                            Origin = Anchor.TopRight,
+                                            Size = new Vector2(60,60),
+                                            Action = () => Hide()
+                                        }
+                                    },
                                 },
                                 new Container
                                 {
                                     RelativeSizeAxes = Axes.Both,
-                                    Height = .4f,
-                                    Child = new GamePreviewContainer(Game)
-                                    {
-                                        GameNameSize = 70,
-                                        MadeBySize = 40,
-                                    }
-                                },
-                                new FillFlowContainer
-                                {
-                                    Depth = 0,
-                                    RelativeSizeAxes = Axes.Both,
-                                    Height = .25f,
+                                    Height = .9f,
                                     Children = new Drawable[]
                                     {
-                                        new SpriteText
-                                        {
-                                            Text = "Motivo:",
-                                            Font = new FontUsage(size:60)
-                                        },
-                                        new FillFlowContainer
+                                        reportContainer = new FillFlowContainer
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Direction = FillDirection.Horizontal,
+                                            Direction = FillDirection.Vertical,
+                                            Padding = new MarginPadding(20),
                                             Children = new Drawable[]
                                             {
                                                 new Container
                                                 {
                                                     RelativeSizeAxes = Axes.Both,
-                                                    Width = .5f,
+                                                    Height = .4f,
+                                                    Child = new GamePreviewContainer(Game)
+                                                    {
+                                                        GameNameSize = 70,
+                                                        MadeBySize = 40,
+                                                    }
+                                                },
+                                                new FillFlowContainer
+                                                {
+                                                    Depth = 0,
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Height = .25f,
                                                     Children = new Drawable[]
                                                     {
-                                                        reasonTextBox = new BasicTextBox
+                                                        new SpriteText
                                                         {
-                                                            Height = 100,
-                                                            RelativeSizeAxes = Axes.X
+                                                            Text = "Motivo:",
+                                                            Font = new FontUsage(size:60)
+                                                        },
+                                                        new FillFlowContainer
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Direction = FillDirection.Horizontal,
+                                                            Children = new Drawable[]
+                                                            {
+                                                                new Container
+                                                                {
+                                                                    RelativeSizeAxes = Axes.Both,
+                                                                    Width = .5f,
+                                                                    Children = new Drawable[]
+                                                                    {
+                                                                        reasonTextBox = new BasicTextBox
+                                                                        {
+                                                                            Height = 100,
+                                                                            RelativeSizeAxes = Axes.X
+                                                                        }
+                                                                    }
+                                                                },
+                                                                new Container
+                                                                {
+                                                                    RelativeSizeAxes = Axes.Both,
+                                                                    Width = .5f,
+                                                                    Child = reportDropdown = new ReportTypeDropdown
+                                                                    {
+                                                                        RelativeSizeAxes = Axes.X,
+                                                                    }
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 },
-                                                new Container
+                                                new SurfaceButton
                                                 {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Width = .5f,
-                                                    Child = reportDropdown = new ReportTypeDropdown
+                                                    Depth = 1,
+                                                    Height = .2f,
+                                                    Action = () => reportAction(),
+                                                    Children = new Drawable[]
                                                     {
-                                                        RelativeSizeAxes = Axes.X,
+                                                        new Box
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Colour = Colour4.LightPink
+                                                        },
+                                                        new SpriteText
+                                                        {
+                                                            Anchor = Anchor.Centre,
+                                                            Origin = Anchor.Centre,
+                                                            Text = "Reportar!",
+                                                            Font = new FontUsage(size: 60)
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                    }
-                                },
-                                new SurfaceButton
-                                {
-                                    Depth = 1,
-                                    Height = .2f,
-                                    Action = () => reportAction(),
-                                    Children = new Drawable[]
-                                    {
-                                        new Box
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Colour = Colour4.LightPink
                                         },
-                                        new SpriteText
+                                        successText = new SpriteText
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Text = "Reportar!",
                                             Font = new FontUsage(size: 60)
                                         }
                                     }
                                 }
                             }
-                        },
-                        successText = new SpriteText
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Font = new FontUsage(size: 60)
-                        }
+                        },                        
                     },
                 },
             };

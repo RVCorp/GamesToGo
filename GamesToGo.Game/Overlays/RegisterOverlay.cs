@@ -4,6 +4,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
+using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;

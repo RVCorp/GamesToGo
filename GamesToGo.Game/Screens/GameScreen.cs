@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.LocalGame;
+using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
@@ -27,6 +29,10 @@ namespace GamesToGo.Game.Screens
         private CancellationTokenSource _tokenSource;
         private FillFlowContainer<CardContainer> playerCards;
         private Player player;
+        [Cached]
+        private WorkingGame file = new WorkingGame();
+        private BoardsContainer board;
+
         [Resolved]
         private APIController api { get; set; }
         [Resolved]
@@ -83,23 +89,9 @@ namespace GamesToGo.Game.Screens
                                 }
                             }
                         },
-                        new Container
+                        board = new BoardsContainer
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Height = .6f,
-                            Children = new Drawable[]
-                            {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.Purple,
-                                },
-                                new SpriteText
-                                {
-                                    Text = "Aquí va el Tablero xdxdxd",
-                                    Font = new FontUsage(size: 80)
-                                }
-                            }
+                            Height = .6f,                            
                         },
                         new Container
                         {
@@ -127,14 +119,14 @@ namespace GamesToGo.Game.Screens
                         }
                     }
                 }
-            };
+            };            
             populateGame();
             player = room.Players.First(p => p.BackingUser.ID == api.LocalUser.Value.ID);
             _tokenSource = new CancellationTokenSource();
             var token = _tokenSource.Token;
             Token = token;
             Task.Run(() =>
-            {
+            { 
                 while (!room.HasStarted)
                 {
                     if (token.IsCancellationRequested)
@@ -156,12 +148,13 @@ namespace GamesToGo.Game.Screens
         {
             if (room != null)
             {
+                populatePlayers(room);
                 if (room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards != null)
                 {
                     checkPlayerHand(room.Players.First(p => p.BackingUser.ID == player.BackingUser.ID).Hand.Cards);
                     foreach(var card in player.Hand.Cards)
                     {
-                        playerCards.Add(new CardContainer(card)); // Terminar CardContainer
+                        //playerCards.Add(); // Hacer CardContainer
                     }
                 }
             }
@@ -177,9 +170,9 @@ namespace GamesToGo.Game.Screens
             //Board, Tile, Cards, Tokens..
         }
 
-        private void checkPlayerHand(List<Card> cards)
+        private void checkPlayerHand(List<OnlineCard> cards)
         {
-            List<Card> cards1 = player.Hand.Cards;
+            List<OnlineCard> cards1 = player.Hand.Cards;
             for (int i = 0; i < cards1.Count; i++)
             {
                 if (cards.All(c => c.ID != cards1[i].ID))
@@ -191,7 +184,7 @@ namespace GamesToGo.Game.Screens
             }
             if (cards1.Any() || cards.Any())
             {
-                player.Hand.Cards.AddRange(cards.Select(c => new Card
+                player.Hand.Cards.AddRange(cards.Select(c => new OnlineCard
                 {
                     ID = c.ID,
                     TypeID = c.TypeID,
@@ -200,17 +193,22 @@ namespace GamesToGo.Game.Screens
                     Tokens = c.Tokens
                 }));
 
+                foreach(var card in player.Hand.Cards)
+                {
+                    playerCards.Add(new CardContainer(card));
+                }
 
                 foreach (var oldCard in cards1)
                 {
                     player.Hand.Cards.Remove(player.Hand.Cards.First(s => s.ID == oldCard.ID));
+                    playerCards.RemoveRange(playerCards.Where(c => c.Card.ID == oldCard.ID));
                 }
 
             }
         }
 
         //Start the GameScreen 
-        private void populatePlayers()
+        private void populatePlayers(OnlineRoom room)
         {
             foreach(var player in room.Players)
             {
@@ -256,40 +254,16 @@ namespace GamesToGo.Game.Screens
             }
         }
 
-        private void populateBoard()
-        {
-
-        }
-
         private void populatePlayerHand()
         {
 
         }        
 
         private void populateGame()
-        {
-            populatePlayers();
-            IReadOnlyList<string> lines = System.IO.File.ReadAllLines(store.GetFullPath($"files/{room.Game.Hash}"));
-            bool isParsingObjects = false;
-            for (int i = 0; i < lines.Count; i++)
-            {
-                var line = lines[i];
-                if (line.StartsWith('['))
-                {
-                    isParsingObjects = line.Trim('[', ']') switch
-                    {
-                        "Info" => false,
-                        "Objects" => true,
-                        _ => isParsingObjects,
-                    };
-
-                    continue;
-                }
-                if (isParsingObjects)
-                {
-
-                }
-            }
+        {            
+            file.Parse(store, textures, room.Game);
+            board.Boards = file.GameBoards.ToList();            
+            board.PopulateBoards();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace GamesToGo.Game.Online.Models.RequestModel
 
         public bool Ready { get; set; }
 
-        public Tile Hand { get; set; }
+        public OnlineTile Hand { get; } = new OnlineTile();
 
         public PlayerStatus Status { get; set; }
     }

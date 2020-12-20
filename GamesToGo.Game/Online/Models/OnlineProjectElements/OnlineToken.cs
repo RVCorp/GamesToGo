@@ -1,6 +1,6 @@
 ﻿namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 {
-    public class Token
+    public class OnlineToken
     {
         public int TypeID { get; set; }
 

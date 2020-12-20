@@ -2,10 +2,9 @@
 
 namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 {
-    public class Board
+    public class OnlineBoard
     {
         public int TypeID { get; set; }
-        public int ID { get; set; }
-        public List<Tile> Tiles { get; set; }
+        public List<OnlineTile> Tiles { get; set; }
     }
 }

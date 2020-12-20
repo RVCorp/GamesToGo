@@ -14,8 +14,4 @@
     <PackageReference Include="ppy.osu.Framework" Version="2020.1129.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LocalGame\Elements\" />
-  </ItemGroup>
-
 </Project>

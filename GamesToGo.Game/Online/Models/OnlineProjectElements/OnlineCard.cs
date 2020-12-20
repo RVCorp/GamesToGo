@@ -2,7 +2,7 @@
 
 namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 {
-    public class Card
+    public class OnlineCard
     {
         public int ID { get; set; }
 
@@ -12,6 +12,6 @@ namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 
         public bool FrontVisible { get; set; }
 
-        public List<Token> Tokens { get; set; }
+        public List<OnlineToken> Tokens { get; set; }
     }
 }

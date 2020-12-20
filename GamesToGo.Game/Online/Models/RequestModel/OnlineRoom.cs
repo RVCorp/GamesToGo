@@ -11,7 +11,7 @@ namespace GamesToGo.Game.Online.Models.RequestModel
 
         public Player[] Players { get; set; }
 
-        public List<Board> Boards { get; set; }
+        public List<OnlineBoard> Boards { get; set; }
 
         public bool HasStarted { get; set; }
 
