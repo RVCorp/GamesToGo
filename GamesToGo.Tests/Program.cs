@@ -7,7 +7,7 @@ namespace GamesToGo.Tests
     {
         public static void Main()
         {
-            using GameHost host = Host.GetSuitableHost("GamesToGo", useOsuTK: true);
+            using GameHost host = Host.GetSuitableHost("GamesToGo");
             using var game = new GamesToGoTestBrowser();
 
             host.Run(game);
