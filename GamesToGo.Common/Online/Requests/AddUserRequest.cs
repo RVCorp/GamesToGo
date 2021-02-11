@@ -1,17 +1,17 @@
 ﻿using System.Net.Http;
-using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Common.Online.RequestModel;
 using Newtonsoft.Json;
 using osu.Framework.IO.Network;
 
-namespace GamesToGo.Game.Online.Requests
+namespace GamesToGo.Common.Online.Requests
 {
-    public class AddUserRequest : APIRequest<User>
+    internal class AddUserRequest : APIRequest<User>
     {
-        private readonly PasswordedUser user;
+        private UserLogin user;
 
-        public AddUserRequest(PasswordedUser user)
+        public AddUserRequest(UserLogin newUser)
         {
-            this.user = user;
+            user = newUser;
         }
 
         protected override WebRequest CreateWebRequest()

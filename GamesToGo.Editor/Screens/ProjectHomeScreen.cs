@@ -353,10 +353,10 @@ namespace GamesToGo.Editor.Screens
                     minPlayers = maxPlayers;
             }
 
-            minPlayersTextBox.Text = minPlayers.ToString();
+            minPlayersTextBox.Current.Value = minPlayers;
             project.DatabaseObject.MinNumberPlayers = minPlayers;
 
-            maxPlayersTextBox.Text = maxPlayers.ToString();
+            maxPlayersTextBox.Current.Value = maxPlayers;
             project.DatabaseObject.MaxNumberPlayers = maxPlayers;
         }
     }

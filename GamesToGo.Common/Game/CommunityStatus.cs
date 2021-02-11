@@ -1,7 +1,8 @@
 ﻿// ReSharper disable UnusedMember.Global
+
 using System.ComponentModel;
 
-namespace GamesToGo.Editor.Project
+namespace GamesToGo.Common.Game
 {
     public enum CommunityStatus
     {

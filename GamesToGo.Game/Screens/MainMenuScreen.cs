@@ -1,15 +1,12 @@
-﻿using System.IO;
+﻿using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
-using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Platform;
 using osu.Framework.Screens;
 
 namespace GamesToGo.Game.Screens
@@ -17,14 +14,12 @@ namespace GamesToGo.Game.Screens
     [Cached]
     public class MainMenuScreen : Screen
     {
-        private SearchOverlay searchOverlay = new SearchOverlay();
+        private SearchOverlay searchOverlay;
         private FillFlowContainer<Container> communityGames;
-        [Resolved]
-        private SideMenuOverlay sideMenu { get; set; }
+        private SideMenuOverlay sideMenu;
+
         [Resolved]
         private APIController api { get; set; }
-        
-
 
         [BackgroundDependencyLoader]
         private void load()
@@ -86,7 +81,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => searchOverlay.Show()
+                                            Action = () => searchOverlay.Show(),
                                         }
                                     },
                                 }
@@ -112,7 +107,8 @@ namespace GamesToGo.Game.Screens
                         }
                     }
                 },
-                searchOverlay
+                searchOverlay = new SearchOverlay(),
+                sideMenu = new SideMenuOverlay(),
             };
             populateGamesList();
         }

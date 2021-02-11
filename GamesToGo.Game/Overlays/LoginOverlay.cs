@@ -1,4 +1,6 @@
 ﻿using System;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.RequestModel;

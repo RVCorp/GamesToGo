@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Online.Requests;
 
 namespace GamesToGo.Game.Online.Requests
 {

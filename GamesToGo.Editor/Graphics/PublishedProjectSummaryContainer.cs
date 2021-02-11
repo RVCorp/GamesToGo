@@ -1,4 +1,7 @@
-﻿using GamesToGo.Editor.Online;
+﻿using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Online.Requests;
+using GamesToGo.Editor.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
@@ -12,10 +15,10 @@ namespace GamesToGo.Editor.Graphics
     {
         public int ID => onlineProject.Id;
 
-        private readonly OnlineProject onlineProject;
+        private readonly OnlineGame onlineProject;
         private SpriteIcon loadingIcon;
 
-        public PublishedProjectSummaryContainer(OnlineProject onlineProject)
+        public PublishedProjectSummaryContainer(OnlineGame onlineProject)
         {
             this.onlineProject = onlineProject;
         }

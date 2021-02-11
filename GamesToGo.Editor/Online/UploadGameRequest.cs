@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net.Http;
+using GamesToGo.Common.Game;
+using GamesToGo.Common.Online.Requests;
 using GamesToGo.Editor.Project;
 using Ionic.Zip;
 using Newtonsoft.Json;

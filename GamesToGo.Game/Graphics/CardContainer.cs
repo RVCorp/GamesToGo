@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
@@ -33,7 +30,7 @@ namespace GamesToGo.Game.Graphics
                 RelativeSizeAxes = Axes.Both,
                 Texture = Card.Images.First(),
                 ImageSize = Card.Size
-            };            
+            };
         }
     }
 }

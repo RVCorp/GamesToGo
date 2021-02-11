@@ -4,7 +4,6 @@ using GamesToGo.Game.LocalGame.Elements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osuTK;
 
@@ -15,7 +14,17 @@ namespace GamesToGo.Game.Graphics
         private FillFlowContainer<BoardContainer> boardContainer;
         private BoardContainer current;
 
-        public List<Board> Boards { get; set; }
+        private List<Board> boards;
+
+        public List<Board> Boards
+        {
+            get => boards;
+            set
+            {
+                boards = value;
+                populateBoards();
+            }
+        }
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
@@ -25,11 +34,11 @@ namespace GamesToGo.Game.Graphics
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,                
-            };            
+                RelativeSizeAxes = Axes.Both,
+            };
         }
 
-        public void PopulateBoards()
+        private void populateBoards()
         {
             if (Boards.First().Size.X > Boards.First().Size.Y)
                 boardContainer.Height = .75f;
@@ -40,7 +49,7 @@ namespace GamesToGo.Game.Graphics
                 boardContainer.Add(new BoardContainer(board));
             }
             foreach(var container in boardContainer)
-            {                
+            {
                 container.Hide();
             }
             boardContainer.First().Show();
@@ -51,17 +60,17 @@ namespace GamesToGo.Game.Graphics
         {
             current.Hide();
             current = boardContainer.First(b => b.Board.ID == id);
-            current.Show();            
+            current.Show();
         }
 
         private class BoardContainer : Container
         {
-            public Board Board;
+            public readonly Board Board;
             private ContainedImage contained;
 
-            public BoardContainer(Board Board)
+            public BoardContainer(Board board)
             {
-                this.Board = Board;
+                Board = board;
             }
 
             [BackgroundDependencyLoader]
@@ -74,7 +83,7 @@ namespace GamesToGo.Game.Graphics
                     Texture = Board.Images.First(),
                     ImageSize = Board.Size
                 };
-                contained.OverImageContent.Clear();              
+                contained.OverImageContent.Clear();
             }
 
             protected override void LoadComplete()

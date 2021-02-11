@@ -2,7 +2,7 @@
 using osu.Framework.IO.Network;
 using osu.Framework.Platform;
 
-namespace GamesToGo.Editor.Online
+namespace GamesToGo.Common.Online.Requests
 {
     public class DownloadProjectRequest : APIRequest
     {

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.LocalGame.Elements;
-using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
@@ -59,134 +58,138 @@ namespace GamesToGo.Game.LocalGame
             return parseObjects(objects);
         }
 
-        private bool parseObjects(IList<string>objects)
+        private bool parseObjects(IList<string> objectLines)
         {
             List<string> aux = new List<string>();
 
-            List<string> tokens = new List<string>();
-            List<string> cards = new List<string>();
-            List<string> tiles = new List<string>();
-            List<string> boards = new List<string>();
+            List<string> tokenLines = new List<string>();
+            List<string> cardLines = new List<string>();
+            List<string> tileLines = new List<string>();
+            List<string> boardLines = new List<string>();
 
-            for (int i = 0; i < objects.Count; i++)
+            for (int i = 0; i < objectLines.Count; i++)
             {
-                var line = objects[i];
+                var line = objectLines[i];
                 aux.Add(line);
-                if (string.IsNullOrEmpty(line) || i == objects.Count-1)
+
+                if (!string.IsNullOrEmpty(line) && i != objectLines.Count - 1)
+                    continue;
+
+                var info = aux[0].Split('|', 3)[0];
+                switch (Enum.Parse<ElementType>(info))
                 {
-                    var info = aux[0].Split('|', 3);
-                    switch(Enum.Parse<ElementType>(info[0]))
+                    case ElementType.Token:
                     {
-                        case ElementType.Token:
-                        {
-                            foreach(var l in aux)
-                            {
-                                tokens.Add(l);
-                            }
-                        }break;
-                        case ElementType.Card:
-                        {
-                            foreach (var l in aux)
-                            {
-                                cards.Add(l);
-                            }
-                        }
-                        break;
-                        case ElementType.Tile:
-                        {
-                            foreach (var l in aux)
-                            {
-                                tiles.Add(l);
-                            }
-                        }
-                        break;
-                        case ElementType.Board:
-                        {
-                            foreach (var l in aux)
-                            {
-                                boards.Add(l);
-                            }
-                        }
-                        break;
+                        cardLines.AddRange(aux);
                     }
-                    aux.Clear();
+                        break;
+                    case ElementType.Card:
+                    {
+                        cardLines.AddRange(aux);
+                    }
+                        break;
+                    case ElementType.Tile:
+                    {
+                        tileLines.AddRange(aux);
+                    }
+                        break;
+                    case ElementType.Board:
+                    {
+                        boardLines.AddRange(aux);
+                    }
+                        break;
                 }
+                aux.Clear();
             }
 
-            parseTokens(tokens);
-            parseCards(cards);
-            parseTiles(tiles);
-            parseBoards(boards);
+            parseTokens(tokenLines);
+            parseCards(cardLines);
+            parseTiles(tileLines);
+            parseBoards(boardLines);
 
             return true;
         }
 
-        private bool parseTokens(IList<string> tokens) 
+        private bool parseTokens(IList<string> tokens)
         {
             List<string> tokenLines = new List<string>();
             Token token = null;
 
             for (int i = 0; i < tokens.Count(); i++)
             {
-                var line = tokens[i];                
-                if (string.IsNullOrEmpty(line))
-                {
-                    for(int h = 0; h < tokenLines.Count(); h++)
-                    {
-                        var tokenLine = tokenLines[h];
-                        if (token == null)
-                        {
-                            var tInfo = tokenLine.Split('|', 3);
-                            if (tInfo.Length != 3)
-                                return false;
-                            token = new Token
-                            {
-                                ID = int.Parse(tInfo[1]),
-                                Name = tInfo[2]
-                            };
-                        }
-                        else
-                        {
-                            var prop = tokenLine.Split('=');
-                            if (prop.Length != 2)
-                                return false;
+                var line = tokens[i];
 
-                            switch (prop[0])
+                if (!string.IsNullOrEmpty(line))
+                {
+                    tokenLines.Add(line);
+
+                    continue;
+                }
+
+                for (int h = 0; h < tokenLines.Count; h++)
+                {
+                    var tokenLine = tokenLines[h];
+
+                    if (token == null)
+                    {
+                        var tInfo = tokenLine.Split('|', 3);
+
+                        if (tInfo.Length != 3)
+                            return false;
+
+                        token = new Token
+                        {
+                            ID = int.Parse(tInfo[1]),
+                            Name = tInfo[2]
+                        };
+                    }
+                    else
+                    {
+                        var prop = tokenLine.Split('=');
+
+                        if (prop.Length != 2)
+                            return false;
+
+                        switch (prop[0])
+                        {
+                            case "Desc":
                             {
-                                case "Desc":
-                                {
-                                    token.Description = prop[1];
-                                }
-                                break;
-                                case "Images":
-                                {
-                                    int amm = int.Parse(prop[1]);
-                                    for (int j = h + amm; h < j; h++)
-                                    {
-                                        var parts = tokenLines[h + 1].Split('=');
-                                        if (parts.Length != 2)
-                                            return false;
-                                        if (parts[1] == "null")
-                                            continue;
-                                        else
-                                            token.Images.Add(textures.Get($"files/{parts[1]}"));
-                                    }
-                                }
-                                break;
-                                case "Privacy":
-                                {
-                                    token.Privacy = Enum.Parse<ElementPrivacy>(prop[1]);
-                                }
-                                break;
+                                token.Description = prop[1];
                             }
+
+                                break;
+                            case "Images":
+                            {
+                                int amm = int.Parse(prop[1]);
+
+                                for (int j = h + amm; h < j; h++)
+                                {
+                                    var parts = tokenLines[h + 1].Split('=');
+
+                                    if (parts.Length != 2)
+                                        return false;
+
+                                    if (parts[1] == "null")
+                                        continue;
+                                    else
+                                        token.Images.Add(textures.Get($"files/{parts[1]}"));
+                                }
+                            }
+
+                                break;
+                            case "Privacy":
+                            {
+                                token.Privacy = Enum.Parse<ElementPrivacy>(prop[1]);
+                            }
+
+                                break;
                         }
                     }
-                    tokenLines.Clear();
-                    gameElements.Add(token);
-                    token = null;
                 }
-                else
-                    tokenLines.Add(line);
+
+                tokenLines.Clear();
+                gameElements.Add(token);
+                token = null;
             }
             return true;
         }
@@ -198,7 +201,7 @@ namespace GamesToGo.Game.LocalGame
 
             for (int i = 0; i < cards.Count(); i++)
             {
-                var line = cards[i];                
+                var line = cards[i];
                 if (string.IsNullOrEmpty(line))
                 {
                     for(int h = 0; h < cardLines.Count(); h++)
@@ -256,7 +259,7 @@ namespace GamesToGo.Game.LocalGame
                                 break;
                                 case "Orient":
                                 {
-                                    card.Orientation = Enum.Parse<ElementOrientation>(prop[1]);                                   
+                                    card.Orientation = Enum.Parse<ElementOrientation>(prop[1]);
                                 }
                                 break;
                             }
@@ -279,7 +282,7 @@ namespace GamesToGo.Game.LocalGame
 
             for (int i = 0; i < tiles.Count(); i++)
             {
-                var line = tiles[i];                
+                var line = tiles[i];
                 if (string.IsNullOrEmpty(line) || i == tiles.Count-1)
                 {
                     for(int h = 0; h < tileLines.Count(); h++)
@@ -375,7 +378,7 @@ namespace GamesToGo.Game.LocalGame
 
             for (int i = 0; i < boards.Count(); i++)
             {
-                var line = boards[i];                
+                var line = boards[i];
                 if (string.IsNullOrEmpty(line))
                 {
                     for(int h = 0; h < boardLines.Count(); h++)

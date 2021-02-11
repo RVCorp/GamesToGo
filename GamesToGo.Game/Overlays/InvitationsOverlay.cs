@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.RequestModel;
@@ -98,11 +100,11 @@ namespace GamesToGo.Game.Overlays
                                         RelativeSizeAxes = Axes.X,
                                         Direction = FillDirection.Vertical,
                                     },
-                                }
-                            }
-                        }
-                    }
-                }
+                                },
+                            },
+                        },
+                    },
+                },
             };
         }
 
@@ -113,11 +115,11 @@ namespace GamesToGo.Game.Overlays
             {
                 invitationsContainer.Add(new InvitePreviewContainer(invite)
                 {
-                NextScreen = () =>
-                {
-                    joinRoom(invite.ID,invite.Room.Game);
-                },
-                DeleteInvitation = () => declineInvite(invite.ID)
+                    NextScreen = () =>
+                    {
+                        joinRoom(invite.ID, invite.Room.Game);
+                    },
+                    DeleteInvitation = () => declineInvite(invite.ID)
                 });
             }
         }
@@ -135,7 +137,7 @@ namespace GamesToGo.Game.Overlays
                     sideMenu.Hide();
                 });
                 game.Invitations.Remove(game.Invitations.First(i => i.ID == id));
-                invitationsContainer.Remove(invitationsContainer.Where(c => c.Invitation.ID == id).FirstOrDefault());
+                invitationsContainer.Remove(invitationsContainer.FirstOrDefault(c => c.Invitation.ID == id));
             };
             api.Queue(room);
         }
@@ -145,7 +147,7 @@ namespace GamesToGo.Game.Overlays
             var invitation = new IgnoreInvitationRequest(id);
             invitation.Success += () =>
             {
-                invitationsContainer.Remove(invitationsContainer.Where(c => c.Invitation.ID == id).FirstOrDefault());
+                invitationsContainer.Remove(invitationsContainer.FirstOrDefault(c => c.Invitation.ID == id));
             };
             api.Queue(invitation);
         }
