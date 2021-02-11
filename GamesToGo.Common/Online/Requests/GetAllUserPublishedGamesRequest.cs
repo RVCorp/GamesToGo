@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Game.Online.Models.RequestModel;
+﻿using System.Collections.Generic;
+using GamesToGo.Common.Online.RequestModel;
 
-namespace GamesToGo.Game.Online.Requests
+namespace GamesToGo.Common.Online.Requests
 {
     public class GetAllUserPublishedGamesRequest : APIRequest<List<OnlineGame>>
     {

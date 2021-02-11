@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GamesToGo.Common.Game;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Editor.Database;
 using GamesToGo.Editor.Database.Models;
 using GamesToGo.Editor.Graphics;
@@ -126,9 +129,9 @@ namespace GamesToGo.Editor.Screens
             currentEditingElement.Value = element;
         }
 
-        public void SaveProject(bool showSplashConfirmation = true)
-        {            
-            string fileString = workingProject.SaveableString();
+        public void SaveProject(CommunityStatus communityStatus, bool showSplashConfirmation = true)
+        {
+            string fileString = workingProject.SaveableString(communityStatus);
             string newFileName;
             using (MemoryStream stream = new MemoryStream())
             {
@@ -188,7 +191,7 @@ namespace GamesToGo.Editor.Screens
 
         public void UploadProject()
         {
-            SaveProject(false);
+            SaveProject(CommunityStatus.Published, false);
             splashOverlay.Show(@"Proyecto guardado localmente, subiendo al servidor...", Colour4.ForestGreen);
             var req = new UploadGameRequest(workingProject.DatabaseObject, store);
             req.Failure += e =>
@@ -198,7 +201,6 @@ namespace GamesToGo.Editor.Screens
             req.Success += res =>
             {
                 workingProject.DatabaseObject.OnlineProjectID = res.OnlineID;
-                workingProject.DatabaseObject.CommunityStatus = res.Status;
                 splashOverlay.Show(@"Proyecto subido al servidor, ahora puedes acceder a el desde cualquier lugar", Colour4.ForestGreen);
                 database.SaveChanges();
             };
@@ -289,7 +291,7 @@ namespace GamesToGo.Editor.Screens
                 {
                     Action = () =>
                     {
-                        SaveProject(false);
+                        SaveProject(CommunityStatus.Saved, false);
                         this.Exit();
                     },
                     Text = @"Guardar y salir",

@@ -1,15 +1,18 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
 
@@ -17,30 +20,51 @@ namespace GamesToGo.Game.Screens
 {
     public class RoomScreen : Screen
     {
-
         [Resolved]
         private APIController api { get; set; }
         [Resolved]
         private Storage store { get; set; }
-        private OnlineRoom room;
+
+        [Cached]
+        private readonly Bindable<OnlineRoom> room;
+
+        [Cached]
+        private WorkingGame game = new WorkingGame();
+
+        [Cached]
+        private RoomUpdater roomUpdater = new RoomUpdater
+        {
+            TimeBetweenPolls = 1000,
+        };
+
         private FillFlowContainer<TextContainer> usersInRoom;
         private SpriteText textButton;
-        private InviteOverlay inviteOverlay = new InviteOverlay();
-        private CancellationTokenSource _tokenSource = null;
-        private CancellationToken Token;
+        private readonly InvitePlayersToRoomOverlay inviteOverlay = new InvitePlayersToRoomOverlay();
         private Box colorBox;
+        private ScreenStack gameStack;
+
+        private DependencyContainer dependencies;
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
+            dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         public RoomScreen(OnlineRoom room)
         {
-            this.room = room;
+            this.room = new Bindable<OnlineRoom>(room);
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(TextureStore textures)
         {
+            game.Parse(store, textures, room.Value.Game);
+
+            dependencies.Cache(room.Value.Players.Single(p => p?.BackingUser?.ID == api.LocalUser.Value.ID));
+
             RelativeSizeAxes = Axes.Both;
+
             InternalChildren = new Drawable[]
             {
+                roomUpdater,
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -52,11 +76,11 @@ namespace GamesToGo.Game.Screens
                     RowDimensions = new[]
                     {
                         new Dimension(GridSizeMode.Relative, .1f),
-                        new Dimension()
+                        new Dimension(),
                     },
                     ColumnDimensions = new[]
                     {
-                        new Dimension()
+                        new Dimension(),
                     },
                     Content = new[]
                     {
@@ -82,7 +106,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => exitRoom()
+                                            Action = exitRoom,
                                         },
                                     },
                                 },
@@ -123,7 +147,8 @@ namespace GamesToGo.Game.Screens
                                                         Masking = true,
                                                         Child = usersInRoom = new FillFlowContainer<TextContainer>
                                                         {
-                                                            RelativeSizeAxes = Axes.Both,
+                                                            RelativeSizeAxes = Axes.X,
+                                                            AutoSizeAxes = Axes.Y,
                                                             Direction = FillDirection.Full,
                                                         },
                                                     },
@@ -144,14 +169,14 @@ namespace GamesToGo.Game.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Colour = Colour4.LightGray
                                                     },
-                                                    textButton =new SpriteText
+                                                    textButton = new SpriteText
                                                     {
                                                         Anchor = Anchor.Centre,
                                                         Origin = Anchor.Centre,
                                                         Font = new FontUsage(size: 80),
-                                                    }
-                                                }
-                                            }
+                                                    },
+                                                },
+                                            },
                                         },
                                         new Container
                                         {
@@ -167,65 +192,49 @@ namespace GamesToGo.Game.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Colour = Colour4.LightPink
                                                     },
-                                                    textButton =new SpriteText
+                                                    textButton = new SpriteText
                                                     {
                                                         Anchor = Anchor.Centre,
                                                         Origin = Anchor.Centre,
                                                         Font = new FontUsage(size: 80),
                                                         Colour = new Colour4(106, 100, 104, 255)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
-                inviteOverlay
+                inviteOverlay,
+                gameStack = new ScreenStack
+                {
+                    RelativeSizeAxes = Axes.Both,
+                },
             };
-            if (api.LocalUser.Value.ID == room.Owner.BackingUser.ID)
+
+            Schedule(() => LoadComponentAsync(new GameScreen(), gameStack.Push));
+
+            if (api.LocalUser.Value.ID == room.Value.Owner.BackingUser.ID)
                 textButton.Text = "Jugar!";
             else
                 textButton.Text = "Listo!";
-            populateUsersList();
-            _tokenSource = new CancellationTokenSource();
-            var token = _tokenSource.Token;
-            Token = token;
-            Task.Run(() =>
+
+            for (int i = 0; i < room.Value.Game.Maxplayers; i++)
             {
-                while (!room.HasStarted)
-                {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    System.Threading.Thread.Sleep(10000);
-                    var roomStateRequest = new GetRoomStateRequest();
-                    roomStateRequest.Success += u =>
-                    {
-                        if (u.HasStarted == true)
-                        {
-                            LoadComponentAsync(new GameScreen(room), this.Push);
-                            _tokenSource.Cancel();
-                        }
-                        else
-                            Refresh(u);
-                    };
-                    api.Queue(roomStateRequest);
-                }
-            });
+                usersInRoom.Add(new TextContainer());
+            }
+
+            room.BindValueChanged(roomUpdate => Refresh(roomUpdate.NewValue), true);
+            gameStack.Hide();
         }
 
         private void exitRoom()
         {
             var req = new ExitRoomRequest();
-            req.Success += () =>
-            {
-                this.Exit();
-                _tokenSource.Cancel();
-            };
+            req.Success += this.Exit;
             api.Queue(req);
         }
 
@@ -234,37 +243,47 @@ namespace GamesToGo.Game.Screens
             colorBox.Colour = Colour4.DeepPink;
             var req = new ReadyRequest();
             api.Queue(req);
-
-        }
-
-        private void populateUsersList()
-        {
-            for (int i = 0; i < room.Game.Maxplayers; i++)
-            {
-                    usersInRoom.Add(new TextContainer());
-            }
-            Refresh(room);
         }
 
         private void Refresh(OnlineRoom updatedRoom)
         {
-            room = updatedRoom;
             for (int i = 0; i < updatedRoom.Game.Maxplayers; i++)
             {
-                if(updatedRoom.Players[i] != null)
+                if (updatedRoom.Players[i] != null)
                 {
-                    usersInRoom[i].Text.Text = updatedRoom.Players[i].BackingUser.Username;
+                    usersInRoom[i].Text = updatedRoom.Players[i].BackingUser.Username;
                 }
                 else if (updatedRoom.Players[i] == null)
                 {
-                    usersInRoom[i].Text.Text = "";
+                    usersInRoom[i].Text = "";
                 }
+            }
+
+            if (updatedRoom.HasStarted)
+            {
+                gameStack.Show();
+                roomUpdater.TimeBetweenPolls = 500;
             }
         }
 
         private class TextContainer : Container
         {
-            public SpriteText Text;
+            private SpriteText text;
+
+            private string textString;
+
+            public string Text
+            {
+                set
+                {
+                    if (text != null)
+                    {
+                        text.Text = value;
+                    }
+
+                    textString = value;
+                }
+            }
 
             [BackgroundDependencyLoader]
             private void load()
@@ -272,11 +291,12 @@ namespace GamesToGo.Game.Screens
                 RelativeSizeAxes = Axes.X;
                 Width = .5f;
                 Height = 100;
-                Child = Text = new SpriteText
+                Child = text = new SpriteText
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Font = new FontUsage(size: 50)
+                    Font = new FontUsage(size: 50),
+                    Text = textString,
                 };
             }
         }

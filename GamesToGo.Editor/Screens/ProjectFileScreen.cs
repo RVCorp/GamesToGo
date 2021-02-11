@@ -1,4 +1,5 @@
-﻿using GamesToGo.Editor.Graphics;
+﻿using GamesToGo.Common.Game;
+using GamesToGo.Editor.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -48,7 +49,7 @@ namespace GamesToGo.Editor.Screens
                             Height = 1/3f,
                             BackgroundColour = Colour4.DodgerBlue,
                             Text = @"Incompleto? Guarda y termina después",
-                            Action = () => editor.SaveProject(),
+                            Action = () => editor.SaveProject(CommunityStatus.Saved),
                         },
                         new GamesToGoButton
                         {

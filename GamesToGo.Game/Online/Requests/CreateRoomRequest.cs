@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using GamesToGo.Common.Online.Requests;
 using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.IO.Network;
 

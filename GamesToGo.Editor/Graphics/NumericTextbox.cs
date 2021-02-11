@@ -7,6 +7,23 @@ namespace GamesToGo.Editor.Graphics
 {
     public class NumericTextBox : BasicTextBox, IHasCurrentValue<float>
     {
+        public override string Text
+        {
+            get => base.Text;
+            set
+            {
+                if (!float.TryParse(value, out var number))
+                {
+                    NotifyInputError();
+
+                    return;
+                }
+
+                current.Value = number;
+                base.Text = value;
+            }
+        }
+
         private readonly bool zero;
 
         private readonly Bindable<float> current = new BindableFloat();

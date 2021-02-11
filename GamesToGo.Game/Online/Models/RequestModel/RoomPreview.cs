@@ -1,4 +1,6 @@
-﻿namespace GamesToGo.Game.Online.Models.RequestModel
+﻿using GamesToGo.Common.Online.RequestModel;
+
+namespace GamesToGo.Game.Online.Models.RequestModel
 {
     public class RoomPreview
     {

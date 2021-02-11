@@ -1,6 +1,6 @@
 ﻿using osu.Framework.IO.Network;
 
-namespace GamesToGo.Editor.Online
+namespace GamesToGo.Common.Online.Requests
 {
     public class BaseWebRequest : WebRequest
     {

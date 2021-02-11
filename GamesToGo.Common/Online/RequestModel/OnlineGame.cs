@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using GamesToGo.Common.Game;
 using Newtonsoft.Json;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable UnusedMember.Global
 
-namespace GamesToGo.Game.Online.Models.RequestModel
+namespace GamesToGo.Common.Online.RequestModel
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -25,11 +26,9 @@ namespace GamesToGo.Game.Online.Models.RequestModel
         public string Name { get; set; }
         public string Hash { get; set; }
         public string Description { get; set; }
-        // TODO: Make this actually work
-        public int Status { get; set; }
+        public CommunityStatus Status { get; set; }
         public int Minplayers { get; set; }
         public int Maxplayers { get; set; }
-        public int CreatorId { get; set; }
         public User Creator { get; set; }
     }
 }

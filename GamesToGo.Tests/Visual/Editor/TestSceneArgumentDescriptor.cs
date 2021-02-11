@@ -12,7 +12,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
 using osu.Framework.Testing;
 
-namespace GamesToGo.Tests.Visual
+namespace GamesToGo.Tests.Visual.Editor
 {
     public class TestSceneArgumentDescriptor : TestScene
     {

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
-using GamesToGo.Game.Online.Models.RequestModel;
-using GamesToGo.Game.Online.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -201,7 +198,7 @@ namespace GamesToGo.Game.Overlays
                                             Height = 225,
                                             RelativeSizeAxes = Axes.X,
                                             Text = @"Registrarse",
-                                            Action = () => registerUser(),
+                                            Action = registerUser,
                                         },
                                     },
                                 },
@@ -229,13 +226,8 @@ namespace GamesToGo.Game.Overlays
                 register.Enabled.Value = true;
         }
 
-        private void registerUser()
-        {
-            var req = new AddUserRequest(new PasswordedUser { Email = emailBox.Text, Password = passwordBox.Text, Username = usernameBox.Text });
-            req.Success += _ => registerSuccess();
-            req.Failure += registerFailure;
-            api.Register(req);
-        }
+        private void registerUser() => api.Register(usernameBox.Text, emailBox.Text, passwordBox.Text, _ => registerSuccess(), registerFailure);
+
 
         private void registerSuccess()
         {

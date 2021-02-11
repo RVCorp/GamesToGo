@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using GamesToGo.Common.Online.Requests;
 using osu.Framework.IO.Network;
 
 namespace GamesToGo.Editor.Online

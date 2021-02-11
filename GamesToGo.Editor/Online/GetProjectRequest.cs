@@ -1,7 +1,10 @@
-﻿namespace GamesToGo.Editor.Online
+﻿using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Online.Requests;
+
+namespace GamesToGo.Editor.Online
 {
     // ReSharper disable once UnusedType.Global
-    public class GetProjectRequest : APIRequest<OnlineProject>
+    public class GetProjectRequest : APIRequest<OnlineGame>
     {
         private readonly int gameID;
         public GetProjectRequest(int id)

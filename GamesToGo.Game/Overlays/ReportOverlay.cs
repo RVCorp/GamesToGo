@@ -1,4 +1,6 @@
-﻿using GamesToGo.Game.Graphics;
+﻿using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
@@ -16,7 +18,6 @@ namespace GamesToGo.Game.Overlays
     {
         private Box shadowBox;
         private Container content;
-        private GamesToGoButton report;
         private BasicTextBox reasonTextBox;
         private FillFlowContainer reportContainer;
         private SpriteText successText;
@@ -173,7 +174,7 @@ namespace GamesToGo.Game.Overlays
                                     }
                                 }
                             }
-                        },                        
+                        },
                     },
                 },
             };

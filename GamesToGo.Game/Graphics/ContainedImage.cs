@@ -1,6 +1,5 @@
 using System;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -16,10 +15,10 @@ namespace GamesToGo.Game.Graphics
         public ContainedImage(bool showOutline, float imageCornerRadius)
         {
             this.showOutline = showOutline;
-            this.imageCornerRadius = imageCornerRadius;            
+            this.imageCornerRadius = imageCornerRadius;
         }
 
-        public Vector2 ImageSize 
+        public Vector2 ImageSize
         {
             get => imageSize;
             set

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using GamesToGo.Game.Online.Models.RequestModel;
-using GamesToGo.Game.Online.Requests;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Online.Requests;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 
-namespace GamesToGo.Game.Online
+namespace GamesToGo.Common.Online
 {
     public class APIController : Component
     {
@@ -20,7 +20,8 @@ namespace GamesToGo.Game.Online
 
         public static string UserAgent { get; } = "gtg";
 
-        public static string Endpoint => @"https://gamestogo.company";
+        public static string Endpoint => AlternativeServer ?? @"https://gamestogo.company";
+        public static string AlternativeServer { get; set; } = "http://192.168.100.98:5000";
 
         private readonly Queue<APIRequest> queue = new Queue<APIRequest>();
 
@@ -91,6 +92,8 @@ namespace GamesToGo.Game.Online
                         if (!hasValidToken && (userID = authenticate()) < 0)
                         {
                             Token = null;
+                            username = string.Empty;
+                            password = string.Empty;
                             continue;
                         }
 
@@ -201,6 +204,7 @@ namespace GamesToGo.Game.Online
 
             using var req = new AccessRequest(username, password)
             {
+                AllowInsecureRequests = AlternativeServer != null,
                 Url = $@"{Endpoint}/api/Login",
                 Method = HttpMethod.Get,
             };
@@ -242,17 +246,36 @@ namespace GamesToGo.Game.Online
         {
             username = user;
             password = pass;
+
+            failureCount = 0;
         }
 
-        public void Register(AddUserRequest userRequest)
+        public void Register(string name, string email, string pass, Action<User> success = null, Action<Exception> failure = null)
         {
-            registrableUser = userRequest;
+            if (isNullEmptyOrWhiteSpace(name) || isNullEmptyOrWhiteSpace(email) || isNullEmptyOrWhiteSpace(pass))
+                return;
+
+            var registerRequest = new AddUserRequest(new UserLogin
+            {
+                Email = email,
+                Password = pass,
+                User = new User
+                {
+                    Username = name,
+                },
+            });
+
+            registerRequest.Success += u => success?.Invoke(u);
+            registerRequest.Failure += e => failure?.Invoke(e);
+
+            registrableUser = registerRequest;
         }
+
+        private bool isNullEmptyOrWhiteSpace(string value) => string.IsNullOrEmpty(value) || string.IsNullOrWhiteSpace(value);
 
         public void Logout()
         {
             flushQueue();
-
 
             var req = new LogoutRequest();
             req.Success += () =>

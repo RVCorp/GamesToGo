@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Editor.Graphics;
-using GamesToGo.Editor.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -167,13 +168,7 @@ namespace GamesToGo.Editor.Overlays
             emailBox.Current.BindValueChanged(checkUserPass);
         }
 
-        private void registerUser()
-        {
-            var req = new AddUserRequest(new PasswordedUser { Email = emailBox.Text, Password = passwordBox.Text, Username = usernameBox.Text });
-            req.Success += _ => registerSuccess();
-            req.Failure += registerFailure;
-            api.Register(req);
-        }
+        private void registerUser() => api.Register(usernameBox.Text, emailBox.Text, passwordBox.Text, _ => registerSuccess(), registerFailure);
 
         private void registerSuccess()
         {

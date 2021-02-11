@@ -10,4 +10,8 @@
     <ProjectReference Include="..\GamesToGo.Game\GamesToGo.Game.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Visual\Game" />
+  </ItemGroup>
+
 </Project>

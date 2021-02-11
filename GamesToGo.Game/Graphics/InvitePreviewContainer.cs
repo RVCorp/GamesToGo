@@ -12,14 +12,14 @@ namespace GamesToGo.Game.Graphics
 {
     public class InvitePreviewContainer : Container
     {
-        public Invitation Invitation;
+        public readonly Invitation Invitation;
         private Sprite userImage;
         public Action NextScreen { get; set; }
         public Action DeleteInvitation { get; set; }
 
         public InvitePreviewContainer(Invitation invitation)
         {
-            this.Invitation = invitation;
+            Invitation = invitation;
         }
 
         [BackgroundDependencyLoader]
@@ -69,7 +69,7 @@ namespace GamesToGo.Game.Graphics
                             RelativeSizeAxes = Axes.Both,
                             Width = .17f,
                             Child = new SurfaceButton
-                            {                                
+                            {
                                 Action = () => NextScreen(),
                                 Children = new Drawable[]
                                 {
@@ -106,7 +106,7 @@ namespace GamesToGo.Game.Graphics
                                     new SpriteIcon
                                     {
                                         Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre, 
+                                        Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Icon = FontAwesome.Solid.Times
                                     }

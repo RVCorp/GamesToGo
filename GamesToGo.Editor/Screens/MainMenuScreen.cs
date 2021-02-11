@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Database;
 using GamesToGo.Editor.Database.Models;
 using GamesToGo.Editor.Graphics;
 using GamesToGo.Editor.Online;
-using GamesToGo.Editor.Overlays;
 using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -277,7 +279,7 @@ namespace GamesToGo.Editor.Screens
             database.SaveChanges();
         }
 
-        private void importProject(OnlineProject onlineProject)
+        private void importProject(OnlineGame onlineProject)
         {
             string filename = store.GetFullPath(Path.Combine(@"download", @$"{onlineProject.Hash}.zip"));
 
