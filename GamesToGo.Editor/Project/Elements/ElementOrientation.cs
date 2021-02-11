@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using GamesToGo.Editor.Graphics;
+// ReSharper disable UnusedMember.Global
 
 namespace GamesToGo.Editor.Project.Elements
 {
@@ -11,9 +12,9 @@ namespace GamesToGo.Editor.Project.Elements
         Horizontal = 1,
         [IgnoreItem]
         Flipped = 2,
-        [Description("Vertical Volteado")]
+        [Description(@"Vertical Volteado")]
         VerticalFlipped = Vertical | Flipped,
-        [Description("Horizontal Volteado")]
+        [Description(@"Horizontal Volteado")]
         HorizontalFlipped = Horizontal | Flipped,
     }
 }

@@ -78,7 +78,17 @@ namespace GamesToGo.Editor
             catch
             {
                 Host.Storage.DeleteDatabase(Name);
-                dbContext.Database.Migrate();
+
+                try
+                {
+                    dbContext.Database.Migrate();
+                }
+                catch
+                {
+                    //Can't get a database going, bail!
+                    Exit();
+                }
+
                 store.DeleteDirectory("files");
             }
             finally

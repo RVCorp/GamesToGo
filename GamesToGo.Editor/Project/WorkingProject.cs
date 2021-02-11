@@ -158,7 +158,7 @@ namespace GamesToGo.Editor.Project
             if (FirstSave)
                 returnableSaves--;
 
-            DatabaseObject.ComunityStatus = CommunityStatus.Saved;
+            DatabaseObject.CommunityStatus = CommunityStatus.Saved;
 
             var ret = stateString(true);
 

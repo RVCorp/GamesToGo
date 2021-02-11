@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
@@ -8,7 +10,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace GamesToGo.Editor.Graphics
 {
-    public class EnumArgumentDescriptor<T> : DropdownEnabledSelectionDescriptor<EnumArgumentDropdown<T>> where T : Enum
+    public class EnumArgumentDescriptor<T> : DropdownEnabledSelectionDescriptor<EnumArgumentDescriptor<T>.EnumArgumentDropdown> where T : Enum
     {
         private SpriteText text;
 
@@ -23,38 +25,36 @@ namespace GamesToGo.Editor.Graphics
             });
             Current.BindValueChanged(v => text.Text = v.NewValue.HasValue ? ((T)(object)v.NewValue.Value).GetDescription() : string.Empty, true);
         }
-    }
 
-    public class EnumArgumentDropdown<T> : ArgumentDropdown where T : Enum
-    {
-        public EnumArgumentDropdown(Bindable<int?> target) : base(target)
+        [UsedImplicitly]
+        public class EnumArgumentDropdown : ArgumentDropdown
         {
-        }
-
-        protected override IEnumerable<ArgumentItem> CreateItems()
-        {
-            foreach (T value in Enum.GetValues(typeof(T)))
+            public EnumArgumentDropdown(Bindable<int?> target) : base(target)
             {
-                yield return new EnumItem(value);
-            }
-        }
-
-        private class EnumItem : ArgumentItem
-        {
-            private readonly T value;
-            public EnumItem(T value) : base(Convert.ToInt32(value))
-            {
-                this.value = value;
             }
 
-            [BackgroundDependencyLoader]
-            private void load()
+            protected override IEnumerable<ArgumentItem> CreateItems()
             {
-                Add(new SpriteText
+                return Enum.GetValues(typeof(T)).Cast<T>().Select(e => new EnumItem(e));
+            }
+
+            private class EnumItem : ArgumentItem
+            {
+                private readonly T value;
+                public EnumItem(T value) : base(Convert.ToInt32(value))
                 {
-                    Text = value.GetDescription(),
-                    Font = FontUsage.Default.With(size: ARGUMENT_HEIGHT),
-                });
+                    this.value = value;
+                }
+
+                [BackgroundDependencyLoader]
+                private void load()
+                {
+                    Add(new SpriteText
+                    {
+                        Text = value.GetDescription(),
+                        Font = FontUsage.Default.With(size: ARGUMENT_HEIGHT),
+                    });
+                }
             }
         }
     }

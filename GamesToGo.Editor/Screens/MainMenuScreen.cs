@@ -285,7 +285,7 @@ namespace GamesToGo.Editor.Screens
             {
                 File = new File { NewName = Path.GetFileNameWithoutExtension(filename), Type = "project" },
                 CreatorID = onlineProject.Creator.ID,
-                ComunityStatus = onlineProject.Status,
+                CommunityStatus = onlineProject.Status,
                 LastEdited = onlineProject.DateTimeLastEdited,
                 MaxNumberPlayers = onlineProject.Maxplayers,
                 MinNumberPlayers = onlineProject.Minplayers,

@@ -125,10 +125,10 @@ namespace GamesToGo.Game.Screens
                                                         {
                                                             RelativeSizeAxes = Axes.Both,
                                                             Direction = FillDirection.Full,
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                                        },
+                                                    },
+                                                },
+                                            },
                                         },
                                         new Container
                                         {
@@ -206,14 +206,14 @@ namespace GamesToGo.Game.Screens
                     roomStateRequest.Success += u =>
                     {
                         if (u.HasStarted == true)
-                        {                            
+                        {
                             LoadComponentAsync(new GameScreen(room), this.Push);
                             _tokenSource.Cancel();
                         }
                         else
                             Refresh(u);
                     };
-                    api.Queue(roomStateRequest);                    
+                    api.Queue(roomStateRequest);
                 }
             });
         }
@@ -234,7 +234,7 @@ namespace GamesToGo.Game.Screens
             colorBox.Colour = Colour4.DeepPink;
             var req = new ReadyRequest();
             api.Queue(req);
-            
+
         }
 
         private void populateUsersList()
@@ -260,7 +260,7 @@ namespace GamesToGo.Game.Screens
                     usersInRoom[i].Text.Text = "";
                 }
             }
-        }        
+        }
 
         private class TextContainer : Container
         {

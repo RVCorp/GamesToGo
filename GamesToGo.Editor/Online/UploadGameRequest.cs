@@ -54,7 +54,7 @@ namespace GamesToGo.Editor.Online
                 req.AddParameter("maxP", project.MaxNumberPlayers.ToString());
                 req.AddParameter("imageName", project.ImageRelation?.File?.NewName ?? "null");
                 req.AddParameter("LastEdited", project.LastEdited.ToUniversalTime().ToString(@"yyyyMMddHHmmssfff"));
-                req.AddParameter("Status",((int)project.ComunityStatus).ToString());
+                req.AddParameter("Status",((int)project.CommunityStatus).ToString());
                 req.AddParameter("FileName", project.File.NewName);
                 req.AddFile(@"File", ms.ToArray());
             }
@@ -69,6 +69,7 @@ namespace GamesToGo.Editor.Online
         [JsonProperty(@"id")]
         public int OnlineID { get; set; }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public CommunityStatus Status { get; set; }
     }
 }

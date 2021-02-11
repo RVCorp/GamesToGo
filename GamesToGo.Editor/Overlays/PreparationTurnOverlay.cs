@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GamesToGo.Editor.Graphics;
+﻿using GamesToGo.Editor.Graphics;
 using GamesToGo.Editor.Project;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

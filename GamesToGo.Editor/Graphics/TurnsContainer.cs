@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Actions;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -14,8 +13,7 @@ namespace GamesToGo.Editor.Graphics
     public class TurnsContainer : Container
     {
         private FillFlowContainer<ActionDescriptor> turnsFillFlow;
-        protected BindableList<EventAction> TurnActions = new BindableList<EventAction>();
-
+        protected readonly BindableList<EventAction> TurnActions = new BindableList<EventAction>();
 
         [BackgroundDependencyLoader]
         private void load()
@@ -96,7 +94,7 @@ namespace GamesToGo.Editor.Graphics
             {
                 turnsFillFlow.Add(new ActionDescriptor(action)
                 {
-                    RemoveAction = (removed) => TurnActions.Remove(removed),
+                    RemoveAction = removed => TurnActions.Remove(removed),
                 });
             }
         }
