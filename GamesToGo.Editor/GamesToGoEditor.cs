@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Editor.Database;
-using GamesToGo.Editor.Online;
 using GamesToGo.Editor.Overlays;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Actions;
@@ -121,7 +122,7 @@ namespace GamesToGo.Editor
 
             dependencies.Cache(api);
 
-            content.Add(splashOverlay = new SplashInfoOverlay { Depth = -2 });
+            content.Add(splashOverlay = new SplashInfoOverlay(SplashPosition.Bottom, 80, 30) { Depth = -2 });
 
             dependencies.Cache(splashOverlay);
 

@@ -1,6 +1,6 @@
 ﻿using osu.Framework.IO.Network;
 
-namespace GamesToGo.Game.Online
+namespace GamesToGo.Common.Online.Requests
 {
     public class BaseJsonWebRequest<T> : JsonWebRequest<T>
     {

@@ -1,6 +1,7 @@
 ﻿using System;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.Requests;
 using GamesToGo.Editor.Project;
-using GamesToGo.Editor.Online;
 using GamesToGo.Editor.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;

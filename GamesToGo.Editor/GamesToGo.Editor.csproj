@@ -26,4 +26,8 @@
     <EmbeddedResource Include="Textures\**\*.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GamesToGo.Common\GamesToGo.Common.csproj" />
+  </ItemGroup>
+
 </Project>

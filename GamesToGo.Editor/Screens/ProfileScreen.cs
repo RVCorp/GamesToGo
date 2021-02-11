@@ -1,6 +1,7 @@
-﻿using GamesToGo.Editor.Database;
+﻿using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.Requests;
+using GamesToGo.Editor.Database;
 using GamesToGo.Editor.Graphics;
-using GamesToGo.Editor.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -35,7 +36,7 @@ namespace GamesToGo.Editor.Screens
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = new Color4 (106,100,104, 255),      //Color fondo general
+                    Colour = new Color4 (106, 100, 104, 255),      //Color fondo general
                 },
                 new FillFlowContainer
                 {
@@ -220,7 +221,7 @@ namespace GamesToGo.Editor.Screens
 
         private void populateOnlineList()
         {
-            var getProjects = new GetAllPublishedProjectsRequest();
+            var getProjects = new GetAllUserPublishedGamesRequest();
             getProjects.Success += u =>
             {
                 foreach (var proj in u)

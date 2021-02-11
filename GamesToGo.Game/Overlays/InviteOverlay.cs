@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Requests;
@@ -12,7 +13,7 @@ using osu.Framework.Graphics.Sprites;
 
 namespace GamesToGo.Game.Overlays
 {
-    public class InviteOverlay : OverlayContainer
+    public class InvitePlayersToRoomOverlay : OverlayContainer
     {
         [Resolved]
         private APIController api { get; set; }

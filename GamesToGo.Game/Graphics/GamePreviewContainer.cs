@@ -1,4 +1,5 @@
-﻿using GamesToGo.Game.Online;
+﻿using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -13,9 +14,9 @@ namespace GamesToGo.Game.Graphics
 {
     public class GamePreviewContainer : Button
     {
-        private OnlineGame game;
+        private readonly OnlineGame game;
         private Sprite gameImage;
-        private TextFlowContainer Text;
+        private TextFlowContainer text;
 
         public int GameNameSize { get; set; }
         public int MadeBySize { get; set; }
@@ -72,21 +73,20 @@ namespace GamesToGo.Game.Graphics
                                         new Container
                                         {
                                             RelativeSizeAxes = Axes.Both,
-                                            Height = .3f,
-                                            Child = Text = new TextFlowContainer
+                                            Child = text = new TextFlowContainer
                                             {
                                                 RelativeSizeAxes = Axes.Both
                                             }
                                         },
                                     },
-                                },                                
+                                },
                             },
                         },
                         new Container
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = .2f,
-                            Padding = new MarginPadding(){ Right = 80 },
+                            Padding = new MarginPadding { Right = 80 },
                             Child = new FillFlowContainer
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -119,8 +119,8 @@ namespace GamesToGo.Game.Graphics
             {
                 gameImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{game.Image}");
             });
-            Text.AddText(game.Name, f => f.Font = new FontUsage(size: GameNameSize));
-            Text.AddParagraph("Hecho por: " + game.Creator.Username, t => t.Font = new FontUsage(size:MadeBySize));
+            text.AddText(game.Name, f => f.Font = new FontUsage(size: GameNameSize));
+            text.AddParagraph(@$"Hecho por: {game.Creator.Username}", t => t.Font = new FontUsage(size:MadeBySize));
         }
 
 

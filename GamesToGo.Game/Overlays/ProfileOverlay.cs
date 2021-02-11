@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.Requests;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
 using GamesToGo.Game.Online.Requests;
-using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Screens;
 using osuTK;
 
-namespace GamesToGo.Game.Ovarlays
+namespace GamesToGo.Game.Overlays
 {
     public class ProfileOverlay : OverlayContainer
     {
         private FillFlowContainer<Container> publishedGames;
         private FillFlowContainer<Container> statisticsContainer;
         private Sprite userImage;
-        private TextureStore textures;
+        [Resolved]
+        private TextureStore textures { get; set; }
         private SpriteText userInfo;
         [Resolved]
         private SideMenuOverlay sideMenu { get; set; }
@@ -31,9 +29,8 @@ namespace GamesToGo.Game.Ovarlays
         public Action NextScreen { get; set; }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load()
         {
-            this.textures = textures;
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -178,7 +175,7 @@ namespace GamesToGo.Game.Ovarlays
                         }
                     }
                 }
-            };            
+            };
         }
 
         private void populateContainers()

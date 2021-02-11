@@ -1,6 +1,7 @@
-﻿using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
-using GamesToGo.Game.Online.Models.RequestModel;
+﻿using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Overlays;
+using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
@@ -24,16 +25,19 @@ namespace GamesToGo.Game.Screens
         private MainMenuScreen mainMenu { get; set; }
         [Resolved]
         private APIController api { get; set; }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
+
         private TextFlowContainer errorText;
 
-        private readonly OnlineGame onlinegame;
+        private readonly OnlineGame onlineGame;
         private FillFlowContainer gameRooms;
         private GamesToGoButton reportButton;
         private ReportOverlay reportOverlay;
 
         public GameInfoScreen(OnlineGame game)
         {
-            onlinegame = game;
+            onlineGame = game;
         }
 
         [BackgroundDependencyLoader]
@@ -53,11 +57,11 @@ namespace GamesToGo.Game.Screens
                     RowDimensions = new[]
                     {
                         new Dimension(GridSizeMode.Relative, .1f),
-                        new Dimension()
+                        new Dimension(),
                     },
                     ColumnDimensions = new[]
                     {
-                        new Dimension()
+                        new Dimension(),
                     },
                     Content = new[]
                     {
@@ -96,7 +100,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = mainMenu.MakeCurrent,
+                                            Action = this.Exit,
                                         }
                                     },
                                 }
@@ -129,7 +133,7 @@ namespace GamesToGo.Game.Screens
                                                         RelativeSizeAxes = Axes.Both,
                                                         Colour = Colour4.Red
                                                     },
-                                                    new GamePreviewContainer(onlinegame)
+                                                    new GamePreviewContainer(onlineGame)
                                                     {
                                                         GameNameSize = 90,
                                                         MadeBySize = 60,
@@ -156,7 +160,7 @@ namespace GamesToGo.Game.Screens
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             Height = 300,
-                                                            Text = onlinegame.Description,
+                                                            Text = onlineGame.Description,
                                                         },
                                                     },
                                                 },
@@ -211,7 +215,7 @@ namespace GamesToGo.Game.Screens
                                             new Container
                                             {
                                                 RelativeSizeAxes = Axes.X,
-                                                Height = 200,                                                
+                                                Height = 200,
                                                 Child = reportButton = new GamesToGoButton
                                                 {
                                                     Anchor = Anchor.Centre,
@@ -219,10 +223,10 @@ namespace GamesToGo.Game.Screens
                                                     RelativeSizeAxes = Axes.X,
                                                     Height = 150,
                                                     Width = .85f,
-                                                    Text = "Reportar",
+                                                    Text = @"Reportar",
                                                     Action = () => reportOverlay.Show()
-                                                }
-                                            }
+                                                },
+                                            },
                                         },
                                     },
                                 },
@@ -242,7 +246,7 @@ namespace GamesToGo.Game.Screens
                         Masking = true,
                         Child = new SurfaceButton
                         {
-                            Action = () => createRoom(onlinegame),
+                            Action = () => createRoom(onlineGame),
                             Children = new Drawable[]
                             {
                                 new Box
@@ -265,7 +269,7 @@ namespace GamesToGo.Game.Screens
                 },
                 reportOverlay = new ReportOverlay()
                 {
-                    Game = onlinegame
+                    Game = onlineGame
                 }
             };
             reportButton.SpriteText.Font = new FontUsage(size: 80);
@@ -274,7 +278,7 @@ namespace GamesToGo.Game.Screens
 
         private void populateRooms()
         {
-            var getRooms = new GetAllRoomsFromGameRequest(onlinegame.Id);
+            var getRooms = new GetAllRoomsFromGameRequest(onlineGame.Id);
             getRooms.Success += u =>
             {
                 foreach(var room in u)
@@ -303,21 +307,28 @@ namespace GamesToGo.Game.Screens
             game.DownloadGame(requestedGame);
             var room = new CreateRoomRequest(requestedGame.Id);
             room.Success += u =>
-            {                
+            {
                 LoadComponentAsync(new RoomScreen(u), this.Push);
-            };            
+            };
+
+            room.Failure += ex =>
+            {
+                infoOverlay.Show(@"Ocurrió un error al intentar crear la sala", Colour4.DarkRed);
+            };
             api.Queue(room);
         }
 
         private void joinRoom(int id)
         {
-            game.DownloadGame(onlinegame);
-            var room = new JoinRoomRequest(id);
-            room.Success += u =>
-            {                
+            game.DownloadGame(onlineGame);
+            var joinRoom = new JoinRoomRequest(id);
+            joinRoom.Success += u =>
+            {
                 LoadComponentAsync(new RoomScreen(u), this.Push);
             };
-            api.Queue(room);
+
+            joinRoom.Failure += _ => infoOverlay.Show(@"Hubo un problema al intentar entrar en la sala", Colour4.DarkRed);
+            api.Queue(joinRoom);
         }
     }
 }

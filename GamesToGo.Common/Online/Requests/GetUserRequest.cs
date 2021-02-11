@@ -1,6 +1,6 @@
-﻿using GamesToGo.Game.Online.Models.RequestModel;
+﻿using GamesToGo.Common.Online.RequestModel;
 
-namespace GamesToGo.Game.Online.Requests
+namespace GamesToGo.Common.Online.Requests
 {
     public class GetUserRequest : APIRequest<User>
     {

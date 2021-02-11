@@ -9,6 +9,6 @@ namespace GamesToGo.Game.Online.Models.RequestModel
         Playing,
         Won,
         Lost,
-        Left
+        Left,
     }
 }

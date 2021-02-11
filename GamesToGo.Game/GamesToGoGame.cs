@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using GamesToGo.Game.Online;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Online.Requests;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Online.Models.RequestModel;
-using GamesToGo.Game.Online.Requests;
-using GamesToGo.Game.Overlays;
 using GamesToGo.Game.Screens;
 using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.IO.Stores;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
@@ -44,26 +43,27 @@ namespace GamesToGo.Game
 
         private DrawSizePreservingFillContainer content;
 
-        private SideMenuOverlay sideMenu;
-
         private SplashInfoOverlay infoOverlay;
-        public BindableList<Invitation> Invitations = new BindableList<Invitation>();
+
+        [Cached]
+        public readonly BindableList<Invitation> Invitations = new BindableList<Invitation>();
+
         private SessionStartScreen startScreen;
+
         [Resolved]
         private Storage store { get; set; }
 
         [BackgroundDependencyLoader]
-        private void load(Storage store)
+        private void load()
         {
             Resources.AddStore(new DllResourceStore(@"GamesToGo.Game.dll"));
             Textures.AddStore(Host.CreateTextureLoaderStore(new OnlineStore()));
             Textures.AddStore(Host.CreateTextureLoaderStore(new StorageBackedResourceStore(store)));
-            Textures.AddExtension("");
             dependencies.CacheAs(this);
-            base.Content.Add(content = new PaddedDrawSizePreservingFillContainer
+            base.Content.Add(content = new DrawSizePreservingFillContainer
             {
                 TargetDrawSize = new Vector2(1080, 1920),
-                Strategy =  DrawSizePreservationStrategy.Minimum
+                Strategy =  DrawSizePreservationStrategy.Minimum,
             });
             content.Add(stack = new ScreenStack
             {
@@ -72,56 +72,21 @@ namespace GamesToGo.Game
             });
             content.Add(api = new APIController());
             dependencies.Cache(api);
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    System.Threading.Thread.Sleep(5000);
-                    var invitations = new GetAllInvitationsRequest();
-                    invitations.Success += u =>
-                    {
-                        List<Invitation> invitations1 = Invitations.ToList();
-                        for (int i = 0; i < invitations1.Count; i++)
-                        {
-                            if (u.All(t => t.ID != invitations1[i].ID))
-                                continue;
-
-                            u.Remove(u.First(p => p.ID == invitations1[i].ID));
-                            invitations1.Remove(invitations1[i]);
-                            i--;
-                        }
-                        if (invitations1.Any() || u.Any())
-                        {
-                            Invitations.AddRange(u.Select(i => new Invitation
-                            {
-                                ID = i.ID,
-                                TimeSent = i.TimeSent,
-                                Sender = i.Sender,
-                                Receiver = i.Receiver,
-                                Room = i.Room
-                            }));
-
-
-                            foreach (var oldInvite in invitations1)
-                            {
-                                Invitations.Remove(Invitations.First(s => s.ID == oldInvite.ID));
-                            }
-                        }
-                    };
-                    api.Queue(invitations);
-                }
-            });
             dependencies.Cache(stack);
-            content.Add(sideMenu = new SideMenuOverlay());
-            dependencies.Cache(sideMenu);
-            content.Add(infoOverlay = new SplashInfoOverlay());
+            content.Add(infoOverlay = new SplashInfoOverlay(SplashPosition.Top, 150, 60) { Depth = -1 });
             dependencies.Cache(infoOverlay);
-            content.Add(new Box
+
+            Invitations.BindCollectionChanged((_, e) =>
             {
-                Colour = Colour4.Black,
-                RelativeSizeAxes = Axes.X,
-                Height = 100,
-                Y = -100,
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        infoOverlay.Show(@$"{e.NewItems.Cast<Invitation>().Last().Sender.Username} te ha invitado a jugar", Colour4.LightBlue);
+
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        break;
+                }
             });
         }
 
@@ -133,23 +98,13 @@ namespace GamesToGo.Game
             LoadComponentAsync(startScreen = new SessionStartScreen(), stack.Push);
         }
 
-        private class PaddedDrawSizePreservingFillContainer : DrawSizePreservingFillContainer
-        {
-            protected override void LoadComplete()
-            {
-                base.LoadComplete();
-                Content.Masking = true;
-                Content.Padding = new MarginPadding { Top = 100 };
-            }
-        }
-
         public void DownloadGame(OnlineGame game)
         {
             var getGame = new DownloadProjectRequest(game.Id, game.Hash, store);
             getGame.Success += g => importGame(game);
             getGame.Progressed += g =>
             {
-                infoOverlay.Show("Descargando juego...", Colour4.Turquoise);
+                infoOverlay.Show(@"Descargando juego...", Colour4.Turquoise);
             };
             api.Queue(getGame);
         }
@@ -158,26 +113,18 @@ namespace GamesToGo.Game
         {
             string filename = store.GetFullPath(Path.Combine(@"download", @$"{onlineGame.Hash}.zip"));
 
-            using (var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open))
-            {
-                using (ZipFile zip = ZipFile.Read(fileStream))
-                {
-                    foreach (ZipEntry e in zip)
-                    {
-                        e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
+            using var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open);
 
-                        if (e.FileName == Path.GetFileNameWithoutExtension(filename))
-                            continue;
-                    }
-                }
-            }
+            using ZipFile zip = ZipFile.Read(fileStream);
+
+            foreach (ZipEntry e in zip)
+                e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
         }
 
         public void Logout()
         {
             api.Logout();
             startScreen.MakeCurrent();
-            sideMenu.Hide();
         }
 
         protected override bool OnExiting()

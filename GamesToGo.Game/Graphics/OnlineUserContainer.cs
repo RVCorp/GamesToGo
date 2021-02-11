@@ -1,5 +1,5 @@
-﻿using GamesToGo.Game.Online;
-using GamesToGo.Game.Online.Models.RequestModel;
+﻿using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.Online.Requests;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -51,7 +51,7 @@ namespace GamesToGo.Game.Graphics
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = .2f,
-                            Child = userImage =  new Sprite
+                            Child = userImage = new Sprite
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Texture = textures.Get("Images/gtg"),

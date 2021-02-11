@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content.PM;
+using Android.OS;
 using Android.Views;
 using GamesToGo.Game;
 using osu.Framework.Android;
@@ -11,8 +12,14 @@ namespace GamesToGo.Android
     {
         protected override osu.Framework.Game CreateGame()
         {
-            UIVisibilityFlags = SystemUiFlags.Visible;
             return new GamesToGoGame();
+        }
+
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+
+            UIVisibilityFlags = SystemUiFlags.Visible;
         }
     }
 }

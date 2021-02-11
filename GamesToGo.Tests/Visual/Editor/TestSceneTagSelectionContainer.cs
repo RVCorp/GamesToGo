@@ -8,20 +8,18 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Testing;
-using osuTK;
 
-namespace GamesToGo.Tests.Visual
+namespace GamesToGo.Tests.Visual.Editor
 {
     public class TestSceneTagSelectionContainer : TestScene
     {
-        private TagSelectionContainer tags;
         private SpriteText valueText;
-        private Bindable<Tag> current = new Bindable<Tag>();
+        private readonly Bindable<Tag> current = new Bindable<Tag>();
 
         [BackgroundDependencyLoader]
         private void load()
         {
-            Add(tags = new TagSelectionContainer
+            Add(new TagSelectionContainer
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

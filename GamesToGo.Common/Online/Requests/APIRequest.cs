@@ -2,7 +2,7 @@
 using osu.Framework.IO.Network;
 using osu.Framework.Logging;
 
-namespace GamesToGo.Editor.Online
+namespace GamesToGo.Common.Online.Requests
 {
     public abstract class APIRequest<T> : APIRequest where T : class
     {
@@ -94,6 +94,8 @@ namespace GamesToGo.Editor.Online
         {
             Success?.Invoke();
         }
+
+        public void Cancel() => Fail(new OperationCanceledException(@"Request cancelled"));
 
         public void Fail(Exception e)
         {

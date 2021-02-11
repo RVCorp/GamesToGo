@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using GamesToGo.Common.Game;
+using GamesToGo.Common.Online;
 using GamesToGo.Editor.Database.Models;
-using GamesToGo.Editor.Online;
 using GamesToGo.Editor.Project.Actions;
 using GamesToGo.Editor.Project.Arguments;
 using GamesToGo.Editor.Project.Elements;
@@ -153,12 +154,12 @@ namespace GamesToGo.Editor.Project
         /// Solo llamar cuando se quiera guardar
         /// </summary>
         /// <returns></returns>
-        public string SaveableString()
+        public string SaveableString(CommunityStatus projectStatus)
         {
             if (FirstSave)
                 returnableSaves--;
 
-            DatabaseObject.CommunityStatus = CommunityStatus.Saved;
+            DatabaseObject.CommunityStatus = projectStatus;
 
             var ret = stateString(true);
 
