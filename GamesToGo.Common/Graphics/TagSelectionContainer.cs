@@ -402,8 +402,8 @@ namespace GamesToGo.Common.Graphics
                     },
                     iconContainer = new Container
                     {
-                        Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.CentreLeft,
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
                         RelativeSizeAxes = Axes.Both,
                         FillMode = FillMode.Fit,
                         Margin = new MarginPadding { Horizontal = 5 },
@@ -436,6 +436,13 @@ namespace GamesToGo.Common.Graphics
                         Padding = new MarginPadding { Horizontal = 5 },
                         Children = new Drawable[]
                         {
+                            new SpriteText
+                            {
+                                Anchor = Anchor.CentreLeft,
+                                Origin = Anchor.CentreLeft,
+                                Text = Value.GetDescription(),
+                                Font = new FontUsage(size: tagSelection.TagSize),
+                            },
                             layoutContainer = new Container
                             {
                                 Anchor = Anchor.CentreLeft,
@@ -443,13 +450,6 @@ namespace GamesToGo.Common.Graphics
                                 RelativeSizeAxes = Axes.Y,
                                 Height = 1,
                                 Width = 0,
-                            },
-                            new SpriteText
-                            {
-                                Anchor = Anchor.CentreLeft,
-                                Origin = Anchor.CentreLeft,
-                                Text = Value.GetDescription(),
-                                Font = new FontUsage(size: tagSelection.TagSize),
                             },
                         },
                     },
