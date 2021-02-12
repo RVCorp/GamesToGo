@@ -254,7 +254,7 @@ namespace GamesToGo.Editor.Screens
             {
                 foreach (var proj in u.Where(project => !database.Projects.Any(dbp => dbp.OnlineProjectID == project.Id) && onlineProjectsList.Children.All(online => online.ID != project.Id)))
                 {
-                    onlineProjectsList.Add(new OnlineProjectSummaryContainer(proj) { ImportAction = importProject });
+                    LoadComponentAsync(new OnlineProjectSummaryContainer(proj) { ImportAction = importProject }, onlineProjectsList.Add);
                 }
             };
             api.Queue(getProjects);

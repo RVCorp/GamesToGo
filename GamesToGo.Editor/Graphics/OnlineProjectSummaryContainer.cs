@@ -12,6 +12,7 @@ using osuTK;
 
 namespace GamesToGo.Editor.Graphics
 {
+    [LongRunningLoad]
     public class OnlineProjectSummaryContainer : ProjectSummaryContainer
     {
         [Resolved]
@@ -61,8 +62,13 @@ namespace GamesToGo.Editor.Graphics
             editButton.Enabled.Value = true;
             Schedule(async () => //ToDo: ????
             {
-                ProjectImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
-                loadingIcon.FadeOut();
+                var texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
+
+                Schedule(() =>
+                {
+                    ProjectImage.Texture = texture;
+                    loadingIcon.FadeOut();
+                });
             });
 
             editButton.Action += downloadProject;
