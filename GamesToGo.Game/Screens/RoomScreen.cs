@@ -1,3 +1,4 @@
+﻿using System;
 using System.Linq;
 using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
@@ -39,7 +40,7 @@ namespace GamesToGo.Game.Screens
             TimeBetweenPolls = 1000,
         };
 
-        private FillFlowContainer<TextContainer> usersInRoom;
+        private FillFlowContainer usersInRoom;
         private SpriteText textButton;
         private readonly InvitePlayersToRoomOverlay inviteOverlay = new InvitePlayersToRoomOverlay();
         private ScreenStack gameStack;
@@ -157,7 +158,7 @@ namespace GamesToGo.Game.Screens
                                                 {
                                                     new SpriteText
                                                     {
-                                                        Text = "Jugadores:",
+                                                        Text = @"Jugadores:",
                                                         Font = new FontUsage(size: 80)
                                                     },
                                                     new BasicScrollContainer
@@ -166,11 +167,12 @@ namespace GamesToGo.Game.Screens
                                                         Height = 1000,
                                                         ClampExtension = 30,
                                                         Masking = true,
-                                                        Child = usersInRoom = new FillFlowContainer<TextContainer>
+                                                        Child = usersInRoom = new FillFlowContainer
                                                         {
                                                             RelativeSizeAxes = Axes.X,
                                                             AutoSizeAxes = Axes.Y,
                                                             Direction = FillDirection.Full,
+                                                            Spacing = new Vector2(0, 20),
                                                         },
                                                     },
                                                 },
@@ -218,7 +220,7 @@ namespace GamesToGo.Game.Screens
 
             for (int i = 0; i < room.Value.Game.Maxplayers; i++)
             {
-                usersInRoom.Add(new TextContainer());
+                usersInRoom.Add(new PlayerInfoContainer(i));
             }
 
             room.BindValueChanged(roomUpdate => Refresh(roomUpdate.NewValue), true);
@@ -241,17 +243,6 @@ namespace GamesToGo.Game.Screens
 
         private void Refresh(OnlineRoom updatedRoom)
         {
-            for (int i = 0; i < updatedRoom.Game.Maxplayers; i++)
-            {
-                if (updatedRoom.Players[i] != null)
-                {
-                    usersInRoom[i].Text = updatedRoom.Players[i].BackingUser.Username;
-                }
-                else if (updatedRoom.Players[i] == null)
-                {
-                    usersInRoom[i].Text = "";
-                }
-            }
 
             if (updatedRoom.HasStarted)
             {
@@ -260,38 +251,71 @@ namespace GamesToGo.Game.Screens
             }
         }
 
-        private class TextContainer : Container
+        private class PlayerInfoContainer : Container
         {
-            private SpriteText text;
+            private readonly int index;
+            private SpriteText playerName;
 
-            private string textString;
+            private static readonly Colour4 ready_green = Colour4.FromHex("8CDD81");
+            private static readonly Colour4 waiting_red = Colour4.FromHex("E9967A");
+            private static readonly Colour4 empty_gray = Colour4.Gray;
+            private static readonly Colour4 icon_green = Colour4.FromHex("4AC948");
+            private Box colourBox;
 
-            public string Text
+            [Resolved]
+            private Bindable<OnlineRoom> onlineRoom { get; set; }
+
+            public PlayerInfoContainer(int index)
             {
-                set
-                {
-                    if (text != null)
-                    {
-                        text.Text = value;
-                    }
-
-                    textString = value;
-                }
+                this.index = index;
             }
 
             [BackgroundDependencyLoader]
             private void load()
             {
                 RelativeSizeAxes = Axes.X;
-                Width = .5f;
+                Width = 0.5f;
                 Height = 100;
-                Child = text = new SpriteText
+                Padding = new MarginPadding { Horizontal = 10f };
+
+                Child = new Container
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Font = new FontUsage(size: 50),
-                    Text = textString,
+                    Masking = true,
+                    CornerRadius = 15f,
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        colourBox = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = empty_gray,
+                        },
+                        playerName = new SpriteText
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Font = new FontUsage(size: 50),
+                        },
+                    },
                 };
+
+                onlineRoom.BindValueChanged(updateDisplay, true);
+            }
+
+            private void updateDisplay(ValueChangedEvent<OnlineRoom> roomChange)
+            {
+                playerName.Text = roomChange.NewValue.Players[index]?.BackingUser.Username ?? @"Esperando Jugador...";
+
+                Colour4 targetBackground;
+
+                if (roomChange.NewValue.Players[index] == null)
+                    targetBackground = empty_gray;
+                else if (roomChange.NewValue.Players[index].Ready)
+                    targetBackground = ready_green;
+                else
+                    targetBackground = waiting_red;
+
+                colourBox.FadeColour(targetBackground, 200, Easing.OutQuart);
             }
         }
     }
