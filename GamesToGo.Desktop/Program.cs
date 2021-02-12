@@ -16,7 +16,7 @@ namespace GamesToGo.Desktop
             if ((server = args.FirstOrDefault(a => a.StartsWith(@"--server="))) != null)
                 APIController.AlternativeServer = server.Substring(server.IndexOf('=') + 1);
             //Estas tres lineas crean la ventana base del proyecto (en el lenguaje del framework, un "juego"), y crean una ventana para el
-            using DesktopGameHost host = Host.GetSuitableHost(@"GamesToGo", useOsuTK: true);
+            using DesktopGameHost host = Host.GetSuitableHost(@"GamesToGo");
             using Game program = new GamesToGoEditor();
                 host.Run(program);
         }
