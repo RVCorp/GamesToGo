@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online;
-using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
@@ -27,6 +27,8 @@ namespace GamesToGo.Game.Overlays
         private ScreenStack stack { get; set; }
         [Resolved]
         private SideMenuOverlay sideMenu { get; set; }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -126,20 +128,46 @@ namespace GamesToGo.Game.Overlays
 
         private void joinRoom(int id, OnlineGame downloadGame)
         {
-            game.DownloadGame(downloadGame);
-            var room = new AcceptInviteRequest(id);
-            room.Success += u =>
+            var downloadComplete = game.DownloadGame(downloadGame);
+
+            Task.Run(async () =>
             {
-                LoadComponentAsync(new RoomScreen(u), roomScreen =>
+                await downloadComplete.Task;
+
+                if (downloadComplete.Task.Result == false)
                 {
-                    stack.Push(roomScreen);
-                    Hide();
-                    sideMenu.Hide();
-                });
-                game.Invitations.Remove(game.Invitations.First(i => i.ID == id));
-                invitationsContainer.Remove(invitationsContainer.FirstOrDefault(c => c.Invitation.ID == id));
-            };
-            api.Queue(room);
+                    failure();
+
+                    return;
+                }
+
+                var room = new AcceptInviteRequest(id);
+                room.Success += u =>
+                {
+                    Schedule(() =>
+                    {
+                        LoadComponentAsync(new RoomScreen(u), roomScreen =>
+                        {
+                            stack.Push(roomScreen);
+                            Hide();
+                            sideMenu.Hide();
+                        });
+                        game.Invitations.Remove(game.Invitations.First(i => i.ID == id));
+                        invitationsContainer.Remove(invitationsContainer.FirstOrDefault(c => c.Invitation.ID == id));
+                    });
+                };
+                room.Failure += ex =>
+                {
+                    failure();
+                };
+
+                api.Queue(room);
+
+                void failure()
+                {
+                    Schedule(() => infoOverlay.Show(@"Ocurrió un error al intentar crear la sala", Colour4.DarkRed));
+                }
+            });
         }
 
         private void declineInvite(int id) // (id invitacion) POST

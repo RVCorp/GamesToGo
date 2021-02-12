@@ -1,11 +1,13 @@
 ﻿using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Common.Online.Requests;
 using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
 using Ionic.Zip;
 using osu.Framework.Allocation;
@@ -98,20 +100,75 @@ namespace GamesToGo.Game
             LoadComponentAsync(startScreen = new SessionStartScreen(), stack.Push);
         }
 
-        public void DownloadGame(OnlineGame game)
+        public TaskCompletionSource<bool> DownloadGame(OnlineGame game)
         {
-            var getGame = new DownloadProjectRequest(game.Id, game.Hash, store);
-            getGame.Success += g => importGame(game);
-            getGame.Progressed += g =>
+            var completionSource = new TaskCompletionSource<bool>();
+
+            var files = store.GetFiles("files");
+
+            var getFilenamesForGame = new GetFileListForGameRequest(game.Id);
+
+            getFilenamesForGame.Success += gameFiles =>
             {
-                infoOverlay.Show(@"Descargando juego...", Colour4.Turquoise);
+                var missingFiles = gameFiles.Except(files).ToArray();
+
+                if (missingFiles.Length == gameFiles.Count)
+                {
+                    var getGame = new DownloadProjectRequest(game.Id, game.Hash, store);
+
+                    getGame.Success += g =>
+                    {
+                        completionSource.SetResult(true);
+                        importGame(game.Hash);
+                    };
+
+                    getGame.Progressed += _ =>
+                    {
+                        infoOverlay.Show(@"Descargando juego...", Colour4.Turquoise);
+                    };
+
+                    getGame.Failure += _ => failure();
+
+                    api.Queue(getGame);
+                }
+                else if (missingFiles.Length == 0)
+                {
+                    completionSource.SetResult(true);
+                }
+                else
+                {
+                    int downloadedFiles = 0;
+                    foreach (var file in missingFiles)
+                    {
+                        var getFile = new DownloadSpecificFile(file, store);
+
+                        getFile.Success += _ =>
+                        {
+                            downloadedFiles++;
+
+                            if (downloadedFiles == missingFiles.Length)
+                                completionSource.SetResult(true);
+                        };
+
+                        getFile.Failure += _ => failure();
+                    }
+                }
             };
-            api.Queue(getGame);
+
+            getFilenamesForGame.Failure += _ => failure();
+
+            return completionSource;
+
+            void failure()
+            {
+                completionSource.SetResult(false);
+                infoOverlay.Show(@"Error al descargar el juego!", Colour4.DarkRed);
+            }
         }
 
-        private void importGame(OnlineGame onlineGame)
+        private void importGame(string zipName)
         {
-            string filename = store.GetFullPath(Path.Combine(@"download", @$"{onlineGame.Hash}.zip"));
+            string filename = store.GetFullPath(Path.Combine(@"download", @$"{zipName}.zip"));
 
             using var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open);
 
