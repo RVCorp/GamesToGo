@@ -16,7 +16,6 @@ namespace GamesToGo.Game.Online.Requests
             this.hash = hash;
             filename = Path.Combine("files", $"{hash.ToUpper()}");
             this.store = store;
-            base.Success += onSuccess;
         }
 
         protected override WebRequest CreateWebRequest()
@@ -28,16 +27,13 @@ namespace GamesToGo.Game.Online.Requests
             { }
 
             var request = new FileWebRequest(fullPath, Uri);
-
+            request.DownloadProgress += request_Progress;
             return request;
         }
 
-        private void onSuccess()
-        {
-            Success?.Invoke(filename);
-        }
+        private void request_Progress(long current, long total) => API.Schedule(() => Progressed?.Invoke((float)current / total));
 
-        public new event APISuccessHandler<string> Success;
+        public event APIProgressHandler Progressed;
 
         protected override string Target => $"Games/DownloadFile/{hash}";
     }

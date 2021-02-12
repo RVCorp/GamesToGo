@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,15 +105,15 @@ namespace GamesToGo.Game
         {
             var completionSource = new TaskCompletionSource<bool>();
 
-            var files = store.GetFiles("files");
+            var files = store.GetStorageForDirectory("files").GetFiles("");
 
             var getFilenamesForGame = new GetFileListForGameRequest(game.Id);
 
             getFilenamesForGame.Success += gameFiles =>
             {
-                var missingFiles = gameFiles.Except(files).ToArray();
+                var missingFiles = new Queue<string>(gameFiles.Except(files).ToArray());
 
-                if (missingFiles.Length == gameFiles.Count)
+                if (missingFiles.Count == gameFiles.Count)
                 {
                     var getGame = new DownloadProjectRequest(game.Id, game.Hash, store);
 
@@ -131,31 +132,46 @@ namespace GamesToGo.Game
 
                     api.Queue(getGame);
                 }
-                else if (missingFiles.Length == 0)
-                {
-                    completionSource.SetResult(true);
-                }
                 else
                 {
-                    int downloadedFiles = 0;
-                    foreach (var file in missingFiles)
+                    Task.Run(() =>
                     {
-                        var getFile = new DownloadSpecificFile(file, store);
-
-                        getFile.Success += _ =>
+                        while (missingFiles.Count > 0)
                         {
-                            downloadedFiles++;
+                            var getFile = new DownloadSpecificFile(missingFiles.Dequeue(), store);
+                            var fileDownloaded = false;
 
-                            if (downloadedFiles == missingFiles.Length)
-                                completionSource.SetResult(true);
-                        };
+                            getFile.Success += () =>
+                            {
+                                fileDownloaded = true;
+                            };
 
-                        getFile.Failure += _ => failure();
-                    }
+                            getFile.Progressed += current =>
+                            {
+                                Schedule(() => infoOverlay.Show(@$"Descargando archivos faltantes (faltan {missingFiles.Count + 1})...", Colour4.Turquoise));
+                            };
+
+                            getFile.Failure += _ =>
+                            {
+                                missingFiles.Clear();
+                                failure();
+                            };
+
+                            api.Queue(getFile);
+
+                            while (!fileDownloaded && missingFiles.Count > 0)
+                            {
+                            }
+                        }
+
+                        completionSource.SetResult(true);
+                    });
                 }
             };
 
             getFilenamesForGame.Failure += _ => failure();
+
+            api.Queue(getFilenamesForGame);
 
             return completionSource;
 
