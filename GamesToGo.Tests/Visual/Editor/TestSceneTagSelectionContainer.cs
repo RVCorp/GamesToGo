@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using GamesToGo.Editor.Graphics;
-using GamesToGo.Editor.Project;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Testing;
+using GamesToGo.Common.Graphics;
 
 namespace GamesToGo.Tests.Visual.Editor
 {
@@ -19,7 +20,7 @@ namespace GamesToGo.Tests.Visual.Editor
         [BackgroundDependencyLoader]
         private void load()
         {
-            Add(new TagSelectionContainer
+            Add(new TagSelectionContainer(35f)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

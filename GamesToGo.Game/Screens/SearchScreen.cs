@@ -1,6 +1,9 @@
-﻿using GamesToGo.Common.Online;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using GamesToGo.Common.Online;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -12,11 +15,10 @@ using osu.Framework.Screens;
 namespace GamesToGo.Game.Screens
 {
     [Cached]
-    public class MainMenuScreen : Screen
+    class SearchScreen : Screen
     {
-        private FillFlowContainer<Container> communityGames;
-        [Cached]
-        private SideMenuOverlay sideMenu = new SideMenuOverlay();
+        private FillFlowContainer<Container> searchedGames;
+        public SearchOverlay SearchOverlay;
 
         [Resolved]
         private APIController api { get; set; }
@@ -64,11 +66,11 @@ namespace GamesToGo.Game.Screens
                                         Origin = Anchor.TopLeft,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .2f,
-                                        Child = new SimpleIconButton(FontAwesome.Solid.Bars)
+                                        Child = new SimpleIconButton(FontAwesome.Solid.ArrowLeft)
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => sideMenu.Show()
+                                            Action = () => this.Exit()
                                         }
                                     },
                                     new Container
@@ -81,7 +83,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             Anchor = Anchor.Centre,
                                             Origin = Anchor.Centre,
-                                            Action = () => searchScreen(),
+                                            Action = () => SearchOverlay.Show(),
                                         }
                                     },
                                 }
@@ -96,7 +98,7 @@ namespace GamesToGo.Game.Screens
                                 {
                                     RelativeSizeAxes = Axes.Both,
                                     ClampExtension = 30,
-                                    Child = communityGames = new FillFlowContainer<Container>
+                                    Child = searchedGames = new FillFlowContainer<Container>
                                     {
                                         AutoSizeAxes = Axes.Y,
                                         RelativeSizeAxes = Axes.X,
@@ -107,40 +109,30 @@ namespace GamesToGo.Game.Screens
                         }
                     }
                 },
-                sideMenu
+                SearchOverlay = new SearchOverlay(),
             };
-            populateGamesList();
+            SearchOverlay.Show();
         }
 
-        private void populateGamesList()
+        public void RefreshSearchedGames(List<OnlineGame> onlineGames)
         {
-            var getGames = new GetAllPublishedGamesRequest();
-            getGames.Success += u =>
+            foreach (var game in onlineGames)
             {
-                foreach(var game in u)
+                searchedGames.Add(new Container
                 {
-                    communityGames.Add(new Container
+                    RelativeSizeAxes = Axes.X,
+                    Height = 400,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 400,
-                        Children = new Drawable[]
+                        new GamePreviewContainer(game)
                         {
-                            new GamePreviewContainer(game)
-                            {
-                                Action = () => LoadComponentAsync(new GameInfoScreen(game), this.Push),
-                                GameNameSize = 90,
-                                MadeBySize = 60
-                            },
+                            Action = () => LoadComponentAsync(new GameInfoScreen(game), this.Push),
+                            GameNameSize = 90,
+                            MadeBySize = 60
                         },
-                    });
-                }
-            };
-            api.Queue(getGames);
-        }
-
-        private void searchScreen()
-        {
-            LoadComponentAsync(new SearchScreen(), this.Push);
+                    },
+                });
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using GamesToGo.Common.Game;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -21,6 +22,16 @@ namespace GamesToGo.Game.Graphics
                     Current.Value -= drawable.Value;
             });
             base.Add(drawable);
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            var tags = Enum.GetValues(typeof(Tag)).Cast<Tag>();
+            foreach (var tag in tags)
+            {
+                Add(new TagContainer(tag));
+            }
         }
     }
 }

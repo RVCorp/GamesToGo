@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GamesToGo.Common.Graphics;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -11,6 +13,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osuTK;
 
 namespace GamesToGo.Game.Overlays
 {
@@ -21,11 +24,10 @@ namespace GamesToGo.Game.Overlays
         private Container content;
         private GamesToGoButton search;
         private BasicTextBox searchTextBox;
-        private TagFlowContainer tagsContainer;
-        private List<Bindable<bool>> tagsAreSelected;
+        private TagSelectionContainer tagsContainer;
 
         [Resolved]
-        private MainMenuScreen mainMenu { get; set; }
+        private SearchScreen searchScreen { get; set; }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -77,6 +79,7 @@ namespace GamesToGo.Game.Overlays
                                 {
                                     new Container
                                     {
+                                        Depth = 0,
                                         RelativeSizeAxes = Axes.Both,
                                         Children = new Drawable[]
                                         {
@@ -101,7 +104,7 @@ namespace GamesToGo.Game.Overlays
                                                             Width = .9f,
                                                             Height = 150,
                                                         }
-                                                    },                                                    
+                                                    },
                                                     new Container
                                                     {
                                                         Anchor = Anchor.TopLeft,
@@ -114,17 +117,10 @@ namespace GamesToGo.Game.Overlays
                                                             Origin = Anchor.Centre,
                                                             RelativeSizeAxes = Axes.Both,
                                                             Width = .9f,
-                                                            Child = new BasicScrollContainer(Direction.Horizontal)
-                                                            {
+                                                            Child = tagsContainer = new TagSelectionContainer(100)
+                                                            {                                                                
                                                                 RelativeSizeAxes = Axes.X,
-                                                                Height = 150,
-                                                                ClampExtension = 30,
-                                                                Child = tagsContainer = new TagFlowContainer
-                                                                {
-                                                                    AutoSizeAxes = Axes.X,
-                                                                    RelativeSizeAxes = Axes.Y,
-                                                                    Direction = FillDirection.Horizontal,
-                                                                },
+                                                                Height = 100
                                                             }
                                                         }
                                                     }
@@ -137,10 +133,11 @@ namespace GamesToGo.Game.Overlays
                                 {
                                     new Container
                                     {
+                                        Depth = 1,
                                         RelativeSizeAxes = Axes.Both,
                                         Padding = new MarginPadding(30),
                                         Child = search = new GamesToGoButton
-                                        {
+                                        {                                            
                                             Anchor = Anchor.TopCentre,
                                             Origin = Anchor.TopCentre,
                                             Height = 225,
@@ -155,32 +152,50 @@ namespace GamesToGo.Game.Overlays
                     },
                 },
             };
-            populateTags();
             tagsContainer.Current.BindValueChanged(v => enableButton());
             searchTextBox.Current.BindValueChanged(t => enableButton());
             search.SpriteText.Font = new FontUsage(size: 60);
             search.Enabled.Value = false;
         }
 
-        private void populateTags()
-        {
-            for (int i = 0; i < 13; i++)
-            {
-                tagsContainer.Add(new TagContainer($"Etiqueta #{i}", 1) { CornerRadius = 10, Masking = true });
-            }
-        }
-
         private void enableButton()
         {
-            if (tagsContainer.Current.Value > 0 || string.IsNullOrEmpty(searchTextBox.Current.Value) == false)
+            if (tagsContainer.Current.Value > 0)
+            {
                 search.Enabled.Value = true;
+                searchTextBox.Current.Disabled = true;
+            }                
+            else if(string.IsNullOrEmpty(searchTextBox.Current.Value) == false)
+            {
+                tagsContainer.Current.Disabled = true;
+                search.Enabled.Value = true;
+            }
             else
+            {
+                searchTextBox.Current.Disabled = false;
                 search.Enabled.Value = false;
+                tagsContainer.Current.Disabled = false;
+            }                
         }
 
         private void searchRequest()
         {
-
+            if (tagsContainer.Current.Value > 0)
+            {
+                var searchTag = new SearchTagRequest((uint)tagsContainer.Current.Value);
+                searchTag.Success += u =>
+                {
+                    searchScreen.RefreshSearchedGames(u);
+                };
+            }
+            else
+            {
+                var searchString = new SearchTextRequest(searchTextBox.Current.Value);
+                searchString.Success += u =>
+                {
+                    searchScreen.RefreshSearchedGames(u);
+                };
+            }
         }
 
         protected override void PopIn()

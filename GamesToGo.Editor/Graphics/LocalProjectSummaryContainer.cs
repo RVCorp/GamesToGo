@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
+using GamesToGo.Common.Game;
 using osuTK;
 using osu.Framework.Extensions;
 

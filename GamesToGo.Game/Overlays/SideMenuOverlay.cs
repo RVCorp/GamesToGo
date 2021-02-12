@@ -272,7 +272,7 @@ namespace GamesToGo.Game.Overlays
             invitations.BindTo(game.Invitations);
             invitations.BindCollectionChanged((_,__)=> changeInvitationsNumber());
             localUser.BindTo(api.LocalUser);
-            localUser.BindValueChanged(_ => changeUserData());
+            localUser.BindValueChanged(_ => changeUserData(), true);
         }
 
         private void logout()
@@ -302,6 +302,9 @@ namespace GamesToGo.Game.Overlays
             if(localUser.Value != null)
             {
                 Schedule(async () =>
+
+
+
                 {
                     userImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Users/DownloadImage/{api.LocalUser.Value.ID}");
                 });
