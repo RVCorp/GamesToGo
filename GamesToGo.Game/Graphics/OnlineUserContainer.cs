@@ -18,7 +18,6 @@ namespace GamesToGo.Game.Graphics
         private User user;
         private Sprite userImage;
         private SurfaceButton inviteButton;
-        private Box colourBox;
 
         public OnlineUserContainer(User user)
         {
@@ -76,26 +75,22 @@ namespace GamesToGo.Game.Graphics
                         {
                             RelativeSizeAxes = Axes.Both,
                             Width = .2f,
-                            Padding = new MarginPadding(){ Right = 50},
+                            Padding = new MarginPadding { Right = 50},
                             Child = inviteButton = new SurfaceButton
                             {
                                 Action = () => inviteUser(),
+                                BackgroundColour = new Colour4(106, 100, 104, 255),
                                 Children = new Drawable[]
                                 {
-                                    colourBox = new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = new Colour4(106, 100, 104, 255)
-                                    },
                                     new SpriteIcon
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .9f,
-                                        Icon = FontAwesome.Solid.Envelope
-                                    }
-                                }
+                                        Icon = FontAwesome.Solid.Envelope,
+                                    },
+                                },
                             },
                         },
                     },
@@ -110,12 +105,12 @@ namespace GamesToGo.Game.Graphics
         private void inviteUser()
         {
             inviteButton.Enabled.Value = false;
-            colourBox.Colour = Colour4.DarkSlateGray;
+            inviteButton.BackgroundColour = Colour4.DarkSlateGray;
             var invite = new SendInvitationRequest(user.ID);
             invite.Failure += e =>
             {
                 inviteButton.Enabled.Value = true;
-                colourBox.Colour = new Colour4(106, 100, 104, 255);
+                inviteButton.BackgroundColour = new Colour4(106, 100, 104, 255);
             };
             api.Queue(invite);
         }

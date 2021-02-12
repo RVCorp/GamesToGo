@@ -247,13 +247,9 @@ namespace GamesToGo.Game.Screens
                         Child = new SurfaceButton
                         {
                             Action = () => createRoom(onlineGame),
+                            BackgroundColour = Colour4.Pink,
                             Children = new Drawable[]
                             {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Colour4.Pink
-                                },
                                 new SpriteIcon
                                 {
                                     Anchor = Anchor.Centre,
