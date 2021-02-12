@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GamesToGo.Common.Graphics;
 using GamesToGo.Editor.Graphics;
 using GamesToGo.Editor.Overlays;
 using GamesToGo.Editor.Project;
@@ -163,7 +164,7 @@ namespace GamesToGo.Editor.Screens
                                                 Text = @"Etiquetas:",
                                                 Position = new Vector2(556, 130),
                                             },
-                                            tags = new TagSelectionContainer
+                                            tags = new TagSelectionContainer(TEXT_ELEMENT_SIZE)
                                             {
                                                 Size = new Vector2(1272, TEXT_ELEMENT_SIZE),
                                                 Position = new Vector2(635, 130),

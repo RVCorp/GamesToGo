@@ -104,12 +104,31 @@ namespace GamesToGo.Game.Screens
                                         Origin = Anchor.TopLeft,
                                         RelativeSizeAxes = Axes.Both,
                                         Width = .2f,
-                                        Child = new SimpleIconButton(FontAwesome.Solid.SignOutAlt)
+                                        Children = new Drawable[]
                                         {
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            Action = exitRoom,
-                                        },
+                                            new SimpleIconButton(FontAwesome.Solid.SignOutAlt)
+                                            {
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Action = exitRoom,
+                                            },                                            
+                                        }
+                                    },
+                                    new Container
+                                    {
+                                        Anchor = Anchor.TopRight,
+                                        Origin = Anchor.TopRight,
+                                        RelativeSizeAxes = Axes.Both,
+                                        Width = .2f,
+                                        Children = new Drawable[]
+                                        {
+                                            new SimpleIconButton(FontAwesome.Solid.Envelope)
+                                            {
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Action = inviteOverlay.Show,
+                                            },
+                                        }
                                     },
                                 },
                             },
@@ -156,30 +175,7 @@ namespace GamesToGo.Game.Screens
                                                     },
                                                 },
                                             },
-                                        },
-                                        new Container
-                                        {
-                                            RelativeSizeAxes = Axes.Both,
-                                            Height = .15f,
-                                            Child = continueButton = new SurfaceButton
-                                            {
-                                                Action = inviteOverlay.Show,
-                                                Children = new Drawable[]
-                                                {
-                                                    new Box
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Colour = Colour4.LightGray
-                                                    },
-                                                    textButton = new SpriteText
-                                                    {
-                                                        Anchor = Anchor.Centre,
-                                                        Origin = Anchor.Centre,
-                                                        Font = new FontUsage(size: 80),
-                                                    },
-                                                },
-                                            },
-                                        },
+                                        },                                        
                                         new Container
                                         {
                                             RelativeSizeAxes = Axes.Both,

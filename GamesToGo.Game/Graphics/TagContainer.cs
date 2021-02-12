@@ -7,6 +7,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using GamesToGo.Common.Game;
+using osu.Framework.Extensions;
 
 namespace GamesToGo.Game.Graphics
 {
@@ -17,15 +19,15 @@ namespace GamesToGo.Game.Graphics
         public Box ColorBox;
         private SpriteIcon icon;
         public Bindable<bool> IsSelected = new Bindable<bool>();
-        public uint Value;
+        public uint Value;        
 
         [Resolved]
         private SearchOverlay searchOverlay { get; set; }
 
-        public TagContainer(string text, uint value)
+        public TagContainer(Tag tag)
         {
-            this.Text = text;
-            Value = value;
+            this.Text = tag.GetDescription();
+            Value = (uint)tag;
         }
 
         [BackgroundDependencyLoader]

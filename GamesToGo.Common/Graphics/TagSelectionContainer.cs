@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using GamesToGo.Editor.Project;
-using GamesToGo.Editor.Screens;
+using GamesToGo.Common.Game;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
@@ -15,24 +14,31 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
 
-namespace GamesToGo.Editor.Graphics
+namespace GamesToGo.Common.Graphics
 {
     [Cached]
     public class TagSelectionContainer : Container, IHasCurrentValue<Tag>
     {
-        private const float tag_size = 30f;
+        public float TagSize => elementSize -5;
         private const double transform_duration = 125;
         private const Easing transform_easing = Easing.OutCubic;
+        private readonly float elementSize;
 
         private FillFlowContainer<TagDropdown> flowContainer;
 
         private readonly BindableWithCurrent<Tag> current = new BindableWithCurrent<Tag>();
         private BasicScrollContainer scrollContainer;
 
+        public override bool PropagatePositionalInputSubTree => !current.Disabled && base.PropagatePositionalInputSubTree;
+
         public Bindable<Tag> Current
         {
             get => current.Current;
             set => current.Current = value;
+        }
+        public TagSelectionContainer(float size)
+        {
+            elementSize = size;
         }
 
         [BackgroundDependencyLoader]
@@ -46,7 +52,7 @@ namespace GamesToGo.Editor.Graphics
                 {
                     Colour = FrameworkColour.BlueGreenDark,
                     RelativeSizeAxes = Axes.X,
-                    Height = ProjectHomeScreen.TEXT_ELEMENT_SIZE,
+                    Height = elementSize,
                 },
                 scrollContainer = new BasicScrollContainer(Direction.Horizontal)
                 {
@@ -58,8 +64,8 @@ namespace GamesToGo.Editor.Graphics
                     Child = flowContainer = new FillFlowContainer<TagDropdown>
                     {
                         AutoSizeAxes = Axes.Both,
-                        Padding = new MarginPadding((ProjectHomeScreen.TEXT_ELEMENT_SIZE - tag_size) / 2),
-                        Spacing = new Vector2((ProjectHomeScreen.TEXT_ELEMENT_SIZE - tag_size) / 2),
+                        Padding = new MarginPadding((elementSize - TagSize) / 2),
+                        Spacing = new Vector2((elementSize - TagSize) / 2),
                         Direction = FillDirection.Horizontal,
                     },
                 },
@@ -99,13 +105,14 @@ namespace GamesToGo.Editor.Graphics
 
 
             current.BindValueChanged(selectWithValue);
+            current.BindDisabledChanged(changeMenuEnabling, true);
         }
 
         private void prepareAndAddDropdown(TagDropdown tagDropdown)
         {
             tagDropdown.Current.BindValueChanged(_ =>
             {
-                current.Value = (current.Value & ~tagDropdown.AffectedTags) | tagDropdown.Current.Value;
+                 current.Value = (current.Value & ~tagDropdown.AffectedTags) | tagDropdown.Current.Value;
             });
             tagDropdown.Visible.BindValueChanged(visible =>
             {
@@ -124,6 +131,27 @@ namespace GamesToGo.Editor.Graphics
             {
                 dropdown.Current.Value = dropdown.AffectedTags & values.NewValue;
             }
+        }
+
+        private void changeMenuEnabling(bool disabled)
+        {
+            scrollContainer.FadeColour(disabled ? new Colour4(150, 150, 150, 255) : Colour4.White, transform_duration, transform_easing);
+
+            if (!disabled) return;
+            foreach(var dropdown in flowContainer)
+            {
+                dropdown.Visible.Value = false;
+            }
+        }
+
+        protected override bool OnMouseDown(MouseDownEvent e)
+        {
+            return current.Disabled || base.OnMouseDown(e);
+        }
+
+        protected override bool OnClick(ClickEvent e)
+        {
+            return current.Disabled || base.OnClick(e);
         }
 
         [Cached]
@@ -163,6 +191,7 @@ namespace GamesToGo.Editor.Graphics
                     AffectedTags |= tag;
             }
 
+
             [BackgroundDependencyLoader]
             private void load()
             {
@@ -176,7 +205,7 @@ namespace GamesToGo.Editor.Graphics
                         Masking = true,
                         CornerRadius = 4,
                         RelativeSizeAxes = Axes.X,
-                        Height = tag_size,
+                        Height = tagSelection.TagSize,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -187,7 +216,7 @@ namespace GamesToGo.Editor.Graphics
                     {
                         Masking = true,
                         CornerRadius = 4,
-                        Position = new Vector2(0, tag_size),
+                        Position = new Vector2(0, tagSelection.TagSize),
                         AutoSizeAxes = Axes.X,
                         Children = new Drawable[]
                         {
@@ -200,7 +229,7 @@ namespace GamesToGo.Editor.Graphics
                     },
                     headerContainer = new Container
                     {
-                        Height = tag_size,
+                        Height = tagSelection.TagSize,
                         AutoSizeAxes = Axes.X,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
@@ -229,7 +258,7 @@ namespace GamesToGo.Editor.Graphics
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = category.GetDescription(),
-                                        Font = new FontUsage(size: tag_size),
+                                        Font = new FontUsage(size: tagSelection.TagSize),
                                     },
                                     new Container
                                     {
@@ -264,7 +293,7 @@ namespace GamesToGo.Editor.Graphics
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
                                                     Text = string.Empty,
-                                                    Font = new FontUsage(size: tag_size - 4),
+                                                    Font = new FontUsage(size: tagSelection.TagSize - 4),
                                                 },
                                             },
                                         },
@@ -341,6 +370,9 @@ namespace GamesToGo.Editor.Graphics
             private Container layoutContainer;
 
             [Resolved]
+            private TagSelectionContainer tagSelection { get; set; }
+
+            [Resolved]
             private TagDropdown dropdown { get; set; }
 
             public Bindable<bool> Selected { get; } = new Bindable<bool>();
@@ -358,7 +390,7 @@ namespace GamesToGo.Editor.Graphics
             private void load()
             {
                 AutoSizeAxes = Axes.X;
-                Height = tag_size;
+                Height = tagSelection.TagSize;
 
                 Children = new Drawable[]
                 {
@@ -417,7 +449,7 @@ namespace GamesToGo.Editor.Graphics
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Text = Value.GetDescription(),
-                                Font = new FontUsage(size: tag_size),
+                                Font = new FontUsage(size: tagSelection.TagSize),
                             },
                         },
                     },
@@ -444,12 +476,12 @@ namespace GamesToGo.Editor.Graphics
                     case true:
                         activeIcon.FadeIn(transform_duration, transform_easing);
                         iconContainer.FadeIn(transform_duration, transform_easing);
-                        layoutContainer.ResizeWidthTo(tag_size + 3, transform_duration, transform_easing);
+                        layoutContainer.ResizeWidthTo(tagSelection.TagSize + 3, transform_duration, transform_easing);
                         break;
                     case false when IsHovered:
                         activeIcon.FadeOut(transform_duration, transform_easing);
                         iconContainer.FadeIn(transform_duration, transform_easing);
-                        layoutContainer.ResizeWidthTo(tag_size + 3, transform_duration, transform_easing);
+                        layoutContainer.ResizeWidthTo(tagSelection.TagSize + 3, transform_duration, transform_easing);
                         break;
                     case false when !IsHovered:
                         activeIcon.FadeOut(transform_duration, transform_easing);

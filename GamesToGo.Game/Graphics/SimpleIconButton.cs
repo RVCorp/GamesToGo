@@ -7,7 +7,7 @@ using osuTK;
 
 namespace GamesToGo.Game.Graphics
 {
-    public class SimpleIconButton : Button
+    public class SimpleIconButton : SurfaceButton
     {
         private readonly IconUsage buttonIcon;
 
@@ -21,6 +21,7 @@ namespace GamesToGo.Game.Graphics
         {
             Masking = true;
             CornerRadius = 5;
+            RelativeSizeAxes = Axes.None;
             Size = new Vector2(100, 100);
             Children = new Drawable[]
             {
