@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.LocalGame;
@@ -10,11 +10,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Platform;
 using osu.Framework.Screens;
+using osuTK;
 
 namespace GamesToGo.Game.Screens
 {
@@ -40,10 +42,10 @@ namespace GamesToGo.Game.Screens
         private FillFlowContainer<TextContainer> usersInRoom;
         private SpriteText textButton;
         private readonly InvitePlayersToRoomOverlay inviteOverlay = new InvitePlayersToRoomOverlay();
-        private Box colorBox;
         private ScreenStack gameStack;
 
         private DependencyContainer dependencies;
+        private SurfaceButton continueButton;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
             dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -159,7 +161,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Height = .15f,
-                                            Child = new SurfaceButton
+                                            Child = continueButton = new SurfaceButton
                                             {
                                                 Action = inviteOverlay.Show,
                                                 Children = new Drawable[]
@@ -185,13 +187,9 @@ namespace GamesToGo.Game.Screens
                                             Child = new SurfaceButton
                                             {
                                                 Action = playGame,
+                                                BackgroundColour = Colour4.LightPink,
                                                 Children = new Drawable[]
                                                 {
-                                                    colorBox = new Box
-                                                    {
-                                                        RelativeSizeAxes = Axes.Both,
-                                                        Colour = Colour4.LightPink
-                                                    },
                                                     textButton = new SpriteText
                                                     {
                                                         Anchor = Anchor.Centre,
@@ -240,7 +238,7 @@ namespace GamesToGo.Game.Screens
 
         private void playGame()
         {
-            colorBox.Colour = Colour4.DeepPink;
+            continueButton.BackgroundColour = Colour4.DeepPink;
             var req = new ReadyRequest();
             api.Queue(req);
         }
