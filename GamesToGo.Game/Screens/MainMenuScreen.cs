@@ -15,6 +15,7 @@ namespace GamesToGo.Game.Screens
     public class MainMenuScreen : Screen
     {
         private FillFlowContainer<Container> communityGames;
+
         [Cached]
         private SideMenuOverlay sideMenu = new SideMenuOverlay();
 

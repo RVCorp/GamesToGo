@@ -71,22 +71,18 @@ namespace GamesToGo.Game.Graphics
                             Child = new SurfaceButton
                             {
                                 Action = () => NextScreen(),
+                                BackgroundColour = new Colour4(106, 100, 104, 255),
                                 Children = new Drawable[]
                                 {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = new Colour4(106, 100, 104, 255)
-                                    },
                                     new SpriteIcon
                                     {
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         RelativeSizeAxes = Axes.Both,
                                         Icon = FontAwesome.Solid.Check
-                                    }
-                                }
-                            }
+                                    },
+                                },
+                            },
                         },
                         new Container
                         {
@@ -96,13 +92,9 @@ namespace GamesToGo.Game.Graphics
                             Child = new SurfaceButton
                             {
                                 Action = () => DeleteInvitation(),
+                                BackgroundColour = new Colour4(106, 100, 104, 255),
                                 Children = new Drawable[]
                                 {
-                                    new Box
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Colour = new Colour4(106, 100, 104, 255)
-                                    },
                                     new SpriteIcon
                                     {
                                         Anchor = Anchor.Centre,
