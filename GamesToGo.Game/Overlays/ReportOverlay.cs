@@ -147,13 +147,9 @@ namespace GamesToGo.Game.Overlays
                                                     Depth = 1,
                                                     Height = .2f,
                                                     Action = () => reportAction(),
+                                                    BackgroundColour = Colour4.LightPink,
                                                     Children = new Drawable[]
                                                     {
-                                                        new Box
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            Colour = Colour4.LightPink
-                                                        },
                                                         new SpriteText
                                                         {
                                                             Anchor = Anchor.Centre,

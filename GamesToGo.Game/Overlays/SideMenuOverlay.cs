@@ -6,6 +6,7 @@ using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -18,9 +19,6 @@ namespace GamesToGo.Game.Overlays
     [Cached]
     public class SideMenuOverlay : OverlayContainer
     {
-        private Container menu;
-        private Box shadowBox;
-
         [Resolved]
         private APIController api { get; set; }
 
@@ -45,34 +43,36 @@ namespace GamesToGo.Game.Overlays
         private Sprite userImage;
         private SpriteText invitationsNumber;
         private Container numberContainer;
+        private SurfaceButton hideButton;
+
+        protected override bool StartHidden => true;
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            RelativePositionAxes = Axes.X;
             RelativeSizeAxes = Axes.Both;
+            X = -1;
+
             InternalChildren = new Drawable[]
             {
                 new InvitationsUpdater(),
-                new Container
+                hideButton = new SurfaceButton
                 {
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        shadowBox = new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Colour = Colour4.Black,
-                            Alpha = 0,
-                        },
-                        new SurfaceButton
-                        {
-                            Action = Hide,
-                        },
-                    },
+                    BackgroundColour = ColourInfo.GradientHorizontal(Colour4.Black.Opacity(0.6f).ToLinear(), Colour4.Black.Opacity(0f).ToLinear()),
+                    Width = 0.2f,
+                    Action = Hide,
                 },
-                menu = new Container
+                new Box
+                {
+                    Anchor = Anchor.TopLeft,
+                    Origin = Anchor.TopRight,
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Colour4.Black.Opacity(0.6f).ToLinear(),
+                },
+                new Container
                 {
                     RelativePositionAxes = Axes.Both,
                     RelativeSizeAxes = Axes.Both,
@@ -85,7 +85,7 @@ namespace GamesToGo.Game.Overlays
                         new Box
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Colour = new Colour4 (106,100,104, 255)
+                            Colour = new Colour4(106, 100, 104, 255)
                         },
                         new GridContainer
                         {
@@ -119,21 +119,17 @@ namespace GamesToGo.Game.Overlays
                                                     BorderColour = Colour4.Black,
                                                     BorderThickness = 3.5f,
                                                     Masking = true,
-                                                    Padding = new MarginPadding { Top = 80, Left = 20, Right = 20 },
+                                                    Padding = new MarginPadding {Top = 80, Left = 20, Right = 20},
                                                     Child = new SurfaceButton
                                                     {
                                                         Action = profileScreen,
                                                         Children = new Drawable[]
                                                         {
-                                                            new EmptyBox
-                                                            {
-                                                                RelativeSizeAxes = Axes.Both
-                                                            },
                                                             new FillFlowContainer
                                                             {
                                                                 RelativeSizeAxes = Axes.Both,
                                                                 Direction = FillDirection.Vertical,
-                                                                Padding = new MarginPadding(){ Bottom = 40},
+                                                                Padding = new MarginPadding() {Bottom = 40},
                                                                 Children = new Drawable[]
                                                                 {
                                                                     new CircularContainer
@@ -144,7 +140,7 @@ namespace GamesToGo.Game.Overlays
                                                                         BorderThickness = 3.5f,
                                                                         Masking = true,
                                                                         Size = new Vector2(300, 300),
-                                                                        Child = userImage= new Sprite
+                                                                        Child = userImage = new Sprite
                                                                         {
                                                                             Anchor = Anchor.Centre,
                                                                             Origin = Anchor.Centre,
@@ -172,15 +168,11 @@ namespace GamesToGo.Game.Overlays
                                                     BorderThickness = 3.5f,
                                                     Masking = true,
                                                     Padding = new MarginPadding(20),
-                                                    Child = new SurfaceButton()
+                                                    Child = new SurfaceButton
                                                     {
-                                                        Action = () => invitesScreen() ,
+                                                        Action = () => invitesScreen(),
                                                         Children = new Drawable[]
                                                         {
-                                                            new EmptyBox
-                                                            {
-                                                                RelativeSizeAxes = Axes.Both
-                                                            },
                                                             new FillFlowContainer
                                                             {
                                                                 RelativeSizeAxes = Axes.Both,
@@ -197,7 +189,7 @@ namespace GamesToGo.Game.Overlays
                                                                             new Box
                                                                             {
                                                                                 RelativeSizeAxes = Axes.Both,
-                                                                                Colour =  Colour4.LightBlue,
+                                                                                Colour = Colour4.LightBlue,
                                                                             },
                                                                             invitationsNumber = new SpriteText
                                                                             {
@@ -234,10 +226,6 @@ namespace GamesToGo.Game.Overlays
                                                         Action = logout,
                                                         Children = new Drawable[]
                                                         {
-                                                            new EmptyBox
-                                                            {
-                                                                RelativeSizeAxes = Axes.Both
-                                                            },
                                                             new SpriteText
                                                             {
                                                                 Anchor = Anchor.CentreRight,
@@ -264,10 +252,6 @@ namespace GamesToGo.Game.Overlays
                                         Padding = new MarginPadding(20),
                                         Children = new Drawable[]
                                         {
-                                            new EmptyBox
-                                            {
-                                                RelativeSizeAxes = Axes.Both,
-                                            },
                                             new SpriteText
                                             {
                                                 Anchor = Anchor.CentreRight,
@@ -325,17 +309,14 @@ namespace GamesToGo.Game.Overlays
             }
         }
 
-
         protected override void PopIn()
         {
-            shadowBox.FadeTo(0.75f, 700);
-            menu.MoveToX(-1).Then().MoveToX(0, 700, Easing.OutElastic);
+            this.MoveToX(0, 300, Easing.OutBack);
         }
 
         protected override void PopOut()
         {
-            shadowBox.FadeOut(250, Easing.OutExpo);
-            menu.MoveToX(-1,700, Easing.InElastic);
+            this.MoveToX(-1,300, Easing.InBack);
         }
 
         private void invitesScreen()
