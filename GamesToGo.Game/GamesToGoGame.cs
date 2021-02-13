@@ -138,7 +138,7 @@ namespace GamesToGo.Game
                     {
                         while (missingFiles.Count > 0)
                         {
-                            var getFile = new DownloadSpecificFile(missingFiles.Dequeue(), store);
+                            var getFile = new DownloadSpecificFileRequest(missingFiles.Dequeue(), store);
                             var fileDownloaded = false;
 
                             getFile.Success += () =>

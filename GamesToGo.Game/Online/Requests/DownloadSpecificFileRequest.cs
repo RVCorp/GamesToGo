@@ -5,13 +5,13 @@ using osu.Framework.Platform;
 
 namespace GamesToGo.Game.Online.Requests
 {
-    public class DownloadSpecificFile : APIRequest
+    public class DownloadSpecificFileRequest : APIRequest
     {
         private readonly string hash;
         private readonly string filename;
         private readonly Storage store;
 
-        public DownloadSpecificFile(string hash, Storage store)
+        public DownloadSpecificFileRequest(string hash, Storage store)
         {
             this.hash = hash;
             filename = Path.Combine("files", $"{hash.ToUpper()}");
