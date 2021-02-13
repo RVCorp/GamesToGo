@@ -60,7 +60,7 @@ namespace GamesToGo.Editor.Graphics
             ProjectName.Text = onlineProject.Name;
             ProjectDescription.Text = onlineProject.Description;
             editButton.Enabled.Value = true;
-            Schedule(async () => //ToDo: ????
+            Schedule(async () =>
             {
                 var texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
 
