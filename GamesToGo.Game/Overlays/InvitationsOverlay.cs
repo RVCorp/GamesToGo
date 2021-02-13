@@ -165,7 +165,7 @@ namespace GamesToGo.Game.Overlays
 
                 void failure()
                 {
-                    Schedule(() => infoOverlay.Show(@"Ocurrió un error al intentar crear la sala", Colour4.DarkRed));
+                    Schedule(() => infoOverlay.Show(@"Ocurrió un error al intentar unirse a la sala", Colour4.DarkRed));
                 }
             });
         }

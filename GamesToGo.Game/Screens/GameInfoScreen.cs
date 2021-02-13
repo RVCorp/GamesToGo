@@ -366,7 +366,7 @@ namespace GamesToGo.Game.Screens
 
                 void failure()
                 {
-                    Schedule(() => infoOverlay.Show(@"Hubo un problema al intentar entrar en la sala", Colour4.DarkRed));
+                    Schedule(() => infoOverlay.Show(@"Hubo un problema al intentar unirse a la sala", Colour4.DarkRed));
                 }
             });
         }
