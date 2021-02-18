@@ -68,7 +68,7 @@ namespace GamesToGo.Editor.Graphics
 
             elementName.Text = Element.Name.Value;
             elementName.Current.BindTo(Element.Name);
-            Element.Images.Values.First().BindValueChanged(val => image.Texture = Element.GetImageWithFallback().Texture, true);
+            Element.Images.Values.First().BindValueChanged(_ => image.Texture = Element.GetImageWithFallback().Texture, true);
         }
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)

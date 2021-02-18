@@ -1,7 +1,6 @@
 ﻿using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Common.Online.Requests;
-using GamesToGo.Editor.Online;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;

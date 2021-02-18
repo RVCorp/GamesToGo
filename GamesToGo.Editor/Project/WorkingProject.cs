@@ -113,7 +113,7 @@ namespace GamesToGo.Editor.Project
                 }
             }
 
-            ret.ProjectElements.CollectionChanged += (_, __) => ret.updateDatabaseObjectInfo();
+            ret.ProjectElements.CollectionChanged += (_, _) => ret.updateDatabaseObjectInfo();
 
             ret.updateDatabaseObjectInfo();
 

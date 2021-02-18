@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,18 +17,13 @@ namespace GamesToGo.Editor.Project
             get => parent;
             set
             {
-                if (!(value is IHasElements elementedParent))
-                {
-                    var parentName = value.Name.Value;
-                    throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when {parentName} is not {nameof(IHasElements)}");
-                }
+                var parentName = value.Name.Value;;
 
-                if (!(elementedParent.Elements.Any(e => e.ID == ID) ||
-                      elementedParent.PendingElements.Any(i => i == ID)))
-                {
-                    var parentName = value.Name.Value;
+                if (!(value is IHasElements elementedParent))
+                    throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when {parentName} is not {nameof(IHasElements)}");
+
+                if (elementedParent.Elements.All(e => e.ID != ID) && elementedParent.PendingElements.All(i => i != ID))
                     throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when no children of {parentName} has our id ({ID})");
-                }
 
                 parent = value;
             }

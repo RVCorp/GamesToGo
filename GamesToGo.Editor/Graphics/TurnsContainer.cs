@@ -77,11 +77,11 @@ namespace GamesToGo.Editor.Graphics
                 switch (args.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        checkAdded(args.NewItems.Cast<EventAction>());
+                        checkAdded(args.NewItems?.Cast<EventAction>());
 
                         break;
                     case NotifyCollectionChangedAction.Remove:
-                        checkRemoved(args.OldItems.Cast<EventAction>());
+                        checkRemoved(args.OldItems?.Cast<EventAction>());
 
                         break;
                 }

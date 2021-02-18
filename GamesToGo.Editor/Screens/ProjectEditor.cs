@@ -194,7 +194,7 @@ namespace GamesToGo.Editor.Screens
             SaveProject(CommunityStatus.Published, false);
             splashOverlay.Show(@"Proyecto guardado localmente, subiendo al servidor...", Colour4.ForestGreen);
             var req = new UploadGameRequest(workingProject.DatabaseObject, store);
-            req.Failure += e =>
+            req.Failure += _ =>
             {
                 splashOverlay.Show(@"Hubo un problema al subir el proyecto al servidor", Colour4.DarkRed);
             };

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.LocalGame;
@@ -11,7 +10,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -112,7 +110,7 @@ namespace GamesToGo.Game.Screens
                                                 Anchor = Anchor.Centre,
                                                 Origin = Anchor.Centre,
                                                 Action = exitRoom,
-                                            },                                            
+                                            },
                                         }
                                     },
                                     new Container
@@ -177,12 +175,12 @@ namespace GamesToGo.Game.Screens
                                                     },
                                                 },
                                             },
-                                        },                                        
+                                        },
                                         new Container
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Height = .15f,
-                                            Child = new SurfaceButton
+                                            Child = continueButton = new SurfaceButton
                                             {
                                                 Action = playGame,
                                                 BackgroundColour = Colour4.LightPink,

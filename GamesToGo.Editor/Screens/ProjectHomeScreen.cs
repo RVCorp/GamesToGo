@@ -304,8 +304,8 @@ namespace GamesToGo.Editor.Screens
             chatDropdown.Current.BindValueChanged(cht => project.ChatRecommendation = cht.NewValue);
             descriptionTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Description = obj.NewValue);
             titleTextBox.Current.BindValueChanged(obj => project.DatabaseObject.Name = obj.NewValue);
-            maxPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(false);
-            minPlayersTextBox.OnCommit += (_, __) => checkPlayerNumber(true);
+            maxPlayersTextBox.OnCommit += (_, _) => checkPlayerNumber(false);
+            minPlayersTextBox.OnCommit += (_, _) => checkPlayerNumber(true);
 
             tags.Current.Value = project.DatabaseObject.Tags;
             tags.Current.BindValueChanged(tag => project.DatabaseObject.Tags = tag.NewValue);

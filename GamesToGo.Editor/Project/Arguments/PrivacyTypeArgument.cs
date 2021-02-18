@@ -17,7 +17,7 @@ namespace GamesToGo.Editor.Project.Arguments
             @"Privacidad predeterminada",
         };
 
-        public Bindable<int?> Result { get; } = new Bindable<int?>(null);
+        public Bindable<int?> Result { get; } = new Bindable<int?>();
 
         public bool ResultMapsTo(object result) => result is ElementPrivacy privacyValue && (int)privacyValue == Result.Value;
     }

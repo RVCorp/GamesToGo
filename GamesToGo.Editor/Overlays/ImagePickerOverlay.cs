@@ -116,7 +116,7 @@ namespace GamesToGo.Editor.Overlays
                 },
             };
 
-            project.Images.CollectionChanged += (_, __) => recreateItems();
+            project.Images.CollectionChanged += (_, _) => recreateItems();
 
             recreateItems();
         }

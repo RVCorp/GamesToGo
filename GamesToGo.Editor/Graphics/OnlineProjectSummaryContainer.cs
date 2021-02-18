@@ -81,7 +81,7 @@ namespace GamesToGo.Editor.Graphics
         private void downloadProject()
         {
             var getGame = new DownloadProjectRequest(onlineProject.Id, onlineProject.Hash, store);
-            getGame.Success += game => ImportAction?.Invoke(onlineProject);
+            getGame.Success += _ => ImportAction?.Invoke(onlineProject);
             getGame.Progressed += progress => editButton.Progress = progress;
             api.Queue(getGame);
         }

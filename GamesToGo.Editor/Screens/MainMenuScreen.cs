@@ -274,7 +274,7 @@ namespace GamesToGo.Editor.Screens
             store.Delete($"files/{project.File.NewName}");
             project.ImageRelation = null;
             database.SaveChanges();
-            database.Relations.RemoveRange(project.Relations.AsEnumerable() ?? throw new ArgumentNullException(nameof(project), "No relations, even when one is required"));
+            database.Relations.RemoveRange(project.Relations?.AsEnumerable() ?? throw new ArgumentNullException(nameof(project), "No relations, even when one is required"));
             database.Files.Remove(project.File);
             database.SaveChanges();
         }

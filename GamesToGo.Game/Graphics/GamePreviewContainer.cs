@@ -1,6 +1,4 @@
 ﻿using GamesToGo.Common.Online.RequestModel;
-using GamesToGo.Game.Online;
-using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;

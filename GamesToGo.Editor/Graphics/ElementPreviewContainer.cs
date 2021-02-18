@@ -24,7 +24,7 @@ namespace GamesToGo.Editor.Graphics
                 RelativeSizeAxes = Axes.Both,
             };
             currentEditing.BindTo(editor.CurrentEditingElement);
-            currentEditing.BindValueChanged(e => RecreatePreview());
+            currentEditing.BindValueChanged(_ => RecreatePreview());
         }
 
         protected override void LoadComplete()
