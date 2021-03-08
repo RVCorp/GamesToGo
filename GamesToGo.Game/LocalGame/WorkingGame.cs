@@ -80,24 +80,24 @@ namespace GamesToGo.Game.LocalGame
                 {
                     case ElementType.Token:
                     {
-                        cardLines.AddRange(aux);
-                    }
+                        tokenLines.AddRange(aux);
                         break;
+                    }
                     case ElementType.Card:
                     {
                         cardLines.AddRange(aux);
-                    }
                         break;
+                    }
                     case ElementType.Tile:
                     {
                         tileLines.AddRange(aux);
-                    }
                         break;
+                    }
                     case ElementType.Board:
                     {
                         boardLines.AddRange(aux);
-                    }
                         break;
+                    }
                 }
                 aux.Clear();
             }
@@ -206,7 +206,7 @@ namespace GamesToGo.Game.LocalGame
                 {
                     for(int h = 0; h < cardLines.Count(); h++)
                     {
-                        var cardLine = cardLines[h];
+                            var cardLine = cardLines[h];
                         if (card == null)
                         {
                             var cInfo = cardLine.Split('|', 3);
@@ -229,8 +229,8 @@ namespace GamesToGo.Game.LocalGame
                                 case "Desc":
                                 {
                                     card.Description = prop[1];
-                                }
-                                break;
+                                    break;
+                                }                                
                                 case "Images":
                                 {
                                     int amm = int.Parse(prop[1]);
@@ -244,24 +244,38 @@ namespace GamesToGo.Game.LocalGame
                                         else
                                             card.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
+                                    break;
                                 }
-                                break;
                                 case "Size":
                                 {
                                     var xy = prop[1].Split("|");
                                     card.Size = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+                                    break;
                                 }
-                                break;
                                 case "Privacy":
                                 {
                                     card.Privacy = Enum.Parse<ElementPrivacy>(prop[1]);
+                                    break;
                                 }
-                                break;
                                 case "Orient":
                                 {
                                     card.Orientation = Enum.Parse<ElementOrientation>(prop[1]);
+                                    break;
                                 }
-                                break;
+                                case "Events":
+                                {
+                                    for(int j = 0; j< int.Parse(prop[1]); j++)
+                                    {
+                                        h++;                                        
+                                        cardLine = cardLines[h];
+                                        var aamm = cardLine.Split("|");
+                                        for(int k = 0; k < int.Parse(aamm.Last());k++)
+                                        {
+                                            h++;
+                                        }
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }

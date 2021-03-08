@@ -12,6 +12,10 @@ namespace GamesToGo.Game.LocalGame.Elements
 
         public Vector2 Size { get; set; }
 
+        public List<Card> Cards { get; } = new List<Card>();
+
+        public List<Token> Tokens { get; } = new List<Token>();
+
         public ElementOrientation Orientation { get; set; }
 
         public Vector2 Position { get; set; }

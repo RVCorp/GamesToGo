@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.LocalGame.Elements;
+using GamesToGo.Game.Online.Models.OnlineProjectElements;
+using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
@@ -14,6 +18,8 @@ namespace GamesToGo.Game.Graphics
         private FillFlowContainer<BoardContainer> boardContainer;
         private BoardContainer current;
 
+        
+
         private List<Board> boards;
 
         public List<Board> Boards
@@ -22,7 +28,7 @@ namespace GamesToGo.Game.Graphics
             set
             {
                 boards = value;
-                populateBoards();
+                
             }
         }
 
@@ -36,6 +42,8 @@ namespace GamesToGo.Game.Graphics
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
             };
+            populateBoards();
+            
         }
 
         private void populateBoards()
@@ -96,28 +104,13 @@ namespace GamesToGo.Game.Graphics
             {
                 foreach(var tile in Board.Tiles)
                 {
-                    contained.OverImageContent.Add(getContainedImageFor(tile).With(c =>
+                    contained.OverImageContent.Add(new TileContainer(tile, Board.ID).With(c =>
                     {
                         c.Size = tile.Size / contained.ExpectedToRealSizeRatio;
                         c.Position = tile.Position / contained.ExpectedToRealSizeRatio;
                     }));
                 }
-            }
-
-            private static ContainedImage getContainedImageFor(Tile tile)
-            {
-                Vector2 size = tile.Size;
-
-                var created = new ContainedImage(true, 0)
-                {
-                    Texture = tile.Images.First(),
-                    ImageSize = size,
-                };
-
-                created.Rotation = (int)tile.Orientation * -90;
-
-                return created;
-            }
+            }        
         }
     }
 }
