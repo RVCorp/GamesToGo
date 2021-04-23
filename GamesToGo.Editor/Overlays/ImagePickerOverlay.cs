@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osuTK;
@@ -181,7 +182,7 @@ namespace GamesToGo.Editor.Overlays
             }
 
             [BackgroundDependencyLoader]
-            private void load(ImageFinderOverlay imageFinder, WorkingProject project)
+            private void load(ImageFinderOverlay imageFinder, WorkingProject project, TextureStore textures)
             {
                 Size = new Vector2(item_size);
                 Masking = true;

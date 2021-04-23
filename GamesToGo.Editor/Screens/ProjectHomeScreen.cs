@@ -237,7 +237,7 @@ namespace GamesToGo.Editor.Screens
                                                                         Child = editingText = new SpriteText
                                                                         {
                                                                             Font = new FontUsage(size: 45),
-                                                                            Text = @"Condiciones de Victoria  Turnos  Turno de preparación",
+                                                                            Text = @"Condiciones de Victoria",
                                                                             Position = new Vector2(5, 2.5f),
                                                                         },
                                                                     },

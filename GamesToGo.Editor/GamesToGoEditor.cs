@@ -187,7 +187,7 @@ namespace GamesToGo.Editor
                 }
                 catch (ArgumentException e)
                 {
-                    throw new ArgumentException($"{nameof(thing)} has the same id as {WorkingProject.AvailableArguments[thing.ArgumentTypeID].Name}, can't resolve IDs", e);
+                    throw new ArgumentException($"{thing.GetType()} has the same id as {WorkingProject.AvailableArguments[thing.ArgumentTypeID].Name}, can't resolve IDs", e);
                 }
 
             }

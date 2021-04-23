@@ -71,7 +71,7 @@ namespace GamesToGo.Editor.Online
         [JsonProperty(@"id")]
         public int OnlineID { get; set; }
 
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        // ReSharper disable once UnusedMember.Global
         public CommunityStatus Status { get; set; }
     }
 }

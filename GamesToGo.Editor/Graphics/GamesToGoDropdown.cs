@@ -66,5 +66,6 @@ namespace GamesToGo.Editor.Graphics
         }
     }
 
+    [AttributeUsage(AttributeTargets.Field)]
     public class IgnoreItemAttribute : Attribute { }
 }

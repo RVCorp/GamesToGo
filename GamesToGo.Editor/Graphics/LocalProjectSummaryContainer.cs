@@ -28,8 +28,8 @@ namespace GamesToGo.Editor.Graphics
 
         private WorkingProject workingProject;
 
-        public Action<WorkingProject> EditAction { get; set; }
-        public Action<ProjectInfo> DeleteAction { get; set; }
+        public Action<WorkingProject> EditAction { get; init; }
+        public Action<ProjectInfo> DeleteAction { get; init; }
 
         public LocalProjectSummaryContainer(ProjectInfo projectInfo)
         {

@@ -1,19 +1,21 @@
 ﻿using GamesToGo.Editor.Project.Arguments;
+using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Actions
 {
-    public class AddCardToTileAction : EventAction
+    [UsedImplicitly]
+    public class AddCardToTileChosenByPlayer : EventAction
     {
-        public override int TypeID => 1;
+        public override int TypeID => 25;
 
         public override ArgumentType[] ExpectedArguments { get; } = {
             ArgumentType.CardType,
-            ArgumentType.TileType,
+            ArgumentType.SingleTile,
         };
 
         public override string[] Text { get; } = {
             @"Añadir nueva carta",
-            @"a casilla predeterminada",
+            @"a casilla",
         };
     }
 }

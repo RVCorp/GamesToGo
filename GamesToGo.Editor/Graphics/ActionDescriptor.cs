@@ -15,7 +15,7 @@ namespace GamesToGo.Editor.Graphics
         public readonly EventAction Model;
         private FillFlowContainer descriptionContainer;
         private BasicScrollContainer scrollContainer;
-        public Action<EventAction> RemoveAction { get; set; }
+        public Action<EventAction> RemoveAction { get; init; }
 
         public ActionDescriptor(EventAction model)
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,6 +10,7 @@ using osu.Framework.Input.Events;
 
 namespace GamesToGo.Editor.Graphics
 {
+    [Cached]
     public abstract class ArgumentDropdown : Container
     {
         private FillFlowContainer<ArgumentItem> elements;
@@ -18,6 +20,8 @@ namespace GamesToGo.Editor.Graphics
         {
             this.target.BindTo(target);
         }
+
+        private float itemWidth => elements.Max(t => t.Width);
 
         [BackgroundDependencyLoader]
         private void load()
@@ -54,6 +58,9 @@ namespace GamesToGo.Editor.Graphics
             [Resolved]
             private ArgumentSelectorOverlay selectorOverlay { get; set; }
 
+            [Resolved]
+            private ArgumentDropdown argumentDropdown { get; set; }
+
             private readonly Container content = new Container
             {
                 AutoSizeAxes = Axes.X,
@@ -80,12 +87,19 @@ namespace GamesToGo.Editor.Graphics
                 {
                     backgroundBox = new Box
                     {
-                        RelativeSizeAxes = Axes.Both,
+                        RelativeSizeAxes = Axes.Y,
                         Alpha = 0.5f,
                         Colour = Colour4.Black,
                     },
                     content,
                 };
+            }
+
+            protected override void Update()
+            {
+                base.Update();
+
+                backgroundBox.Width = argumentDropdown.itemWidth;
             }
 
             protected override bool OnHover(HoverEvent e)

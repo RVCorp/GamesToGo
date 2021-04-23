@@ -5,7 +5,7 @@ using osuTK;
 
 namespace GamesToGo.Editor.Project.Elements
 {
-    public class Tile : ProjectElement, IHasSize, IHasEvents, IHasOrientation, IHasPosition
+    public class Tile : ProjectElement, IHasSize, IHasEvents, IHasOrientation, IHasPosition, IHasLogicalArrangement
     {
         public override ElementType Type => ElementType.Tile;
 
@@ -26,6 +26,8 @@ namespace GamesToGo.Editor.Project.Elements
         public Bindable<ElementOrientation> DefaultOrientation { get; } = new Bindable<ElementOrientation>();
 
         public Bindable<Vector2> Position { get; } = new Bindable<Vector2>(Vector2.Zero);
+
+        public Bindable<Vector2> Arrangement { get; } = new Bindable<Vector2>(Vector2.Zero);
 
         public override ElementPreviewMode PreviewMode => ElementPreviewMode.ParentWithChildren;
     }

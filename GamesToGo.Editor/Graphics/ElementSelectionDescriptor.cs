@@ -79,7 +79,7 @@ namespace GamesToGo.Editor.Graphics
 
         protected override IEnumerable<ArgumentItem> CreateItems()
         {
-            IEnumerable<ProjectElement> elements = new ProjectElement[0];
+            IEnumerable<ProjectElement> elements = Array.Empty<ProjectElement>();
 
             if (typeof(T) == typeof(Card))
                 elements = project.ProjectCards;

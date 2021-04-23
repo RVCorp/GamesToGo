@@ -1,10 +1,14 @@
 ﻿// ReSharper disable UnusedMember.Global
+
+using System;
+
 namespace GamesToGo.Editor.Project.Events
 {
+    [Flags]
     public enum EventSourceActivator
     {
-        Single = 0,
-        Multiple = 1,
+        Single = 1,
+        Multiple = 1 << 1,
 
         Player = 1 << 2,
         Card = 1 << 4,

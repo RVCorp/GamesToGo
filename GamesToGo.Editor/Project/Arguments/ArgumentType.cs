@@ -23,6 +23,7 @@ namespace GamesToGo.Editor.Project.Arguments
 
         Privacy = 1 << 10,
         Orientation = 1 << 11,
+        Direction = 1 << 12,
 
         SinglePlayer = Single | Player,
         MultiplePlayer = Multiple | Player,

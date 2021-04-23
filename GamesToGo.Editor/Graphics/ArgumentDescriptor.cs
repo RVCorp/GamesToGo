@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
+using Direction = GamesToGo.Editor.Project.Arguments.Direction;
 
 namespace GamesToGo.Editor.Graphics
 {
@@ -105,6 +106,7 @@ namespace GamesToGo.Editor.Graphics
             {
                 ArgumentType.Privacy => new EnumArgumentDescriptor<ElementPrivacy>(),
                 ArgumentType.Orientation => new EnumArgumentDescriptor<ElementOrientation>(),
+                ArgumentType.Direction => new EnumArgumentDescriptor<Direction>(),
                 ArgumentType.SingleNumber => new NumberSelectionDescriptor(),
                 ArgumentType.CardType => new ElementSelectionDescriptor<Card>(),
                 ArgumentType.TileType => new ElementSelectionDescriptor<Tile>(),

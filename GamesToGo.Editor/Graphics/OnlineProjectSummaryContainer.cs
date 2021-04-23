@@ -26,7 +26,7 @@ namespace GamesToGo.Editor.Graphics
         private readonly OnlineGame onlineProject;
         private IconButton editButton;
 
-        public Action<OnlineGame> ImportAction { private get; set; }
+        public Action<OnlineGame> ImportAction { private get; init; }
 
         public OnlineProjectSummaryContainer(OnlineGame onlineProject)
         {

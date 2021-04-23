@@ -13,7 +13,7 @@ namespace GamesToGo.Editor.Graphics
 {
     public class ElementEditButton : Button
     {
-        public ProjectElement Element { get; set; }
+        public ProjectElement Element { get; init; }
         private Container borderContainer;
         private SpriteText elementName;
 

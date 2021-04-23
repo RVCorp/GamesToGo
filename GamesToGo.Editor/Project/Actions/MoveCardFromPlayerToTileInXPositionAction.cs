@@ -12,7 +12,7 @@ namespace GamesToGo.Editor.Project.Actions
             ArgumentType.CardType,
             ArgumentType.SinglePlayer,
             ArgumentType.SingleTile,
-            ArgumentType.Number,
+            ArgumentType.SingleNumber,
         };
 
         public override string[] Text { get; } = {

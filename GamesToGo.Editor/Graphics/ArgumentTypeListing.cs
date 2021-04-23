@@ -112,12 +112,12 @@ namespace GamesToGo.Editor.Graphics
         {
             switch (e)
             {
-                case ClickEvent _:
+                case ClickEvent:
                     Hide();
                     return false;
             }
 
-            return true;
+            return base.Handle(e);
         }
 
         private class ArgumentTypeButton : GamesToGoButton

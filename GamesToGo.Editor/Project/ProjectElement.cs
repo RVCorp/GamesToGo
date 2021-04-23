@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace GamesToGo.Editor.Project
             get => parent;
             set
             {
-                var parentName = value.Name.Value;;
+                var parentName = value.Name.Value;
 
                 if (!(value is IHasElements elementedParent))
                     throw new InvalidOperationException($"Can't add element {Name.Value} as children of {parentName} when {parentName} is not {nameof(IHasElements)}");
@@ -67,7 +67,7 @@ namespace GamesToGo.Editor.Project
 
             foreach (var image in Images)
             {
-                builder.AppendLine($"{image.Key}={image.Value.Value?.ImageName ?? "null"}");
+                builder.AppendLine($"{image.Key}:{image.Value.Value?.ImageName ?? "null"}");
             }
 
             if (this is IHasSize sizedElement)
@@ -90,7 +90,7 @@ namespace GamesToGo.Editor.Project
                 builder.AppendLine(sidedElement.ToSaveable());
             }
 
-            if(this is IHasPosition positionedElement)
+            if (this is IHasPosition positionedElement)
             {
                 builder.AppendLine(positionedElement.ToSaveable());
             }
@@ -98,6 +98,11 @@ namespace GamesToGo.Editor.Project
             if (this is IHasElements elementedElement)
             {
                 builder.AppendLine(elementedElement.ToSaveable());
+            }
+
+            if (this is IHasLogicalArrangement arrangedElement)
+            {
+                builder.AppendLine(arrangedElement.ToSaveable());
             }
 
             if (this is IHasEvents eventedElement)
