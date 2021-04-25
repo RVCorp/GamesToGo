@@ -156,7 +156,7 @@ namespace GamesToGo.Editor.Screens
                                                 new Container
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Height = 600,
+                                                    AutoSizeAxes = Axes.Y,
                                                     Children = new Drawable[]
                                                     {
                                                         new FillFlowContainer
@@ -210,8 +210,9 @@ namespace GamesToGo.Editor.Screens
                                                         },
                                                         elementSubElements = new Container
                                                         {
-                                                            RelativeSizeAxes = Axes.Both,
+                                                            RelativeSizeAxes = Axes.X,
                                                             Width = 1 / 3f,
+                                                            Height = 500,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Child = tilesManagerContainer = new BoardObjectManagerContainer(),

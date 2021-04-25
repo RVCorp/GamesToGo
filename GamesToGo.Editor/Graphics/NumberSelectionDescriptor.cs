@@ -29,8 +29,6 @@ namespace GamesToGo.Editor.Graphics
             });
             Current.BindValueChanged(v => text.Text = v.NewValue?.ToString() ?? string.Empty, true);
 
-
-
             Action = () =>
             {
                 dropdown = (NumberSelector)Activator.CreateInstance(typeof(NumberSelector), (object)Current);
