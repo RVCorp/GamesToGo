@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,6 +62,8 @@ namespace GamesToGo.Editor.Screens
         private List<FileRelation> initialRelations;
         private EditorTabChanger tabsBar;
 
+        private ProjectFileOverlay fileOverlay;
+
         [Cached]
         private ImagePickerOverlay imagePicker = new ImagePickerOverlay {Depth = 2};
 
@@ -79,7 +81,7 @@ namespace GamesToGo.Editor.Screens
             {
                 new Container
                 {
-                    Depth = 4,
+                    Depth = 5,
                     RelativeSizeAxes = Axes.Both,
                     Padding = new MarginPadding
                     {
@@ -89,6 +91,16 @@ namespace GamesToGo.Editor.Screens
                     {
                         RelativeSizeAxes = Axes.Both,
                     },
+                },
+                new Container
+                {
+                    Depth = 4,
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new MarginPadding
+                    {
+                        Top = 30,
+                    },
+                    Child = fileOverlay = new ProjectFileOverlay(),
                 },
                 new Container
                 {
@@ -102,16 +114,41 @@ namespace GamesToGo.Editor.Screens
                             RelativeSizeAxes = Axes.Both,
                             Colour = Colour4.Gray,
                         },
-                        tabsBar = new EditorTabChanger(),
-                        new CloseButton
+                        new GridContainer
                         {
-                            Action = confirmClose,
+                            RelativeSizeAxes = Axes.Both,
+                            ColumnDimensions = new []
+                            {
+                                new Dimension(GridSizeMode.AutoSize),
+                                new Dimension(GridSizeMode.Absolute, 10),
+                                new Dimension(GridSizeMode.AutoSize),
+                                new Dimension(),
+                            },
+                            RowDimensions = new []
+                            {
+                                new Dimension(),
+                            },
+                            Content = new []
+                            {
+                                new Drawable[]
+                                {
+                                    new TopButton(@"Archivo")
+                                    {
+                                        Action = fileOverlay.ToggleVisibility,
+                                    },
+                                    null,
+                                    tabsBar = new EditorTabChanger(),
+                                    new TopButton(@"Volver al inicio")
+                                    {
+                                        Action = confirmClose,
+                                    },
+                                },
+                            },
                         },
                     },
                 },
             };
 
-            tabsBar.Current.ValueChanged += changeEditorScreen;
             CurrentEditingElement.ValueChanged += _ => tabsBar.Current.Value = tabsBar.Current.Value switch
             {
                 EditorScreenOption.Objets => EditorScreenOption.Objets,
@@ -121,7 +158,7 @@ namespace GamesToGo.Editor.Screens
 
             AddInternal(imagePicker);
 
-            tabsBar.Current.Value = EditorScreenOption.Home;
+            tabsBar.Current.BindValueChanged(changeEditorScreen, true);
         }
 
         public void SelectElement(ProjectElement element)
@@ -267,7 +304,6 @@ namespace GamesToGo.Editor.Screens
 
             currentScreen = value.NewValue switch
             {
-                EditorScreenOption.File => new ProjectFileScreen(),
                 EditorScreenOption.Home => new ProjectHomeScreen(),
                 EditorScreenOption.Objets => new ProjectObjectScreen(),
                 EditorScreenOption.Events => new ProjectEventsScreen(),
@@ -351,9 +387,15 @@ namespace GamesToGo.Editor.Screens
             database.SaveChanges();
         }
 
-        private class CloseButton : Button
+        private class TopButton : Button
         {
             private Box hoverBox;
+            private readonly string text;
+
+            public TopButton(string text)
+            {
+                this.text = text;
+            }
 
             [BackgroundDependencyLoader]
             private void load()
@@ -375,7 +417,7 @@ namespace GamesToGo.Editor.Screens
                         Margin = new MarginPadding { Horizontal = 5 },
                         Anchor = Anchor.CentreRight,
                         Origin = Anchor.CentreRight,
-                        Text = @"Volver al inicio",
+                        Text = text,
                     },
                 };
             }
