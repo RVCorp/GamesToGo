@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -172,7 +172,7 @@ namespace GamesToGo.Editor.Screens
             string newFileName;
             using (MemoryStream stream = new MemoryStream())
             {
-                var sw = new StreamWriter(stream, new UnicodeEncoding());
+                var sw = new StreamWriter(stream, new UTF8Encoding());
 
                 sw.Write(fileString);
                 sw.Flush();
@@ -183,7 +183,7 @@ namespace GamesToGo.Editor.Screens
 
             using (Stream fileStream = store.GetStream($"files/{newFileName}", FileAccess.Write, FileMode.Create))
             {
-                var sw = new StreamWriter(fileStream, new UnicodeEncoding());
+                var sw = new StreamWriter(fileStream, new UTF8Encoding());
 
                 sw.Write(fileString);
                 sw.Flush();
