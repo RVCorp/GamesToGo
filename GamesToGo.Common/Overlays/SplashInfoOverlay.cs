@@ -99,7 +99,7 @@ namespace GamesToGo.Common.Overlays
 
         protected override void PopIn()
         {
-            if (delayedHide != null)
+            if (delayedHide != null && !delayedHide.Completed)
             {
                 backgroundBox.FadeColour(targetColour, 300, Easing.OutCubic);
 
@@ -125,7 +125,6 @@ namespace GamesToGo.Common.Overlays
             Child.MoveToY(position == SplashPosition.Bottom ? 1 : -1, 400, Easing.OutCubic);
 
             delayedHide?.Cancel();
-            delayedHide = null;
         }
     }
 
