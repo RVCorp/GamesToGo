@@ -1,13 +1,15 @@
-﻿namespace GamesToGo.Editor.Project.Arguments
+﻿using GamesToGo.Common.Game;
+
+namespace GamesToGo.Editor.Project.Arguments
 {
     public class PlayerWithTokenArgument : Argument
     {
         public override int ArgumentTypeID => 6;
 
-        public override ArgumentType Type => ArgumentType.SinglePlayer;
+        public override ArgumentReturnType Type => ArgumentReturnType.SinglePlayer;
 
-        public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.TokenType,
+        public override ArgumentReturnType[] ExpectedArguments { get; } = {
+            ArgumentReturnType.TokenType,
         };
 
         public override string[] Text { get; } = {

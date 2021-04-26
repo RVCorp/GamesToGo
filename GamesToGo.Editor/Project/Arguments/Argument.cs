@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using GamesToGo.Common.Game;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
@@ -14,9 +15,9 @@ namespace GamesToGo.Editor.Project.Arguments
     {
         public abstract int ArgumentTypeID { get; }
 
-        public abstract ArgumentType Type { get; }
+        public abstract ArgumentReturnType Type { get; }
 
-        public abstract ArgumentType[] ExpectedArguments { get; }
+        public abstract ArgumentReturnType[] ExpectedArguments { get; }
 
         private Bindable<Argument>[] arguments;
 

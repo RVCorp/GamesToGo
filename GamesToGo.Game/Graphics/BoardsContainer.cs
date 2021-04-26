@@ -13,12 +13,15 @@ using osuTK;
 
 namespace GamesToGo.Game.Graphics
 {
+    [Cached]
     public class BoardsContainer : Container
     {
         private FillFlowContainer<BoardContainer> boardContainer;
         private BoardContainer current;
+        private readonly Bindable<Tile> currentSelectedTile = new Bindable<Tile>();
+        public IBindable<Tile> CurrentSelectedTile => currentSelectedTile;
 
-        
+
 
         private List<Board> boards;
 
@@ -42,8 +45,8 @@ namespace GamesToGo.Game.Graphics
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
             };
-            populateBoards();
-            
+            if(Boards != null)
+                populateBoards();
         }
 
         private void populateBoards()
@@ -69,6 +72,14 @@ namespace GamesToGo.Game.Graphics
             current.Hide();
             current = boardContainer.First(b => b.Board.ID == id);
             current.Show();
+        }
+
+        public void SelectTile(Tile tile)
+        {
+            if (currentSelectedTile.Value == tile)
+                currentSelectedTile.Value = null;
+            else
+                currentSelectedTile.Value = tile;
         }
 
         private class BoardContainer : Container

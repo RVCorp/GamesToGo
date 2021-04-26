@@ -180,7 +180,7 @@ namespace GamesToGo.Game.Screens
                                         {
                                             RelativeSizeAxes = Axes.Both,
                                             Height = .15f,
-                                            Child = new SurfaceButton
+                                            Child = continueButton = new SurfaceButton
                                             {
                                                 Action = playGame,
                                                 BackgroundColour = Colour4.LightPink,

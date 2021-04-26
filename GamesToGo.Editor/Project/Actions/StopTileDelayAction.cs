@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project.Arguments;
 using JetBrains.Annotations;
 
@@ -9,7 +10,7 @@ namespace GamesToGo.Editor.Project.Actions
     {
         public override int TypeID => 20;
 
-        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentReturnType[] ExpectedArguments => Array.Empty<ArgumentReturnType>();
 
         public override string[] Text { get; } = {
             @"Detener retraso de esta casilla",

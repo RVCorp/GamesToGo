@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GamesToGo.Common.Online.RequestModel;
+using GamesToGo.Game.LocalGame.Arguments;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 
@@ -19,6 +20,8 @@ namespace GamesToGo.Game.Online.Models.RequestModel
         public bool HasStarted { get; set; }
 
         public double TimeElapsed { get; set; }
+
+        public ArgumentParameter UserAcctionArgument { get; set; }
 
         public Player PlayerWithID(int id) => Players.SingleOrDefault(p => p?.BackingUser.ID == id);
 

@@ -5,6 +5,7 @@ using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -31,6 +32,8 @@ namespace GamesToGo.Game.Graphics
         private WorkingGame game { get; set; }
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
+        [Resolved]
+        private GameScreen gameScreen { get; set; }
 
         public CardContainer(OnlineCard card)
         {
@@ -46,6 +49,7 @@ namespace GamesToGo.Game.Graphics
         [BackgroundDependencyLoader]
         private void load()
         {
+            Enabled.BindTo(gameScreen.EnableCardSelection);
             Action += () => hand.SelectCard(Card);
             currentSelected.BindTo(hand.CurrentSelectedCard);
             Anchor = Anchor.Centre;
@@ -76,7 +80,8 @@ namespace GamesToGo.Game.Graphics
             };
             currentSelected.BindValueChanged(_ =>
             {
-                FadeBorder(selected || IsHovered, golden: selected);
+                if (Enabled.Value == true)
+                    FadeBorder(selected || IsHovered, golden: selected);
             });
             room.BindValueChanged(updatedRoom => checkCard(updatedRoom.NewValue.Boards.Where(b => b.TypeID == tile.BoardID).FirstOrDefault().Tiles.Where(t => t.TypeID == tile.Tile.ID).FirstOrDefault().Cards.Where(c => c.ID == Card.ID).FirstOrDefault().Tokens), true);
         }

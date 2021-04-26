@@ -1,4 +1,5 @@
-﻿using GamesToGo.Editor.Project.Arguments;
+﻿using GamesToGo.Common.Game;
+using GamesToGo.Editor.Project.Arguments;
 using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Events
@@ -14,9 +15,9 @@ namespace GamesToGo.Editor.Project.Events
 
         public override string[] Text => new[] { @"Al tomar una carta de tipo" };
 
-        public override ArgumentType[] ExpectedArguments => new[]
+        public override ArgumentReturnType[] ExpectedArguments => new[]
         {
-            ArgumentType.CardType,
+            ArgumentReturnType.CardType,
         };
     }
 }

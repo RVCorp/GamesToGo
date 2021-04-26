@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GamesToGo.Common.Game;
 using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.LocalGame;
+using GamesToGo.Game.LocalGame.Arguments;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
@@ -17,12 +20,17 @@ using osu.Framework.Screens;
 
 namespace GamesToGo.Game.Screens
 {
+    [Cached]
     public class GameScreen : Screen
     {
         private PlayerHandContainer playerCards;
         [Resolved]
         private Player localPlayer { get; set; }
         private BoardsContainer board;
+
+        public Bindable<bool> EnableCardSelection = new BindableBool(false);
+        public Bindable<bool> EnableTileSelection = new BindableBool(false);
+        public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
 
         [Resolved]
         private APIController api { get; set; }
@@ -36,10 +44,17 @@ namespace GamesToGo.Game.Screens
 
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
+        [Resolved]
+        private WorkingGame game { get; set; }
+
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            EnableCardSelection.Value = false;
+            EnableTileSelection.Value = false;
+            EnablePlayerSelection.Value = false;
+
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -77,6 +92,7 @@ namespace GamesToGo.Game.Screens
                         board = new BoardsContainer
                         {
                             Height = .6f,
+                            Boards = game.GameBoards.ToList()
                         },
                         new Container
                         {
@@ -95,7 +111,7 @@ namespace GamesToGo.Game.Screens
                     },
                 },
             };
-            room.BindValueChanged(updatedRoom => refreshRoom(updatedRoom.NewValue), true);
+            room.BindValueChanged(updatedRoom => checkActions(updatedRoom.NewValue), true);
         }
 
         private void exitRoom()
@@ -109,9 +125,37 @@ namespace GamesToGo.Game.Screens
             api.Queue(req);
         }
 
-        private void refreshRoom(OnlineRoom receivedRoom)
+        private void checkActions(OnlineRoom receivedRoom)
         {
+            if (receivedRoom.UserAcctionArgument != null)
+            {
+                switch (receivedRoom.UserAcctionArgument.Type)
+                {
+                    case ArgumentType.TileWithNoCardsChosenByPlayer:
+                    {
+                        argumentWithOneArgument(receivedRoom);
+                    }
+                    break;
+                    case ArgumentType.PlayerChosenByPlayer:
+                    {
+                        argumentWithOneArgument(receivedRoom);
+                    }
+                    break;
+                    case ArgumentType.DefaultArgument: //TileWithTokenSelectedByPlayer 
+                    {
 
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void argumentWithOneArgument(OnlineRoom receivedRoom)
+        {
+            if (receivedRoom.Players[receivedRoom.UserAcctionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
+            {
+
+            }
         }
     }
 }

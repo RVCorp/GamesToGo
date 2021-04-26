@@ -4,23 +4,35 @@ using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 
 namespace GamesToGo.Game.Graphics
 {
-    public class TileContainer : Container
+    public class TileContainer : Button
     {
         public Tile Tile;
 
         public ContainedImage TileImage;
 
         [Resolved]
+        private BoardsContainer boards { get; set; }
+
+        [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
+        [Resolved]
+        private GameScreen gameScreen { get; set; }
+
+        private readonly IBindable<Tile> currentSelected = new Bindable<Tile>();
+        private bool selected => (currentSelected.Value?.ID ?? -1) == Tile.ID;
         public int BoardID;
+        private Container borderContainer;
 
         public TileContainer(Tile tile, int boardID)
         {
@@ -30,15 +42,48 @@ namespace GamesToGo.Game.Graphics
 
         [BackgroundDependencyLoader]
         private void load()
-        {
-            Child = TileImage =new ContainedImage(false, 0)
+        {            
+            Action += () => boards.SelectTile(Tile);
+            Enabled.BindTo(gameScreen.EnableTileSelection);
+            currentSelected.BindTo(boards.CurrentSelectedTile);
+            Children = new Drawable[]
             {
-                Texture = Tile.Images.First(),
-                ImageSize = Tile.Size
+                borderContainer = new Container
+                {
+                    Masking = true,
+                    CornerRadius = 10,
+                    BorderThickness = 2,
+                    BorderColour = Colour4.White,
+                    RelativeSizeAxes = Axes.Both,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0.1f,
+                    },
+                },
+                TileImage =new ContainedImage(false, 0)
+                {
+                    BorderThickness = .3f,
+                    BorderColour = Colour4.White,
+                    RelativeSizeAxes = Axes.Both,
+                    Texture = Tile.Images.First(),
+                    ImageSize = Tile.Size
+                }
             };
+                
             TileImage.Rotation = (int)Tile.Orientation * -90;
             TileImage.OverImageContent.Clear();
-            room.BindValueChanged(updatedRoom => checkTile(updatedRoom.NewValue.Boards.Where(b => b.TypeID == BoardID).FirstOrDefault().Tiles.Where(t => t.TypeID == Tile.ID).FirstOrDefault()), true);
+            currentSelected.BindValueChanged(_ =>
+            {
+                if (Enabled.Value == true)
+                    FadeBorder(selected || IsHovered, golden: selected);
+            });
+            //room.BindValueChanged(updatedRoom => checkTile(updatedRoom.NewValue.Boards.Where(b => b.TypeID == BoardID).FirstOrDefault().Tiles.Where(t => t.TypeID == Tile.ID).FirstOrDefault()), true);
+        }
+
+        protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
+        {
+            borderContainer.Colour = golden ? Colour4.Gold : Colour4.White;
         }
 
         private void checkTile(OnlineTile tile)

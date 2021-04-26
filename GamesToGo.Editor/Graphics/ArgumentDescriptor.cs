@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project.Arguments;
 using GamesToGo.Editor.Project.Elements;
 using osu.Framework.Allocation;
@@ -103,13 +104,13 @@ namespace GamesToGo.Editor.Graphics
             // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
             ArgumentSelectionDescriptor selectionDescriptor = model.Type switch
             {
-                ArgumentType.Privacy => new EnumArgumentDescriptor<ElementPrivacy>(),
-                ArgumentType.Orientation => new EnumArgumentDescriptor<ElementOrientation>(),
-                ArgumentType.SingleNumber => new NumberSelectionDescriptor(),
-                ArgumentType.CardType => new ElementSelectionDescriptor<Card>(),
-                ArgumentType.TileType => new ElementSelectionDescriptor<Tile>(),
-                ArgumentType.TokenType => new ElementSelectionDescriptor<Token>(),
-                ArgumentType.BoardType => new ElementSelectionDescriptor<Board>(),
+                ArgumentReturnType.Privacy => new EnumArgumentDescriptor<ElementPrivacy>(),
+                ArgumentReturnType.Orientation => new EnumArgumentDescriptor<ElementOrientation>(),
+                ArgumentReturnType.SingleNumber => new NumberSelectionDescriptor(),
+                ArgumentReturnType.CardType => new ElementSelectionDescriptor<Card>(),
+                ArgumentReturnType.TileType => new ElementSelectionDescriptor<Tile>(),
+                ArgumentReturnType.TokenType => new ElementSelectionDescriptor<Token>(),
+                ArgumentReturnType.BoardType => new ElementSelectionDescriptor<Board>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(model.Type), model.Type,
                     "Can't create selector for given model, as no selection is available"),
             };

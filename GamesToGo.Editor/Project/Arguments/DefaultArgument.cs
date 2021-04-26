@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Common.Game;
 
 namespace GamesToGo.Editor.Project.Arguments
 {
@@ -6,8 +7,8 @@ namespace GamesToGo.Editor.Project.Arguments
     {
         public override int ArgumentTypeID => 0;
 
-        public override ArgumentType Type => ArgumentType.Default;
-        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentReturnType Type => ArgumentReturnType.Default;
+        public override ArgumentReturnType[] ExpectedArguments => Array.Empty<ArgumentReturnType>();
         public override string[] Text { get; } = { @"Añade un argumento aquí" };
     }
 }
