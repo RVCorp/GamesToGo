@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using GamesToGo.Common.Online;
-using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.LocalGame;
-using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Platform;
 using osuTK;
 
 namespace GamesToGo.Game.Graphics
@@ -29,14 +22,14 @@ namespace GamesToGo.Game.Graphics
 
         private BasicScrollContainer scroll;
         private HelpContainer description;
-        private readonly Bindable<Card> currentSelectedCard = new Bindable<Card>();
+        private readonly Bindable<OnlineCard> currentSelectedCard = new Bindable<OnlineCard>();
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
         [Resolved]
         private APIController api { get; set; }
 
-        private BindableList<OnlineCard> localCards = new BindableList<OnlineCard>();
-        public IBindable<Card> CurrentSelectedCard => currentSelectedCard;
+        private readonly BindableList<OnlineCard> localCards = new BindableList<OnlineCard>();
+        public IBindable<OnlineCard> CurrentSelectedCard => currentSelectedCard;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -74,44 +67,23 @@ namespace GamesToGo.Game.Graphics
         }
 
         private void checkPlayerHand(ICollection<OnlineCard> cards)
-        {            
-            for (int i = 0; i < localCards.Count; i++)
+        {
+            playerCards.RemoveRange(playerCards.Where(c => cards.All(oc => oc.ID != c.Model.ID)));
+
+            var toBeAddedCards = cards.Where(oc => playerCards.All(c => c.Model.ID != oc.ID)).ToList();
+
+            foreach (var card in cards.Except(toBeAddedCards))
+                playerCards.Single(c => c.Model.ID == card.ID).Model = card;
+
+            foreach (var card in toBeAddedCards)
             {
-                if (cards.All(c => c.ID != localCards[i].ID))
-                    continue;
-
-                cards.Remove(cards.First(c => c.ID == localCards[i].ID));
-                localCards.Remove(localCards[i]);
-                i--;
-            }
-            if (localCards.Any() || cards.Any())
-            {
-                localCards.AddRange(cards.Select(c => new OnlineCard
-                {
-                    ID = c.ID,
-                    TypeID = c.TypeID,
-                    Orientation = c.Orientation,
-                    FrontVisible = c.FrontVisible,
-                    Tokens = c.Tokens
-                }));
-
-                foreach (var card in localCards)
-                {
-                    playerCards.Add(new CardContainer(card));
-                }
-
-                foreach (var oldCard in localCards)
-                {
-                    localCards.Remove(localCards.First(s => s.ID == oldCard.ID));
-                    playerCards.RemoveRange(playerCards.Where(c => c.Card.ID == oldCard.ID));
-                }
-
+                playerCards.Add(new CardContainer { Model = card });
             }
         }
 
-        public void SelectCard(Card card)
+        public void SelectCard(OnlineCard card)
         {
-            if (currentSelectedCard.Value == card)
+            if (Equals(currentSelectedCard.Value, card))
                 currentSelectedCard.Value = null;
             else
                 currentSelectedCard.Value = card;
@@ -123,7 +95,7 @@ namespace GamesToGo.Game.Graphics
             description.Show();
         }
         public void HideDescription()
-        {            
+        {
             description.Hide();
         }
     }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
+using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -13,17 +12,22 @@ namespace GamesToGo.Game.Graphics
     public class TokenContainer : Container
     {
         private Token token;
+        private OnlineToken model;
         private Container borderContainer;
         private ContainedImage tokenImage;
 
-        public TokenContainer(Token token)
+        [Resolved]
+        private WorkingGame game { get; set; }
+
+        public TokenContainer(OnlineToken token)
         {
-            this.token = token;
+            model = token;
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            token = game.GameTokens.First(t => t.TypeID == model.TypeID);
             Anchor = Anchor.TopRight;
             Origin = Anchor.TopRight;
             RelativeSizeAxes = Axes.Both;

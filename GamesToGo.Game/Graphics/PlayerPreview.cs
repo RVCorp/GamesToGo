@@ -38,6 +38,8 @@ namespace GamesToGo.Game.Graphics
             Enabled.BindTo(gameScreen.EnablePlayerSelection);
             Enabled.Value = false;
             Action += () => playersContainer.SelectPlayer(Model);
+            
+                      
             currentSelected.BindTo(playersContainer.CurrentSelectedPlayer);
             RelativeSizeAxes = Axes.Y;
             Width = 180;

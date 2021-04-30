@@ -31,10 +31,7 @@ namespace GamesToGo.Game.Graphics
 
         public void SelectPlayer(Player player)
         {
-            if (currentSelectedPlayer.Value == player)
-                currentSelectedPlayer.Value = null;
-            else
-                currentSelectedPlayer.Value = player;
+            currentSelectedPlayer.Value = Equals(currentSelectedPlayer.Value, player) ? null : player;
         }
 
         private void updatePreviews()

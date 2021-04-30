@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GamesToGo.Common.Online;
 using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
@@ -12,22 +11,36 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
+using osu.Framework.Testing;
 using osu.Framework.Threading;
 
 namespace GamesToGo.Game.Graphics
 {
     public class CardContainer : SurfaceButton
     {
-        public Card Card;
+        private Card fileCard;
+
+        private OnlineCard model;
+        public OnlineCard Model
+        {
+            get => model;
+            set
+            {
+                model = value;
+
+                CheckCard(model.Tokens);
+            }
+        }
+
         private ContainedImage cardFrontImage;
-        private ContainedImage cardBackImage; //ToDo
+        private ContainedImage cardBackImage; //ToDo: OK
         private Container borderContainer;
         private readonly IBindable<Card> currentSelected = new Bindable<Card>();
-        private bool selected => (currentSelected.Value?.ID ?? -1) == Card.ID;
+        private bool selected => (currentSelected.Value?.TypeID ?? -1) == fileCard.TypeID;
         private ScheduledDelegate delayedShow;
-        private TileContainer tile;
+
         [Resolved]
-        private PlayerHandContainer hand {get; set;}
+        private PlayerHandContainer hand { get; set; }
         [Resolved]
         private WorkingGame game { get; set; }
         [Resolved]
@@ -35,22 +48,12 @@ namespace GamesToGo.Game.Graphics
         [Resolved]
         private GameScreen gameScreen { get; set; }
 
-        public CardContainer(OnlineCard card)
-        {
-            Card = game.GameCards.Where(c => c.ID == card.ID).FirstOrDefault();
-        }
-
-        public CardContainer(OnlineCard card, TileContainer tile)
-        {            
-            Card = game.GameCards.Where(c => c.ID == card.ID).FirstOrDefault();
-            this.tile = tile;
-        }
-
         [BackgroundDependencyLoader]
         private void load()
         {
+            fileCard = game.GameCards.First(c => c.TypeID == model.TypeID);
             Enabled.BindTo(gameScreen.EnableCardSelection);
-            Action += () => hand.SelectCard(Card);
+            Action += () => hand.SelectCard(model);
             currentSelected.BindTo(hand.CurrentSelectedCard);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -74,31 +77,23 @@ namespace GamesToGo.Game.Graphics
                 cardFrontImage = new ContainedImage(false, 0)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Texture = Card.Images.First(),
-                    ImageSize = Card.Size
-                }
+                    Texture = fileCard.Images.First(),
+                    ImageSize = fileCard.Size,
+                },
             };
             currentSelected.BindValueChanged(_ =>
             {
                 if (Enabled.Value == true)
                     FadeBorder(selected || IsHovered, golden: selected);
             });
-            room.BindValueChanged(updatedRoom => checkCard(updatedRoom.NewValue.Boards.Where(b => b.TypeID == tile.BoardID).FirstOrDefault().Tiles.Where(t => t.TypeID == tile.Tile.ID).FirstOrDefault().Cards.Where(c => c.ID == Card.ID).FirstOrDefault().Tokens), true);
         }
 
-        private void checkCard(List<OnlineToken> updatedTokens)
+        public void CheckCard(List<OnlineToken> updatedTokens)
         {
-            Card.Tokens.Clear();
-            cardFrontImage.OverImageContent.RemoveRange(cardFrontImage.OverImageContent.Where(t => t is TokenContainer));
+            cardFrontImage.OverImageContent.RemoveRange(cardFrontImage.ChildrenOfType<TokenContainer>());
             foreach (var token in updatedTokens)
             {
-                Token newToken;
-                Card.Tokens.Add(newToken = new Token
-                {
-                    ID = token.TypeID,
-                    Amount = token.Count
-                });
-                cardFrontImage.OverImageContent.Add(new TokenContainer(newToken));
+                cardFrontImage.OverImageContent.Add(new TokenContainer(token));
             }
         }
 
@@ -110,7 +105,7 @@ namespace GamesToGo.Game.Graphics
         protected override bool OnMouseDown(MouseDownEvent e)
         {
             base.OnMouseDown(e);
-            delayedShow = Scheduler.AddDelayed(() => hand.ShowDescription(Card.Description, Position), 1400);
+            delayedShow = Scheduler.AddDelayed(() => hand.ShowDescription(fileCard.Description, Position), 1400);
             return true;
         }
 

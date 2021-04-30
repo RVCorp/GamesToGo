@@ -11,6 +11,8 @@ namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 
         public ElementOrientation Orientation { get; set; }
 
+        public ElementPrivacy Privacy { get; set; }
+
         public bool FrontVisible { get; set; }
 
         public List<OnlineToken> Tokens { get; set; } = new List<OnlineToken>();

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
@@ -9,7 +8,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
-using osuTK;
+using osu.Framework.Testing;
 
 namespace GamesToGo.Game.Graphics
 {
@@ -21,8 +20,6 @@ namespace GamesToGo.Game.Graphics
         private readonly Bindable<Tile> currentSelectedTile = new Bindable<Tile>();
         public IBindable<Tile> CurrentSelectedTile => currentSelectedTile;
 
-
-
         private List<Board> boards;
 
         public List<Board> Boards
@@ -31,7 +28,7 @@ namespace GamesToGo.Game.Graphics
             set
             {
                 boards = value;
-                
+
             }
         }
 
@@ -45,7 +42,7 @@ namespace GamesToGo.Game.Graphics
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
             };
-            if(Boards != null)
+            if (Boards != null)
                 populateBoards();
         }
 
@@ -59,7 +56,7 @@ namespace GamesToGo.Game.Graphics
             {
                 boardContainer.Add(new BoardContainer(board));
             }
-            foreach(var container in boardContainer)
+            foreach (var container in boardContainer)
             {
                 container.Hide();
             }
@@ -70,22 +67,22 @@ namespace GamesToGo.Game.Graphics
         public void ChangeBoard(int id)
         {
             current.Hide();
-            current = boardContainer.First(b => b.Board.ID == id);
+            current = boardContainer.First(b => b.Board.TypeID == id);
             current.Show();
         }
 
         public void SelectTile(Tile tile)
         {
-            if (currentSelectedTile.Value == tile)
-                currentSelectedTile.Value = null;
-            else
-                currentSelectedTile.Value = tile;
+            currentSelectedTile.Value = currentSelectedTile.Value == tile ? null : tile;
         }
 
         private class BoardContainer : Container
         {
             public readonly Board Board;
             private ContainedImage contained;
+
+            [Resolved]
+            private Bindable<OnlineRoom> room { get; set; }
 
             public BoardContainer(Board board)
             {
@@ -103,6 +100,16 @@ namespace GamesToGo.Game.Graphics
                     ImageSize = Board.Size
                 };
                 contained.OverImageContent.Clear();
+
+                room.BindValueChanged(_ => updateTiles(room.Value.Boards.First(b => b.TypeID == Board.TypeID).Tiles));
+            }
+
+            private void updateTiles(List<OnlineTile> tiles)
+            {
+                var currentTiles = this.ChildrenOfType<TileContainer>().ToList();
+
+                foreach (var tile in tiles)
+                    currentTiles.First(t => t.Model.TypeID == tile.TypeID).Model = tile;
             }
 
             protected override void LoadComplete()
@@ -113,15 +120,15 @@ namespace GamesToGo.Game.Graphics
 
             private void populateTiles()
             {
-                foreach(var tile in Board.Tiles)
+                foreach (var tile in Board.Tiles)
                 {
-                    contained.OverImageContent.Add(new TileContainer(tile, Board.ID).With(c =>
+                    contained.OverImageContent.Add(new TileContainer(tile).With(c =>
                     {
                         c.Size = tile.Size / contained.ExpectedToRealSizeRatio;
                         c.Position = tile.Position / contained.ExpectedToRealSizeRatio;
                     }));
                 }
-            }        
+            }
         }
     }
 }

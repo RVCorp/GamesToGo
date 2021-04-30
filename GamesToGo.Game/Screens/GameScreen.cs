@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GamesToGo.Common.Game;
 using GamesToGo.Common.Online;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Arguments;
+using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
+using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -31,6 +34,16 @@ namespace GamesToGo.Game.Screens
         public Bindable<bool> EnableCardSelection = new BindableBool(false);
         public Bindable<bool> EnableTileSelection = new BindableBool(false);
         public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
+
+        public Card CurrentCard = new Card();
+        public Tile CurrentTile = new Tile();
+        public Player CurrentPlayer = new Player();
+        private PlayerPreviewContainer players;
+
+        private Player[] playersArray;
+
+        private int indexOfPlayer = 0;
+        private SendArgumentOverlay sendOverlay;
 
         [Resolved]
         private APIController api { get; set; }
@@ -81,7 +94,7 @@ namespace GamesToGo.Game.Screens
                                     RelativeSizeAxes = Axes.Both,
                                     Width = .8f,
                                     ScrollbarOverlapsContent = false,
-                                    Child = new PlayerPreviewContainer(),
+                                    Child = players = new PlayerPreviewContainer(),
                                 },
                                 new SimpleIconButton(FontAwesome.Solid.SignOutAlt)
                                 {
@@ -110,6 +123,7 @@ namespace GamesToGo.Game.Screens
                         },
                     },
                 },
+                sendOverlay = new SendArgumentOverlay()
             };
             room.BindValueChanged(updatedRoom => checkActions(updatedRoom.NewValue), true);
         }
@@ -125,6 +139,36 @@ namespace GamesToGo.Game.Screens
             api.Queue(req);
         }
 
+        public void Send()
+        {
+            int id = 0;
+            if(CurrentTile == null && CurrentPlayer == null)
+            {
+                CurrentCard = playerCards.CurrentSelectedCard.Value;
+                id = CurrentCard.ID;
+                EnableCardSelection.Value = false;
+            }
+            else if(CurrentCard == null && CurrentPlayer == null)
+            {
+                CurrentTile = board.CurrentSelectedTile.Value;
+                id = CurrentTile.ID;
+                EnableTileSelection.Value = false;
+            }
+            else if (CurrentTile == null && CurrentCard == null)
+            {
+                CurrentPlayer = players.CurrentSelectedPlayer.Value;
+                id = Array.IndexOf<Player>(playersArray, CurrentPlayer);
+                EnablePlayerSelection.Value = false;
+            }
+
+            var SendArgument = new JoinRoomRequest(id);
+            SendArgument.Failure += e =>
+            {
+                Console.WriteLine( @"No se pudo enviar el argumento");
+            };
+            api.Queue(SendArgument);
+        }
+
         private void checkActions(OnlineRoom receivedRoom)
         {
             if (receivedRoom.UserAcctionArgument != null)
@@ -133,12 +177,12 @@ namespace GamesToGo.Game.Screens
                 {
                     case ArgumentType.TileWithNoCardsChosenByPlayer:
                     {
-                        argumentWithOneArgument(receivedRoom);
+                        argumentWithOneArgument(receivedRoom, ArgumentType.TileWithNoCardsChosenByPlayer.ReturnType());
                     }
                     break;
                     case ArgumentType.PlayerChosenByPlayer:
                     {
-                        argumentWithOneArgument(receivedRoom);
+                        argumentWithOneArgument(receivedRoom, ArgumentType.PlayerChosenByPlayer.ReturnType());
                     }
                     break;
                     case ArgumentType.DefaultArgument: //TileWithTokenSelectedByPlayer 
@@ -150,11 +194,32 @@ namespace GamesToGo.Game.Screens
             }
         }
 
-        private void argumentWithOneArgument(OnlineRoom receivedRoom)
+        private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argument)
         {
             if (receivedRoom.Players[receivedRoom.UserAcctionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
             {
-
+                if((argument & ArgumentReturnType.Tile) != 0)
+                {
+                    EnableTileSelection.Value = true;
+                    sendOverlay.Show();
+                    CurrentCard = null;
+                    CurrentPlayer = null;
+                }
+                if ((argument & ArgumentReturnType.Card) != 0)
+                {
+                    EnableCardSelection.Value = true;
+                    sendOverlay.Show();
+                    CurrentTile = null;
+                    CurrentPlayer = null;
+                }
+                if ((argument & ArgumentReturnType.Player) != 0)
+                {
+                    EnablePlayerSelection.Value = true;
+                    sendOverlay.Show();
+                    CurrentTile = null;
+                    CurrentCard = null;
+                    playersArray = receivedRoom.Players;
+                }
             }
         }
     }

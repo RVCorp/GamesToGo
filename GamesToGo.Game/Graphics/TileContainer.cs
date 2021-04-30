@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
@@ -10,16 +9,31 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Testing;
 
 namespace GamesToGo.Game.Graphics
 {
     public class TileContainer : Button
     {
-        public Tile Tile;
+        private readonly Tile tile;
+        private OnlineTile model;
 
-        public ContainedImage TileImage;
+        public OnlineTile Model
+        {
+            get => model;
+            set
+            {
+                model = value;
+                checkTile();
+            }
+        }
+
+        private ContainedImage tileImage;
+
+        private List<CardContainer> cards => tileImage.OverImageContent.ChildrenOfType<CardContainer>().ToList();
+
+        public List<Token> Tokens { get; } = new List<Token>();
 
         [Resolved]
         private BoardsContainer boards { get; set; }
@@ -30,20 +44,18 @@ namespace GamesToGo.Game.Graphics
         private GameScreen gameScreen { get; set; }
 
         private readonly IBindable<Tile> currentSelected = new Bindable<Tile>();
-        private bool selected => (currentSelected.Value?.ID ?? -1) == Tile.ID;
-        public int BoardID;
+        private bool selected => (currentSelected.Value?.TypeID ?? -1) == tile.TypeID;
         private Container borderContainer;
 
-        public TileContainer(Tile tile, int boardID)
+        public TileContainer(Tile tile)
         {
-            this.Tile = tile;
-            this.BoardID = boardID;
+            this.tile = tile;
         }
 
         [BackgroundDependencyLoader]
         private void load()
-        {            
-            Action += () => boards.SelectTile(Tile);
+        {
+            Action += () => boards.SelectTile(tile);
             Enabled.BindTo(gameScreen.EnableTileSelection);
             currentSelected.BindTo(boards.CurrentSelectedTile);
             Children = new Drawable[]
@@ -61,24 +73,23 @@ namespace GamesToGo.Game.Graphics
                         Alpha = 0.1f,
                     },
                 },
-                TileImage =new ContainedImage(false, 0)
+                tileImage = new ContainedImage(false, 0)
                 {
                     BorderThickness = .3f,
                     BorderColour = Colour4.White,
                     RelativeSizeAxes = Axes.Both,
-                    Texture = Tile.Images.First(),
-                    ImageSize = Tile.Size
-                }
+                    Texture = tile.Images.First(),
+                    ImageSize = tile.Size,
+                },
             };
-                
-            TileImage.Rotation = (int)Tile.Orientation * -90;
-            TileImage.OverImageContent.Clear();
+
+            tileImage.Rotation = (int)tile.Orientation * -90;
+            tileImage.OverImageContent.Clear();
             currentSelected.BindValueChanged(_ =>
             {
                 if (Enabled.Value == true)
                     FadeBorder(selected || IsHovered, golden: selected);
             });
-            //room.BindValueChanged(updatedRoom => checkTile(updatedRoom.NewValue.Boards.Where(b => b.TypeID == BoardID).FirstOrDefault().Tiles.Where(t => t.TypeID == Tile.ID).FirstOrDefault()), true);
         }
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
@@ -86,51 +97,35 @@ namespace GamesToGo.Game.Graphics
             borderContainer.Colour = golden ? Colour4.Gold : Colour4.White;
         }
 
-        private void checkTile(OnlineTile tile)
+        private void checkTile()
         {
-            for (int j = 0; j < Tile.Cards.Count; j++)
+            tileImage.OverImageContent.RemoveRange(cards.Where(c => model.Cards.All(oc => oc.ID != c.Model.ID)));
+
+            var toBeAddedCards = model.Cards.Where(oc => cards.All(c => c.Model.ID != oc.ID)).ToList();
+
+            foreach (var card in model.Cards.Except(toBeAddedCards))
+                this.ChildrenOfType<CardContainer>().Single(c => c.Model.ID == card.ID).Model = card;
+
+            foreach (var card in toBeAddedCards)
             {
-                if (tile.Cards.All(c => c.ID != Tile.Cards[j].ID))
-                    continue;
-
-                tile.Cards.Remove(tile.Cards.First(c => c.ID == Tile.Cards[j].ID));
-                Tile.Cards.Remove(Tile.Cards[j]);
-                j--;
-            }
-            if (Tile.Cards.Any() || tile.Cards.Any())
-            {
-                Tile.Cards.AddRange(tile.Cards.Select(c => new Card
+                tileImage.OverImageContent.Add(new CardContainer()
                 {
-                    ID = c.ID,
-                    TypeID = c.TypeID,
-                    Orientation = c.Orientation,
-                    FrontVisible = c.FrontVisible,
-                }));
-
-                foreach (var card in Tile.Cards)
-                {
-                    TileImage.OverImageContent.Add(new CardContainer(tile.Cards.Where(c => c.ID == card.ID).FirstOrDefault(), this));
-                }
-
-                foreach (var oldCard in Tile.Cards)
-                {
-                    Tile.Cards.Remove(Tile.Cards.First(s => s.ID == oldCard.ID));
-                    TileImage.OverImageContent.RemoveRange(TileImage.OverImageContent.Where(c => c is CardContainer card && card.Card.ID == oldCard.ID));
-                }
-
-            }
-            Tile.Tokens.Clear();
-            TileImage.OverImageContent.RemoveRange(TileImage.OverImageContent.Where(t => t is TokenContainer));
-            foreach (var token in tile.Tokens)
-            {
-                Token newToken;
-                Tile.Tokens.Add(newToken = new Token
-                {
-                    ID = token.TypeID,
-                    Amount = token.Count
+                    Model = card,
                 });
-                TileImage.OverImageContent.Add(new TokenContainer(newToken));
             }
+
+            /*Tile.Tokens.Clear(); 
+            tileImage.OverImageContent.RemoveRange(tileImage.OverImageContent.Where(t => t is TokenContainer)); 
+            foreach (var token in updatedTile.Tokens) 
+            { 
+                Token newToken; 
+                Tile.Tokens.Add(newToken = new Token 
+                { 
+                    ID = token.TypeID, 
+                    Amount = token.Count 
+                }); 
+                tileImage.OverImageContent.Add(new TokenContainer(newToken)); 
+            }*/
         }
     }
 }
