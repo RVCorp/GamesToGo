@@ -281,7 +281,8 @@ namespace GamesToGo.Editor.Screens
 
         private void importProject(OnlineGame onlineProject)
         {
-            string filename = store.GetFullPath(Path.Combine(@"download", @$"{onlineProject.Hash}.zip"));
+            string relativePath = Path.Combine(@"download", @$"{onlineProject.Hash}.zip");
+            string filename = store.GetFullPath(relativePath);
 
             ProjectInfo futureInfo = new ProjectInfo
             {
@@ -317,6 +318,7 @@ namespace GamesToGo.Editor.Screens
             futureInfo.ImageRelation = futureInfo.Relations.FirstOrDefault(r => r.File.NewName == onlineProject.Image);
             WorkingProject.Parse(futureInfo, store, textures, api);
             database.SaveChanges();
+            store.Delete(relativePath);
 
             onlineProjectsList.Remove(onlineProjectsList.Children.First(o => o.ID == onlineProject.Id));
             projectsList.Add(new LocalProjectSummaryContainer(futureInfo) { EditAction = openProject, DeleteAction = deleteProject });
