@@ -23,14 +23,14 @@ namespace GamesToGo.Game.Graphics
         private BasicScrollContainer scroll;
         private HelpContainer description;
         private FillFlowContainer<TokenContainer> playerTokens;
-        private readonly Bindable<OnlineCard> currentSelectedCard = new Bindable<OnlineCard>();
+        
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
         [Resolved]
         private APIController api { get; set; }
 
         private readonly BindableList<OnlineCard> localCards = new BindableList<OnlineCard>();
-        public IBindable<OnlineCard> CurrentSelectedCard => currentSelectedCard;
+
 
         [BackgroundDependencyLoader]
         private void load()
@@ -120,13 +120,6 @@ namespace GamesToGo.Game.Graphics
             }
         }
 
-        public void SelectCard(OnlineCard card)
-        {
-            if (Equals(currentSelectedCard.Value, card))
-                currentSelectedCard.Value = null;
-            else
-                currentSelectedCard.Value = card;
-        }
         public void ShowDescription(string desc, Vector2 pos)
         {
             description.Text = desc;

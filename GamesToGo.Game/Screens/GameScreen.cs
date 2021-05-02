@@ -35,6 +35,17 @@ namespace GamesToGo.Game.Screens
         public Bindable<bool> EnableTileSelection = new BindableBool(false);
         public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
 
+        private readonly Bindable<OnlineCard> currentSelectedCard = new Bindable<OnlineCard>();
+        public IBindable<OnlineCard> CurrentSelectedCard => currentSelectedCard;
+
+        private readonly Bindable<OnlineTile> currentSelectedTile = new Bindable<OnlineTile>();
+        public IBindable<OnlineTile> CurrentSelectedTile => currentSelectedTile;
+
+        private readonly Bindable<Player> currentSelectedPlayer = new Bindable<Player>();
+        public IBindable<Player> CurrentSelectedPlayer => currentSelectedPlayer;
+
+
+
         private PlayerPreviewContainer players;
 
         private Player[] playersArray;
@@ -123,6 +134,23 @@ namespace GamesToGo.Game.Screens
                 sendOverlay = new SendArgumentOverlay()
             };
             room.BindValueChanged(updatedRoom => checkActions(updatedRoom.NewValue), true);
+        }
+        public void SelectCard(OnlineCard card)
+        {
+            if (Equals(currentSelectedCard.Value, card))
+                currentSelectedCard.Value = null;
+            else
+                currentSelectedCard.Value = card;
+        }
+
+        public void SelectTile(OnlineTile tile)
+        {
+            currentSelectedTile.Value = currentSelectedTile.Value == tile ? null : tile;
+        }
+
+        public void SelectPlayer(Player player)
+        {
+            currentSelectedPlayer.Value = Equals(currentSelectedPlayer.Value, player) ? null : player;
         }
 
         private void exitRoom()

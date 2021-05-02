@@ -14,9 +14,6 @@ namespace GamesToGo.Game.Graphics
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
 
-        private readonly Bindable<Player> currentSelectedPlayer = new Bindable<Player>();
-        public IBindable<Player> CurrentSelectedPlayer => currentSelectedPlayer;
-
         [Resolved]
         private APIController api { get; set; }
 
@@ -27,11 +24,6 @@ namespace GamesToGo.Game.Graphics
             AutoSizeAxes = Axes.X;
             Direction = FillDirection.Horizontal;
             room.BindValueChanged(r => updatePreviews(), true);
-        }
-
-        public void SelectPlayer(Player player)
-        {
-            currentSelectedPlayer.Value = Equals(currentSelectedPlayer.Value, player) ? null : player;
         }
 
         private void updatePreviews()

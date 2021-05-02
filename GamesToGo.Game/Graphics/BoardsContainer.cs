@@ -18,8 +18,7 @@ namespace GamesToGo.Game.Graphics
     {
         private FillFlowContainer<BoardContainer> boardContainer;
         private BoardContainer current;
-        private readonly Bindable<OnlineTile> currentSelectedTile = new Bindable<OnlineTile>();
-        public IBindable<OnlineTile> CurrentSelectedTile => currentSelectedTile;
+        
 
         private List<Board> boards;
 
@@ -70,11 +69,6 @@ namespace GamesToGo.Game.Graphics
             current.Hide();
             current = boardContainer.First(b => b.Board.TypeID == id);
             current.Show();
-        }
-
-        public void SelectTile(OnlineTile tile)
-        {
-            currentSelectedTile.Value = currentSelectedTile.Value == tile ? null : tile;
         }
 
         private class BoardContainer : Container

@@ -42,8 +42,6 @@ namespace GamesToGo.Game.Graphics
         private FillFlowContainer<TokenContainer> cardTokens;
 
         [Resolved]
-        private PlayerHandContainer hand { get; set; }
-        [Resolved]
         private WorkingGame game { get; set; }
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
@@ -55,8 +53,8 @@ namespace GamesToGo.Game.Graphics
         {
             fileCard = game.GameCards.First(c => c.TypeID == model.TypeID);
             Enabled.BindTo(gameScreen.EnableCardSelection);
-            Action += () => hand.SelectCard(model);
-            currentSelected.BindTo(hand.CurrentSelectedCard);
+            Action += () => gameScreen.SelectCard(model);
+            currentSelected.BindTo(gameScreen.CurrentSelectedCard);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Y;

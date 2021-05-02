@@ -57,9 +57,9 @@ namespace GamesToGo.Game.Graphics
         [BackgroundDependencyLoader]
         private void load()
         {
-            Action += () => boards.SelectTile(model);
+            Action += () => gameScreen.SelectTile(model);
             Enabled.BindTo(gameScreen.EnableTileSelection);
-            currentSelected.BindTo(boards.CurrentSelectedTile);
+            currentSelected.BindTo(gameScreen.CurrentSelectedTile);
             Children = new Drawable[]
             {
                 borderContainer = new Container

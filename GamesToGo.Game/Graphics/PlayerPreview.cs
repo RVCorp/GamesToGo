@@ -37,10 +37,10 @@ namespace GamesToGo.Game.Graphics
         {
             Enabled.BindTo(gameScreen.EnablePlayerSelection);
             Enabled.Value = false;
-            Action += () => playersContainer.SelectPlayer(Model);
+            Action += () => gameScreen.SelectPlayer(Model);
             
                       
-            currentSelected.BindTo(playersContainer.CurrentSelectedPlayer);
+            currentSelected.BindTo(gameScreen.CurrentSelectedPlayer);
             RelativeSizeAxes = Axes.Y;
             Width = 180;
 
