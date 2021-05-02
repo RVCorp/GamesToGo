@@ -7,6 +7,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Testing;
 
@@ -80,6 +81,7 @@ namespace GamesToGo.Game.Graphics
         {
             public readonly Board Board;
             private ContainedImage contained;
+            private Container borderContainer;
 
             [Resolved]
             private Bindable<OnlineRoom> room { get; set; }
@@ -93,13 +95,28 @@ namespace GamesToGo.Game.Graphics
             private void load()
             {
                 RelativeSizeAxes = Axes.Both;
-                Child = contained = new ContainedImage(true, 0)
+                Children = new Drawable[] 
                 {
-                    BorderThickness = 3f,
-                    BorderColour = Colour4.White,
+                    borderContainer = new Container
+                    {
+                        Masking = true,
+                        CornerRadius = 10,
+                        BorderThickness = 4f,
+                        BorderColour = Colour4.White,
+                        RelativeSizeAxes = Axes.Both,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Colour = Colour4.Transparent,
+                            Alpha = 0.1f,
+                        },
+                    },
+                    contained = new ContainedImage(true, 0)
+                    {
                     RelativeSizeAxes = Axes.Both,
                     Texture = Board.Images.FirstOrDefault(),
                     ImageSize = Board.Size
+                    }
                 };
                 contained.OverImageContent.Clear();
                 

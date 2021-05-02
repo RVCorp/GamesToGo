@@ -62,15 +62,29 @@ namespace GamesToGo.Game.Graphics
             currentSelected.BindTo(boards.CurrentSelectedTile);
             Children = new Drawable[]
             {
+                borderContainer = new Container
+                {
+                    Masking = true,
+                    CornerRadius = 10,
+                    BorderThickness = 4f,
+                    BorderColour = Colour4.White,
+                    RelativeSizeAxes = Axes.Both,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Colour4.Transparent,
+                        Alpha = 0.1f,
+                    },
+                },
                 new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Direction = FillDirection.Vertical,
                     Children = new Drawable[]
                     {
-                        tileImage = new ContainedImage(true, 0)
+                        tileImage = new ContainedImage(false, 0)
                         {
-                            BorderThickness = 3f,
+                            BorderThickness = .3f,
                             BorderColour = Colour4.White,
                             RelativeSizeAxes = Axes.Both,
                             Height = .7f, 
@@ -106,7 +120,7 @@ namespace GamesToGo.Game.Graphics
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
         {
-            tileImage.BorderColour = golden ? Colour4.Gold : Colour4.White;
+            borderContainer.BorderColour = golden ? Colour4.Gold : Colour4.White;
         }
 
         private void checkTile()
