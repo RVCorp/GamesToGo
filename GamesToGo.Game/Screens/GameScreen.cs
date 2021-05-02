@@ -169,17 +169,17 @@ namespace GamesToGo.Game.Screens
             int id = 0;
             if(EnableCardSelection.Value)
             {
-                id = playerCards.CurrentSelectedCard.Value.ID;
+                id = CurrentSelectedCard.Value.ID;
                 EnableCardSelection.Value = false;
             }
             else if(EnableTileSelection.Value)
             {
-                id = board.CurrentSelectedTile.Value.TypeID;
+                id = CurrentSelectedTile.Value.TypeID;
                 EnableTileSelection.Value = false;
             }
             else if (EnablePlayerSelection.Value)
             {
-                id = Array.IndexOf<Player>(playersArray, players.CurrentSelectedPlayer.Value);
+                id = Array.IndexOf<Player>(playersArray, CurrentSelectedPlayer.Value);
                 EnablePlayerSelection.Value = false;
             }
 
