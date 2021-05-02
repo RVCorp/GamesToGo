@@ -35,9 +35,10 @@ namespace GamesToGo.Game.Graphics
         [BackgroundDependencyLoader]
         private void load()
         {
+            Action += () => gameScreen.SelectPlayer(Model);
             Enabled.BindTo(gameScreen.EnablePlayerSelection);
             Enabled.Value = false;
-            Action += () => gameScreen.SelectPlayer(Model);
+            
             
                       
             currentSelected.BindTo(gameScreen.CurrentSelectedPlayer);

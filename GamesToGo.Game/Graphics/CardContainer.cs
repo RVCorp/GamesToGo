@@ -54,8 +54,8 @@ namespace GamesToGo.Game.Graphics
         private void load()
         {
             fileCard = game.GameCards.First(c => c.TypeID == model.TypeID);
-            Enabled.BindTo(gameScreen.EnableCardSelection);
             Action += () => gameScreen.SelectCard(model);
+            Enabled.BindTo(gameScreen.EnableCardSelection);
             currentSelected.BindTo(gameScreen.CurrentSelectedCard);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
