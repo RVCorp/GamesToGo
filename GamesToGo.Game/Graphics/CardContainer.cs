@@ -36,11 +36,13 @@ namespace GamesToGo.Game.Graphics
         private ContainedImage cardFrontImage;
         private ContainedImage cardBackImage; //ToDo: OK
         private Container borderContainer;
-        private readonly IBindable<Card> currentSelected = new Bindable<Card>();
+        private readonly IBindable<OnlineCard> currentSelected = new Bindable<OnlineCard>();
         private bool selected => (currentSelected.Value?.TypeID ?? -1) == fileCard.TypeID;
         private ScheduledDelegate delayedShow;
         private FillFlowContainer<TokenContainer> cardTokens;
 
+        [Resolved(canBeNull:true)]
+        private PlayerHandContainer hand { get; set; }
         [Resolved]
         private WorkingGame game { get; set; }
         [Resolved]
@@ -104,6 +106,12 @@ namespace GamesToGo.Game.Graphics
                     }
                 }
             };
+            
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
             currentSelected.BindValueChanged(_ =>
             {
                 if (Enabled.Value == true)
@@ -132,7 +140,7 @@ namespace GamesToGo.Game.Graphics
         protected override bool OnMouseDown(MouseDownEvent e)
         {
             base.OnMouseDown(e);
-            delayedShow = Scheduler.AddDelayed(() => hand.ShowDescription(fileCard.Description, Position), 1400);
+            delayedShow = Scheduler.AddDelayed(() => hand?.ShowDescription(fileCard.Description, Position), 1400);
             return true;
         }
 
@@ -141,7 +149,7 @@ namespace GamesToGo.Game.Graphics
             base.OnMouseUp(e);
             delayedShow?.Cancel();
             delayedShow = null;
-            hand.HideDescription();
+            hand?.HideDescription();
         }
     }
 }

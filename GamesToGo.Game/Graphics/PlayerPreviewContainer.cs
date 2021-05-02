@@ -22,7 +22,12 @@ namespace GamesToGo.Game.Graphics
         {
             RelativeSizeAxes = Axes.Y;
             AutoSizeAxes = Axes.X;
-            Direction = FillDirection.Horizontal;
+            Direction = FillDirection.Horizontal;            
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
             room.BindValueChanged(r => updatePreviews(), true);
         }
 

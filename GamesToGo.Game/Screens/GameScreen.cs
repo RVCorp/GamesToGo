@@ -133,6 +133,12 @@ namespace GamesToGo.Game.Screens
                 },
                 sendOverlay = new SendArgumentOverlay()
             };
+            
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
             room.BindValueChanged(updatedRoom => checkActions(updatedRoom.NewValue), true);
         }
         public void SelectCard(OnlineCard card)
