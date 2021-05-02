@@ -85,13 +85,14 @@ namespace GamesToGo.Game.Graphics
                         cardFrontImage = new ContainedImage(false, 0)
                         {
                             RelativeSizeAxes = Axes.Both,
+                            Height = .7f,
                             Texture = fileCard.Images.First(),
                             ImageSize = fileCard.Size,
                         },
                         new BasicScrollContainer(Direction.Horizontal)
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Width = .3f,
+                            Height = .3f,
                             ScrollbarOverlapsContent = false,
                             Child = cardTokens = new FillFlowContainer<TokenContainer>
                             {

@@ -171,9 +171,9 @@ namespace GamesToGo.Game.Screens
 
         private void checkActions(OnlineRoom receivedRoom)
         {
-            if (receivedRoom.UserAcctionArgument != null)
+            if (receivedRoom.UserActionArgument != null)
             {
-                switch (receivedRoom.UserAcctionArgument.Type)
+                switch (receivedRoom.UserActionArgument.Type)
                 {
                     case ArgumentType.TileWithNoCardsChosenByPlayer:
                     {
@@ -196,7 +196,7 @@ namespace GamesToGo.Game.Screens
 
         private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argument)
         {
-            if (receivedRoom.Players[receivedRoom.UserAcctionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
+            if (receivedRoom.Players[receivedRoom.UserActionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
             {
                 if((argument & ArgumentReturnType.Tile) != 0)
                 {

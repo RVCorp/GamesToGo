@@ -21,7 +21,7 @@ namespace GamesToGo.Game.Online.Models.RequestModel
 
         public double TimeElapsed { get; set; }
 
-        public ArgumentParameter UserAcctionArgument { get; set; }
+        public ArgumentParameter UserActionArgument { get; set; }
 
         public Player PlayerWithID(int id) => Players.SingleOrDefault(p => p?.BackingUser.ID == id);
 

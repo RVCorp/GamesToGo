@@ -19,17 +19,16 @@ namespace GamesToGo.Game.Overlays
         private void load()
         {
             RelativePositionAxes = Axes.X;
-            RelativeSizeAxes = Axes.Both;
+            Height = 120;
+            Width = 120;
+            Anchor = Anchor.CentreRight;
+            Origin = Anchor.CentreRight;
             X = -1;
             InternalChildren = new Drawable[]
             {
                 new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Height = .2f,
-                    Width = .2f,
-                    Anchor = Anchor.CentreRight,
-                    Origin = Anchor.CentreRight,
                     Child = new SurfaceButton
                     {
                         Action = () => SendArgument(),
@@ -37,8 +36,8 @@ namespace GamesToGo.Game.Overlays
                         Child = new SpriteIcon
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Height = .85f,
-                            Width = .85f,
+                            Height = .95f,
+                            Width = .95f,
                             Icon = FontAwesome.Solid.PaperPlane
                         }
                     }

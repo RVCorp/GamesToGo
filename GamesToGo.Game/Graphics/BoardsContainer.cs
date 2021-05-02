@@ -100,6 +100,13 @@ namespace GamesToGo.Game.Graphics
                     ImageSize = Board.Size
                 };
                 contained.OverImageContent.Clear();
+                
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+
                 populateTiles();
                 room.BindValueChanged(_ => updateTiles(room.Value.Boards.First(b => b.TypeID == Board.TypeID).Tiles));
             }
