@@ -36,9 +36,8 @@ namespace GamesToGo.Game.Graphics
             fileToken = game.GameTokens.First(t => t.TypeID == model.TypeID);
             Anchor = Anchor.TopRight;
             Origin = Anchor.TopRight;
-            RelativeSizeAxes = Axes.Both;
-            Height = .2f;
-            Width = .2f;
+            Height = 300;
+            Width = 300;
             Children = new Drawable[]
             {
                 borderContainer = new Container

@@ -11,6 +11,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Testing;
+using osuTK;
 
 namespace GamesToGo.Game.Graphics
 {
@@ -151,7 +152,7 @@ namespace GamesToGo.Game.Graphics
 
             foreach (var token in model.Tokens)
             {
-                tileTokens.Add(new TokenContainer { Model = token });
+                tileTokens.Add(new TokenContainer { Model = token , Size = new Vector2(20, 20)});
             }
         }
     }

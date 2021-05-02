@@ -139,7 +139,7 @@ namespace GamesToGo.Game.LocalGame
 
                         token = new Token
                         {
-                            ID = int.Parse(tInfo[1]),
+                            TypeID = int.Parse(tInfo[1]),
                             Name = tInfo[2]
                         };
                     }
@@ -170,7 +170,7 @@ namespace GamesToGo.Game.LocalGame
                                         return false;
 
                                     if (parts[1] == "null")
-                                        continue;
+                                        token.Images.Add(null);
                                     else
                                         token.Images.Add(textures.Get($"files/{parts[1]}"));
                                 }
@@ -234,7 +234,7 @@ namespace GamesToGo.Game.LocalGame
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            card.Images.Add(null);
                                         else
                                             card.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
@@ -319,7 +319,7 @@ namespace GamesToGo.Game.LocalGame
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            tile.Images.Add(null);
                                         else
                                             tile.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
@@ -416,7 +416,7 @@ namespace GamesToGo.Game.LocalGame
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            board.Images.Add(null);
                                         else
                                             board.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }

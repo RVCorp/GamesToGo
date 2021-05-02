@@ -116,7 +116,7 @@ namespace GamesToGo.Game.Graphics
 
             foreach(var token in tokens)
             {
-                playerTokens.Add(new TokenContainer { Model = token });
+                playerTokens.Add(new TokenContainer { Model = token, Size = new Vector2(300,300)});
             }
         }
 

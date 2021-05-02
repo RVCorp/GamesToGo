@@ -13,6 +13,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
 using osu.Framework.Testing;
 using osu.Framework.Threading;
+using osuTK;
 
 namespace GamesToGo.Game.Graphics
 {
@@ -117,7 +118,7 @@ namespace GamesToGo.Game.Graphics
 
             foreach(var token in model.Tokens)
             {
-                cardTokens.Add(new TokenContainer { Model = token});
+                cardTokens.Add(new TokenContainer { Model = token, Size = new Vector2(20,20)});
             }
         }
 
