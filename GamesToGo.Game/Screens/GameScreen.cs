@@ -35,8 +35,8 @@ namespace GamesToGo.Game.Screens
         public Bindable<bool> EnableTileSelection = new BindableBool(false);
         public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
 
-        public Card CurrentCard = new Card();
-        public Tile CurrentTile = new Tile();
+        public OnlineCard CurrentCard = new OnlineCard();
+        public OnlineTile CurrentTile = new OnlineTile();
         public Player CurrentPlayer = new Player();
         private PlayerPreviewContainer players;
 
@@ -151,7 +151,7 @@ namespace GamesToGo.Game.Screens
             else if(CurrentCard == null && CurrentPlayer == null)
             {
                 CurrentTile = board.CurrentSelectedTile.Value;
-                id = CurrentTile.ID;
+                id = CurrentTile.TypeID;
                 EnableTileSelection.Value = false;
             }
             else if (CurrentTile == null && CurrentCard == null)

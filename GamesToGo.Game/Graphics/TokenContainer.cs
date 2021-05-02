@@ -11,23 +11,29 @@ namespace GamesToGo.Game.Graphics
 {
     public class TokenContainer : Container
     {
-        private Token token;
+        private Token fileToken;
         private OnlineToken model;
+        public OnlineToken Model
+        {
+            get => model;
+            set
+            {
+                model = value;
+
+                CheckToken();
+            }
+        }
+
         private Container borderContainer;
         private ContainedImage tokenImage;
 
         [Resolved]
         private WorkingGame game { get; set; }
 
-        public TokenContainer(OnlineToken token)
-        {
-            model = token;
-        }
-
         [BackgroundDependencyLoader]
         private void load()
         {
-            token = game.GameTokens.First(t => t.TypeID == model.TypeID);
+            fileToken = game.GameTokens.First(t => t.TypeID == model.TypeID);
             Anchor = Anchor.TopRight;
             Origin = Anchor.TopRight;
             RelativeSizeAxes = Axes.Both;
@@ -51,10 +57,29 @@ namespace GamesToGo.Game.Graphics
                 tokenImage = new ContainedImage(false, 0)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Texture = token.Images.First(),
+                    Texture = fileToken.Images.First(),
                     ImageSize = Size
                 }
             };
+        }
+
+        public void CheckToken()    
+        {
+            switch(model.Privacy)
+            {
+                case ElementPrivacy.Invisible:
+                {
+                    Hide();
+                }break;
+                case ElementPrivacy.Private:
+                {
+                    Show();
+                }break;
+                case ElementPrivacy.Public:
+                {
+                    Show();
+                }break;
+            }
         }
     }
 }

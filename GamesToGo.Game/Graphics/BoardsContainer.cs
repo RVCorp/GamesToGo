@@ -17,8 +17,8 @@ namespace GamesToGo.Game.Graphics
     {
         private FillFlowContainer<BoardContainer> boardContainer;
         private BoardContainer current;
-        private readonly Bindable<Tile> currentSelectedTile = new Bindable<Tile>();
-        public IBindable<Tile> CurrentSelectedTile => currentSelectedTile;
+        private readonly Bindable<OnlineTile> currentSelectedTile = new Bindable<OnlineTile>();
+        public IBindable<OnlineTile> CurrentSelectedTile => currentSelectedTile;
 
         private List<Board> boards;
 
@@ -42,7 +42,7 @@ namespace GamesToGo.Game.Graphics
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
             };
-            if (Boards != null)
+            if (Boards != null || Boards.Count != 0)
                 populateBoards();
         }
 
@@ -71,7 +71,7 @@ namespace GamesToGo.Game.Graphics
             current.Show();
         }
 
-        public void SelectTile(Tile tile)
+        public void SelectTile(OnlineTile tile)
         {
             currentSelectedTile.Value = currentSelectedTile.Value == tile ? null : tile;
         }
@@ -96,11 +96,11 @@ namespace GamesToGo.Game.Graphics
                 Child = contained = new ContainedImage(true, 0)
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Texture = Board.Images.First(),
+                    Texture = Board.Images.FirstOrDefault(),
                     ImageSize = Board.Size
                 };
                 contained.OverImageContent.Clear();
-
+                populateTiles();
                 room.BindValueChanged(_ => updateTiles(room.Value.Boards.First(b => b.TypeID == Board.TypeID).Tiles));
             }
 
@@ -109,13 +109,7 @@ namespace GamesToGo.Game.Graphics
                 var currentTiles = this.ChildrenOfType<TileContainer>().ToList();
 
                 foreach (var tile in tiles)
-                    currentTiles.First(t => t.Model.TypeID == tile.TypeID).Model = tile;
-            }
-
-            protected override void LoadComplete()
-            {
-                base.LoadComplete();
-                populateTiles();
+                    currentTiles.First(t => t.Tile.TypeID == tile.TypeID).Model = tile;
             }
 
             private void populateTiles()

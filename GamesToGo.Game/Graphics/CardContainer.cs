@@ -38,6 +38,7 @@ namespace GamesToGo.Game.Graphics
         private readonly IBindable<Card> currentSelected = new Bindable<Card>();
         private bool selected => (currentSelected.Value?.TypeID ?? -1) == fileCard.TypeID;
         private ScheduledDelegate delayedShow;
+        private FillFlowContainer<TokenContainer> cardTokens;
 
         [Resolved]
         private PlayerHandContainer hand { get; set; }
@@ -73,13 +74,35 @@ namespace GamesToGo.Game.Graphics
                         RelativeSizeAxes = Axes.Both,
                         Alpha = 0.1f,
                     },
-                },
-                cardFrontImage = new ContainedImage(false, 0)
+                },                
+                new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Texture = fileCard.Images.First(),
-                    ImageSize = fileCard.Size,
-                },
+                    Direction = FillDirection.Vertical,
+                    Children = new Drawable[]
+                    {
+                        cardFrontImage = new ContainedImage(false, 0)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Texture = fileCard.Images.First(),
+                            ImageSize = fileCard.Size,
+                        },
+                        new BasicScrollContainer(Direction.Horizontal)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .3f,
+                            ScrollbarOverlapsContent = false,
+                            Child = cardTokens = new FillFlowContainer<TokenContainer>
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                RelativeSizeAxes = Axes.Y,
+                                AutoSizeAxes = Axes.X,
+                                Direction = FillDirection.Horizontal,
+                            },
+                        }
+                    }
+                }
             };
             currentSelected.BindValueChanged(_ =>
             {
@@ -90,10 +113,11 @@ namespace GamesToGo.Game.Graphics
 
         public void CheckCard(List<OnlineToken> updatedTokens)
         {
-            cardFrontImage.OverImageContent.RemoveRange(cardFrontImage.ChildrenOfType<TokenContainer>());
-            foreach (var token in updatedTokens)
+            cardTokens.Clear();
+
+            foreach(var token in model.Tokens)
             {
-                cardFrontImage.OverImageContent.Add(new TokenContainer(token));
+                cardTokens.Add(new TokenContainer { Model = token});
             }
         }
 

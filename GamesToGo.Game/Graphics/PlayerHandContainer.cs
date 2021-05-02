@@ -22,6 +22,7 @@ namespace GamesToGo.Game.Graphics
 
         private BasicScrollContainer scroll;
         private HelpContainer description;
+        private FillFlowContainer<TokenContainer> playerTokens;
         private readonly Bindable<OnlineCard> currentSelectedCard = new Bindable<OnlineCard>();
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
@@ -42,18 +43,40 @@ namespace GamesToGo.Game.Graphics
                     RelativeSizeAxes = Axes.Both,
                     Colour = Colour4.Black.Opacity(0.6f)
                 },
-                scroll = new BasicScrollContainer(Direction.Horizontal)
+                new FillFlowContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    ScrollbarOverlapsContent = false,
-                    Child = playerCards = new FillFlowContainer<CardContainer>
+                    Children = new Drawable[]
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Direction = FillDirection.Horizontal,
-                    },
+                        scroll = new BasicScrollContainer(Direction.Horizontal)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .7f,
+                            ScrollbarOverlapsContent = false,
+                            Child = playerCards = new FillFlowContainer<CardContainer>
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                RelativeSizeAxes = Axes.Y,
+                                AutoSizeAxes = Axes.X,
+                                Direction = FillDirection.Horizontal,
+                            },
+                        },
+                        new BasicScrollContainer(Direction.Vertical)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Width = .3f,
+                            ScrollbarOverlapsContent = false,
+                            Child = playerTokens = new FillFlowContainer<TokenContainer>
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                RelativeSizeAxes = Axes.X,
+                                AutoSizeAxes = Axes.Y,
+                                Direction = FillDirection.Vertical,
+                            },
+                        }
+                    }
                 },
                 description = new HelpContainer(80)
                 {
@@ -63,10 +86,16 @@ namespace GamesToGo.Game.Graphics
             description.Hide();
             scroll.ScrollContent.Anchor = Anchor.Centre;
             scroll.ScrollContent.Origin = Anchor.Centre;
-            room.BindValueChanged(updatedRoom => checkPlayerHand(updatedRoom.NewValue.PlayerWithID(api.LocalUser.Value.ID).Hand.Cards), true);
+            room.BindValueChanged(updatedRoom => checkPlayerHand(updatedRoom.NewValue), true);
         }
 
-        private void checkPlayerHand(ICollection<OnlineCard> cards)
+        private void checkPlayerHand(OnlineRoom room)
+        {
+            checkCards(room.PlayerWithID(api.LocalUser.Value.ID).Hand.Cards);
+            checkTokens(room.PlayerWithID(api.LocalUser.Value.ID).Hand.Tokens);
+        }
+
+        private void checkCards(ICollection<OnlineCard> cards)
         {
             playerCards.RemoveRange(playerCards.Where(c => cards.All(oc => oc.ID != c.Model.ID)));
 
@@ -78,6 +107,16 @@ namespace GamesToGo.Game.Graphics
             foreach (var card in toBeAddedCards)
             {
                 playerCards.Add(new CardContainer { Model = card });
+            }
+        }
+
+        private void checkTokens(ICollection<OnlineToken> tokens)
+        {
+            playerTokens.Clear();
+
+            foreach(var token in tokens)
+            {
+                playerTokens.Add(new TokenContainer { Model = token });
             }
         }
 

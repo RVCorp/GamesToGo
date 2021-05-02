@@ -164,7 +164,7 @@ namespace GamesToGo.Game.LocalGame
 
                                 for (int j = h + amm; h < j; h++)
                                 {
-                                    var parts = tokenLines[h + 1].Split('=');
+                                    var parts = tokenLines[h + 1].Split('=',':');
 
                                     if (parts.Length != 2)
                                         return false;
@@ -230,7 +230,7 @@ namespace GamesToGo.Game.LocalGame
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = cardLines[h + 1].Split('=');
+                                        var parts = cardLines[h + 1].Split('=', ':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
@@ -315,7 +315,7 @@ namespace GamesToGo.Game.LocalGame
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = tileLines[h + 1].Split('=');
+                                        var parts = tileLines[h + 1].Split('=',':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
@@ -412,7 +412,7 @@ namespace GamesToGo.Game.LocalGame
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = boardLines[h + 1].Split('=');
+                                        var parts = boardLines[h + 1].Split('=', ':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
