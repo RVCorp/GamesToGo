@@ -115,6 +115,9 @@ namespace GamesToGo.Game.Graphics
 
         public void CheckCard(List<OnlineToken> updatedTokens)
         {
+            if (!IsLoaded)
+                return;
+
             cardTokens.Clear();
 
             foreach(var token in model.Tokens)

@@ -35,9 +35,6 @@ namespace GamesToGo.Game.Screens
         public Bindable<bool> EnableTileSelection = new BindableBool(false);
         public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
 
-        public OnlineCard CurrentCard = new OnlineCard();
-        public OnlineTile CurrentTile = new OnlineTile();
-        public Player CurrentPlayer = new Player();
         private PlayerPreviewContainer players;
 
         private Player[] playersArray;
@@ -142,22 +139,19 @@ namespace GamesToGo.Game.Screens
         public void Send()
         {
             int id = 0;
-            if(CurrentTile == null && CurrentPlayer == null)
+            if(EnableCardSelection.Value)
             {
-                CurrentCard = playerCards.CurrentSelectedCard.Value;
-                id = CurrentCard.ID;
+                id = playerCards.CurrentSelectedCard.Value.ID;
                 EnableCardSelection.Value = false;
             }
-            else if(CurrentCard == null && CurrentPlayer == null)
+            else if(EnableTileSelection.Value)
             {
-                CurrentTile = board.CurrentSelectedTile.Value;
-                id = CurrentTile.TypeID;
+                id = board.CurrentSelectedTile.Value.TypeID;
                 EnableTileSelection.Value = false;
             }
-            else if (CurrentTile == null && CurrentCard == null)
+            else if (EnablePlayerSelection.Value)
             {
-                CurrentPlayer = players.CurrentSelectedPlayer.Value;
-                id = Array.IndexOf<Player>(playersArray, CurrentPlayer);
+                id = Array.IndexOf<Player>(playersArray, players.CurrentSelectedPlayer.Value);
                 EnablePlayerSelection.Value = false;
             }
 
@@ -202,22 +196,16 @@ namespace GamesToGo.Game.Screens
                 {
                     EnableTileSelection.Value = true;
                     sendOverlay.Show();
-                    CurrentCard = null;
-                    CurrentPlayer = null;
                 }
                 if ((argument & ArgumentReturnType.Card) != 0)
                 {
                     EnableCardSelection.Value = true;
                     sendOverlay.Show();
-                    CurrentTile = null;
-                    CurrentPlayer = null;
                 }
                 if ((argument & ArgumentReturnType.Player) != 0)
                 {
                     EnablePlayerSelection.Value = true;
                     sendOverlay.Show();
-                    CurrentTile = null;
-                    CurrentCard = null;
                     playersArray = receivedRoom.Players;
                 }
             }

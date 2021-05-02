@@ -19,7 +19,7 @@ namespace GamesToGo.Game.Online.Requests
         {
             var req = base.CreateWebRequest();
             req.Method = HttpMethod.Post;
-            req.AddParameter("id", @$"{id}");
+            req.AddParameter("resultID", @$"{id}");
             return req;
         }
 
