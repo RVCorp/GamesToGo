@@ -1,4 +1,5 @@
-﻿using GamesToGo.Common.Online;
+﻿using System.Threading.Tasks;
+using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
@@ -246,7 +247,7 @@ namespace GamesToGo.Game.Screens
                         Masking = true,
                         Child = new SurfaceButton
                         {
-                            Action = () => createRoom(onlineGame),
+                            Action = createRoom,
                             BackgroundColour = Colour4.Pink,
                             Children = new Drawable[]
                             {
@@ -298,33 +299,76 @@ namespace GamesToGo.Game.Screens
             api.Queue(getRooms);
         }
 
-        private void createRoom(OnlineGame requestedGame)
+        private void createRoom()
         {
-            game.DownloadGame(requestedGame);
-            var room = new CreateRoomRequest(requestedGame.Id);
-            room.Success += u =>
-            {
-                LoadComponentAsync(new RoomScreen(u), this.Push);
-            };
+            var downloadComplete = game.DownloadGame(onlineGame);
 
-            room.Failure += ex =>
+            Task.Run(async () =>
             {
-                infoOverlay.Show(@"Ocurrió un error al intentar crear la sala", Colour4.DarkRed);
-            };
-            api.Queue(room);
+                await downloadComplete.Task;
+
+                if (downloadComplete.Task.Result == false)
+                {
+                    failure();
+
+                    return;
+                }
+
+                var room = new CreateRoomRequest(onlineGame.Id);
+
+                room.Success += u =>
+                {
+                    Schedule(() => LoadComponentAsync(new RoomScreen(u), this.Push));
+                };
+
+                room.Failure += ex =>
+                {
+                    failure();
+                };
+
+                api.Queue(room);
+
+                void failure()
+                {
+                    Schedule(() => infoOverlay.Show(@"Ocurrió un error al intentar crear la sala", Colour4.DarkRed));
+                }
+            });
         }
 
         private void joinRoom(int id)
         {
-            game.DownloadGame(onlineGame);
-            var joinRoom = new JoinRoomRequest(id);
-            joinRoom.Success += u =>
-            {
-                LoadComponentAsync(new RoomScreen(u), this.Push);
-            };
+            var downloadComplete = game.DownloadGame(onlineGame);
 
-            joinRoom.Failure += _ => infoOverlay.Show(@"Hubo un problema al intentar entrar en la sala", Colour4.DarkRed);
-            api.Queue(joinRoom);
+            Task.Run(async () =>
+            {
+                await downloadComplete.Task;
+
+                if (downloadComplete.Task.Result == false)
+                {
+                    failure();
+
+                    return;
+                }
+
+                var joinRoom = new JoinRoomRequest(id);
+
+                joinRoom.Success += u =>
+                {
+                    Schedule(() => LoadComponentAsync(new RoomScreen(u), this.Push));
+                };
+
+                joinRoom.Failure += ex =>
+                {
+                    failure();
+                };
+
+                api.Queue(joinRoom);
+
+                void failure()
+                {
+                    Schedule(() => infoOverlay.Show(@"Hubo un problema al intentar unirse a la sala", Colour4.DarkRed));
+                }
+            });
         }
     }
 }
