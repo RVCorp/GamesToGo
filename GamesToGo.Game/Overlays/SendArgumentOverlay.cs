@@ -23,7 +23,7 @@ namespace GamesToGo.Game.Overlays
             Width = 120;
             Anchor = Anchor.CentreRight;
             Origin = Anchor.CentreRight;
-            X = -1;
+            X = 1;
             InternalChildren = new Drawable[]
             {
                 new CircularContainer
@@ -58,7 +58,7 @@ namespace GamesToGo.Game.Overlays
 
         protected override void PopOut()
         {
-            this.MoveToX(-1, 300, Easing.InBack);
+            this.MoveToX(1, 300, Easing.InBack);
         }
     }
 }

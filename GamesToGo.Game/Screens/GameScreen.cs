@@ -161,7 +161,7 @@ namespace GamesToGo.Game.Screens
                 EnablePlayerSelection.Value = false;
             }
 
-            var SendArgument = new JoinRoomRequest(id);
+            var SendArgument = new SendArgumentRequest(id);
             SendArgument.Failure += e =>
             {
                 Console.WriteLine( @"No se pudo enviar el argumento");
