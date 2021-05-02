@@ -95,6 +95,8 @@ namespace GamesToGo.Game.Graphics
                 RelativeSizeAxes = Axes.Both;
                 Child = contained = new ContainedImage(true, 0)
                 {
+                    BorderThickness = 3f,
+                    BorderColour = Colour4.White,
                     RelativeSizeAxes = Axes.Both,
                     Texture = Board.Images.FirstOrDefault(),
                     ImageSize = Board.Size

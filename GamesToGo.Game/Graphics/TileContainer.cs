@@ -68,9 +68,9 @@ namespace GamesToGo.Game.Graphics
                     Direction = FillDirection.Vertical,
                     Children = new Drawable[]
                     {
-                        tileImage = new ContainedImage(false, 0)
+                        tileImage = new ContainedImage(true, 0)
                         {
-                            BorderThickness = .3f,
+                            BorderThickness = 3f,
                             BorderColour = Colour4.White,
                             RelativeSizeAxes = Axes.Both,
                             Height = .7f, 
