@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Visual\Game" />
+    <Folder Include="Visual\Game\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Actions;
 using GamesToGo.Editor.Project.Arguments;
@@ -113,11 +114,11 @@ namespace GamesToGo.Editor.Graphics
 
                 lists.AddRange(new []
                 {
-                    new ActionTypeList(@"Jugador", ArgumentType.Player),
-                    new ActionTypeList(@"Cartas", ArgumentType.Card),
-                    new ActionTypeList(@"Casillas", ArgumentType.Tile),
-                    new ActionTypeList(@"Fichas", ArgumentType.Token),
-                    new ActionTypeList(@"Otros", ArgumentType.Default | ArgumentType.Privacy | ArgumentType.Orientation),
+                    new ActionTypeList(@"Jugador", ArgumentReturnType.Player),
+                    new ActionTypeList(@"Cartas", ArgumentReturnType.Card),
+                    new ActionTypeList(@"Casillas", ArgumentReturnType.Tile),
+                    new ActionTypeList(@"Fichas", ArgumentReturnType.Token),
+                    new ActionTypeList(@"Otros", ArgumentReturnType.Default | ArgumentReturnType.Privacy | ArgumentReturnType.Orientation),
                 });
             }
 
@@ -142,7 +143,7 @@ namespace GamesToGo.Editor.Graphics
 
                 foreach (var list in lists)
                 {
-                    var added = ArgumentType.Default;
+                    var added = ArgumentReturnType.Default;
                     foreach(var arg in defaultEvent.ExpectedArguments)
                     {
                         if ((arg & list.ExpectedType) <= 0 || (added & list.ExpectedType) != 0)
@@ -158,9 +159,9 @@ namespace GamesToGo.Editor.Graphics
         private class ActionTypeList : Container
         {
             private readonly FillFlowContainer possibilitiesList;
-            public ArgumentType ExpectedType { get; }
+            public ArgumentReturnType ExpectedType { get; }
 
-            public ActionTypeList(string title, ArgumentType type)
+            public ActionTypeList(string title, ArgumentReturnType type)
             {
                 ExpectedType = type;
                 AutoSizeAxes = Axes.Both;

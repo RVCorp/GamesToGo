@@ -1,4 +1,5 @@
-﻿using GamesToGo.Editor.Project.Arguments;
+﻿using GamesToGo.Common.Game;
+using GamesToGo.Editor.Project.Arguments;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -15,12 +16,12 @@ namespace GamesToGo.Editor.Graphics
     {
         private Box hoverBox;
         private readonly Bindable<Argument> model;
-        private readonly ArgumentType type;
+        private readonly ArgumentReturnType type;
 
         [Resolved(canBeNull: true)]
         private ArgumentTypeListing argumentListing { get; set; }
 
-        public ChangeArgumentButton(ArgumentType argumentType, Bindable<Argument> bindable)
+        public ChangeArgumentButton(ArgumentReturnType argumentType, Bindable<Argument> bindable)
         {
             type = argumentType;
             model = bindable;

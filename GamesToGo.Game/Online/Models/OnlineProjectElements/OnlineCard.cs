@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GamesToGo.Game.LocalGame.Elements;
 
 namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 {
@@ -8,7 +9,9 @@ namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 
         public int TypeID { get; set; }
 
-        public int Orientation { get; set; }
+        public ElementOrientation Orientation { get; set; }
+
+        public ElementPrivacy Privacy { get; set; }
 
         public bool FrontVisible { get; set; }
 

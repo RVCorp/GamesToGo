@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project.Actions;
 using GamesToGo.Editor.Project.Arguments;
 using osu.Framework.Bindables;
@@ -20,7 +21,7 @@ namespace GamesToGo.Editor.Project.Events
 
         public Bindable<string> Name { get; } = new Bindable<string>();
 
-        public abstract ArgumentType[] ExpectedArguments { get; }
+        public abstract ArgumentReturnType[] ExpectedArguments { get; }
 
         private Bindable<Argument>[] arguments;
 

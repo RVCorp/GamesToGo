@@ -10,9 +10,5 @@ namespace GamesToGo.Game.LocalGame.Elements
         public override ElementType Type => ElementType.Card;
 
         public Vector2 Size { get; set; }
-
-        public ElementPrivacy Privacy { get; set; }
-
-        public ElementOrientation Orientation { get; set; }
     }
 }

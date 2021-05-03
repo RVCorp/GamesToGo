@@ -1,10 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using GamesToGo.Common.Game;
 using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
+using GamesToGo.Game.LocalGame;
+using GamesToGo.Game.LocalGame.Arguments;
+using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
+using GamesToGo.Game.Overlays;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -17,12 +24,36 @@ using osu.Framework.Screens;
 
 namespace GamesToGo.Game.Screens
 {
+    [Cached]
     public class GameScreen : Screen
     {
-        private FillFlowContainer<CardContainer> playerCards;
+        private PlayerHandContainer playerCards;
         [Resolved]
         private Player localPlayer { get; set; }
         private BoardsContainer board;
+
+        public Bindable<bool> EnableCardSelection = new BindableBool(false);
+        public Bindable<bool> EnableTileSelection = new BindableBool(false);
+        public Bindable<bool> EnablePlayerSelection = new BindableBool(false);
+
+        private readonly Bindable<OnlineCard> currentSelectedCard = new Bindable<OnlineCard>();
+        public IBindable<OnlineCard> CurrentSelectedCard => currentSelectedCard;
+
+        private readonly Bindable<OnlineTile> currentSelectedTile = new Bindable<OnlineTile>();
+        public IBindable<OnlineTile> CurrentSelectedTile => currentSelectedTile;
+
+        private readonly Bindable<Player> currentSelectedPlayer = new Bindable<Player>();
+        public IBindable<Player> CurrentSelectedPlayer => currentSelectedPlayer;
+
+        private ArgumentParameter argumentToSend;
+
+        private PlayerPreviewContainer players;
+        private bool hasEnded;
+
+        private Player[] playersArray;
+
+        private int indexOfPlayer = 0;
+        private SendArgumentOverlay sendOverlay;
 
         [Resolved]
         private APIController api { get; set; }
@@ -36,10 +67,19 @@ namespace GamesToGo.Game.Screens
 
         [Resolved]
         private Bindable<OnlineRoom> room { get; set; }
+        [Resolved]
+        private WorkingGame game { get; set; }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
+
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            EnableCardSelection.Value = false;
+            EnableTileSelection.Value = false;
+            EnablePlayerSelection.Value = false;
+
             RelativeSizeAxes = Axes.Both;
             InternalChildren = new Drawable[]
             {
@@ -66,7 +106,7 @@ namespace GamesToGo.Game.Screens
                                     RelativeSizeAxes = Axes.Both,
                                     Width = .8f,
                                     ScrollbarOverlapsContent = false,
-                                    Child = new PlayerPreviewContainer(),
+                                    Child = players = new PlayerPreviewContainer(),
                                 },
                                 new SimpleIconButton(FontAwesome.Solid.SignOutAlt)
                                 {
@@ -77,6 +117,7 @@ namespace GamesToGo.Game.Screens
                         board = new BoardsContainer
                         {
                             Height = .6f,
+                            Boards = game.GameBoards.ToList()
                         },
                         new Container
                         {
@@ -89,23 +130,37 @@ namespace GamesToGo.Game.Screens
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Colour4.Bisque
                                 },
-                                new BasicScrollContainer(Direction.Horizontal)
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    ScrollbarOverlapsContent = false,
-                                    Child = playerCards = new FillFlowContainer<CardContainer>
-                                    {
-                                        RelativeSizeAxes = Axes.Y,
-                                        AutoSizeAxes = Axes.X,
-                                        Direction = FillDirection.Horizontal,
-                                    },
-                                },
+                                playerCards = new PlayerHandContainer()
                             },
                         },
                     },
                 },
+                sendOverlay = new SendArgumentOverlay()
             };
-            room.BindValueChanged(updatedRoom => refreshRoom(updatedRoom.NewValue), true);
+            
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            room.BindValueChanged(updatedRoom => checkRoom(updatedRoom.NewValue), true);
+        }
+        public void SelectCard(OnlineCard card)
+        {
+            if (Equals(currentSelectedCard.Value, card))
+                currentSelectedCard.Value = null;
+            else
+                currentSelectedCard.Value = card;
+        }
+
+        public void SelectTile(OnlineTile tile)
+        {
+            currentSelectedTile.Value = currentSelectedTile.Value == tile ? null : tile;
+        }
+
+        public void SelectPlayer(Player player)
+        {
+            currentSelectedPlayer.Value = Equals(currentSelectedPlayer.Value, player) ? null : player;
         }
 
         private void exitRoom()
@@ -119,76 +174,170 @@ namespace GamesToGo.Game.Screens
             api.Queue(req);
         }
 
-        private void refreshRoom(OnlineRoom receivedRoom)
+        public void Send()
         {
-            if (receivedRoom == null)
+            int id = 0;
+            if(EnableCardSelection.Value)
+            {
+                if (CurrentSelectedCard.Value == null)
+                {
+                    Schedule(() => infoOverlay.Show(@"Selecciona una carta", Colour4.DarkRed));
+                    return;
+                }
+                id = CurrentSelectedCard.Value.ID;
+                EnableCardSelection.Value = false;
+                currentSelectedCard.Value = null;
+            }
+            else if(EnableTileSelection.Value)
+            {
+                if(argumentToSend.Type == ArgumentType.TileWithNoCardsChosenByPlayer)
+                {
+                    if (CurrentSelectedTile.Value == null)
+                    {
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla", Colour4.DarkRed));
+                        return;
+                    }
+                    if (CurrentSelectedTile.Value.Cards.Count == 0)
+                    {
+                        id = CurrentSelectedTile.Value.TypeID;
+                        EnableTileSelection.Value = false;
+                        currentSelectedTile.Value = null;
+                    }
+                    else
+                    {
+                        EnableTileSelection.Value = false;
+                        currentSelectedTile.Value = null;
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla que no tenga cartas", Colour4.DarkRed));                        
+                    }
+                }
+                else
+                {
+                    if (CurrentSelectedTile.Value == null)
+                    {
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla", Colour4.DarkRed));
+                        return;
+                    }
+                    id = CurrentSelectedTile.Value.TypeID;
+                    EnableTileSelection.Value = false;
+                    currentSelectedTile.Value = null;
+                }
+            }
+            else if (EnablePlayerSelection.Value)
+            {
+                if (CurrentSelectedPlayer.Value == null)
+                {
+                    Schedule(() => infoOverlay.Show(@"Selecciona un jugador", Colour4.DarkRed));
+                    return;
+                }
+                id = Array.IndexOf<Player>(playersArray, CurrentSelectedPlayer.Value);
+                EnablePlayerSelection.Value = false;
+                currentSelectedPlayer.Value = null;
+            }
+
+            if(id != 0)
+            {
+                var SendArgument = new SendArgumentRequest(id);
+                SendArgument.Failure += e =>
+                {
+                    Console.WriteLine(@"No se pudo enviar el argumento");
+                };
+                api.Queue(SendArgument);
+            }
+        }
+
+        private void checkRoom(OnlineRoom receivedRoom)
+        {
+            checkActions(receivedRoom);
+            if(receivedRoom.HasEnded)
+                checkVictory(receivedRoom);
+        }
+
+        private void checkVictory(OnlineRoom receivedRoom)
+        {
+            if (!hasEnded)
+                hasEnded = true;
+            else
+                return;
+            if (receivedRoom.WinningPlayersIndexes == null)
                 return;
 
-            checkPlayerHand(receivedRoom.PlayerWithID(api.LocalUser.Value.ID).Hand.Cards);
-
-            foreach (var card in localPlayer.Hand.Cards)
+            if(receivedRoom.WinningPlayersIndexes.Count == 1)
             {
-                //playerCards.Add(); // Hacer CardContainer
+                if (localPlayer.BackingUser.ID == receivedRoom.Players[receivedRoom.WinningPlayersIndexes.FirstOrDefault()].BackingUser.ID)
+                    Schedule(() => infoOverlay.Show(@"Felicidades, ganaste!", Colour4.Green));
+                else
+                    Schedule(() => infoOverlay.Show(@"Suerte para la proxima, perdiste!", Colour4.DarkRed));
             }
+            else if(receivedRoom.WinningPlayersIndexes.Count > 1)
+                Schedule(() => infoOverlay.Show(@"Empate!", Colour4.Blue));
+            else if(receivedRoom.WinningPlayersIndexes.Count == 0)
+                Schedule(() => infoOverlay.Show(@"Nadie ganó!", Colour4.DarkRed));
         }
 
-        private void checkPlayer()
+        private void checkActions(OnlineRoom receivedRoom)
         {
-            //Hand, Status...
-        }
-
-        private void checkObjects()
-        {
-            //Board, Tile, Cards, Tokens..
-        }
-
-        private void checkPlayerHand(ICollection<OnlineCard> cards)
-        {
-            List<OnlineCard> cards1 = localPlayer.Hand.Cards;
-            for (int i = 0; i < cards1.Count; i++)
+            if (receivedRoom.UserActionArgument != null)
             {
-                if (cards.All(c => c.ID != cards1[i].ID))
-                    continue;
-
-                cards.Remove(cards.First(c => c.ID == cards1[i].ID));
-                cards1.Remove(cards1[i]);
-                i--;
-            }
-            if (cards1.Any() || cards.Any())
-            {
-                localPlayer.Hand.Cards.AddRange(cards.Select(c => new OnlineCard
+                argumentToSend = receivedRoom.UserActionArgument;
+                switch (receivedRoom.UserActionArgument.Type)
                 {
-                    ID = c.ID,
-                    TypeID = c.TypeID,
-                    Orientation = c.Orientation,
-                    FrontVisible = c.FrontVisible,
-                    Tokens = c.Tokens
-                }));
+                    case ArgumentType.TileWithNoCardsChosenByPlayer:
+                    {
+                        argumentWithOneArgument(receivedRoom, ArgumentType.TileWithNoCardsChosenByPlayer.ReturnType());
+                    }
+                    break;
+                    case ArgumentType.PlayerChosenByPlayer:
+                    {
+                        argumentWithOneArgument(receivedRoom, ArgumentType.PlayerChosenByPlayer.ReturnType());
+                    }
+                    break;
+                    default:
+                    {
 
-                foreach(var card in localPlayer.Hand.Cards)
-                {
-                    playerCards.Add(new CardContainer(card));
+                    }
+                    break;
                 }
-
-                foreach (var oldCard in cards1)
-                {
-                    localPlayer.Hand.Cards.Remove(localPlayer.Hand.Cards.First(s => s.ID == oldCard.ID));
-                    playerCards.RemoveRange(playerCards.Where(c => c.Card.ID == oldCard.ID));
-                }
-
             }
         }
 
-        //Start the GameScreen
-        private void populatePlayers()
+        private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argumentType)
         {
+            if (receivedRoom.Players[receivedRoom.UserActionArgument.Arguments[0].Result[0]].BackingUser.ID != localPlayer.BackingUser.ID)
+            {
+                sendOverlay.Hide();
+                EnableCardSelection.Value = false;
+                EnablePlayerSelection.Value = false;
+                EnableTileSelection.Value = false;
+                return;
+            }
 
+            if ((argumentType & ArgumentReturnType.Tile) != 0)
+            {
+                EnableTileSelection.Value = true;
+                sendOverlay.Show();
+            }
+            if ((argumentType & ArgumentReturnType.Card) != 0)
+            {
+                EnableCardSelection.Value = true;
+                sendOverlay.Show();
+            }
+            if ((argumentType & ArgumentReturnType.Player) != 0)
+            {
+                EnablePlayerSelection.Value = true;
+                sendOverlay.Show();
+                playersArray = receivedRoom.Players;
+            }
         }
 
-        private void populatePlayerHand()
+        private void argumentWithManyArguments(OnlineRoom receivedRoom, ArgumentType argumentType)
         {
+            for (int i = 0; i < receivedRoom.UserActionArgument.Arguments.Count; i++)
+            {
+                if(receivedRoom.UserActionArgument.Arguments[i].Type.ReturnType() == ArgumentReturnType.SinglePlayer)
+                {
 
+                }
+            }
         }
     }
 }
-//En caso de varios tableros, cual mostrar? Debo tener ProjectElement locales? Como muestro el tablero con

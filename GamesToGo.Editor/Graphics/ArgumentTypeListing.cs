@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Arguments;
 using osu.Framework.Allocation;
@@ -74,7 +75,7 @@ namespace GamesToGo.Editor.Graphics
             possibilities = possibilitiesList;
         }
 
-        public void ShowFor(ArgumentType type, Bindable<Argument> argument, Vector2 position)
+        public void ShowFor(ArgumentReturnType type, Bindable<Argument> argument, Vector2 position)
         {
             current.UnbindAll();
             current.BindTo(argument);

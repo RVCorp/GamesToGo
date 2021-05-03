@@ -1,4 +1,5 @@
-﻿using GamesToGo.Editor.Project.Arguments;
+﻿using GamesToGo.Common.Game;
+using GamesToGo.Editor.Project.Arguments;
 
 namespace GamesToGo.Editor.Project.Actions
 {
@@ -6,8 +7,8 @@ namespace GamesToGo.Editor.Project.Actions
     {
         public override int TypeID => 4;
 
-        public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SingleNumber,
+        public override ArgumentReturnType[] ExpectedArguments { get; } = {
+            ArgumentReturnType.SingleNumber,
         };
 
         public override string[] Text { get; } = {

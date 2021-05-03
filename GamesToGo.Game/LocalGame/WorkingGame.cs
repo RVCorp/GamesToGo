@@ -80,24 +80,24 @@ namespace GamesToGo.Game.LocalGame
                 {
                     case ElementType.Token:
                     {
-                        cardLines.AddRange(aux);
-                    }
+                        tokenLines.AddRange(aux);
                         break;
+                    }
                     case ElementType.Card:
                     {
                         cardLines.AddRange(aux);
-                    }
                         break;
+                    }
                     case ElementType.Tile:
                     {
                         tileLines.AddRange(aux);
-                    }
                         break;
+                    }
                     case ElementType.Board:
                     {
                         boardLines.AddRange(aux);
-                    }
                         break;
+                    }
                 }
                 aux.Clear();
             }
@@ -139,7 +139,7 @@ namespace GamesToGo.Game.LocalGame
 
                         token = new Token
                         {
-                            ID = int.Parse(tInfo[1]),
+                            TypeID = int.Parse(tInfo[1]),
                             Name = tInfo[2]
                         };
                     }
@@ -157,32 +157,26 @@ namespace GamesToGo.Game.LocalGame
                                 token.Description = prop[1];
                             }
 
-                                break;
+                            break;
                             case "Images":
                             {
                                 int amm = int.Parse(prop[1]);
 
                                 for (int j = h + amm; h < j; h++)
                                 {
-                                    var parts = tokenLines[h + 1].Split('=');
+                                    var parts = tokenLines[h + 1].Split('=',':');
 
                                     if (parts.Length != 2)
                                         return false;
 
                                     if (parts[1] == "null")
-                                        continue;
+                                        token.Images.Add(null);
                                     else
                                         token.Images.Add(textures.Get($"files/{parts[1]}"));
                                 }
                             }
 
-                                break;
-                            case "Privacy":
-                            {
-                                token.Privacy = Enum.Parse<ElementPrivacy>(prop[1]);
-                            }
-
-                                break;
+                            break;
                         }
                     }
                 }
@@ -204,7 +198,7 @@ namespace GamesToGo.Game.LocalGame
                 var line = cards[i];
                 if (string.IsNullOrEmpty(line))
                 {
-                    for(int h = 0; h < cardLines.Count(); h++)
+                    for (int h = 0; h < cardLines.Count(); h++)
                     {
                         var cardLine = cardLines[h];
                         if (card == null)
@@ -214,7 +208,7 @@ namespace GamesToGo.Game.LocalGame
                                 return false;
                             card = new Card
                             {
-                                ID = int.Parse(cInfo[1]),
+                                TypeID = int.Parse(cInfo[1]),
                                 Name = cInfo[2]
                             };
                         }
@@ -229,39 +223,43 @@ namespace GamesToGo.Game.LocalGame
                                 case "Desc":
                                 {
                                     card.Description = prop[1];
+                                    break;
                                 }
-                                break;
                                 case "Images":
                                 {
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = cardLines[h + 1].Split('=');
+                                        var parts = cardLines[h + 1].Split('=', ':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            card.Images.Add(null);
                                         else
                                             card.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
+                                    break;
                                 }
-                                break;
                                 case "Size":
                                 {
                                     var xy = prop[1].Split("|");
                                     card.Size = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+                                    break;
                                 }
-                                break;
-                                case "Privacy":
+                                case "Events":
                                 {
-                                    card.Privacy = Enum.Parse<ElementPrivacy>(prop[1]);
+                                    for (int j = 0; j < int.Parse(prop[1]); j++)
+                                    {
+                                        h++;
+                                        cardLine = cardLines[h];
+                                        var aamm = cardLine.Split("|");
+                                        for (int k = 0; k < int.Parse(aamm.Last()); k++)
+                                        {
+                                            h++;
+                                        }
+                                    }
+                                    break;
                                 }
-                                break;
-                                case "Orient":
-                                {
-                                    card.Orientation = Enum.Parse<ElementOrientation>(prop[1]);
-                                }
-                                break;
                             }
                         }
                     }
@@ -283,9 +281,9 @@ namespace GamesToGo.Game.LocalGame
             for (int i = 0; i < tiles.Count(); i++)
             {
                 var line = tiles[i];
-                if (string.IsNullOrEmpty(line) || i == tiles.Count-1)
+                if (string.IsNullOrEmpty(line) || i == tiles.Count - 1)
                 {
-                    for(int h = 0; h < tileLines.Count(); h++)
+                    for (int h = 0; h < tileLines.Count(); h++)
                     {
                         var tileLine = tileLines[h];
                         if (tile == null)
@@ -295,7 +293,7 @@ namespace GamesToGo.Game.LocalGame
                                 return false;
                             tile = new Tile
                             {
-                                ID = int.Parse(tInfo[1]),
+                                TypeID = int.Parse(tInfo[1]),
                                 Name = tInfo[2]
                             };
                         }
@@ -317,11 +315,11 @@ namespace GamesToGo.Game.LocalGame
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = tileLines[h + 1].Split('=');
+                                        var parts = tileLines[h + 1].Split('=',':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            tile.Images.Add(null);
                                         else
                                             tile.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
@@ -342,7 +340,8 @@ namespace GamesToGo.Game.LocalGame
                                 {
                                     var xy = prop[1].Split("|");
                                     tile.Position = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
-                                }break;
+                                }
+                                break;
                                 case "Events":
                                 {
                                     int amm = int.Parse(prop[1]);
@@ -350,7 +349,7 @@ namespace GamesToGo.Game.LocalGame
                                     {
                                         var events = tileLines[h + 1].Split('|');
                                         int actions = int.Parse(events[5]);
-                                        if(actions != 0)
+                                        if (actions != 0)
                                         {
                                             h += actions;
                                         }
@@ -381,7 +380,7 @@ namespace GamesToGo.Game.LocalGame
                 var line = boards[i];
                 if (string.IsNullOrEmpty(line))
                 {
-                    for(int h = 0; h < boardLines.Count(); h++)
+                    for (int h = 0; h < boardLines.Count(); h++)
                     {
                         var boardLine = boardLines[h];
                         if (board == null)
@@ -391,7 +390,7 @@ namespace GamesToGo.Game.LocalGame
                                 return false;
                             board = new Board
                             {
-                                ID = int.Parse(tInfo[1]),
+                                TypeID = int.Parse(tInfo[1]),
                                 Name = tInfo[2]
                             };
                         }
@@ -413,11 +412,11 @@ namespace GamesToGo.Game.LocalGame
                                     int amm = int.Parse(prop[1]);
                                     for (int j = h + amm; h < j; h++)
                                     {
-                                        var parts = boardLines[h + 1].Split('=');
+                                        var parts = boardLines[h + 1].Split('=', ':');
                                         if (parts.Length != 2)
                                             return false;
                                         if (parts[1] == "null")
-                                            continue;
+                                            board.Images.Add(null);
                                         else
                                             board.Images.Add(textures.Get($"files/{parts[1]}"));
                                     }
@@ -453,13 +452,13 @@ namespace GamesToGo.Game.LocalGame
 
         private bool postParse()
         {
-            foreach(var board in GameBoards)
+            foreach (var board in GameBoards)
             {
                 var elementQueue = board.PendingElements;
-                while(elementQueue.Count > 0)
+                while (elementQueue.Count > 0)
                 {
                     int nextElement = elementQueue.Peek();
-                    Tile tile = GameTiles.FirstOrDefault(e => e.ID == nextElement);
+                    Tile tile = GameTiles.FirstOrDefault(e => e.TypeID == nextElement);
 
                     if (tile == null)
                         return false;

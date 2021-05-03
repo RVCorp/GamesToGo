@@ -1,4 +1,5 @@
-﻿using GamesToGo.Editor.Project.Arguments;
+﻿using GamesToGo.Common.Game;
+using GamesToGo.Editor.Project.Arguments;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,11 +10,11 @@ namespace GamesToGo.Editor.Graphics
 {
     public class ArgumentChanger : Container
     {
-        private readonly ArgumentType expectedType;
+        private readonly ArgumentReturnType expectedType;
         private readonly Bindable<Argument> model;
         private Container argumentContainer;
 
-        public ArgumentChanger(ArgumentType expectedType, Bindable<Argument> model)
+        public ArgumentChanger(ArgumentReturnType expectedType, Bindable<Argument> model)
         {
             this.expectedType = expectedType;
             this.model = model;

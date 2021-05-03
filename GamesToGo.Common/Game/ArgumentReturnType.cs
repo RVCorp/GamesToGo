@@ -2,10 +2,10 @@
 
 using System;
 
-namespace GamesToGo.Editor.Project.Arguments
+namespace GamesToGo.Common.Game
 {
     [Flags]
-    public enum ArgumentType
+    public enum ArgumentReturnType
     {
         Default = 0,
 
@@ -23,6 +23,7 @@ namespace GamesToGo.Editor.Project.Arguments
 
         Privacy = 1 << 10,
         Orientation = 1 << 11,
+        Direction = 1 << 12,
 
         SinglePlayer = Single | Player,
         MultiplePlayer = Multiple | Player,
