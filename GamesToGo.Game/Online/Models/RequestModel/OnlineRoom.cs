@@ -19,6 +19,8 @@ namespace GamesToGo.Game.Online.Models.RequestModel
 
         public bool HasStarted { get; set; }
 
+        public bool HasEnded { get; set; }
+
         public double TimeElapsed { get; set; }
         public List<int> WinnerPlayerIndexes { get; set; }
 

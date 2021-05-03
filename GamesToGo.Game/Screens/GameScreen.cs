@@ -48,6 +48,7 @@ namespace GamesToGo.Game.Screens
         private ArgumentParameter argumentToSend;
 
         private PlayerPreviewContainer players;
+        private bool hasEnded;
 
         private Player[] playersArray;
 
@@ -247,11 +248,16 @@ namespace GamesToGo.Game.Screens
         private void checkRoom(OnlineRoom receivedRoom)
         {
             checkActions(receivedRoom);
-            checkVictory(receivedRoom);
+            if(receivedRoom.HasEnded)
+                checkVictory(receivedRoom);
         }
 
         private void checkVictory(OnlineRoom receivedRoom)
         {
+            if (!hasEnded)
+                hasEnded = true;
+            else
+                return;
             if (receivedRoom.WinnerPlayerIndexes == null)
                 return;
 
