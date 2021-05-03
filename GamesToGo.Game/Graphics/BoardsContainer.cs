@@ -48,8 +48,6 @@ namespace GamesToGo.Game.Graphics
 
         private void populateBoards()
         {
-            boardContainer.Height = Boards.First().Size.Y;
-            boardContainer.Width = Boards.First().Size.X;
 
 
             foreach (var board in Boards)
