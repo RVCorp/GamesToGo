@@ -296,24 +296,30 @@ namespace GamesToGo.Game.Screens
 
         private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argumentType)
         {
-            if (receivedRoom.Players[receivedRoom.UserActionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
+            if (receivedRoom.Players[receivedRoom.UserActionArgument.Arguments[0].Result[0]].BackingUser.ID != localPlayer.BackingUser.ID)
             {
-                if((argumentType & ArgumentReturnType.Tile) != 0)
-                {
-                    EnableTileSelection.Value = true;
-                    sendOverlay.Show();
-                }
-                if ((argumentType & ArgumentReturnType.Card) != 0)
-                {
-                    EnableCardSelection.Value = true;
-                    sendOverlay.Show();
-                }
-                if ((argumentType & ArgumentReturnType.Player) != 0)
-                {
-                    EnablePlayerSelection.Value = true;
-                    sendOverlay.Show();
-                    playersArray = receivedRoom.Players;
-                }
+                sendOverlay.Hide();
+                EnableCardSelection.Value = false;
+                EnablePlayerSelection.Value = false;
+                EnableTileSelection.Value = false;
+                return;
+            }
+
+            if ((argumentType & ArgumentReturnType.Tile) != 0)
+            {
+                EnableTileSelection.Value = true;
+                sendOverlay.Show();
+            }
+            if ((argumentType & ArgumentReturnType.Card) != 0)
+            {
+                EnableCardSelection.Value = true;
+                sendOverlay.Show();
+            }
+            if ((argumentType & ArgumentReturnType.Player) != 0)
+            {
+                EnablePlayerSelection.Value = true;
+                sendOverlay.Show();
+                playersArray = receivedRoom.Players;
             }
         }
 
