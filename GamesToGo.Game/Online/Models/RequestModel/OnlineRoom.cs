@@ -22,7 +22,7 @@ namespace GamesToGo.Game.Online.Models.RequestModel
         public bool HasEnded { get; set; }
 
         public double TimeElapsed { get; set; }
-        public List<int> WinnerPlayerIndexes { get; set; }
+        public List<int> WinningPlayersIndexes { get; set; }
 
         public ArgumentParameter UserActionArgument { get; set; }
 

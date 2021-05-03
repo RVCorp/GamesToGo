@@ -258,19 +258,19 @@ namespace GamesToGo.Game.Screens
                 hasEnded = true;
             else
                 return;
-            if (receivedRoom.WinnerPlayerIndexes == null)
+            if (receivedRoom.WinningPlayersIndexes == null)
                 return;
 
-            if(receivedRoom.WinnerPlayerIndexes.Count == 1)
+            if(receivedRoom.WinningPlayersIndexes.Count == 1)
             {
-                if (localPlayer.BackingUser.ID == receivedRoom.Players[receivedRoom.WinnerPlayerIndexes.FirstOrDefault()].BackingUser.ID)
+                if (localPlayer.BackingUser.ID == receivedRoom.Players[receivedRoom.WinningPlayersIndexes.FirstOrDefault()].BackingUser.ID)
                     Schedule(() => infoOverlay.Show(@"Felicidades, ganaste!", Colour4.Green));
                 else
                     Schedule(() => infoOverlay.Show(@"Suerte para la proxima, perdiste!", Colour4.DarkRed));
             }
-            else if(receivedRoom.WinnerPlayerIndexes.Count > 1)
+            else if(receivedRoom.WinningPlayersIndexes.Count > 1)
                 Schedule(() => infoOverlay.Show(@"Empate!", Colour4.Blue));
-            else if(receivedRoom.WinnerPlayerIndexes.Count == 0)
+            else if(receivedRoom.WinningPlayersIndexes.Count == 0)
                 Schedule(() => infoOverlay.Show(@"Nadie ganó!", Colour4.DarkRed));
         }
 
@@ -291,7 +291,7 @@ namespace GamesToGo.Game.Screens
                         argumentWithOneArgument(receivedRoom, ArgumentType.PlayerChosenByPlayer.ReturnType());
                     }
                     break;
-                    case ArgumentType.DefaultArgument: //TileWithTokenSelectedByPlayer 
+                    default:
                     {
 
                     }
