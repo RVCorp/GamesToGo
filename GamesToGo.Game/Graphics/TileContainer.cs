@@ -113,7 +113,6 @@ namespace GamesToGo.Game.Graphics
             tileImage.OverImageContent.Clear();
             currentSelected.BindValueChanged(_ =>
             {
-                if (Enabled.Value == true)
                     FadeBorder(selected || IsHovered, golden: selected);
             });
         }

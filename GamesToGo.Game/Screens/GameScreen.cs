@@ -178,6 +178,11 @@ namespace GamesToGo.Game.Screens
             int id = 0;
             if(EnableCardSelection.Value)
             {
+                if (CurrentSelectedCard.Value == null)
+                {
+                    Schedule(() => infoOverlay.Show(@"Selecciona una carta", Colour4.DarkRed));
+                    return;
+                }
                 id = CurrentSelectedCard.Value.ID;
                 EnableCardSelection.Value = false;
                 currentSelectedCard.Value = null;
@@ -186,6 +191,11 @@ namespace GamesToGo.Game.Screens
             {
                 if(argumentToSend.Type == ArgumentType.TileWithNoCardsChosenByPlayer)
                 {
+                    if (CurrentSelectedTile.Value == null)
+                    {
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla", Colour4.DarkRed));
+                        return;
+                    }
                     if (CurrentSelectedTile.Value.Cards.Count == 0)
                     {
                         id = CurrentSelectedTile.Value.TypeID;
@@ -201,6 +211,11 @@ namespace GamesToGo.Game.Screens
                 }
                 else
                 {
+                    if (CurrentSelectedTile.Value == null)
+                    {
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla", Colour4.DarkRed));
+                        return;
+                    }
                     id = CurrentSelectedTile.Value.TypeID;
                     EnableTileSelection.Value = false;
                     currentSelectedTile.Value = null;
@@ -208,6 +223,11 @@ namespace GamesToGo.Game.Screens
             }
             else if (EnablePlayerSelection.Value)
             {
+                if (CurrentSelectedPlayer.Value == null)
+                {
+                    Schedule(() => infoOverlay.Show(@"Selecciona un jugador", Colour4.DarkRed));
+                    return;
+                }
                 id = Array.IndexOf<Player>(playersArray, CurrentSelectedPlayer.Value);
                 EnablePlayerSelection.Value = false;
                 currentSelectedPlayer.Value = null;

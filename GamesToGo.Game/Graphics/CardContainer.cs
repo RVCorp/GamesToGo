@@ -114,7 +114,6 @@ namespace GamesToGo.Game.Graphics
             base.LoadComplete();
             currentSelected.BindValueChanged(_ =>
             {
-                if (Enabled.Value == true)
                     FadeBorder(selected || IsHovered, golden: selected);
             });
         }

@@ -38,9 +38,9 @@ namespace GamesToGo.Game.Graphics
             Action += () => gameScreen.SelectPlayer(Model);
             Enabled.BindTo(gameScreen.EnablePlayerSelection);
             Enabled.Value = false;
-            
-            
-                      
+
+
+
             currentSelected.BindTo(gameScreen.CurrentSelectedPlayer);
             RelativeSizeAxes = Axes.Y;
             Width = 180;
@@ -76,10 +76,15 @@ namespace GamesToGo.Game.Graphics
                     },
                 },
             };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
             currentSelected.BindValueChanged(_ =>
             {
-                if(Enabled.Value == true)
-                    FadeBorder(selected || IsHovered, golden: selected);
+                FadeBorder(selected || IsHovered, golden: selected);
             });
         }
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
