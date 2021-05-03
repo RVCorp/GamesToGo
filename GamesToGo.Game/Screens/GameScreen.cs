@@ -180,6 +180,7 @@ namespace GamesToGo.Game.Screens
             {
                 id = CurrentSelectedCard.Value.ID;
                 EnableCardSelection.Value = false;
+                currentSelectedCard.Value = null;
             }
             else if(EnableTileSelection.Value)
             {
@@ -189,10 +190,12 @@ namespace GamesToGo.Game.Screens
                     {
                         id = CurrentSelectedTile.Value.TypeID;
                         EnableTileSelection.Value = false;
+                        currentSelectedTile.Value = null;
                     }
                     else
                     {
                         EnableTileSelection.Value = false;
+                        currentSelectedTile.Value = null;
                         Schedule(() => infoOverlay.Show(@"Selecciona una casilla que no tenga cartas", Colour4.DarkRed));                        
                     }
                 }
@@ -200,12 +203,14 @@ namespace GamesToGo.Game.Screens
                 {
                     id = CurrentSelectedTile.Value.TypeID;
                     EnableTileSelection.Value = false;
+                    currentSelectedTile.Value = null;
                 }
             }
             else if (EnablePlayerSelection.Value)
             {
                 id = Array.IndexOf<Player>(playersArray, CurrentSelectedPlayer.Value);
                 EnablePlayerSelection.Value = false;
+                currentSelectedPlayer.Value = null;
             }
 
             if(id != 0)
