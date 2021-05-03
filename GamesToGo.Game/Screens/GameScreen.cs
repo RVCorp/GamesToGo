@@ -284,28 +284,8 @@ namespace GamesToGo.Game.Screens
             if (receivedRoom.UserActionArgument != null)
             {
                 argumentToSend = receivedRoom.UserActionArgument;
-                switch (receivedRoom.UserActionArgument.Type)
-                {
-                    case ArgumentType.TileWithNoCardsChosenByPlayer:
-                    {
-                        argumentWithOneArgument(receivedRoom, ArgumentType.TileWithNoCardsChosenByPlayer.ReturnType());
-                    }
-                    break;
-                    case ArgumentType.PlayerChosenByPlayer:
-                    {
-                        argumentWithOneArgument(receivedRoom, ArgumentType.PlayerChosenByPlayer.ReturnType());
-                    }
-                    break;
-                    case ArgumentType.CardSelectedByPlayer:
-                    {
-                        argumentWithOneArgument(receivedRoom, ArgumentType.CardSelectedByPlayer.ReturnType());
-                    }break;
-                    default:
-                    {
-
-                    }
-                    break;
-                }
+                if (argumentToSend.Arguments.Count == 1)
+                    argumentWithOneArgument(receivedRoom, argumentToSend.Type.ReturnType());
             }
         }
 
