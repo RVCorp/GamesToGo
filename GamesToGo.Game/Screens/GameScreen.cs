@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GamesToGo.Common.Game;
 using GamesToGo.Common.Online;
+using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Arguments;
@@ -44,7 +45,7 @@ namespace GamesToGo.Game.Screens
         private readonly Bindable<Player> currentSelectedPlayer = new Bindable<Player>();
         public IBindable<Player> CurrentSelectedPlayer => currentSelectedPlayer;
 
-
+        private ArgumentParameter argumentToSend;
 
         private PlayerPreviewContainer players;
 
@@ -67,6 +68,8 @@ namespace GamesToGo.Game.Screens
         private Bindable<OnlineRoom> room { get; set; }
         [Resolved]
         private WorkingGame game { get; set; }
+        [Resolved]
+        private SplashInfoOverlay infoOverlay { get; set; }
 
 
         [BackgroundDependencyLoader]
@@ -139,7 +142,7 @@ namespace GamesToGo.Game.Screens
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            room.BindValueChanged(updatedRoom => checkActions(updatedRoom.NewValue), true);
+            room.BindValueChanged(updatedRoom => checkRoom(updatedRoom.NewValue), true);
         }
         public void SelectCard(OnlineCard card)
         {
@@ -180,8 +183,24 @@ namespace GamesToGo.Game.Screens
             }
             else if(EnableTileSelection.Value)
             {
-                id = CurrentSelectedTile.Value.TypeID;
-                EnableTileSelection.Value = false;
+                if(argumentToSend.Type == ArgumentType.TileWithNoCardsChosenByPlayer)
+                {
+                    if (CurrentSelectedTile.Value.Cards.Count == 0)
+                    {
+                        id = CurrentSelectedTile.Value.TypeID;
+                        EnableTileSelection.Value = false;
+                    }
+                    else
+                    {
+                        EnableTileSelection.Value = false;
+                        Schedule(() => infoOverlay.Show(@"Selecciona una casilla que no tenga cartas", Colour4.DarkRed));                        
+                    }
+                }
+                else
+                {
+                    id = CurrentSelectedTile.Value.TypeID;
+                    EnableTileSelection.Value = false;
+                }
             }
             else if (EnablePlayerSelection.Value)
             {
@@ -189,18 +208,43 @@ namespace GamesToGo.Game.Screens
                 EnablePlayerSelection.Value = false;
             }
 
-            var SendArgument = new SendArgumentRequest(id);
-            SendArgument.Failure += e =>
+            if(id != 0)
             {
-                Console.WriteLine( @"No se pudo enviar el argumento");
-            };
-            api.Queue(SendArgument);
+                var SendArgument = new SendArgumentRequest(id);
+                SendArgument.Failure += e =>
+                {
+                    Console.WriteLine(@"No se pudo enviar el argumento");
+                };
+                api.Queue(SendArgument);
+            }
+        }
+
+        private void checkRoom(OnlineRoom receivedRoom)
+        {
+            checkActions(receivedRoom);
+            checkVictory(receivedRoom);
+        }
+
+        private void checkVictory(OnlineRoom receivedRoom)
+        {
+            if(receivedRoom.WinnerPlayerIndexes.Count == 1)
+            {
+                if (localPlayer.BackingUser.ID == receivedRoom.Players[receivedRoom.WinnerPlayerIndexes.FirstOrDefault()].BackingUser.ID)
+                    Schedule(() => infoOverlay.Show(@"Felicidades, ganaste!", Colour4.Green));
+                else
+                    Schedule(() => infoOverlay.Show(@"Suerte para la proxima, perdiste!", Colour4.DarkRed));
+            }
+            else if(receivedRoom.WinnerPlayerIndexes.Count > 1)
+                Schedule(() => infoOverlay.Show(@"Empate!", Colour4.Blue));
+            else if(receivedRoom.WinnerPlayerIndexes.Count == 0)
+                Schedule(() => infoOverlay.Show(@"Nadie ganó!", Colour4.DarkRed));
         }
 
         private void checkActions(OnlineRoom receivedRoom)
         {
             if (receivedRoom.UserActionArgument != null)
             {
+                argumentToSend = receivedRoom.UserActionArgument;
                 switch (receivedRoom.UserActionArgument.Type)
                 {
                     case ArgumentType.TileWithNoCardsChosenByPlayer:
@@ -222,25 +266,36 @@ namespace GamesToGo.Game.Screens
             }
         }
 
-        private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argument)
+        private void argumentWithOneArgument(OnlineRoom receivedRoom, ArgumentReturnType argumentType)
         {
             if (receivedRoom.Players[receivedRoom.UserActionArgument.Arguments[0].Result[0]].BackingUser.ID == localPlayer.BackingUser.ID)
             {
-                if((argument & ArgumentReturnType.Tile) != 0)
+                if((argumentType & ArgumentReturnType.Tile) != 0)
                 {
                     EnableTileSelection.Value = true;
                     sendOverlay.Show();
                 }
-                if ((argument & ArgumentReturnType.Card) != 0)
+                if ((argumentType & ArgumentReturnType.Card) != 0)
                 {
                     EnableCardSelection.Value = true;
                     sendOverlay.Show();
                 }
-                if ((argument & ArgumentReturnType.Player) != 0)
+                if ((argumentType & ArgumentReturnType.Player) != 0)
                 {
                     EnablePlayerSelection.Value = true;
                     sendOverlay.Show();
                     playersArray = receivedRoom.Players;
+                }
+            }
+        }
+
+        private void argumentWithManyArguments(OnlineRoom receivedRoom, ArgumentType argumentType)
+        {
+            for (int i = 0; i < receivedRoom.UserActionArgument.Arguments.Count; i++)
+            {
+                if(receivedRoom.UserActionArgument.Arguments[i].Type.ReturnType() == ArgumentReturnType.SinglePlayer)
+                {
+
                 }
             }
         }
