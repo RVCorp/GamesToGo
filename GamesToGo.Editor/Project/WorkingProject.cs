@@ -673,6 +673,7 @@ namespace GamesToGo.Editor.Project
         {
             Turns.ForEach(t => t.DeleteReferenceTo(toDeleteElement));
             VictoryConditions.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
+            PreparationTurn.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
 
             projectElements.ForEach(e =>
             {
@@ -684,6 +685,7 @@ namespace GamesToGo.Editor.Project
         {
             return Turns.Any(t => t.HasReferenceTo(element)) ||
                    VictoryConditions.Any(vc => vc.HasReferenceTo(element)) ||
+                   PreparationTurn.Any(vc => vc.HasReferenceTo(element)) ||
                    projectElements.Any(e => e is IHasEvents ee && ee.HasReferenceTo(element));
         }
     }
