@@ -9,7 +9,7 @@ namespace GamesToGo.Game.LocalGame
 {
     public abstract class GameElement
     {
-        public int ID { get; set; }
+        public int TypeID { get; set; }
 
         public abstract ElementType Type { get; }
 

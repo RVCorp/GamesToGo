@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using JetBrains.Annotations;
+// ReSharper disable UnusedMember.Global
 
 namespace GamesToGo.Editor.Project.Arguments
 {

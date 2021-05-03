@@ -22,7 +22,7 @@ namespace GamesToGo.Game.LocalGame.Elements
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"SubElems={Elements.Count}");
-            foreach (var element in Elements.Select(e => e.ID).ToList())
+            foreach (var element in Elements.Select(e => e.TypeID).ToList())
             {
                 builder.AppendLine($"{element}");
             }

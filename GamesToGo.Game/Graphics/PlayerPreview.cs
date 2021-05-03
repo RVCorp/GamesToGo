@@ -1,16 +1,28 @@
 ﻿using GamesToGo.Game.Online.Models.RequestModel;
+using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.UserInterface;
 using osuTK;
 
 namespace GamesToGo.Game.Graphics
 {
-    public class PlayerPreview : Container
+    public class PlayerPreview : Button
     {
         public readonly Player Model;
+        private readonly IBindable<Player> currentSelected = new Bindable<Player>();
+        private CircularContainer borderContainer;
+        [Resolved]
+        private GameScreen gameScreen { get; set; }
+
+        private bool selected => (currentSelected.Value?.BackingUser.ID ?? -1) == Model.BackingUser.ID;
+
+        [Resolved]
+        private PlayerPreviewContainer playersContainer { get; set; }
 
         [Resolved]
         private TextureStore textures { get; set; }
@@ -23,6 +35,13 @@ namespace GamesToGo.Game.Graphics
         [BackgroundDependencyLoader]
         private void load()
         {
+            Action += () => gameScreen.SelectPlayer(Model);
+            Enabled.BindTo(gameScreen.EnablePlayerSelection);
+            Enabled.Value = false;
+
+
+
+            currentSelected.BindTo(gameScreen.CurrentSelectedPlayer);
             RelativeSizeAxes = Axes.Y;
             Width = 180;
 
@@ -32,11 +51,11 @@ namespace GamesToGo.Game.Graphics
                 Direction = FillDirection.Vertical,
                 Children = new Drawable[]
                 {
-                    new CircularContainer
+                    borderContainer = new CircularContainer
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        BorderColour = Colour4.Black,
+                        BorderColour = Colour4.White,
                         BorderThickness = 3.5f,
                         Masking = true,
                         Size = new Vector2(100),
@@ -57,6 +76,20 @@ namespace GamesToGo.Game.Graphics
                     },
                 },
             };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            currentSelected.BindValueChanged(_ =>
+            {
+                FadeBorder(selected || IsHovered, golden: selected);
+            });
+        }
+        protected void FadeBorder(bool visible, bool instant = false, bool golden = false)
+        {
+            borderContainer.Colour = golden ? Colour4.Gold : Colour4.White;
         }
     }
 }

@@ -2,10 +2,10 @@
 
 using System;
 
-namespace GamesToGo.Editor.Project.Arguments
+namespace GamesToGo.Common.Game
 {
     [Flags]
-    public enum ArgumentType
+    public enum ArgumentReturnType
     {
         Default = 0,
 

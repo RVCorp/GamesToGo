@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Common.Game;
 using JetBrains.Annotations;
 using osu.Framework.Bindables;
 
@@ -8,8 +9,8 @@ namespace GamesToGo.Editor.Project.Arguments
     public class DirectionTypeArgument : Argument, IHasResult
     {
         public override int ArgumentTypeID => 21;
-        public override ArgumentType Type => ArgumentType.Direction;
-        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentReturnType Type => ArgumentReturnType.Direction;
+        public override ArgumentReturnType[] ExpectedArguments => Array.Empty<ArgumentReturnType>();
 
         public override string[] Text { get; } =
         {

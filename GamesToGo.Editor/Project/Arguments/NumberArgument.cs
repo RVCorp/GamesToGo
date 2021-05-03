@@ -1,4 +1,5 @@
 ﻿using System;
+using GamesToGo.Common.Game;
 using osu.Framework.Bindables;
 
 namespace GamesToGo.Editor.Project.Arguments
@@ -7,9 +8,9 @@ namespace GamesToGo.Editor.Project.Arguments
     {
         public override int ArgumentTypeID => 3;
 
-        public override ArgumentType Type => ArgumentType.SingleNumber;
+        public override ArgumentReturnType Type => ArgumentReturnType.SingleNumber;
 
-        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentReturnType[] ExpectedArguments => Array.Empty<ArgumentReturnType>();
 
         public override string[] Text { get; } =
         {

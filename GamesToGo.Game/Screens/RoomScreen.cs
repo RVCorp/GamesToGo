@@ -221,8 +221,14 @@ namespace GamesToGo.Game.Screens
                 usersInRoom.Add(new PlayerInfoContainer(i));
             }
 
-            room.BindValueChanged(roomUpdate => Refresh(roomUpdate.NewValue), true);
+            
             gameStack.Hide();
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            room.BindValueChanged(roomUpdate => Refresh(roomUpdate.NewValue), true);
         }
 
         private void exitRoom()
@@ -297,6 +303,12 @@ namespace GamesToGo.Game.Screens
                     },
                 };
 
+                
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
                 onlineRoom.BindValueChanged(updateDisplay, true);
             }
 

@@ -1,4 +1,4 @@
-﻿using GamesToGo.Editor.Project.Arguments;
+﻿using GamesToGo.Common.Game;
 using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Actions
@@ -8,10 +8,10 @@ namespace GamesToGo.Editor.Project.Actions
     {
         public override int TypeID => 13;
 
-        public override ArgumentType[] ExpectedArguments { get; } = {
-            ArgumentType.SingleNumber,
-            ArgumentType.SinglePlayer,
-            ArgumentType.SingleTile,
+        public override ArgumentReturnType[] ExpectedArguments { get; } = {
+            ArgumentReturnType.SingleNumber,
+            ArgumentReturnType.SinglePlayer,
+            ArgumentReturnType.SingleTile,
         };
 
         public override string[] Text { get; } = {

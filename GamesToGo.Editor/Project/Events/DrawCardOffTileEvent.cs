@@ -1,5 +1,5 @@
 ﻿using System;
-using GamesToGo.Editor.Project.Arguments;
+using GamesToGo.Common.Game;
 using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Events
@@ -15,6 +15,6 @@ namespace GamesToGo.Editor.Project.Events
 
         public override string[] Text => new[] { @"Al tomar una carta" };
 
-        public override ArgumentType[] ExpectedArguments => Array.Empty<ArgumentType>();
+        public override ArgumentReturnType[] ExpectedArguments => Array.Empty<ArgumentReturnType>();
     }
 }

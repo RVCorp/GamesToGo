@@ -21,7 +21,7 @@ namespace GamesToGo.Common.Online
         public static string UserAgent { get; } = "gtg";
 
         public static string Endpoint => AlternativeServer ?? @"https://gamestogo.company";
-        public static string AlternativeServer { get; set; }// = "http://192.168.100.98:5000";
+        public static string AlternativeServer { get; set; }
 
         private readonly Queue<APIRequest> queue = new Queue<APIRequest>();
 
