@@ -227,6 +227,9 @@ namespace GamesToGo.Game.Screens
 
         private void checkVictory(OnlineRoom receivedRoom)
         {
+            if (receivedRoom.WinnerPlayerIndexes == null)
+                return;
+
             if(receivedRoom.WinnerPlayerIndexes.Count == 1)
             {
                 if (localPlayer.BackingUser.ID == receivedRoom.Players[receivedRoom.WinnerPlayerIndexes.FirstOrDefault()].BackingUser.ID)

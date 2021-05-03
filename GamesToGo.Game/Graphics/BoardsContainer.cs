@@ -48,10 +48,10 @@ namespace GamesToGo.Game.Graphics
 
         private void populateBoards()
         {
-            if (Boards.First().Size.X > Boards.First().Size.Y)
-                boardContainer.Height = .75f;
-            else
-                boardContainer.Width = .75f;
+            boardContainer.Height = Boards.First().Size.Y;
+            boardContainer.Width = Boards.First().Size.X;
+
+
             foreach (var board in Boards)
             {
                 boardContainer.Add(new BoardContainer(board));
