@@ -1,6 +1,5 @@
 ﻿using System;
 using GamesToGo.Common.Game;
-using GamesToGo.Editor.Project.Arguments;
 using JetBrains.Annotations;
 
 namespace GamesToGo.Editor.Project.Actions

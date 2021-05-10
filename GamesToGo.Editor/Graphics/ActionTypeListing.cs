@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using GamesToGo.Common.Game;
 using GamesToGo.Editor.Project;
 using GamesToGo.Editor.Project.Actions;
-using GamesToGo.Editor.Project.Arguments;
 using GamesToGo.Editor.Screens;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -21,7 +19,7 @@ namespace GamesToGo.Editor.Graphics
     {
         private readonly IBindable<ProjectElement> currentEditing = new Bindable<ProjectElement>();
         private ActionListContainer possibleEventsList;
-        public Action<EventAction> OnSelection { get; set; }
+        public Action<EventAction> OnSelection { get; init; }
 
         [Resolved]
         private ProjectEditor editor { get; set; }
@@ -136,7 +134,7 @@ namespace GamesToGo.Editor.Graphics
             {
                 if (defaultEvent.ExpectedArguments.Length == 0)
                 {
-                    lists.Last().AddPossibility(defaultEvent);
+                    lists[^1].AddPossibility(defaultEvent);
 
                     return;
                 }

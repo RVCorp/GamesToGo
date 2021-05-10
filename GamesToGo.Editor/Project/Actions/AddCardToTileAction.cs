@@ -1,5 +1,4 @@
 ﻿using GamesToGo.Common.Game;
-using GamesToGo.Editor.Project.Arguments;
 
 namespace GamesToGo.Editor.Project.Actions
 {
@@ -14,7 +13,7 @@ namespace GamesToGo.Editor.Project.Actions
 
         public override string[] Text { get; } = {
             @"Añadir nueva carta",
-            @"a casilla",
+            @"a casilla predeterminada",
         };
     }
 }

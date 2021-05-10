@@ -21,6 +21,8 @@ namespace GamesToGo.Editor.Project
 {
     public class WorkingProject
     {
+        private const int current_file_version = 1;
+
         public static Dictionary<int, Type> AvailableEvents { get; } = new Dictionary<int, Type>();
 
         public static Dictionary<int, Type> AvailableActions { get; } = new Dictionary<int, Type>();
@@ -113,7 +115,7 @@ namespace GamesToGo.Editor.Project
                 }
             }
 
-            ret.ProjectElements.CollectionChanged += (_, __) => ret.updateDatabaseObjectInfo();
+            ret.ProjectElements.CollectionChanged += (_, _) => ret.updateDatabaseObjectInfo();
 
             ret.updateDatabaseObjectInfo();
 
@@ -173,6 +175,7 @@ namespace GamesToGo.Editor.Project
             StringBuilder builder = new StringBuilder();
 
             builder.AppendLine("[Info]");
+            builder.AppendLine($"Version={current_file_version}");
             builder.AppendLine($"ChatRecommendation={ChatRecommendation}");
             builder.AppendLine($"Files={Images.Count}");
 
@@ -328,7 +331,7 @@ namespace GamesToGo.Editor.Project
 
                                 for (int j = i + amm; i < j; i++)
                                 {
-                                    var parts = lines[i + 1].Split('=');
+                                    var parts = lines[i + 1].Split('=', ':');
 
                                     if (parts.Length != 2)
                                         return false;
@@ -393,6 +396,13 @@ namespace GamesToGo.Editor.Project
 
                                 break;
                             }
+                            case "Arrangement" when parsingElement is IHasLogicalArrangement arrangedElement:
+                            {
+                                var xy = tokens[1].Split("|");
+                                arrangedElement.Arrangement.Value = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+
+                                break;
+                            }
                             case "Events" when parsingElement is IHasEvents eventedElement:
                             {
                                 int amm = int.Parse(tokens[1]);
@@ -423,7 +433,7 @@ namespace GamesToGo.Editor.Project
                                         var action = lines[i + 2].Split('|');
                                         int actType = divideLine(action[1], out string arguments);
 
-                                        var actionArgs = arguments.Split(',');
+                                        var actionArgs = divideArguments(arguments).ToArray();
 
                                         EventAction toBeAction = Activator.CreateInstance(AvailableActions[actType]) as EventAction;
 
@@ -555,7 +565,7 @@ namespace GamesToGo.Editor.Project
             if (string.IsNullOrEmpty(argText))
                 return toBeArgument;
 
-            var subArgs = argText.Split(',');
+            var subArgs = divideArguments(argText).ToArray();
 
             for (int i = 0; i < subArgs.Length; i++)
             {
@@ -570,7 +580,7 @@ namespace GamesToGo.Editor.Project
             var action = text.Split('|');
             int actType = divideLine(action[1], out string arguments);
 
-            var actionArgs = arguments.Split(',');
+            var actionArgs = divideArguments(arguments).ToArray();
 
             if (!(Activator.CreateInstance(AvailableActions[actType]) is EventAction toBeAction))
                 return null;
@@ -606,6 +616,38 @@ namespace GamesToGo.Editor.Project
             return int.Parse(line.Split('(')[0]);
         }
 
+        private static IEnumerable<string> divideArguments(string line)
+        {
+            int parenthesisOpenCount = 0, parenthesisCloseCount = 0, lastStart = 0;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                switch (line[i])
+                {
+                    case '(':
+                        parenthesisOpenCount++;
+
+                        break;
+                    case ')':
+                        parenthesisCloseCount++;
+
+                        break;
+                    case ',':
+                        if (parenthesisOpenCount == parenthesisCloseCount)
+                        {
+                            if (i != lastStart)
+                                yield return line.Substring(lastStart, i - lastStart);
+                            lastStart = i + 1;
+                        }
+
+                        break;
+                }
+            }
+
+            if (parenthesisOpenCount == parenthesisCloseCount)
+                yield return line.Substring(lastStart);
+        }
+
 
         /// <summary>
         /// This assumes CrawlEventsForReferences has been called and user is ok with possible references being deleted.
@@ -631,6 +673,7 @@ namespace GamesToGo.Editor.Project
         {
             Turns.ForEach(t => t.DeleteReferenceTo(toDeleteElement));
             VictoryConditions.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
+            PreparationTurn.ForEach(vc => vc.DeleteReferenceTo(toDeleteElement));
 
             projectElements.ForEach(e =>
             {
@@ -642,6 +685,7 @@ namespace GamesToGo.Editor.Project
         {
             return Turns.Any(t => t.HasReferenceTo(element)) ||
                    VictoryConditions.Any(vc => vc.HasReferenceTo(element)) ||
+                   PreparationTurn.Any(vc => vc.HasReferenceTo(element)) ||
                    projectElements.Any(e => e is IHasEvents ee && ee.HasReferenceTo(element));
         }
     }

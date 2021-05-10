@@ -72,7 +72,7 @@ namespace GamesToGo.Editor.Graphics
             {
                 var req = new UploadUserImageRequest(i);
                 req.Success += () => image.Texture = Texture.FromStream(new MemoryStream(i));
-                req.Failure += e => infoOverlay.Show(@"Falló como siempre", Colour4.DarkRed);
+                req.Failure += _ => infoOverlay.Show(@"Falló como siempre", Colour4.DarkRed);
                 api.Queue(req);
             });
         }

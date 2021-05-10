@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using GamesToGo.Editor.Graphics;
 using GamesToGo.Common.Game;
 using GamesToGo.Editor.Screens;
 using osu.Framework.Allocation;

@@ -184,14 +184,17 @@ namespace GamesToGo.Game
 
         private void importGame(string zipName)
         {
-            string filename = store.GetFullPath(Path.Combine(@"download", @$"{zipName}.zip"));
+            string filename = Path.Combine(@"download", @$"{zipName}.zip");
 
-            using var fileStream = store.GetStream(filename, FileAccess.Read, FileMode.Open);
+            using (var fileStream = store.GetStream(store.GetFullPath(filename), FileAccess.Read, FileMode.Open))
+            {
+                using ZipFile zip = ZipFile.Read(fileStream);
 
-            using ZipFile zip = ZipFile.Read(fileStream);
+                foreach (ZipEntry e in zip)
+                    e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
+            }
 
-            foreach (ZipEntry e in zip)
-                e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
+            store.Delete(filename);
         }
 
         public void Logout()

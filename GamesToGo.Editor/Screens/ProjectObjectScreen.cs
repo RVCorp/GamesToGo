@@ -35,6 +35,7 @@ namespace GamesToGo.Editor.Screens
         private LabeledDropdown<ElementPrivacy> elementPrivacy;
         private LabeledDropdown<ElementSideVisible> elementSideVisible;
         private VectorTextBoxContainer elementPosition;
+        private VectorTextBoxContainer elementArrangement;
         private ElementVisualEditorContainer visualEditor;
 
         [BackgroundDependencyLoader]
@@ -155,7 +156,7 @@ namespace GamesToGo.Editor.Screens
                                                 new Container
                                                 {
                                                     RelativeSizeAxes = Axes.X,
-                                                    Height = 600,
+                                                    AutoSizeAxes = Axes.Y,
                                                     Children = new Drawable[]
                                                     {
                                                         new FillFlowContainer
@@ -200,12 +201,18 @@ namespace GamesToGo.Editor.Screens
                                                                     TextX = @"Posición en X:",
                                                                     TextY = @"Posición en Y:",
                                                                 },
+                                                                elementArrangement = new VectorTextBoxContainer(4, true)
+                                                                {
+                                                                    TextX = @"Orden en X:",
+                                                                    TextY = @"Orden en Y:",
+                                                                },
                                                             },
                                                         },
                                                         elementSubElements = new Container
                                                         {
-                                                            RelativeSizeAxes = Axes.Both,
+                                                            RelativeSizeAxes = Axes.X,
                                                             Width = 1 / 3f,
+                                                            Height = 500,
                                                             Anchor = Anchor.TopRight,
                                                             Origin = Anchor.TopRight,
                                                             Child = tilesManagerContainer = new BoardObjectManagerContainer(),
@@ -264,6 +271,9 @@ namespace GamesToGo.Editor.Screens
 
         private static void unbindBindings(ProjectElement oldElement)
         {
+            if (oldElement is IHasLogicalArrangement arrangedElement)
+                arrangedElement.Arrangement.UnbindAll();
+
             if (oldElement is IHasSize sizedElement)
                 sizedElement.Size.UnbindAll();
 
@@ -273,7 +283,7 @@ namespace GamesToGo.Editor.Screens
             if (oldElement is IHasOrientation orientedElement)
                 orientedElement.DefaultOrientation.UnbindAll();
 
-            if(oldElement is IHasSideVisible sidedElement)
+            if (oldElement is IHasSideVisible sidedElement)
                 sidedElement.DefaultSide.UnbindAll();
 
             if (oldElement is IHasPrivacy privacySetElement)
@@ -293,7 +303,7 @@ namespace GamesToGo.Editor.Screens
                 descriptionTextBox.Text = obj.NewValue.Description.Value;
             }
 
-            if(obj.NewValue is IHasSize size)
+            if (obj.NewValue is IHasSize size)
             {
                 elementSize.Show();
                 elementSize.Current.Value = size.Size.Value;
@@ -338,7 +348,16 @@ namespace GamesToGo.Editor.Screens
             else
                 elementPosition.Hide();
 
-            if(obj.NewValue is Board board)
+            if (obj.NewValue is IHasLogicalArrangement arrangement)
+            {
+                elementArrangement.Show();
+                elementArrangement.Current.Value = arrangement.Arrangement.Value;
+                arrangement.Arrangement.BindTo(elementArrangement.Current);
+            }
+            else
+                elementArrangement.Hide();
+
+            if (obj.NewValue is Board board)
             {
                 elementSubElements.Show();
                 tilesManagerContainer.Filter = t =>

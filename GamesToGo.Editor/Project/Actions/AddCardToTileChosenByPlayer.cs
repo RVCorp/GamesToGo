@@ -4,22 +4,18 @@ using JetBrains.Annotations;
 namespace GamesToGo.Editor.Project.Actions
 {
     [UsedImplicitly]
-    public class MoveCardFromPlayerToTileInXPositionAction : EventAction
+    public class AddCardToTileChosenByPlayer : EventAction
     {
-        public override int TypeID => 9;
+        public override int TypeID => 25;
 
         public override ArgumentReturnType[] ExpectedArguments { get; } = {
             ArgumentReturnType.CardType,
-            ArgumentReturnType.SinglePlayer,
             ArgumentReturnType.SingleTile,
-            ArgumentReturnType.Number,
         };
 
         public override string[] Text { get; } = {
-            @"Poner carta",
-            @"desde jugador",
-            @"hacia casilla",
-            @"en posición",
+            @"Añadir nueva carta",
+            @"a casilla",
         };
     }
 }

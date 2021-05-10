@@ -27,7 +27,7 @@ namespace GamesToGo.Editor.Overlays
                     Width = 175,
                     Text = @"Regresar",
                     Position = new Vector2(10,10),
-                    Action = () => editor.SelectElement(oldCurrentEditing),
+                    Action = () => Schedule(() => editor.SelectElement(oldCurrentEditing)),
                 },
             };
         }

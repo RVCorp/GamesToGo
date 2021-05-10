@@ -8,7 +8,7 @@ namespace GamesToGo.Editor.Graphics
     {
         public new GamesToGoDropdown<TEnum> Element
         {
-            set
+            init
             {
                 var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();
                 value.Items = values.Except(values.Where(isIgnored));
@@ -18,7 +18,7 @@ namespace GamesToGo.Editor.Graphics
 
         private static bool isIgnored(TEnum value)
         {
-            return value.GetType().GetField(value.ToString())
+            return value.GetType().GetField(value.ToString())!
                 .GetCustomAttribute<IgnoreItemAttribute>() != null;
         }
     }

@@ -149,13 +149,16 @@ namespace GamesToGo.Editor.Graphics
                     },
                 },
             };
-            currentEditing.BindTo(editor.CurrentEditingElement);
             imagesIndex.BindValueChanged(val =>
             {
                 images.MoveToX(-val.NewValue, 250, Easing.OutQuint);
                 leftMovementButton.Enabled.Value = val.NewValue != 0;
                 rightMovementButton.Enabled.Value = val.NewValue != currentEditing.Value.Images.Count - 1;
             });
+
+            imagesButton.Action?.Invoke();
+
+            currentEditing.BindTo(editor.CurrentEditingElement);
             currentEditing.BindValueChanged(loadElement, true);
         }
 
@@ -179,7 +182,8 @@ namespace GamesToGo.Editor.Graphics
 
             previewButton.Enabled.Value = e.NewValue.PreviewMode != ElementPreviewMode.None;
 
-            imagesButton.Action?.Invoke();
+            if (!previewButton.Enabled.Value || imagesButton.Selected)
+                imagesButton.Action?.Invoke();
 
             imagesIndex.Value = 0;
             imagesIndex.TriggerChange();

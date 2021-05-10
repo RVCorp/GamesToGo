@@ -165,7 +165,7 @@ namespace GamesToGo.Editor.Overlays
             priorityBox.Text = model.Priority.ToString();
             priorityBox.Current.BindValueChanged(obj => Current.Value.Priority.Value = (int)obj.NewValue, true);
 
-            Current.Value.Actions.CollectionChanged += (_, __) => recreateActions();
+            Current.Value.Actions.CollectionChanged += (_, _) => recreateActions();
 
             eventDescriptorContainer.Child = new EventDescriptor(model);
 

@@ -11,11 +11,11 @@ namespace GamesToGo.Editor.Graphics
     {
         private LabeledElement<NumericTextBox, float> textX;
 
-        private string stringX;
+        private readonly string stringX;
 
         public string TextX
         {
-            set
+            init
             {
                 stringX = value;
 
@@ -25,11 +25,11 @@ namespace GamesToGo.Editor.Graphics
         }
 
         private LabeledElement<NumericTextBox, float> textY;
-        private string stringY;
+        private readonly string stringY;
 
         public string TextY
         {
-            set
+            init
             {
                 stringY = value;
 

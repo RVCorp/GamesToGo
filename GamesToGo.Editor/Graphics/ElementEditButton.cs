@@ -13,7 +13,7 @@ namespace GamesToGo.Editor.Graphics
 {
     public class ElementEditButton : Button
     {
-        public ProjectElement Element { get; set; }
+        public ProjectElement Element { get; init; }
         private Container borderContainer;
         private SpriteText elementName;
 
@@ -68,7 +68,7 @@ namespace GamesToGo.Editor.Graphics
 
             elementName.Text = Element.Name.Value;
             elementName.Current.BindTo(Element.Name);
-            Element.Images.Values.First().BindValueChanged(val => image.Texture = Element.GetImageWithFallback().Texture, true);
+            Element.Images.Values.First().BindValueChanged(_ => image.Texture = Element.GetImageWithFallback().Texture, true);
         }
 
         protected void FadeBorder(bool visible, bool instant = false, bool golden = false)

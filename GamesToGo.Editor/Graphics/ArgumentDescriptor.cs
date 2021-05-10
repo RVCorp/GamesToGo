@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osuTK.Graphics;
+using Direction = GamesToGo.Editor.Project.Arguments.Direction;
 
 namespace GamesToGo.Editor.Graphics
 {
@@ -111,6 +112,7 @@ namespace GamesToGo.Editor.Graphics
                 ArgumentReturnType.TileType => new ElementSelectionDescriptor<Tile>(),
                 ArgumentReturnType.TokenType => new ElementSelectionDescriptor<Token>(),
                 ArgumentReturnType.BoardType => new ElementSelectionDescriptor<Board>(),
+                ArgumentReturnType.Direction => new EnumArgumentDescriptor<Direction>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(model.Type), model.Type,
                     "Can't create selector for given model, as no selection is available"),
             };

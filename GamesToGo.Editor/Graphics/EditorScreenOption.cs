@@ -4,8 +4,6 @@ namespace GamesToGo.Editor.Graphics
 {
     public enum EditorScreenOption
     {
-        [Description(@"Archivo")]
-        File,
         [Description(@"Inicio")]
         Home,
         [Description(@"Objetos")]

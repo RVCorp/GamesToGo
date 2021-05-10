@@ -19,7 +19,7 @@ namespace GamesToGo.Common.Graphics
     [Cached]
     public class TagSelectionContainer : Container, IHasCurrentValue<Tag>
     {
-        public float TagSize => elementSize -5;
+        private float tagSize => elementSize - 5;
         private const double transform_duration = 125;
         private const Easing transform_easing = Easing.OutCubic;
         private readonly float elementSize;
@@ -64,8 +64,8 @@ namespace GamesToGo.Common.Graphics
                     Child = flowContainer = new FillFlowContainer<TagDropdown>
                     {
                         AutoSizeAxes = Axes.Both,
-                        Padding = new MarginPadding((elementSize - TagSize) / 2),
-                        Spacing = new Vector2((elementSize - TagSize) / 2),
+                        Padding = new MarginPadding((elementSize - tagSize) / 2),
+                        Spacing = new Vector2((elementSize - tagSize) / 2),
                         Direction = FillDirection.Horizontal,
                     },
                 },
@@ -205,7 +205,7 @@ namespace GamesToGo.Common.Graphics
                         Masking = true,
                         CornerRadius = 4,
                         RelativeSizeAxes = Axes.X,
-                        Height = tagSelection.TagSize,
+                        Height = tagSelection.tagSize,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -216,7 +216,7 @@ namespace GamesToGo.Common.Graphics
                     {
                         Masking = true,
                         CornerRadius = 4,
-                        Position = new Vector2(0, tagSelection.TagSize),
+                        Position = new Vector2(0, tagSelection.tagSize),
                         AutoSizeAxes = Axes.X,
                         Children = new Drawable[]
                         {
@@ -229,7 +229,7 @@ namespace GamesToGo.Common.Graphics
                     },
                     headerContainer = new Container
                     {
-                        Height = tagSelection.TagSize,
+                        Height = tagSelection.tagSize,
                         AutoSizeAxes = Axes.X,
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
@@ -258,7 +258,7 @@ namespace GamesToGo.Common.Graphics
                                         Anchor = Anchor.Centre,
                                         Origin = Anchor.Centre,
                                         Text = category.GetDescription(),
-                                        Font = new FontUsage(size: tagSelection.TagSize),
+                                        Font = new FontUsage(size: tagSelection.tagSize),
                                     },
                                     new Container
                                     {
@@ -293,7 +293,7 @@ namespace GamesToGo.Common.Graphics
                                                     Anchor = Anchor.Centre,
                                                     Origin = Anchor.Centre,
                                                     Text = string.Empty,
-                                                    Font = new FontUsage(size: tagSelection.TagSize - 4),
+                                                    Font = new FontUsage(size: tagSelection.tagSize - 4),
                                                 },
                                             },
                                         },
@@ -390,7 +390,7 @@ namespace GamesToGo.Common.Graphics
             private void load()
             {
                 AutoSizeAxes = Axes.X;
-                Height = tagSelection.TagSize;
+                Height = tagSelection.tagSize;
 
                 Children = new Drawable[]
                 {
@@ -441,7 +441,7 @@ namespace GamesToGo.Common.Graphics
                                 Anchor = Anchor.CentreLeft,
                                 Origin = Anchor.CentreLeft,
                                 Text = Value.GetDescription(),
-                                Font = new FontUsage(size: tagSelection.TagSize),
+                                Font = new FontUsage(size: tagSelection.tagSize),
                             },
                             layoutContainer = new Container
                             {
@@ -476,12 +476,12 @@ namespace GamesToGo.Common.Graphics
                     case true:
                         activeIcon.FadeIn(transform_duration, transform_easing);
                         iconContainer.FadeIn(transform_duration, transform_easing);
-                        layoutContainer.ResizeWidthTo(tagSelection.TagSize + 3, transform_duration, transform_easing);
+                        layoutContainer.ResizeWidthTo(tagSelection.tagSize + 3, transform_duration, transform_easing);
                         break;
                     case false when IsHovered:
                         activeIcon.FadeOut(transform_duration, transform_easing);
                         iconContainer.FadeIn(transform_duration, transform_easing);
-                        layoutContainer.ResizeWidthTo(tagSelection.TagSize + 3, transform_duration, transform_easing);
+                        layoutContainer.ResizeWidthTo(tagSelection.tagSize + 3, transform_duration, transform_easing);
                         break;
                     case false when !IsHovered:
                         activeIcon.FadeOut(transform_duration, transform_easing);

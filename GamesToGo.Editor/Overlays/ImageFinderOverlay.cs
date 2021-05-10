@@ -277,8 +277,8 @@ namespace GamesToGo.Editor.Overlays
 
             itemsScrollContainer.FadeOut(100);
 
-            LoadComponentsAsync(newDirectories, nd => ensureAllLoaded(newDirectories, newFiles));
-            LoadComponentsAsync(newFiles, nf => ensureAllLoaded(newDirectories, newFiles));
+            LoadComponentsAsync(newDirectories, _ => ensureAllLoaded(newDirectories, newFiles));
+            LoadComponentsAsync(newFiles, _ => ensureAllLoaded(newDirectories, newFiles));
         }
 
         private bool alreadyLoaded;
