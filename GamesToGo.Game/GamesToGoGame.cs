@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using GamesToGo.Common.Online;
@@ -10,7 +11,6 @@ using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
-using Ionic.Zip;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -185,13 +185,10 @@ namespace GamesToGo.Game
         private void importGame(string zipName)
         {
             string filename = Path.Combine(@"download", @$"{zipName}.zip");
-
-            using (var fileStream = store.GetStream(store.GetFullPath(filename), FileAccess.Read, FileMode.Open))
+            using (ZipArchive zip = ZipFile.OpenRead(store.GetFullPath(filename)))
             {
-                using ZipFile zip = ZipFile.Read(fileStream);
-
-                foreach (ZipEntry e in zip)
-                    e.Extract(store.GetFullPath("files"), ExtractExistingFileAction.DoNotOverwrite);
+                foreach (ZipArchiveEntry e in zip.Entries)
+                    e.ExtractToFile(store.GetFullPath(Path.Combine("files", e.FullName)));
             }
 
             store.Delete(filename);
