@@ -54,6 +54,7 @@ namespace GamesToGo.Game.Screens
 
         private int indexOfPlayer = 0;
         private SendArgumentOverlay sendOverlay;
+        private SelectionOverlay selectOverlay;
 
         [Resolved]
         private APIController api { get; set; }
@@ -135,6 +136,7 @@ namespace GamesToGo.Game.Screens
                         },
                     },
                 },
+                selectOverlay = new SelectionOverlay(),
                 sendOverlay = new SendArgumentOverlay()
             };
             
@@ -179,14 +181,17 @@ namespace GamesToGo.Game.Screens
             int id = 0;
             if(EnableCardSelection.Value)
             {
-                if (CurrentSelectedCard.Value == null)
+                if(argumentToSend.Type == ArgumentType.CardSelectedByPlayer)
                 {
-                    Schedule(() => infoOverlay.Show(@"Selecciona una carta", Colour4.DarkRed));
-                    return;
-                }
-                id = CurrentSelectedCard.Value.ID;
-                EnableCardSelection.Value = false;
-                currentSelectedCard.Value = null;
+                    if (CurrentSelectedCard.Value == null)
+                    {
+                        Schedule(() => infoOverlay.Show(@"Selecciona una carta", Colour4.DarkRed));
+                        return;
+                    }
+                    id = CurrentSelectedCard.Value.TypeID;
+                    EnableCardSelection.Value = false;
+                    currentSelectedCard.Value = null;
+                }                
             }
             else if(EnableTileSelection.Value)
             {
@@ -279,24 +284,8 @@ namespace GamesToGo.Game.Screens
             if (receivedRoom.UserActionArgument != null)
             {
                 argumentToSend = receivedRoom.UserActionArgument;
-                switch (receivedRoom.UserActionArgument.Type)
-                {
-                    case ArgumentType.TileWithNoCardsChosenByPlayer:
-                    {
-                        argumentWithOneArgument(receivedRoom, ArgumentType.TileWithNoCardsChosenByPlayer.ReturnType());
-                    }
-                    break;
-                    case ArgumentType.PlayerChosenByPlayer:
-                    {
-                        argumentWithOneArgument(receivedRoom, ArgumentType.PlayerChosenByPlayer.ReturnType());
-                    }
-                    break;
-                    default:
-                    {
-
-                    }
-                    break;
-                }
+                if (argumentToSend.Arguments.Count == 1)
+                    argumentWithOneArgument(receivedRoom, argumentToSend.Type.ReturnType());
             }
         }
 
@@ -326,6 +315,21 @@ namespace GamesToGo.Game.Screens
                 EnablePlayerSelection.Value = true;
                 sendOverlay.Show();
                 playersArray = receivedRoom.Players;
+            }
+            if((argumentType & ArgumentReturnType.CardType) != 0)
+            {
+                EnableCardSelection.Value = true;
+                List<OnlineCard> cardsType = new List<OnlineCard>();
+                foreach (var card in game.GameCards)
+                {
+                    OnlineCard oc = new OnlineCard()
+                    {
+                        TypeID = card.TypeID
+                    };
+                    cardsType.Add(oc);
+                }
+                selectOverlay.PopulateCards(cardsType);
+                sendOverlay.Show();
             }
         }
 

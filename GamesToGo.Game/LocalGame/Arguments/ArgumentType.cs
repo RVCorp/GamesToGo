@@ -144,6 +144,20 @@ namespace GamesToGo.Game.LocalGame.Arguments
             ArgumentReturnType.SingleNumber,
         })]
         PlayerAtXPosition = 23,
+
+        [ReturnType(ArgumentReturnType.SingleTile)]
+        [InnerReturnTypes(new[]
+        {
+            ArgumentReturnType.SinglePlayer,
+        })]
+        TileSelectedByPlayer = 24,
+
+        [ReturnType(ArgumentReturnType.CardType)]
+        [InnerReturnTypes(new[]
+        {
+            ArgumentReturnType.SinglePlayer,
+        })]
+        CardSelectedByPlayer = 25,
     }
 
     public static class ArgumentTypeExtensions
