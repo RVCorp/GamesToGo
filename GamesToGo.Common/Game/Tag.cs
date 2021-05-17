@@ -11,28 +11,29 @@ namespace GamesToGo.Common.Game
     public enum Tag : uint
     {
         [Category(TagCategory.Time)]
-        [Description(@"20-30 mins.")]
-        Tag1 = 1 << 0,
+        [Description(@"<10 mins.")]
+        Tag5 = 1 << 0,
         [Category(TagCategory.Time)]
         [Description(@"10-20 mins.")]
         Tag2 = 1 << 1,
         [Category(TagCategory.Time)]
+        [Description(@"20-30 mins.")]
+        Tag1 = 1 << 2,
+        [Category(TagCategory.Time)]
         [Description(@">30 mins.")]
-        Tag3 = 1 << 2,
+        Tag3 = 1 << 3,
         [Category(TagCategory.Type)]
-        [Description(@"Poker")]
-        Tag4 = 1 << 3,
-        Tag5 = 1 << 4,
-        Tag6 = 1 << 5,
-        Tag7 = 1 << 6,
-        Tag8 = 1 << 7,
-        Tag9 = 1 << 8,
-        Tag10 = 1 << 9,
-        Tag11 = 1 << 10,
-        Tag12 = 1 << 11,
-        Tag13 = 1 << 12,
-        Tag14 = 1 << 13,
-        Tag15 = 1 << 14,
+        [Description(@"Cartas")]
+        Tag4 = 1 << 4,
+        [Category(TagCategory.Type)]
+        [Description(@"Fichas")]
+        Tag8 = 1 << 5,
+        [Category(TagCategory.Type)]
+        [Description(@"Rol")]
+        Tag6 = 1 << 6,
+        [Category(TagCategory.Type)]
+        [Description(@"Tablero tradicional")]
+        Tag7 = 1 << 7,
     }
 
     public class CategoryAttribute : Attribute
