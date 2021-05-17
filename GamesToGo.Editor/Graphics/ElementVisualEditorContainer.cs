@@ -25,6 +25,19 @@ namespace GamesToGo.Editor.Graphics
         private StateButton previewButton;
         private GridContainer stateContainer;
         private ElementPreviewContainer preview;
+        private GridContainer stateButtonContainer;
+
+        private readonly Dimension[] previewActiveDimensions =
+        {
+            new Dimension(),
+            new Dimension(),
+        };
+
+        private readonly Dimension[] previewDisabledDimension =
+        {
+            new Dimension(GridSizeMode.Relative, 1),
+            new Dimension(),
+        };
 
         [BackgroundDependencyLoader]
         private void load(ProjectEditor editor)
@@ -54,7 +67,7 @@ namespace GamesToGo.Editor.Graphics
                     {
                         new Drawable[]
                         {
-                            new GridContainer
+                            stateButtonContainer = new GridContainer
                             {
                                 RelativeSizeAxes = Axes.X,
                                 AutoSizeAxes = Axes.Y,
@@ -182,6 +195,18 @@ namespace GamesToGo.Editor.Graphics
 
             previewButton.Enabled.Value = e.NewValue.PreviewMode != ElementPreviewMode.None;
 
+            if (previewButton.Enabled.Value)
+            {
+                stateButtonContainer.ColumnDimensions = previewActiveDimensions;
+                previewButton.Show();
+            }
+            else
+            {
+
+                stateButtonContainer.ColumnDimensions = previewDisabledDimension;
+                previewButton.Hide();
+            }
+            
             if (!previewButton.Enabled.Value || imagesButton.Selected)
                 imagesButton.Action?.Invoke();
 
@@ -258,12 +283,12 @@ namespace GamesToGo.Editor.Graphics
 
         private class StateButton : Button
         {
-            private string text;
+            private readonly string text;
             private SpriteText spriteText;
 
             public string Text
             {
-                set
+                init
                 {
                     if (spriteText != null)
                         spriteText.Text = value;
@@ -286,7 +311,6 @@ namespace GamesToGo.Editor.Graphics
             }
 
             private Box glowBox;
-            private Box shadowBox;
 
             [BackgroundDependencyLoader]
             private void load()
@@ -315,19 +339,9 @@ namespace GamesToGo.Editor.Graphics
                             Text = text,
                         },
                     },
-                    shadowBox = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.Black,
-                        Alpha = 0,
-                    },
                 };
 
-                Enabled.BindValueChanged(val =>
-                {
-                    Selected &= val.NewValue;
-                    shadowBox.FadeTo(val.NewValue ? 0 : 0.25f, 100);
-                });
+                Enabled.BindValueChanged(val => Selected &= val.NewValue);
 
                 Action += () => { Selected = true; };
             }
