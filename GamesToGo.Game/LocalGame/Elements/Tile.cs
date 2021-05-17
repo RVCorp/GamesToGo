@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.Graphics.Textures;
-using osuTK;
+﻿using osuTK;
 
 namespace GamesToGo.Game.LocalGame.Elements
 {

@@ -23,7 +23,3 @@ namespace GamesToGo.Game.Online.Requests
         protected override string Target => "Room/CreateRoom";
     }
 }
-
-
-
-

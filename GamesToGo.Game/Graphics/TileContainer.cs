@@ -37,11 +37,6 @@ namespace GamesToGo.Game.Graphics
         public List<Token> Tokens { get; } = new List<Token>();
 
         [Resolved]
-        private BoardsContainer boards { get; set; }
-
-        [Resolved]
-        private Bindable<OnlineRoom> room { get; set; }
-        [Resolved]
         private GameScreen gameScreen { get; set; }
 
         private readonly IBindable<OnlineTile> currentSelected = new Bindable<OnlineTile>();

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GamesToGo.Game.Online.Models.RequestModel
+﻿namespace GamesToGo.Game.Online.Models.RequestModel
 {
     public class Statistic 
     {

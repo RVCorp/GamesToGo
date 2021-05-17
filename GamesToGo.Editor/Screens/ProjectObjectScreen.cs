@@ -290,7 +290,7 @@ namespace GamesToGo.Editor.Screens
                 privacySetElement.DefaultPrivacy.UnbindAll();
         }
 
-        private void checkData(ValueChangedEvent<ProjectElement> obj)
+        private void checkData(ValueChangedEvent<ProjectElement> obj) // checa que elementos deben mostrarse para editarse
         {
             activeEditContainer.FadeTo(obj.NewValue == null ? 0 : 1);
             noSelectionContainer.FadeTo(obj.NewValue == null ? 1 : 0);

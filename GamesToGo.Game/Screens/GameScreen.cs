@@ -7,7 +7,6 @@ using GamesToGo.Common.Overlays;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.LocalGame;
 using GamesToGo.Game.LocalGame.Arguments;
-using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using GamesToGo.Game.Online.Models.RequestModel;
 using GamesToGo.Game.Online.Requests;
@@ -27,10 +26,8 @@ namespace GamesToGo.Game.Screens
     [Cached]
     public class GameScreen : Screen
     {
-        private PlayerHandContainer playerCards;
         [Resolved]
         private Player localPlayer { get; set; }
-        private BoardsContainer board;
 
         public Bindable<bool> EnableCardSelection = new BindableBool(false);
         public Bindable<bool> EnableTileSelection = new BindableBool(false);
@@ -47,21 +44,14 @@ namespace GamesToGo.Game.Screens
 
         private ArgumentParameter argumentToSend;
 
-        private PlayerPreviewContainer players;
         private bool hasEnded;
 
         private Player[] playersArray;
-
-        private int indexOfPlayer = 0;
         private SendArgumentOverlay sendOverlay;
         private SelectionOverlay selectOverlay;
 
         [Resolved]
         private APIController api { get; set; }
-        [Resolved]
-        private Storage store { get; set; }
-        [Resolved]
-        private TextureStore textures { get; set; }
 
         [Resolved]
         private MainMenuScreen mainMenu { get; set; }
@@ -107,7 +97,7 @@ namespace GamesToGo.Game.Screens
                                     RelativeSizeAxes = Axes.Both,
                                     Width = .8f,
                                     ScrollbarOverlapsContent = false,
-                                    Child = players = new PlayerPreviewContainer(),
+                                    Child = new PlayerPreviewContainer(),
                                 },
                                 new SimpleIconButton(FontAwesome.Solid.SignOutAlt)
                                 {
@@ -115,7 +105,7 @@ namespace GamesToGo.Game.Screens
                                 },
                             },
                         },
-                        board = new BoardsContainer
+                        new BoardsContainer
                         {
                             Height = .6f,
                             Boards = game.GameBoards.ToList()
@@ -131,7 +121,7 @@ namespace GamesToGo.Game.Screens
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Colour4.Bisque
                                 },
-                                playerCards = new PlayerHandContainer()
+                                new PlayerHandContainer()
                             },
                         },
                     },

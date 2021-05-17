@@ -172,7 +172,7 @@ namespace GamesToGo.Game.Overlays
 
         private void declineInvite(int id) // (id invitacion) POST
         {
-            var invitation = new IgnoreInvitationRequest(id);
+            var invitation = new IgnoreInvitationRequest(id);   
             invitation.Success += () =>
             {
                 invitationsContainer.Remove(invitationsContainer.FirstOrDefault(c => c.Invitation.ID == id));

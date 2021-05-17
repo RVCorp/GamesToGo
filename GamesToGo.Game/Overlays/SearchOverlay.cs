@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GamesToGo.Common.Graphics;
+﻿using GamesToGo.Common.Graphics;
 using GamesToGo.Game.Graphics;
 using GamesToGo.Game.Online.Requests;
 using GamesToGo.Game.Screens;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osuTK;
+
 
 namespace GamesToGo.Game.Overlays
 {
