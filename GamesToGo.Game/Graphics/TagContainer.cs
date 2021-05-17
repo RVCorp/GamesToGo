@@ -21,8 +21,6 @@ namespace GamesToGo.Game.Graphics
         public Bindable<bool> IsSelected = new Bindable<bool>();
         public uint Value;        
 
-        [Resolved]
-        private SearchOverlay searchOverlay { get; set; }
 
         public TagContainer(Tag tag)
         {

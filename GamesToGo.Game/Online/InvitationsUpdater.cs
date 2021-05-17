@@ -21,9 +21,6 @@ namespace GamesToGo.Game.Online
         [Resolved]
         private APIController api { get; set; }
 
-        [Resolved]
-        private SplashInfoOverlay infoOverlay { get; set; }
-
         public InvitationsUpdater() : base(5000)
         {
 

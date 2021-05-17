@@ -17,8 +17,6 @@ namespace GamesToGo.Game.Graphics
     public class PlayerHandContainer : Container
     {
         private FillFlowContainer<CardContainer> playerCards;
-        [Resolved]
-        private WorkingGame game { get; set; }
 
         private BasicScrollContainer scroll;
         private HelpContainer description;
@@ -29,7 +27,7 @@ namespace GamesToGo.Game.Graphics
         [Resolved]
         private APIController api { get; set; }
 
-        private readonly BindableList<OnlineCard> localCards = new BindableList<OnlineCard>();
+
 
 
         [BackgroundDependencyLoader]

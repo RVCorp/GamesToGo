@@ -22,9 +22,6 @@ namespace GamesToGo.Game.Graphics
         private bool selected => (currentSelected.Value?.BackingUser.ID ?? -1) == Model.BackingUser.ID;
 
         [Resolved]
-        private PlayerPreviewContainer playersContainer { get; set; }
-
-        [Resolved]
         private TextureStore textures { get; set; }
 
         public PlayerPreview(Player model)

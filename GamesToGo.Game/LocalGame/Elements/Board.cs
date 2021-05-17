@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics.Textures;
+﻿using System.Collections.Generic;
 using osuTK;
 
 namespace GamesToGo.Game.LocalGame.Elements

@@ -24,9 +24,6 @@ namespace GamesToGo.Game.Graphics
             }
         }
 
-        private Container borderContainer;
-        private ContainedImage tokenImage;
-
         [Resolved]
         private WorkingGame game { get; set; }
 
@@ -40,7 +37,7 @@ namespace GamesToGo.Game.Graphics
             Width = 300;
             Children = new Drawable[]
             {
-                borderContainer = new Container
+                new Container
                 {
                     Masking = true,
                     CornerRadius = 10,
@@ -53,7 +50,7 @@ namespace GamesToGo.Game.Graphics
                         Alpha = 0.1f,
                     },
                 },
-                tokenImage = new ContainedImage(false, 0)
+                new ContainedImage(false, 0)
                 {
                     RelativeSizeAxes = Axes.Both,
                     Texture = fileToken.Images.First(),

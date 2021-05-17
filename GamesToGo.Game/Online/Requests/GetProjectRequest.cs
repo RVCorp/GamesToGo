@@ -4,7 +4,6 @@ using GamesToGo.Game.Online.Models.RequestModel;
 
 namespace GamesToGo.Game.Online.Requests
 {
-    // ReSharper disable once UnusedType.Global
     public class GetProjectRequest : APIRequest<OnlineGame>
     {
         private readonly int gameID;

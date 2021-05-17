@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 
-// ReSharper disable UnusedMember.Global
-
 namespace GamesToGo.Game.LocalGame.Elements
 {
     [Flags]

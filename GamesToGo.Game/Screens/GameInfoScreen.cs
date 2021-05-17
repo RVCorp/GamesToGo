@@ -20,10 +20,7 @@ namespace GamesToGo.Game.Screens
     {
         [Resolved]
         private GamesToGoGame game { get; set; }
-        [Resolved]
-        private SideMenuOverlay sideMenu { get; set; }
-        [Resolved]
-        private MainMenuScreen mainMenu { get; set; }
+
         [Resolved]
         private APIController api { get; set; }
         [Resolved]
@@ -77,19 +74,6 @@ namespace GamesToGo.Game.Screens
                                     {
                                         RelativeSizeAxes = Axes.Both,
                                         Colour = new Colour4(60, 60, 60, 255)
-                                    },
-                                    new Container
-                                    {
-                                        Anchor = Anchor.TopLeft,
-                                        Origin = Anchor.TopLeft,
-                                        RelativeSizeAxes = Axes.Both,
-                                        Width = .2f,
-                                        Child = new SimpleIconButton(FontAwesome.Solid.Bars)
-                                        {
-                                            Anchor = Anchor.Centre,
-                                            Origin = Anchor.Centre,
-                                            Action = () => sideMenu.Show()
-                                        }
                                     },
                                     new Container
                                     {

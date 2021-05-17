@@ -32,9 +32,6 @@ namespace GamesToGo.Game.Graphics
                 CheckCard(model.Tokens);
             }
         }
-
-        private ContainedImage cardFrontImage;
-        private ContainedImage cardBackImage; //ToDo: OK
         private Container borderContainer;
         private readonly IBindable<OnlineCard> currentSelected = new Bindable<OnlineCard>();
         private bool selected => (currentSelected.Value?.TypeID ?? -1) == fileCard.TypeID;
@@ -45,8 +42,7 @@ namespace GamesToGo.Game.Graphics
         private PlayerHandContainer hand { get; set; }
         [Resolved]
         private WorkingGame game { get; set; }
-        [Resolved]
-        private Bindable<OnlineRoom> room { get; set; }
+
         [Resolved]
         private GameScreen gameScreen { get; set; }
 
@@ -82,7 +78,7 @@ namespace GamesToGo.Game.Graphics
                     Direction = FillDirection.Vertical,
                     Children = new Drawable[]
                     {
-                        cardFrontImage = new ContainedImage(false, 0)
+                        new ContainedImage(false, 0)
                         {
                             RelativeSizeAxes = Axes.Both,
                             Height = .7f,

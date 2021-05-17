@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GamesToGo.Game.LocalGame.Elements
+﻿namespace GamesToGo.Game.LocalGame.Elements
 {
     public class Token : GameElement
     { 

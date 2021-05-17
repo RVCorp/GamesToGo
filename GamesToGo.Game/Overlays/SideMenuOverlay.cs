@@ -43,7 +43,6 @@ namespace GamesToGo.Game.Overlays
         private Sprite userImage;
         private SpriteText invitationsNumber;
         private Container numberContainer;
-        private SurfaceButton hideButton;
 
         protected override bool StartHidden => true;
 
@@ -57,7 +56,7 @@ namespace GamesToGo.Game.Overlays
             InternalChildren = new Drawable[]
             {
                 new InvitationsUpdater(),
-                hideButton = new SurfaceButton
+                new SurfaceButton
                 {
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,

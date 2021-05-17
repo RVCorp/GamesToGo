@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using GamesToGo.Common.Online.Requests;
 using GamesToGo.Game.Online.Models.RequestModel;
 

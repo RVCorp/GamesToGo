@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Threading;
 

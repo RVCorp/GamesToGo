@@ -16,18 +16,5 @@ namespace GamesToGo.Game.LocalGame.Elements
         List<GameElement> Elements { get; }
 
         ElementType NestedElementType { get; }
-
-        public string ToSaveable()
-        {
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine($"SubElems={Elements.Count}");
-            foreach (var element in Elements.Select(e => e.TypeID).ToList())
-            {
-                builder.AppendLine($"{element}");
-            }
-
-            return builder.ToString().TrimEnd('\n', '\r');
-        }
     }
 }

@@ -17,7 +17,7 @@ namespace GamesToGo.Game.Online.Models.OnlineProjectElements
 
         public List<OnlineToken> Tokens { get; set; } = new List<OnlineToken>();
 
-        public override bool Equals(object obj)
+        public override bool Equals(object obj) 
         {
             if (!(obj is OnlineCard other))
                 return false;

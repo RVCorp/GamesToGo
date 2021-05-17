@@ -2,7 +2,6 @@
 using System.Linq;
 using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.LocalGame.Arguments;
-using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 
 namespace GamesToGo.Game.Online.Models.RequestModel

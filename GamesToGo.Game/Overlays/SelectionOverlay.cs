@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using GamesToGo.Game.Graphics;
-using GamesToGo.Game.LocalGame.Elements;
 using GamesToGo.Game.Online.Models.OnlineProjectElements;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 
@@ -15,7 +11,6 @@ namespace GamesToGo.Game.Overlays
     public class SelectionOverlay : OverlayContainer
     {
         private FillFlowContainer<CardContainer> cardsContainer;
-        private List<OnlineCard> cards;
 
 
         [BackgroundDependencyLoader]
@@ -76,6 +71,7 @@ namespace GamesToGo.Game.Overlays
 
         protected override void PopOut()
         {
+            cardsContainer.Clear();
             this.FadeOut(300);
         }
     }

@@ -48,8 +48,6 @@ namespace GamesToGo.Game.Graphics
 
         private void populateBoards()
         {
-
-
             foreach (var board in Boards)
             {
                 boardContainer.Add(new BoardContainer(board));

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using GamesToGo.Game.LocalGame.Elements;
 using osu.Framework.Graphics.Textures;
-using osuTK;
+
 
 namespace GamesToGo.Game.LocalGame
 {
