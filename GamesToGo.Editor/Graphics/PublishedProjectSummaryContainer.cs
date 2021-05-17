@@ -38,8 +38,13 @@ namespace GamesToGo.Editor.Graphics
             });
             Schedule(async () => //ToDo: ????
             {
-                ProjectImage.Texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
-                loadingIcon.FadeOut();
+                var texture = await textures.GetAsync(@$"https://gamestogo.company/api/Games/DownloadFile/{onlineProject.Image}");
+
+                Schedule(() =>
+                {
+                    ProjectImage.Texture = texture;
+                    loadingIcon.FadeOut();
+                });
             });
 
             BottomContainer.Add(new SpriteText
