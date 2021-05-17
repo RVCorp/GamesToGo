@@ -206,7 +206,7 @@ namespace GamesToGo.Editor.Graphics
                 stateButtonContainer.ColumnDimensions = previewDisabledDimension;
                 previewButton.Hide();
             }
-            
+
             if (!previewButton.Enabled.Value || imagesButton.Selected)
                 imagesButton.Action?.Invoke();
 
