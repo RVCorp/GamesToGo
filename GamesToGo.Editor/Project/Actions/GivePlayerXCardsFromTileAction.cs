@@ -9,7 +9,7 @@ namespace GamesToGo.Editor.Project.Actions
         public override int TypeID => 12;
 
         public override ArgumentReturnType[] ExpectedArguments { get; } = {
-            ArgumentReturnType.Number,
+            ArgumentReturnType.SingleNumber,
             ArgumentReturnType.SingleTile,
             ArgumentReturnType.SinglePlayer,
         };

@@ -14,6 +14,7 @@ namespace GamesToGo.Editor.Graphics
     {
         public readonly ProjectEvent Event;
         private SpriteText nameText;
+        private SpriteText descriptionText;
 
         [Resolved]
         private EventEditionOverlay eventOverlay { get; set; }
@@ -59,12 +60,12 @@ namespace GamesToGo.Editor.Graphics
                                         Text = Event.Name.Value,
                                         Font = new FontUsage(size: 35),
                                     },
-                                    new SpriteText //ToDo: fijate que esto, como que no se que iria aqui
+                                    descriptionText = new SpriteText
                                     {
                                         Anchor = Anchor.BottomLeft,
                                         Origin = Anchor.BottomLeft,
                                         Margin = new MarginPadding { Left = 5, Right = 2, Top = 2, Bottom = 7},
-                                        Text = @"Aquí debería haber información del evento, pero soy demasiado lento como para poder hacer eso",
+                                        Text = @$"{Event.Text}",
                                         Font = new FontUsage(size: 20),
                                     },
                                 },
@@ -101,7 +102,14 @@ namespace GamesToGo.Editor.Graphics
             };
 
             nameText.Current.BindTo(Event.Name);
+            Event.Priority.BindValueChanged(_ => recreateText());
+            Event.Actions.BindCollectionChanged((_, _) => recreateText());
+            Event.Condition.BindValueChanged(_ => recreateText());
         }
 
+        private void recreateText()
+        {
+            descriptionText.Text = @$"{Event.Actions.Count} acciones, Prioridad {Event.Priority}, {(Event.Condition.Value == null ? @"sin condición" : @"condicionado")}";
+        }
     }
 }
