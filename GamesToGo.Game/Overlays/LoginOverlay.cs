@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.RequestModel;
 using GamesToGo.Game.Graphics;
@@ -176,7 +176,8 @@ namespace GamesToGo.Game.Overlays
                 usernameBox.Text = "";
                 passwordBox.Text = "";
                 Hide();
-                nextScreenAction?.Invoke();
+                if(localUser.Value != null)
+                    nextScreenAction?.Invoke();
             });
             api.Login(@"daro31", @"1234");
         }
