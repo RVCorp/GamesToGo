@@ -1,4 +1,4 @@
-﻿namespace GamesToGo.Game.Online.Models.RequestModel
+﻿namespace GamesToGo.Common.Online.RequestModel
 {
     public class Statistic 
     {

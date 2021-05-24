@@ -1,6 +1,6 @@
-﻿using GamesToGo.Common.Online;
+﻿using GamesToGo.Common.Graphics;
+using GamesToGo.Common.Online;
 using GamesToGo.Common.Online.Requests;
-using GamesToGo.Editor.Database;
 using GamesToGo.Editor.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -20,13 +20,10 @@ namespace GamesToGo.Editor.Screens
         private APIController api { get; set; }
 
         [Resolved]
-        private Context database { get; set; }
-
-        [Resolved]
         private TextureStore textures { get; set; }
 
         private FillFlowContainer<PublishedProjectSummaryContainer> publishedProjectsList;
-        private Sprite banner;
+        private FillFlowContainer<Container> statisticsContainer;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -81,9 +78,10 @@ namespace GamesToGo.Editor.Screens
                                         Height = 600,
                                         Children = new Drawable[]
                                         {
-                                            banner = new Sprite
+                                            new Sprite
                                             {
                                                 RelativeSizeAxes = Axes.Both,
+                                                Texture = textures.Get("https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg")
                                             },
                                             new FillFlowContainer
                                             {
@@ -196,6 +194,22 @@ namespace GamesToGo.Editor.Screens
                                                                 },
                                                             },
                                                         },
+                                                        new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Child = new BasicScrollContainer
+                                                            {
+                                                                RelativeSizeAxes = Axes.Both,
+                                                                ClampExtension = 30,
+                                                                Child = statisticsContainer = new FillFlowContainer<Container>
+                                                                {
+                                                                    AutoSizeAxes = Axes.Y,
+                                                                    RelativeSizeAxes = Axes.X,
+                                                                    Direction = FillDirection.Vertical,
+                                                                    Padding = new MarginPadding(40)
+                                                                },
+                                                            }
+                                                        }
                                                     },
                                                 },
                                             },
@@ -207,6 +221,21 @@ namespace GamesToGo.Editor.Screens
                     },
                 },
             };
+
+            var stats = new GetUserStatisticsRequest();
+            stats.Success += (u) =>
+            {
+                foreach (var stat in u)
+                {
+                    statisticsContainer.Add(new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 300,
+                        Child = new StatisticContainer(stat)
+                    });
+                }
+            };
+            api.Queue(stats);
         }
 
         public override void OnEntering(IScreen last)
@@ -215,8 +244,6 @@ namespace GamesToGo.Editor.Screens
 
             publishedProjectsList.Clear();
             populateOnlineList();
-
-            banner.Texture = textures.Get("https://a-static.besthdwallpaper.com/halo-infinito-papel-pintado-1920x600-11770_57.jpg");
         }
 
         private void populateOnlineList()

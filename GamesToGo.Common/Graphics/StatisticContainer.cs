@@ -1,11 +1,11 @@
-﻿using GamesToGo.Game.Online.Models.RequestModel;
+﻿using GamesToGo.Common.Online.RequestModel;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 
-namespace GamesToGo.Game.Graphics
+namespace GamesToGo.Common.Graphics
 {
     public class StatisticContainer : Container
     {

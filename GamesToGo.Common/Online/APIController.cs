@@ -284,7 +284,7 @@ namespace GamesToGo.Common.Online
                 Token = null;
                 password = null;
                 username = null;
-                LocalUser.Value = null;
+
 
                 State = APIState.Offline;
             };
